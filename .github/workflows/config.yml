@@ -2,6 +2,10 @@ name: Build release
 
 on:
   push:
+    branches:
+      - main
+      - 'feat/**'
+      - 'fix/**'
     tags:
       - 'v*'
 
@@ -10,11 +14,11 @@ permissions:
 
 jobs:
   build:
-    name: Production build
+    name: Build and package
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out tagged commit
+      - name: Check out source
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -38,9 +42,11 @@ jobs:
           retention-days: 30
 
       - name: Build staging bundle
+        if: startsWith(github.ref, 'refs/tags/')
         run: npm run build:stage
 
       - name: Upload staging artifact
+        if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: musterbox-${{ github.ref_name }}-staging
@@ -49,9 +55,11 @@ jobs:
           retention-days: 30
 
       - name: Build production bundle
+        if: startsWith(github.ref, 'refs/tags/')
         run: npm run build:prod
 
       - name: Upload production artifact
+        if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: musterbox-${{ github.ref_name }}-prod
