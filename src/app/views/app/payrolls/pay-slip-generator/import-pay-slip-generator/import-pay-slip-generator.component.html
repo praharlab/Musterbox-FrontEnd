@@ -1,0 +1,196 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<h4 class="mb-4">Import Pay Slip Data</h4>
+
+<app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons"
+  [showExtraButton]="downloadDemoExcel" [extraButtonName]="'Download Demo Excel'" (onSubmit)="validateData($event)"
+  (getCompany)="getCompany($event)" (getBodyValue)="getAllUsers($event)" (getUser)="getUsers($event)"
+  (clearCompany)="getCompany()" (onExtraButtonClick)="download()" [cancelRoute]="'/payrolls/paySlipGenerator'"
+  [showRequiredFields]="showRequiredFields">
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <ng-select [items]="payrollFrequencyType" ngModel #payrollFrequency="ngModel" required
+        name="payrollFrequency" [(ngModel)]="selectedPayrollFrequencyType"
+        (change)="changePayrollFrequency();getDateRange();downloadDemoExcelShow()">
+      </ng-select>
+      <span>Payroll Frequency *</span>
+      @if (!payrollFrequency.valid && commonFilter?.filterForm?.submitted) {
+        <div class="invalid-tooltip">
+          Payroll Frequency Is Required !
+        </div>
+      }
+    </label>
+  </div>
+
+  @if (['Fortnightly','Weekly'].includes(selectedPayrollFrequencyType)) {
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel required #year="ngModel" name="year"
+          (change)="getDateRange();downloadDemoExcelShow()" [(ngModel)]="selectedYear">
+          @for (year of years; track year) {
+            <ng-option [value]="year">
+              {{ year }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Select Year *</span>
+        @if (!year.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Year is required!
+          </div>
+        }
+      </label>
+    </div>
+  }
+
+
+  @if (['Fortnightly','Weekly'].includes(selectedPayrollFrequencyType) && selectedYear) {
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel required #dateRange="ngModel" name="dateRange"
+          [(ngModel)]="selectedDateRange" (change)="downloadDemoExcelShow();selectDateRange($event)">
+          @for (data of dateRangeData; track data) {
+            <ng-option [value]="data.title">
+              {{ data.value }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Select Date Range *</span>
+        @if (!dateRange.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Select Date Range is required!
+          </div>
+        }
+      </label>
+    </div>
+  }
+
+  @if (selectedPayrollFrequencyType == 'Monthly') {
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" required ngModel #month="ngModel" name="month"
+          [(ngModel)]="selectedMonth" required (change)="downloadDemoExcelShow()" />
+          <span> Select Month *</span>
+          @if (!month.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Month is required!
+            </div>
+          }
+        </label>
+      </div>
+    }
+
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="file" ngModel #file="ngModel" (change)="onFileChange($event)"
+          accept=".xlsx, .xls" name="file" required />
+          <span>Import File *</span>
+          @if (file.valid) {
+            <p>{{ fileName }}</p>
+          }
+          @if (!file.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              File is required!
+            </div>
+          }
+        </label>
+      </div>
+
+
+    </app-common-filter>
+
+
+    @if (rows.length > 0) {
+      <div class="card mb-4">
+        <div class="card-body">
+          <form #tableForm="ngForm" novalidate>
+            <div class="row">
+              <div class="col mb-2">
+                @if (rows.length && remarksCount==0 && !isEdited) {
+                  <button class="btn btn-primary" type="submit" (click)="saveData()"
+                    >
+                    Submit
+                  </button>
+                }
+                @if (rows.length > 0 && isEdited) {
+                  <button class="btn btn-primary" type="submit" (click)="reValidateData()"
+                    >
+                    Re-Validate
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="editable-table" class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Sr No</th>
+                    <th>Actions</th>
+                    <th>Remarks</th>
+                    <th>Employee Details</th>
+                    @for (header of finalHeader; track header) {
+                      <th>{{header}}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of rows; track item; let i = $index) {
+                    <tr style="width: 140px;">
+                      <td>
+                        {{i + 1}}
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                          Remove
+                        </button>
+                      </td>
+                      <td>
+                        <div>
+                          {{ item.remarks }}
+                        </div>
+                      </td>
+                      <td>
+                        <div style="width: 250px">
+                          Name - {{ item.displayName }} @if (item.employeeCode) {
+                          <span>
+                            ({{ item.employeeCode }})
+                          </span>
+                        }
+                        <br />
+                        Branch - {{ item.branch }}
+                        <br />
+                        Department - {{ item.department }}
+                        <br />
+                        Division - {{ item.Division }}
+                        <br />
+                        Designation - {{ item.designation }}
+                        <br />
+                        Employee Type - {{ item['Employee Type'] }}
+                        <br />
+                        Contact Number - {{ item.userNumber }}
+                        <br />
+                      </div>
+                    </td>
+                    @for (header of finalHeader; track header) {
+                      <td>
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" [(ngModel)]="item[header]"
+                            name="header{{ i }}_{{ header }}" #header="ngModel" min="0"
+                            (change)="onAmountChange(item,header,i)" style="width: 120px;" />
+                            <span>Value </span>
+                          </label>
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,79 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Advance Payment</h5>
+
+    @if (advanceData) {
+      <form #editadvancepayment="ngForm" novalidate (ngSubmit)="(onSubmit)">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel" name="userMasterID"
+                [(ngModel)]="advanceData.userMasterID" required [readonly]="true">
+                @for (empLists of copersonlist; track empLists; let i = $index) {
+                  <ng-option
+                    [value]="empLists.userMasterID">
+                    {{ empLists.employee.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Employee Name *</span>
+              @if (!userMasterID.valid && editadvancepayment.submitted) {
+                <div class="invalid-tooltip">
+                  Employee is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #PaymentYearMonth="ngModel"
+                name="PaymentYearMonth" [(ngModel)]="advanceData.paymentYearMonth" />
+                <span>Select Month to Deduct Advance *</span>
+                @if (!PaymentYearMonth.valid && editadvancepayment.submitted) {
+                  <div class="invalid-tooltip">
+                    Month is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #advanceAmount="ngModel"
+                  name="advanceAmount" [(ngModel)]="advanceData.amount" />
+                  <span>Advance Amount *</span>
+                  @if (!advanceAmount.valid && editadvancepayment.submitted) {
+                    <div class="invalid-tooltip">
+                      Advance Amount is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-12">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" type="text" required ngModel #Description="ngModel"
+                  name="Description" [(ngModel)]="advanceData.description"></textarea>
+                  <span>Description *</span>
+                  @if (!Description.valid && editadvancepayment.submitted) {
+                    <div class="invalid-tooltip">
+                      Description is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <br />
+            <button class="btn btn-primary mr-2" type="submit" (click)="onSubmit()">
+              {{ 'submit' | translate }}
+            </button>
+            <button class="btn btn-danger btn-shadow" type="button"
+              [routerLink]="adminRoot + '/finances/teamAdvanceRequest'" style="margin-left: 2%">
+              Cancel
+            </button>
+            <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+          </form>
+        }
+      </div>
+    </div>

@@ -1,0 +1,412 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+<app-list-page-header name="Employee Month Wise Salary Report" [showOrderBy]="false" [showDisplayMode]="false"
+[showSearch]="false" [showItemsPerPage]="true" (itemsPerPageChange)="onLimitChange($event)"></app-list-page-header>
+<div class="card">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="submit()">
+        <div class="row">
+          <!--fromdate-->
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" ngModel #startmonth="ngModel" (change)="selectdate()"
+                name="startmonth" required />
+                <span>From Month*</span>
+                @if (!startmonth.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From Month is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <!--todate-->
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="month" ngModel #endmonth="ngModel" [(ngModel)]="currmonth"
+                  (change)="selectdate()" name="endmonth" required />
+                  <span>To Month *</span>
+                  @if (!endmonth.valid && datefilter.submitted) {
+                    <div class="invalid-tooltip">
+                      To Month is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #cid="ngModel"
+                    (change)="selectcompany($event)" name="cid" required>
+                    @for (data of company; track data) {
+                      <ng-option [value]="data.companyMasterID">
+                        {{ data.companyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Company *</span>
+                  @if (!cid.valid && datefilter.submitted) {
+                    <div class="invalid-tooltip">
+                      Company is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+                    [(ngModel)]="selectedBranch" (change)="selectbranch($event)">
+                    @for (item of allbranch; track item) {
+                      <ng-option [value]="item.branchMasterID">
+                        {{ item.branchName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Branch</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="alldepartment" [multiple]="true" bindLabel="departmentName" groupBy="selectedAllGroup"
+                    (ngModelChange)="selectdepartment()" [(ngModel)]="selectedDepartment" [selectableGroup]="true"
+                    [selectableGroupAsModel]="false" bindValue="departmentId" [closeOnSelect]="false" ngModel
+                    #department="ngModel" name="department">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Department</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="alldesignation" [multiple]="true" bindLabel="designationName" groupBy="selectedAllGroup"
+                      (ngModelChange)="selectdesig()" [(ngModel)]="selecteddesig" [selectableGroup]="true"
+                      [selectableGroupAsModel]="false" bindValue="designationId" [closeOnSelect]="false" ngModel
+                      #designation="ngModel" name="designation">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Designation</span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="allDivision" [multiple]="true" bindLabel="divisionName" groupBy="selectedAllGroup"
+                        (ngModelChange)="selectdivision()" [(ngModel)]="selectedDivision" [selectableGroup]="true"
+                        [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel #division="ngModel"
+                        name="division">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                            [ngModelOptions]="{standalone: true}" />
+                            Select All
+                          </ng-template>
+                        </ng-select>
+                        <span>Select Division</span>
+                      </label>
+                    </div>
+                    <!-- select working area -->
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select [items]="allWorkingArea" [multiple]="true" bindLabel="workingAreaName" groupBy="selectedAllGroup"
+                          (ngModelChange)="selectWorkingArea()" [(ngModel)]="selectedWorkingArea" [selectableGroup]="true"
+                          [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel #workingArea="ngModel"
+                          name="workingArea">
+                          <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                              [ngModelOptions]="{standalone: true}" />
+                              Select All
+                            </ng-template>
+                          </ng-select>
+                          <span>Select Working Area</span>
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select [items]="alluser" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup" required
+                            [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                            ngModel #user="ngModel" name="user" [(ngModel)]="selectedUser">
+                            <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectall"
+                                [ngModelOptions]="{standalone: true}" />
+                                Select All
+                              </ng-template>
+                            </ng-select>
+                            <span>Select Employee *</span>
+                            @if (!user.valid && datefilter.submitted) {
+                              <div class="invalid-tooltip">
+                                Employee is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel #dayType="ngModel" name="dayType"
+                              [(ngModel)]="selectedDayType" required>
+                              <ng-option value="paidDays">Paid Days</ng-option>
+                              <ng-option value="present">Present</ng-option>
+                            </ng-select>
+                            <span>Select Day Type *</span>
+                            @if (!dayType.valid && datefilter.submitted) {
+                              <div class="invalid-tooltip">
+                                Day Type is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel #status="ngModel" name="status"
+                              [(ngModel)]="selectedStatus" (change)="selectStatus()" required>
+                              <ng-option value="1">Active</ng-option>
+                              <ng-option value="0">Deactive</ng-option>
+                            </ng-select>
+                            <span>Select Status *</span>
+                            @if (!user.valid && datefilter.submitted) {
+                              <div class="invalid-tooltip">
+                                Status is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <br />
+                        <div class="col-md-6">
+                          <button class="btn btn-primary form-group" type="submit">Submit</button>
+                          <button class="btn btn-primary form-group ml-2" type="button" (click)="clear()">Clear</button>
+                          &nbsp;
+                          <span> &nbsp; </span>
+                          @if (rows.length > 0) {
+                            <button class="btn btn-success form-group" (click)="Export('excel')"
+                            type="button">Export Excel</button>
+                          }
+                          <span> &nbsp; </span>
+                          <span> &nbsp; </span>
+                          @if (rows.length > 0) {
+                            <button class="btn btn-success form-group" (click)="Export('pdf')"
+                            type="button">Download PDF</button>
+                          }
+                        </div>
+                        <div class="col-md-3" style="text-align: right"></div>
+                      </div>
+                    </form>
+                  }
+                </div>
+              </div>
+              <br />
+
+              @if (rows) {
+                <div>
+                  @for (data of rows; track data; let i = $index) {
+                    <div>
+                      <div class="main">
+                        <div class="salaryData row">
+                          <div class="col-md-2 col-sm-4 col-xs-6">
+                            <b>Employee Code : </b>
+                            <br>
+                              <p class="m-0">{{data.employeeCode}}</p>
+                            </div>
+                            <div class="col-md-2 col-sm-4 col-xs-6">
+                              <b>Employee Name : </b>
+                              <br>
+                                <p class="m-0">{{data.displayName}}</p>
+                              </div>
+                              <div class="col-md-2 col-sm-4 col-xs-6">
+                                <b>Number : </b>
+                                <p class="m-0">{{data.userNumber}}</p>
+                              </div>
+                              <div class="col-md-2 col-sm-4 col-xs-6">
+                                <b>Branch : </b>
+                                <p class="m-0">{{data.branch}}</p>
+                              </div>
+                              <div class="col-md-2 col-sm-4 col-xs-6">
+                                <b>Department : </b>
+                                <p class="m-0">{{data.department}}</p>
+                              </div>
+                              <div class="col-md-2 col-sm-4 col-xs-6">
+                                <b>Designation : </b>
+                                <p class="m-0">{{data.designation}}</p>
+                              </div>
+                              <div class="col-md-2 col-sm-4 col-xs-6">
+                                <b>Joining Date : </b>
+                                <p class="m-0">{{data.joiningDate | date: 'dd-MM-yyyy'}}</p>
+                              </div>
+                            </div>
+                            <hr>
+                              @if (data?.salaryData.length > 0) {
+                                <div>
+                                  @for (salary of data?.salaryData; track salary; let s = $index) {
+                                    <div>
+                                      <div class="d-flex">
+                                        <p class="mt15 mb10"><b>Salary Month: </b>{{salary.salaryFromYYYYMM}}</p>
+                                        <p class="ml15 mt15 mb10"><b>Salary Scale: </b>{{salary.salaryScale.EmployeeSalaryAmount}}</p>
+                                        <p class="ml15 mt15 mb10"><b>Days: </b>{{salary.days}}</p>
+                                      </div>
+                                      <div class="table-responsive">
+                                        <table class="table">
+                                          <tr>
+                                            @for (child of salary.achildData; track child; let c = $index) {
+                                              <td>{{child.payheadDisplayName ?
+                                              child.payheadDisplayName : child.payheadName}}</td>
+                                            }
+                                            <!-- <td *ngFor="let child of salary.incentiveData; let c = index">
+                                          {{child.incentivetypename}}</td> -->
+                                          @if (salary.grossData) {
+                                            <td> <b>{{salary.grossData.payheadDisplayName ?
+                                            salary.grossData.payheadDisplayName : salary.grossData.payheadName}}</b> </td>
+                                          }
+                                          @for (child of salary.bchildData; track child; let c = $index) {
+                                            <td>{{child.payheadDisplayName ?
+                                            child.payheadDisplayName : child.payheadName}}</td>
+                                          }
+                                          @for (child of salary.penaltyData; track child; let c = $index) {
+                                            <td>
+                                            {{child.penaltyName}}</td>
+                                          }
+                                          @for (child of salary.extra_achild; track child; let c = $index) {
+                                            <td>{{child.payheadDisplayName ?
+                                            child.payheadDisplayName : child.payheadName}}</td>
+                                          }
+                                          @if (salary.netPayData) {
+                                            <td><b>{{salary.netPayData.payheadDisplayName ?
+                                            salary.netPayData.payheadDisplayName : salary.netPayData.payheadName}}</b> </td>
+                                          }
+                                          <!-- <td *ngFor="let child of salary.cchildData; let c = index">{{child.payheadDisplayName ?
+                                        child.payheadDisplayName : child.payheadName}}</td> -->
+                                      </tr>
+                                      <tr>
+                                        @for (child of salary.achildData; track child; let c = $index) {
+                                          <td>{{child.EmployeeSalaryAmount}}</td>
+                                        }
+                                        <!-- <td *ngFor="let child of salary.incentiveData; let c = index">
+                                      {{child.EmployeeSalaryAmount}}</td> -->
+                                      @if (salary.grossData) {
+                                        <td> <b>{{salary.grossData.EmployeeSalaryAmount}}</b></td>
+                                      }
+                                      @for (child of salary.bchildData; track child; let c = $index) {
+                                        <td>{{child.EmployeeSalaryAmount}}</td>
+                                      }
+                                      @for (child of salary.penaltyData; track child; let c = $index) {
+                                        <td>
+                                        {{child.penaltyAmount}}</td>
+                                      }
+                                      @for (child of salary.extra_achild; track child; let c = $index) {
+                                        <td>{{child.EmployeeSalaryAmount}}</td>
+                                      }
+                                      @if (salary.netPayData) {
+                                        <td><b>{{salary.netPayData.EmployeeSalaryAmount}}</b></td>
+                                      }
+                                      <!-- <td *ngFor="let child of salary.cchildData; let c = index">{{child.EmployeeSalaryAmount}}</td> -->
+                                      <!-- <td *ngIf="salary.ctcData"><b>{{salary.ctcData.EmployeeSalaryAmount}}</b></td> -->
+                                    </tr>
+                                  </table>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        }
+                        <!-- <div *ngIf="data?.total"> -->
+                        <!-- <div *ngFor="let salary of data?.salaryData; let s = index"> -->
+                        @if (data?.salaryData.length > 0) {
+                          <div class="mt15">
+                            <div class="d-flex">
+                              <p class="mt15 mb10"><b>Total Salary: </b></p>
+                            </div>
+                            <div class="table-responsive">
+                              <table class="table">
+                                <tr>
+                                  @for (child of data.total.achildSum; track child; let c = $index) {
+                                    <td>{{child.payheadDisplayName ?
+                                    child.payheadDisplayName : child.payheadName}}</td>
+                                  }
+                                  <!-- <td *ngFor="let child of salary.incentiveData; let c = index">
+                                {{child.incentivetypename}}</td> -->
+                                @if (data.total.grossSum) {
+                                  <td> <b>{{data.total.grossSum.payheadDisplayName ?
+                                  data.total.grossSum.payheadDisplayName : data.total.grossSum.payheadName}}</b> </td>
+                                }
+                                @for (child of data.total.bchildSum; track child; let c = $index) {
+                                  <td>{{child.payheadDisplayName ?
+                                  child.payheadDisplayName : child.payheadName}}</td>
+                                }
+                                <!-- <td *ngFor="let child of salary.penaltyData; let c = index">
+                              {{child.penaltyName}}</td> -->
+                              @for (child of data.total.extraAChildSum; track child; let c = $index) {
+                                <td>{{child.payheadDisplayName ?
+                                child.payheadDisplayName : child.payheadName}}</td>
+                              }
+                              @if (data.total.netPaySum) {
+                                <td><b>{{data.total.netPaySum.payheadDisplayName ?
+                                data.total.netPaySum.payheadDisplayName : data.total.netPaySum.payheadName}}</b> </td>
+                              }
+                              <!-- <td *ngFor="let child of salary.cchildData; let c = index">{{child.payheadDisplayName ?
+                            child.payheadDisplayName : child.payheadName}}</td> -->
+                          </tr>
+                          <tr>
+                            @for (child of data.total.achildSum; track child; let c = $index) {
+                              <td>{{child.EmployeeSalaryAmount}}</td>
+                            }
+                            <!-- <td *ngFor="let child of salary.incentiveData; let c = index">
+                          {{child.EmployeeSalaryAmount}}</td> -->
+                          @if (data.total.grossSum) {
+                            <td> <b>{{data.total.grossSum.EmployeeSalaryAmount}}</b></td>
+                          }
+                          @for (child of data.total.bchildSum; track child; let c = $index) {
+                            <td>{{child.EmployeeSalaryAmount}}</td>
+                          }
+                          <!-- <td *ngFor="let child of salary.penaltyData; let c = index">
+                        {{child.penaltyAmount}}</td> -->
+                        @for (child of data.total.extraAChildSum; track child; let c = $index) {
+                          <td>{{child.EmployeeSalaryAmount}}</td>
+                        }
+                        @if (data.total.netPaySum) {
+                          <td><b>{{data.total.netPaySum.EmployeeSalaryAmount}}</b></td>
+                        }
+                        <!-- <td *ngFor="let child of salary.cchildData; let c = index">{{child.EmployeeSalaryAmount}}</td> -->
+                        <!-- <td *ngIf="salary.ctcData"><b>{{salary.ctcData.EmployeeSalaryAmount}}</b></td> -->
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              }
+            <!-- </div> -->
+          <!-- </div> -->
+          @if (data?.salaryData.length == 0) {
+            <div>
+              <p><b>No salary data found!</b></p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
+<div class="row">
+  <div class="col-12">
+    <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+      [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="body.limit"
+      [maxSize]="5" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+    [customPreviousTemplate]="prevTemplate"></pagination>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

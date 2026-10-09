@@ -1,0 +1,81 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Outdoor Duty</h5>
+    <form #addOutdoorDuty="ngForm" novalidate>
+      <div class="row">
+
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel name="dayType" #dayType="ngModel"
+              (change)="changeDay()" required>
+              <ng-option value="First Half">First Half</ng-option>
+              <ng-option value="Second Half">Second Half</ng-option>
+              <ng-option value="Full Day">Full Day</ng-option>
+            </ng-select>
+            <span>DayType *</span>
+            @if (!dayType.valid && addOutdoorDuty.submitted) {
+              <div class="invalid-tooltip">
+                dayType is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel name="from" #from="ngModel" (change)="changeDay();"
+              required />
+
+              <span>FromDate *</span>
+              @if (!from.valid && addOutdoorDuty.submitted) {
+                <div class="invalid-tooltip">
+                  FromDate is required!
+                </div>
+              }
+            </label>
+          </div>
+          @if (addOutdoorDuty.value.dayType == 'Full Day') {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel name="to" #to="ngModel" [min]="addOutdoorDuty.value.from"
+                  (change)="changeDay()" required />
+                  <span>ToDate *</span>
+                  @if (!to.valid && addOutdoorDuty.submitted) {
+                    <div class="invalid-tooltip">
+                      ToDate is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            }
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" ngModel type="number" name="days" [(ngModel)]="totalDays" #days = "ngModel" readonly />
+                <span>Days</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel name="reason" #reason="ngModel" type="text"></textarea>
+                <span>Reason</span>
+              </label>
+            </div>
+          </div>
+          <br />
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit" (click)="onSubmit()">
+              {{ 'forms.submit' | translate }}
+            </button>
+            <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/attendances/my_Outdoor_Duty'"
+              style="margin-left: 2%">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

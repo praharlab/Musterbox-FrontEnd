@@ -1,0 +1,116 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Employee IncomeTax Declaration"></app-heading>
+    @if (permissionview.length >0) {
+      <div class="btn-group float-right float-none-xs mt-2" dropdown>
+        <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary btn-xs dropdown-toggle"
+          aria-controls="dropdown-basic">
+          {{ selectedFiscalYear }}
+          <span class="caret"></span>
+        </button>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+          @for (year of financialYears; track year) {
+            <li role="menuitem">
+              <a class="dropdown-item" href="javascript:;" (click)="selectFiscalYear(year)">{{ year }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    <app-breadcrumb title="Employee IncomeTax Declaration"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+
+@if (permissionview.length >0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" [(ngModel)]="company_id" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                (change)="selectbranch($event)">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #employee="ngModel" name="employee"
+                (change)="onSubmit($event)" required>
+                @for (user of empList; track user) {
+                  <ng-option [value]="user.userMasterID">
+                    {{ user.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee *</span>
+              @if (!employee.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Employee is required!
+                </div>
+              }
+            </label>
+          </div>
+          <!-- <div class="col-md-6">
+          <button class="btn btn-primary form-group" type="submit">
+            {{ 'Submit' | translate }}
+          </button>
+        </div> -->
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+
+
+<!-- <app-declaration-information *ngIf="permissionview.length >0"> </app-declaration-information> -->
+
+@if (categorydata.length > 0 && permissionview.length >0 && show) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <tabset #staticTabs class="separator-tabs">
+        <tab heading="My Declarations" (selectTab)="onTabSelect()">
+          <app-employee-declaration [data]="myDeclarationData" [selectedFiscalYear]="selectedFiscalYear"
+          [selectedUserId]="selectedUserId"></app-employee-declaration>
+        </tab>
+        @for (tab of categorydata; track tab) {
+          <tab [heading]="tab.categoryName"
+            (selectTab)="loadComponent(tab.categoryName, tab.data,selectedFiscalYear,tab.tdsSubSectionCategoryID,selectedUserId)">
+          </tab>
+        }
+      </tabset>
+      <ng-container #componentContainer></ng-container>
+    </div>
+  </div>
+}

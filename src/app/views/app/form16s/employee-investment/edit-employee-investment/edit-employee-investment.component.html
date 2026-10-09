@@ -1,0 +1,133 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Employee Investment</h5>
+
+    <form #editform="ngForm" novalidate (ngSubmit)="onSubmit()">
+      @if (selecteddata) {
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                [items]="empList"
+                bindLabel="name"
+                groupBy="selectedAllGroup"
+                [selectableGroup]="true"
+                [selectableGroupAsModel]="false"
+                bindValue="userMasterID"
+                [closeOnSelect]="false"
+                [(ngModel)]="selecteddata"
+                ngModel
+                #userid="ngModel"
+                name="userid"
+                >
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select User</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                [items]="form16list"
+                bindLabel="name1"
+                groupBy="selectedAllGroup"
+                [selectableGroup]="true"
+                [selectableGroupAsModel]="false"
+                bindValue="Form16ChildID"
+                [closeOnSelect]="false"
+                [(ngModel)]="parentformdata"
+                ngModel
+                #form16="ngModel"
+                name="form16"
+                >
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Form 16</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #InvestmentName="ngModel"
+                name="InvestmentName"
+                [(ngModel)]="editformdata.InvestmentName"
+                />
+                <span>Investment Name *</span>
+                @if (!InvestmentName.valid && editform.submitted) {
+                  <div class="invalid-tooltip">
+                    Details are required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #InvestmentAmount="ngModel"
+                  name="InvestmentAmount"
+                  [(ngModel)]="editformdata.InvestmentAmount"
+                  />
+                  <span>Investment Amount *</span>
+                  @if (!InvestmentAmount.valid && editform.submitted) {
+                    <div class="invalid-tooltip">
+                      Details are required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="month"
+                    required
+                    ngModel
+                    #YearMonth="ngModel"
+                    name="YearMonth"
+                    [(ngModel)]="editformdata.YearMonth"
+                    />
+                    <span>Year Month *</span>
+                    @if (!YearMonth.valid && editform.submitted) {
+                      <div class="invalid-tooltip">
+                        Details are required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+            }
+            <br />
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button
+                class="btn btn-danger btn-shadow mt-4"
+                [routerLink]="adminRoot + '/form16s/employee_investment'"
+                style="margin-left: 2%"
+                >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <simple-notifications
+        [options]="{ position: ['top', 'center'], maxStack: 1 }"
+      ></simple-notifications>

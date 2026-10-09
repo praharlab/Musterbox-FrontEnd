@@ -1,0 +1,336 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+@if (rows) {
+  <div class="row">
+    @for (item of rows; track item) {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;"></a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div
+              class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      @if (item.branchID) {
+                        <p class="list-item-heading mb-1 truncate">
+                          {{ item.branchMaster.branchName | uppercase }}
+                        </p>
+                      }
+                    </div>
+                    <div>
+                      <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+                      @if (item.showDelete) {
+                        <a class="btn btn-outline-danger btn-xs" (click)="alertConfirmation(item.employeeBranchID)"
+                        >DELETE</a>
+                      }
+                    </div>
+                  </div>
+                  @if (item.branchMaster.createdByUserDetails != null) {
+                    <div class="d-flex mt-2" style="margin-top: 5%">
+                      <p class="text-muted mb-0 text-small">
+                        <strong>Branch Created</strong> by {{ item.branchMaster.createdByUserDetails.displayName }}, at {{
+                        item.branchMaster.createdAt
+                        | date: 'dd-MM-yyyy hh:mm a' }}
+                      </p>
+                    </div>
+                  }
+                  @if (item.branchMaster.updatedByUserDetails != null) {
+                    <div class="d-flex mt-1" style="margin-top: 1px">
+                      <p class="text-muted mb-0 text-small">
+                        <strong>Branch Updated</strong> by {{ item.branchMaster.updatedByUserDetails.displayName }}, at {{
+                        item.branchMaster.updatedAt
+                        | date: 'dd-MM-yyyy hh:mm a' }}
+                      </p>
+                    </div>
+                  }
+                  <hr>
+                    <p class="text-muted mb-0 text-small">
+                      Start Date : {{ item.applicableDate | date: 'dd-MM-yyyy' }}
+                    </p>
+                    @if (item.endDate != null) {
+                      <p class="text-muted mb-0 text-small">
+                        End Date : {{ item.endDate | date: 'dd-MM-yyyy' }}
+                      </p>
+                    }
+                    <div style="margin-top: 2%;">
+                      <p class="text-muted mb-0 text-small">
+                        <strong>Assigned</strong> by {{ item.createdByUserDetails.displayName}}, at {{
+                        item.createdAt
+                        | date: 'dd-MM-yyyy hh:mm a' }}
+                      </p>
+                    </div>
+                    <div class="min-width-zero">
+                      <a href="javascript:;">
+                        @if (item.branchpolicystatus == 'active') {
+                          <button type="button" class="btn btn-success"
+                            style="margin-top: 10%">
+                            {{ 'Active' | translate }}
+                          </button>
+                        }
+                        {{ ' ' }}
+                        @if (item.branchpolicystatus == 'deactive') {
+                          <button type="button" class="btn btn-danger"
+                            style="margin-top: 10%">
+                            {{ 'Deactive' | translate }}
+                          </button>
+                        }
+                        {{ ' ' }}
+                      </a>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Employee Branch</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #branchID="ngModel" name="branchID" required>
+                    @for (item of alldepartment; track item) {
+                      <ng-option [value]="item.branchMasterID">
+                        {{ item.branchName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Branch *</span>
+                </label>
+                @if (!branchID.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Branch is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="Date" ngModel #applicableDate="ngModel" name="applicableDate" />
+                  <span>Applicable Date *</span>
+                </label>
+                @if (!applicableDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Applicable Date is required!
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Edit Employee Branch</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+            #closeModal1>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (editbyid) {
+            <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #branchID="ngModel" name="branchID"
+                      [(ngModel)]="editbyid.branchID" required>
+                      @for (item of alldepartment; track item) {
+                        <ng-option [value]="item.branchMasterID">
+                          {{ item.branchName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Branch *</span>
+                  </label>
+                  @if (!branchID.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Branch is required!
+                    </div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="Date" ngModel #applicableDate="ngModel"
+                      [ngModel]="editbyid.applicableDate | date: 'yyyy-MM-dd'" name="applicableDate" required />
+                      <span>Applicable Date *</span>
+                    </label>
+                    @if (!applicableDate.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Applicable Date is required!
+                      </div>
+                    }
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+              </form>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div bsModal #branchDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+      aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+      <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">{{ branchdata.branchName }} - Branch Details</h4>
+            <button type="button" class="btn-close close pull-right" (click)="branchDataModal.hide()" aria-label="Close">
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" [(ngModel)]="branchdata.companyMasterID" [readonly]="true">
+                    @for (company of allcomp; track company) {
+                      <ng-option [value]="company.companyMasterID">
+                        {{ company.companyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Company *</span>
+                </label>
+              </div>
+              <div class="col-md-5">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" [(ngModel)]="branchdata.branchName" [attr.disabled]="true" />
+                  <span>Branch Name *</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" required [(ngModel)]="branchdata.branchCode"
+                    [attr.disabled]="true" />
+                    <span>Branch Code *</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="branchdata.latitude" [attr.disabled]="true" />
+                    <span>Latitude</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="branchdata.longitude" [attr.disabled]="true" />
+                    <span>Longitude</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="branchdata.radius" [attr.disabled]="true" />
+                    <span>Radius</span>
+                  </label>
+                </div>
+                <div class="col-md-12">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" [(ngModel)]="branchdata.branchAddress" [attr.disabled]="true"></textarea>
+                    <span>Branch Address *</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [(ngModel)]="countryid" [readonly]="true">
+                      @for (countrys of country; track countrys) {
+                        <ng-option [value]="countrys.countryMasterID">
+                          {{ countrys.countryName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Branch Country *</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [(ngModel)]="stateid" [readonly]="true">
+                      @for (states of state; track states) {
+                        <ng-option [value]="states.stateMasterID">
+                          {{ states.stateName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Branch State *</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [(ngModel)]="cityid" [readonly]="true">
+                      @for (citys of city; track citys) {
+                        <ng-option [value]="citys.cityMasterID">
+                          {{ citys.cityName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Branch City *</span>
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="branchdata.gstNumber" [attr.disabled]="true" />
+                    <span>GST No.</span>
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="branchdata.lwfNumber" [attr.disabled]="true" />
+                    <span>LWF No.</span>
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="branchdata.professionaltaxNumber"
+                      [attr.disabled]="true" />
+                      <span>Professional Tax No.</span>
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="branchdata.pfNumber" [attr.disabled]="true" />
+                      <span>PF No.</span>
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="branchdata.esicNumber" [attr.disabled]="true" />
+                      <span>ESIC No.</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>

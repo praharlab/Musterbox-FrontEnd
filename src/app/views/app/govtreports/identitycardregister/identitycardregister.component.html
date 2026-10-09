@@ -1,0 +1,622 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Id Card Register"></app-heading>
+    <app-breadcrumb title="Id Card Register"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                (change)="selectBranch($event)">
+                @for (item of branch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #orderBy="ngModel" name="orderBy"
+                [(ngModel)]="orderByValue">
+                <ng-option value="displayName">
+                  Employee Name
+                </ng-option>
+                <!-- <ng-option value="employeeCode">
+                Employee Code
+              </ng-option> -->
+              <ng-option value="joiningDate">
+                Joining Date
+              </ng-option>
+            </ng-select>
+            <span>Select OrderBy</span>
+          </label>
+        </div>
+        <div class="col-md-5">
+          <button class="btn btn-primary form-group" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+          &nbsp;&nbsp;
+          <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          <span> &nbsp;&nbsp; </span>
+          @if (rows.length > 0) {
+            <button class="btn btn-success form-group" type="button" onclick="window.print()">
+              Download As PDF
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  }
+</div>
+</div>
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="Generator" content="Microsoft Word 15 (filtered)" />
+    <title>Identity Card Register</title>
+    <style>
+      /* Font Definitions */
+      @font-face {
+      font-family: 'Cambria Math';
+      panose-1: 2 4 5 3 5 4 6 3 2 4;
+    }
+
+    /* Style Definitions */
+    p.MsoNormal,
+    li.MsoNormal,
+    div.MsoNormal {
+    margin: 0in;
+    font-size: 10pt;
+    font-family: 'Times New Roman', serif;
+  }
+
+  p.MsoTitle,
+  li.MsoTitle,
+  div.MsoTitle {
+  margin-top: 20px;
+  margin-right: 0in;
+  margin-bottom: 2pt;
+  margin-left: 0in;
+  text-align: center;
+  font-size: 22pt;
+  font-family: 'Arial', sans-serif;
+  color: black;
+}
+
+p.MsoSubtitle,
+li.MsoSubtitle,
+div.MsoSubtitle {
+margin-top: 2pt;
+margin-right: 0in;
+margin-bottom: 2pt;
+margin-left: 0in;
+text-align: center;
+line-height: 14pt;
+font-size: 11pt;
+font-family: 'Arial', sans-serif;
+color: black;
+}
+</style>
+</head>
+@if (display == true) {
+  <div id="page" style="text-align: center">
+    <h1>No Data Found!!</h1>
+  </div>
+}
+@if (rows.length > 0) {
+  <div>
+    <body lang="EN-US" style="word-wrap: break-word">
+      <div class="WordSection1">
+        <div style="text-align: center">
+          <h1 style="font-family: 'Times New Roman', Times, serif; font-weight: 900; font-size: 42px">
+            Identity Card Register
+          </h1>
+        </div>
+        <table class="MsoNormalTable" cellspacing="0" cellpadding="0" width="691"
+          style="width: 7.2in; border-collapse: collapse; border: none">
+          @if (companyData) {
+            <tr style="page-break-inside: avoid; height: 60.75pt">
+              <td width="306" valign="top" style="width: 229.2pt; padding: 0in 5.4pt 0in 5.4pt; height: 60.75pt">
+                <p class="MsoNormal">
+                  Name of the Company:
+                  <b>{{ companyData.companyName }}</b>
+                </p>
+                @if (companyAddress_display == true) {
+                  <p class="MsoNormal">
+                    Address of Company :
+                    <b>{{ companyData.companyAddress }}</b>
+                  </p>
+                }
+                @if (branchAddress_display == true) {
+                  <p class="MsoNormal">
+                    Name of the Branch :
+                    <b>{{ branch1.branchName }}</b>
+                  </p>
+                }
+                @if (branchAddress_display == true) {
+                  <p class="MsoNormal">
+                    Address of Branch :
+                    <b>{{ branch1.branchAddress }}</b>
+                  </p>
+                }
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+            </tr>
+          }
+        </table>
+        <div style="overflow-x: auto">
+          <table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0"
+            style="margin-left: 0.9pt; border-collapse: collapse; border: none">
+            <tr>
+              <td width="36" valign="top" style="width: 27pt; border: solid windowtext 1pt; padding: 0in 5.4pt 0in 5.4pt">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Sr.
+                    <br />
+                    No
+                  </span>
+                </p>
+              </td>
+            <td width="120" valign="top" style="
+                  width: 3.25in;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Full Name and Address of the Employee
+                  </span>
+                </p>
+              </td>
+            <td width="120" valign="top" style="
+                  width: 1.25in;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Date of Birth of the Employee
+                  </span>
+                </p>
+              </td>
+            <td width="48" valign="top" style="
+                  width: 1.25in;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Date of Joining the service in the company
+                  </span>
+                </p>
+              </td>
+            <td width="132" valign="top" style="
+                  width: 105pt;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Recent Passport size Photograph of the Employee
+                  </span>
+                </p>
+              </td>
+            <td width="84" valign="top" style="
+                  width: 105pt;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Signature or Thumb Expression of the Employee
+                  </span>
+                </p>
+              </td>
+            <td width="120" valign="top" style="
+                  width: 105pt;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Signature of Manager of Authorized Agent
+                  </span>
+                </p>
+              </td>
+              <td width="103" valign="top"
+                style="width: 1.25in; border: solid windowtext 1pt; padding: 0in 5.4pt 0in 5.4pt">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Date of Issue
+                  </span>
+                </p>
+              </td>
+            <td width="78" valign="top" style="
+                  width: 105pt;
+                  border: solid windowtext 1pt;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" align="center" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                <span style="
+                      font-size: 14px !important;
+                      font-family: 'Times New Roman', Times, serif;
+                      color: black;
+                    ">
+                    Remarks
+                  </span>
+                </p>
+              </td>
+            </tr>
+            @for (item of rows; track item; let i = $index) {
+              <tr>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      {{ i + 1 }}
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      {{ item.Name }}
+                      <br />
+                      {{ item.address }}
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      {{ item.dob | date: 'dd-MMM-yyyy' }}
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      {{ item.joiningDate | date: 'dd-MMM-yyyy' }}
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" height="100" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 5pt;
+                    margin-right: 0in;
+                    margin-bottom: 5pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      @if (item.photo) {
+                        <img src="{{ apiURL }}uploads/user/photo/{{ item.photo }}" height="90px" width="84px"
+                          />
+                      }
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 19pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      @if (item.signature) {
+                        <img src="{{ apiURL }}uploads/user/signature/{{ item.signature}}" height="90px" width="84px"
+                          />
+                      }
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      <!-- <img src="{{ apiURL }}uploads/user/signature/{{item.signature}}" height="50px" width="90px"
+                      *ngIf="item.signature" /> -->
+                      &nbsp;
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      {{ item.joiningDate | date: 'dd-MMM-yyyy' }}
+                      <span> &nbsp; </span>
+                    </span>
+                  </p>
+                </td>
+            <td width="36" valign="top" style="
+                  width: 27pt;
+                  border: solid windowtext 1pt;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                ">
+              <p class="MsoNormal" style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  ">
+                    <span style="font-family: 'Times New Roman', Times, serif; color: black">
+                      &nbsp;
+                    </span>
+                  </p>
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+      </div>
+    </body>
+  </div>
+}
+
+</html>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Image</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center">
+          <img src="{{ apiURL }}uploads/user/signature/{{ image }}" height="350px" width="350px" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Image</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center">
+          <img src="{{ apiURL }}uploads/user/photo/{{ image }}" height="350px" width="350px" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

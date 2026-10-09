@@ -1,0 +1,47 @@
+<style>
+  .card-title .line {
+    position: relative;
+    display: inline-block;
+    color: var(--m-primary);
+  }
+
+  .card-title .line::after {
+    content: ' ';
+    background: var(--m-primary);
+    border-radius: 10px;
+    position: absolute;
+    width: 36%;
+    height: 2px;
+    left: 19%;
+    bottom: 0;
+    transform: translateX(-50%);
+    top: 30px;
+  }
+</style>
+
+<div [class]="'card ' + class">
+  <!-- <div *ngIf="isSortable" class="card-header p-0 position-relative">
+    <div class="position-absolute handle card-icon">
+      <i class="simple-icon-shuffle"></i>
+    </div>
+  </div> -->
+  <div class="card-body d-flex justify-content-between align-items-center">
+    <h2 class="card-title mb-0" style="color: var(--m-primary)">
+      <span class="line">{{ title }}</span>
+    </h2>
+    <div class="progress-bar-circle position-relative" style="height: 60px; width: 60px">
+      <div class="progressbar-text">{{ status }}%</div>
+      <round-progress
+        [current]="status"
+        [max]="100"
+        [responsive]="true"
+        [duration]="800"
+        [animation]="'easeInOutQuart'"
+        [animationDelay]="0"
+        [radius]="50"
+        [rounded]="true"
+        [stroke]="4"
+      ></round-progress>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,379 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Gate Pass</h5>
+    <form #addgatepass="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <!-- <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select
+            placeholder="Choose your option"
+            ngModel
+            required
+            #company="ngModel"
+            name="company"
+            (change)="getuser($event);companyid($event)"
+            >
+            <ng-option *ngFor="let comp of comp" [value]="comp.companyMasterID">
+              {{ comp.companyName }}
+            </ng-option>
+          </ng-select>
+          <span>Select Company *</span>
+          <div
+            *ngIf="!company.valid && addgatepass.submitted"
+            class="invalid-tooltip"
+            >
+            Company is required!
+          </div>
+        </label>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select
+            placeholder="Choose your option"
+            ngModel
+            required
+            #user="ngModel"
+            name="user"
+            >
+            <ng-option *ngFor="let users of users" [value]="users.userMasterID">
+              {{users.firstName}} {{users.lastName}}  ({{users.userNumber}})
+            </ng-option>
+          </ng-select>
+          <span>Select User *</span>
+          <div
+            *ngIf="!user.valid && addgatepass.submitted"
+            class="invalid-tooltip"
+            >
+            User is required!
+          </div>
+        </label>
+      </div>  -->
+
+      <div class="col-md-4">
+        <span><b>Visitor Type *</b></span>
+        &nbsp;&nbsp;
+        <input type="radio" name="visitor_type" value="employee" ngModel #visitor_type="ngModel"
+          (click)="visitortype($event.target.value)" style="margin-right: 1%" required />
+          <label for="true" style="margin-right: 1%">Employee</label>
+          <input type="radio" name="visitor_type" value="visitor" ngModel #visitor_type="ngModel"
+            (click)="visitortype($event.target.value)" style="margin-right: 1%" required />
+            <label for="false">Visitor</label>
+            @if (!visitor_type.valid && addgatepass.submitted) {
+              <div class="invalid-tooltip">
+                Visitor Type is required!
+              </div>
+            }
+          </div>
+          @if (visitor_type1 == 'employee') {
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel required #employee="ngModel" name="employee">
+                  @for (users of users; track users) {
+                    <ng-option [value]="users.userMasterID">
+                      {{ users.firstName }} {{ users.lastName }} ({{ users.userNumber }})
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Employee *</span>
+                @if (!employee.valid && addgatepass.submitted) {
+                  <div class="invalid-tooltip">
+                    Employee is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          @if (visitor_type1 == 'visitor') {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #visitorsid="ngModel" name="visitorsid" required>
+                  @for (category of category; track category) {
+                    <ng-option [value]="category.visitorsid">
+                      {{ category.visitorsFirstName }} {{ category.visitorsLastName }} ({{
+                      category.visitorsPhone
+                      }}) ({{ category.visitorsComapny }})
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Visitor *</span>
+                @if (!visitorsid.valid && addgatepass.submitted) {
+                  <div class="invalid-tooltip">
+                    Visitors is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          @if (visitor_type1 == 'visitor') {
+            <div class="col-md-1">
+              <label class="form-group has-float-label">
+                <button (click)="lgModal1.show()" style="font-size: large" class="btn btn-primary" type="button">
+                  +
+                </button>
+              </label>
+            </div>
+          }
+
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #meetingPlaceID="ngModel" name="meetingPlaceID">
+                @for (meetingplace of meetingplace; track meetingplace) {
+                  <ng-option [value]="meetingplace.meetingPlaceid">
+                    {{ meetingplace.meetingPlaceName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Meeting Location</span>
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #date="ngModel" name="date"
+                (change)="checkmonth($event.target.value)" [ngModel]="checkdate" />
+                <span>Date</span>
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="time" ngModel #fromTime="ngModel" name="fromTime"
+                  (change)="checktime1($event.target.value)" />
+                  <span>From Time</span>
+                </label>
+              </div>
+              <div class="col-md-2">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="time" ngModel #toTime="ngModel" name="toTime" />
+                  <span>To Time</span>
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+                  <span>Remarks</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" name="attachment" accept="image/*"
+                    (change)="onUploadChange($event)" />
+                    <span>Attachment</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #vehicleno="ngModel" name="vehicleno" />
+                    <span>Vehicle Number</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" ngModel #noofpeople="ngModel" name="noofpeople" />
+                    <span>Number of people</span>
+                  </label>
+                </div>
+              </div>
+              @for (value of personNameAndPhone; track value; let i = $index) {
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="value.personName" #personName="ngModel"
+                        name="personName{{ i }}" placeholder="Person Name {{ i + 1 }}" />
+                        <span>Person Name</span>
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" [(ngModel)]="value.personNumber" #personNumber="ngModel"
+                          name="personNumber{{ i }}" placeholder="Person Number {{ i + 1 }}" />
+                          <span>Person Number</span>
+                        </label>
+                      </div>
+                      <div class="col-md-1">
+                        <span class="button btn btn-xs btn-success" (click)="addValue()"
+                          style="margin-left: 3%; font-size: medium; margin-top: 3%; color: white">
+                          +
+                        </span>
+                        @if (personNameAndPhone.length > 1) {
+                          <span class="button btn btn-xs btn-danger" (click)="removeValue(i)"
+                            style="margin-left: 3%; font-size: medium; margin-top: 3%; color: white">
+                            -
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  }
+                  <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                    [isDisabled]="buttonDisabled" click="onLoginClick()">
+                    {{ 'forms.submit' | translate }}
+                  </app-state-button>
+                  <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/gatepasses/mygatepass'"
+                    style="margin-left: 2%">
+                    Cancel
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+            <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+              [config]="{ backdrop: 'static', keyboard: false }">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Add Visitor</h4>
+                    <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+                      #closeModal>
+                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form #addvisitor="ngForm" novalidate (ngSubmit)="onSubmit1(); lgModal1.hide()">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" required ngModel #visitorsFirstName="ngModel"
+                              name="visitorsFirstName" />
+                              <span>Visitor First Name *</span>
+                              @if (!visitorsFirstName.valid && addvisitor.submitted) {
+                                <div class="invalid-tooltip">
+                                  Visitor First Name is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" required ngModel #visitorsLastName="ngModel"
+                                name="visitorsLastName" />
+                                <span>Visitor Last Name *</span>
+                                @if (!visitorsLastName.valid && addvisitor.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Visitor Last Name is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="number" required ngModel #visitorsPhone="ngModel"
+                                  name="visitorsPhone" />
+                                  <span>Visitor Phone *</span>
+                                  @if (!visitorsPhone.valid && addvisitor.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Visitor Phone is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" required ngModel #visitorsComapny="ngModel"
+                                    name="visitorsComapny" />
+                                    <span>Visitor Company *</span>
+                                    @if (!visitorsComapny.valid && addvisitor.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Visitor Company is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                @if (childcompany == 'false') {
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+                                        required>
+                                        @for (company of comp; track company) {
+                                          <ng-option [value]="company.companyMasterID">
+                                            {{ company.companyName }}
+                                          </ng-option>
+                                        }
+                                      </ng-select>
+                                      <span>Select Company *</span>
+                                      @if (!companyMasterID.valid && addvisitor.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Company is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                }
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="file" accept=".png, .jpeg, .jpg" ngModel #visitorPhoto="ngModel"
+                                      name="visitorPhoto" (change)="onFileChange($event)" />
+                                      <span>Visitor Photo</span>
+                                    </label>
+                                  </div>
+                                </div>
+                                <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow'" [currentState]="buttonState"
+                                  [isDisabled]="buttonDisabled" click="onLoginClick()">
+                                  {{ 'forms.submit' | translate }}
+                                </app-state-button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                        [config]="{ backdrop: 'static', keyboard: false }">
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Add Meeting Location</h4>
+                              <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+                                #closeModal>
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form #addmeetingPlace="ngForm" novalidate (ngSubmit)="onSubmit2(); lgModal2.hide()">
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" required ngModel #meetingPlaceName="ngModel"
+                                        name="meetingPlaceName" />
+                                        <span>Meeting Location Name *</span>
+                                        @if (!meetingPlaceName.valid && addmeetingPlace.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Meeting Location Name is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    @if (childcompany == 'false') {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+                                            required>
+                                            @for (company of comp; track company) {
+                                              <ng-option [value]="company.companyMasterID">
+                                                {{ company.companyName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Select Company *</span>
+                                          @if (!companyMasterID.valid && addmeetingPlace.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Company is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                  </div>
+                                  <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow'" [currentState]="buttonState"
+                                    [isDisabled]="buttonDisabled" click="onLoginClick()">
+                                    {{ 'forms.submit' | translate }}
+                                  </app-state-button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>

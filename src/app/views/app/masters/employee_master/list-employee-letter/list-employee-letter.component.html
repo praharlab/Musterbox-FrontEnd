@@ -1,0 +1,569 @@
+<div class="row">
+  @for (item of rows; track item) {
+    @if (item.label == 'Offer Letter' || item.label == 'Joining Letter' || item.label =='Appointment Letter' || item.label == 'Experience Letter'|| item.label == 'Termination Letter'   ) {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-4"
+        >
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;"></a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div
+              class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <p class="list-item-heading mb-1 truncate">{{ item.label | uppercase }}</p>
+                  <div class="min-width-zero">
+                    <a href="javascript:;">
+                      @if (item.path) {
+                        <button type="button" class="btn btn-success btn-xs" style="margin-top: 10%"
+                          (click)="view(item.path)">
+                          {{ 'View' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (item.path) {
+                        <button type="button" class="btn btn-primary btn-xs" style="margin-top: 10%"
+                          (click)="sendmail(item.label)">
+                          {{ 'Send Email' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (!item.path && permissioncreate.length != 0 && item.label=='Offer Letter') {
+                        <button type="button" class="btn btn-success btn-xs"
+                          style="margin-top: 10%" (click)="generate(item.label); lgModal.show()">
+                          {{ 'Generate' | translate }}
+                        </button>
+                      }
+                      @if (!item.path && permissioncreate.length != 0 && item.label=='Termination Letter') {
+                        <button type="button" class="btn btn-success btn-xs"
+                          style="margin-top: 10%" (click)="generate(item.label);TlgModal.show()">
+                          {{ 'Generate' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (!item.path && permissioncreate.length != 0 && item.label=='Joining Letter') {
+                        <button type="button" class="btn btn-success btn-xs"
+                          style="margin-top: 10%" (click)="generate(item.label); JlgModal.show()">
+                          {{ 'Generate' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (!item.path && permissioncreate.length != 0 && item.label=='Experience Letter') {
+                        <button type="button" class="btn btn-success btn-xs"
+                          style="margin-top: 10%" (click)="generate(item.label);ElgModal.show()">
+                          {{ 'Generate' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (!item.path && permissioncreate.length != 0 && item.label=='Appointment Letter') {
+                        <button type="button" class="btn btn-success btn-xs"
+                          style="margin-top: 10%" (click)="generate(item.label);AlgModal.show()">
+                          {{ 'Generate' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </a>
+                  </div>
+                </a>
+              </div>
+              <div>
+                @if (item.path && item.htmlContent && permissionedit.length != 0) {
+                  <a class="btn btn-outline-primary btn-xs btn-xs"
+                    (click)="editLetter(item); lgModal1.show()" style="margin-top: 10%">
+                    EDIT
+                  </a>
+                }
+                <br />
+                @if (item.path && permissiondelete.length != 0 ) {
+                  <a class="btn btn-outline-danger btn-xs"
+                    (click)="alertConfirmation(item.label)" style="margin-top: 10%">
+                    DELETE
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+
+<div class="row">
+  <hr class="flex-grow-1">
+</div>
+<div class="col-auto text-right">
+  <button type="button" class="btn btn-primary ml-1" (click)="addNewCard()">Add</button>
+</div>
+
+
+<div class="row">
+  @for (item of rows; track item) {
+    @if (item.label == 'Increment Letter') {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-4 mb-4">
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;"></a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div
+              class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <p class="list-item-heading mb-1 truncate">{{ item.label | uppercase }}</p>
+                  <div class="min-width-zero">
+                    <a href="javascript:;">
+                      @if (item.path) {
+                        <button type="button" class="btn btn-success" style="margin-top: 10%"
+                          (click)="view(item.path)">
+                          {{ 'View' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (item.path) {
+                        <button type="button" class="btn btn-primary" style="margin-top: 10%"
+                          (click)="sendmail1(item.userincrementLetterID)">
+                          {{ 'Email' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (!item.path && permissioncreate.length != 0 && item.label=='Increment Letter') {
+                        <button type="button" class="btn btn-success btn-xs"
+                          style="margin-top: 10%" (click)="generate(item.label); IlgModal.show()">
+                          {{ 'Generate' | translate }}
+                        </button>
+                      }
+                    </a>
+                  </div>
+                </a>
+              </div>
+              <div style="margin-top: 14px">
+                @if (item.path && item.htmlContent && permissionedit.length != 0) {
+                  <a class="btn btn-outline-primary btn-xs"
+                    (click)="editLetter(item); lgModal1.show()" style="margin-top: 10%">
+                    EDIT
+                  </a>
+                }
+                <br />
+                @if (item.path && permissiondelete.length != 0 ) {
+                  <a class="btn btn-outline-primary btn-xs"
+                    (click)="alertConfirmation1(item.userincrementLetterID)" style="margin-top: 10%">
+                    DELETE
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12 text-danger" style="font-size: 14px;padding: 2%">
+          <div>Note* :- 1) To access the options menu for the body toolbar, simply right-click with your mouse. eg.
+          font-size</div>
+          <div><span style="visibility: hidden;">Note* :-</span> 2) To insert a page break, simply use the [PageBreak]
+        tag.</div>
+      </div>
+
+      <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+        <div class="row">
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <quill-editor (contextmenu)="onToolbarRightClick($event)" [placeholder]="''" ngModel #body="ngModel"
+                name="body" [(ngModel)]="html_Content" required>
+                <div quill-editor-toolbar>
+                  <span class="ql-formats">
+                    <button class="ql-bold" [title]="'Bold'"></button>
+                    <button class="ql-italic" [title]="'Italic'"></button>
+                    <button class="ql-underline" [title]="'Underline'"></button>
+                    <button class="ql-strike" [title]="'Strike'"></button>
+                    <button class="ql-image" [title]="'Image'"></button>
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-link"></button>
+                    <button class="ql-video"></button>
+                  </span>
+
+                  <span class="ql-formats">
+                    <select class="ql-align" [title]="'Aligment'">
+                      <option selected=""></option>
+                      <option value="center"></option>
+                      <option value="right"></option>
+                      <option value="justify"></option>
+                    </select>
+                    <select class="ql-size" [title]="'Size'">
+                      <option value="8px">8px</option>
+                      <option value="10px">10px</option>
+                      <option selected="" value="12px">12px</option>
+                      <option value="14px">14px</option>
+                      <option value="16px">16px</option>
+                      <option value="18px">18px</option>
+                      <option value="20px">20px</option>
+                      <option value="22px">22px</option>
+                      <option value="24px">24px</option>
+                      <option value="26px">26px</option>
+                      <option value="28px">28px</option>
+                      <option value="30px">30px</option>
+                      <option value="32px">32px</option>
+                      <option value="34px">34px</option>
+                      <option value="36px">36px</option>
+                      <option value="38px">38px</option>
+                      <option value="40px">40px</option>
+                      <option value="42px">42px</option>
+                      <option value="44px">44px</option>
+                      <option value="46px">46px</option>
+                      <option value="48px">48px</option>
+                      <option value="50px">50px</option>
+                    </select>
+                    <select class="ql-header" [title]="'Header'">
+                      <option value="1">Heading 1</option>
+                      <option value="2">Heading 2</option>
+                      <option value="3">Heading 3</option>
+                      <option value="4">Heading 4</option>
+                      <option value="5">Heading 5</option>
+                      <option value="6">Heading 6</option>
+                    </select>
+                    <select class="ql-color" [title]="'Color'">
+                      <option value="rgb(0, 0, 0)"></option>
+                      <option value="rgb(230, 0, 0)"></option>
+                      <option value="rgb(255, 153, 0)"></option>
+                      <option value="rgb(255, 255, 0)"></option>
+                      <option value="rgb(0, 138, 0)"></option>
+                      <option value="rgb(0, 102, 204)"></option>
+                      <option value="rgb(153, 51, 255)"></option>
+                      <option value="rgb(255, 255, 255)"></option>
+                      <option value="rgb(250, 204, 204)"></option>
+                      <option value="rgb(255, 235, 204)"></option>
+                      <option value="rgb(204, 224, 245)"></option>
+                      <option value="rgb(235, 214, 255)"></option>
+                      <option value="rgb(187, 187, 187)"></option>
+                      <option value="rgb(102, 185, 102)"></option>
+                      <option value="rgb(192,192,192)"></option>
+                      <option value="rgb(128,128,128)"></option>
+                      <option value="rgb(128,0,0)"></option>
+                      <option value="rgb(128,128,0)"></option>
+                      <option value="rgb(0,128,0)"></option>
+                      <option value="rgb(128,0,128)"></option>
+                      <option value="rgb(0,128,128)"></option>
+                      <option value="rgb(0,0,128)"></option>
+                    </select>
+                    <select class="ql-font" [title]="'Font'">
+                      <option selected="">Sans Serif</option>
+                      <option value="inconsolata">Inconsolata</option>
+                      <option value="roboto">Roboto</option>
+                      <option value="mirza">Mirza</option>
+                      <option value="arial">Arial</option>
+                      <option value="calibri">Calibri</option>
+                    </select>
+                  </span>
+                </div>
+              </quill-editor>
+              <span>Body</span>
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Offer Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #offerLetterList="ngModel" name="offerLetterList"
+                  required>
+                  @for (item of allOfferletter; track item) {
+                    <ng-option [value]="item.offerLetterID">
+                      {{ item.offerLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Offer Letter Template *</span>
+                @if (!offerLetterList.valid && generateLetter.submitted) {
+                  <div class="invalid-tooltip">
+                    Offer Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #JlgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Joining Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="JlgModal.hide()" aria-label="Close"
+          #closeModalJ>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter1="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #joiningLetterList="ngModel"
+                  name="joiningLetterList" required>
+                  @for (item of allJoiningletter; track item) {
+                    <ng-option [value]="item.joiningLetterID">
+                      {{ item.joiningLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Joining Letter Template *</span>
+                @if (!joiningLetterList.valid && generateLetter1.submitted) {
+                  <div class="invalid-tooltip">
+                    Joining Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #ElgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Experience Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="ElgModal.hide()" aria-label="Close"
+          #closeModalE>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter2="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #experienceLetterList="ngModel"
+                  name="experienceLetterList" required>
+                  @for (item of allExperienceletter; track item) {
+                    <ng-option [value]="item.experienceLetterID">
+                      {{ item.experienceLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Experience Letter Template *</span>
+                @if (!experienceLetterList.valid && generateLetter2.submitted) {
+                  <div class="invalid-tooltip">
+                    Experience Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #IlgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Increment Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="IlgModal.hide()" aria-label="Close"
+          #closeModalI>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter3="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #incrementLetterList="ngModel"
+                  name="incrementLetterList" required>
+                  @for (item of allincrementletter; track item) {
+                    <ng-option [value]="item.incrementLetterID">
+                      {{ item.incrementLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Increment Letter Template *</span>
+                @if (!incrementLetterList.valid && generateLetter3.submitted) {
+                  <div class="invalid-tooltip">
+                    Increment Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #oldCTC="ngModel" name="oldCTC" required>
+                  <!-- Loop through getStaructureName and display the months -->
+                  @for (item of getStaructureName; track item) {
+                    <ng-option [value]="item.salaryFromYYYYMM">
+                      {{ item.month }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Old CTC*</span>
+                @if (!oldCTC.valid && generateLetter3.submitted) {
+                  <div class="invalid-tooltip">
+                    Select Old CTC is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #newCTC="ngModel" name="newCTC" required>
+                  <!-- Loop through getStaructureName and display the months -->
+                  @for (item of getStaructureName; track item) {
+                    <ng-option [value]="item.salaryFromYYYYMM">
+                      {{ item.month }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select New CTC*</span>
+                @if (!newCTC.valid && generateLetter3.submitted) {
+                  <div class="invalid-tooltip">
+                    Select New CTC is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #TlgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Termination Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="TlgModal.hide()" aria-label="Close"
+          #closeModalT>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter4="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #terminationLetterList="ngModel"
+                  name="terminationLetterList" required>
+                  @for (item of allterminationletter; track item) {
+                    <ng-option [value]="item.terminationLetterID">
+                      {{ item.terminationLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Termination Letter Template *</span>
+                @if (!terminationLetterList.valid && generateLetter4.submitted) {
+                  <div class="invalid-tooltip">
+                    Termination Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #AlgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Appointment Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="AlgModal.hide()" aria-label="Close"
+          #closeModalA>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter5="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #appointmentLetterList="ngModel"
+                  name="appointmentLetterList" required>
+                  @for (item of allappointmentletter; track item) {
+                    <ng-option [value]="item.appointmentLetterID">
+                      {{ item.appointmentLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Appointment Letter Template *</span>
+                @if (!appointmentLetterList.valid && generateLetter5.submitted) {
+                  <div class="invalid-tooltip">
+                    Appointment Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1328 @@
+<style>
+  th,
+  td {
+  border: 1px solid black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-family: 'iconsminds';
+  padding-left: 3px;
+  padding-right: 3px;
+}
+</style>
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 16 Report"></app-heading>
+    <app-breadcrumb title="Form 16 Report"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #company="ngModel"
+              name="company"
+              (change)="getuser($event)"
+              >
+              @for (comp of comp; track comp) {
+                <ng-option [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #user="ngModel"
+              name="user"
+              >
+              @for (users of users; track users) {
+                <ng-option [value]="users.userMasterID">
+                  {{ users.firstName }} {{ users.lastName }} ({{ users.userNumber }})
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select User *</span>
+            @if (!user.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                User is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #assessmentyear="ngModel"
+              name="assessmentyear"
+              >
+              @for (assessmentYear of assessmentYear; track assessmentYear) {
+                <ng-option [value]="assessmentYear">
+                  {{ assessmentYear }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Assesment Year *</span>
+            @if (!assessmentyear.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Assessment Year is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-primary form-group" type="submit">
+            {{ 'Search' | translate }}
+          </button>
+          <span> &nbsp;&nbsp; </span>
+          @if (visible == true) {
+            <button
+              class="btn btn-primary form-group"
+              type="button"
+              (click)="clear()"
+              >
+              Clear
+            </button>
+          }
+          @if (visible == true) {
+            <button
+              class="btn btn-primary form-group"
+              (click)="SavePDF()"
+              style="margin-left: 10px"
+              >
+              Save as PDF
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<br />
+
+@if (visible == true) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <div id="page1">
+        <table style="width: 100%; text-align: center">
+          <tr>
+            <td colspan="2" style="font-size: 20px; font-weight: bold; font-family: 'iconsminds'">
+              FORM NO. 16
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">[see rule 31(1)(a)]</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="font-weight: bold; font-family: 'iconsminds'; font-size: 15px">
+              PART A
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="font-weight: bold">
+              Certificate under section 203 of the Income-tac Act, 1961 for tax deducted at source on
+              salary
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: bold">Certificate No.</td>
+            <td style="text-align: right; font-weight: bold">Last Updated on 21-Jan-2020</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Name and Address of the Employer</td>
+            <td style="font-weight: bold">Name and Address of the Employee</td>
+          </tr>
+          <tr>
+            @if (companyData) {
+              <td style="text-align: left; padding-left: 20px">
+                @for (companyData1 of companyData; track companyData1) {
+                  {{ companyData1.companyName }}
+                  <br />
+                  {{ companyData1.companyAddress }}
+                  <br />
+                  <br />
+                  {{ companyData1.companyEmail }}
+                }
+              </td>
+            }
+            @if (!companyData) {
+              <td style="text-align: left; padding-left: 20px"></td>
+            }
+            <td style="text-align: left; padding-left: 20px">
+              {{ userData.displayName.replace('_', ' ') }}
+              <br />
+              @for (userAddress1 of userAddress; track userAddress1) {
+                {{ userAddress1.houseNumber }} {{ userAddress1.houseName }}
+                {{ userAddress1.landmark }} {{ userAddress1.area }}
+                <br />
+                {{ userAddress1.cityMaster.cityName }}-{{ userAddress1.zipcode }}
+                <br />
+                {{ userAddress1.cityMaster.stateMaster.stateName }}
+              }
+            </td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr>
+            <td style="border-top: none; width: 30%; font-weight: bold">PAN of Deductor</td>
+            <td style="border-top: none; width: 30%; font-weight: bold">TAN of Deductor</td>
+            <td style="border-top: none; font-weight: bold">PAN of Employee</td>
+            <td style="border-top: none; font-weight: bold">
+              Employee Reference No.
+              <br />
+              provided by the Employer
+              <br />
+              (If available)
+            </td>
+          </tr>
+          <tr>
+            <td>---</td>
+            <td>---</td>
+            <td>---</td>
+            <td></td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr>
+            <td style="border-top: none; width: 50%; font-weight: bold">CIT (TDS)</td>
+            <td style="border-top: none; font-weight: bold">Assessment Year</td>
+            <td style="border-top: none; font-weight: bold" colspan="2">Period with the Employer</td>
+          </tr>
+          <tr>
+            <td>
+              The Commissioner of Income Tax (TDS)
+              <br />
+              Room No. 201, 2nd Floor, Navjivan Trust Building, B/h Gujarat
+              <br />
+              Vidhyapith, Ashram Road, Ahmedabad - 380014
+            </td>
+            <td>{{ assessment_year }}</td>
+            <td>
+              From
+              <br />
+              01-Apr-{{ year - 1 }}
+            </td>
+            <td>
+              To
+              <br />
+              31-Mar-{{ year }}
+            </td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr>
+            <td style="border-top: none; font-weight: bold" colspan="5">
+              Summary of amount paid/credited and tax deducted at source thereon in respect of the
+              employee
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Quater(s)</td>
+            <td style="font-weight: bold">
+              Receipt Numbers of original
+              <br />
+              quaterly statements of TDS
+              <br />
+              under sub-section (3) of
+              <br />
+              Section 200
+            </td>
+            <td style="font-weight: bold">Amount Paid/Credited</td>
+            <td style="font-weight: bold">
+              Amount of Tax deducted
+              <br />
+              (Rs.)
+            </td>
+            <td style="font-weight: bold">
+              Amount of tax deposited / remitted
+              <br />
+              (Rs.)
+            </td>
+          </tr>
+          <tr>
+            <td>Q1</td>
+            <td>{{ Q1receipt }}</td>
+            @if (Q1amountpaid != 0) {
+              <td>{{ Q1amountpaid }}</td>
+            }
+            @if (Q1taxdeducted != 0) {
+              <td>{{ Q1taxdeducted }}</td>
+            }
+            @if (Q1taxdeposited != 0) {
+              <td>{{ Q1taxdeposited }}</td>
+            }
+            @if (Q1amountpaid == 0) {
+              <td>{{ Q1amountpaid }}</td>
+            }
+            @if (Q1taxdeducted == 0) {
+              <td>{{ Q1taxdeducted }}</td>
+            }
+            @if (Q1taxdeposited == 0) {
+              <td>{{ Q1taxdeposited }}</td>
+            }
+          </tr>
+          <tr>
+            <td>Q2</td>
+            <td>{{ Q2receipt }}</td>
+            @if (Q2amountpaid != 0) {
+              <td>{{ Q2amountpaid }}</td>
+            }
+            @if (Q2taxdeducted != 0) {
+              <td>{{ Q2taxdeducted }}</td>
+            }
+            @if (Q2taxdeposited != 0) {
+              <td>{{ Q2taxdeposited }}</td>
+            }
+            @if (Q2amountpaid == 0) {
+              <td>{{ Q2amountpaid }}</td>
+            }
+            @if (Q2taxdeducted == 0) {
+              <td>{{ Q2taxdeducted }}</td>
+            }
+            @if (Q2taxdeposited == 0) {
+              <td>{{ Q2taxdeposited }}</td>
+            }
+          </tr>
+          <tr>
+            <td>Q3</td>
+            <td>{{ Q3receipt }}</td>
+            @if (Q3amountpaid != 0) {
+              <td>{{ Q3amountpaid }}</td>
+            }
+            @if (Q3taxdeducted != 0) {
+              <td>{{ Q3taxdeducted }}</td>
+            }
+            @if (Q3taxdeposited != 0) {
+              <td>{{ Q3taxdeposited }}</td>
+            }
+            @if (Q3amountpaid == 0) {
+              <td>{{ Q3amountpaid }}</td>
+            }
+            @if (Q3taxdeducted == 0) {
+              <td>{{ Q3taxdeducted }}</td>
+            }
+            @if (Q3taxdeposited == 0) {
+              <td>{{ Q3taxdeposited }}</td>
+            }
+          </tr>
+          <tr>
+            <td>Q4</td>
+            <td>{{ Q4receipt }}</td>
+            @if (Q4amountpaid != 0) {
+              <td>{{ Q4amountpaid }}</td>
+            }
+            @if (Q4taxdeducted != 0) {
+              <td>{{ Q4taxdeducted }}</td>
+            }
+            @if (Q4taxdeposited != 0) {
+              <td>{{ Q4taxdeposited }}</td>
+            }
+            @if (Q4amountpaid == 0) {
+              <td>{{ Q4amountpaid }}</td>
+            }
+            @if (Q4taxdeducted == 0) {
+              <td>{{ Q4taxdeducted }}</td>
+            }
+            @if (Q4taxdeposited == 0) {
+              <td>{{ Q4taxdeposited }}</td>
+            }
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Total (Rs.)</td>
+            <td style="background-color: lightgray"></td>
+            <td style="font-weight: bold">{{ Totalamountpaid }}</td>
+            <td style="font-weight: bold">{{ Totaltaxdeducted }}</td>
+            <td style="font-weight: bold">{{ Totaltaxdeposited }}</td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr>
+            <td style="border-top: none" colspan="6">
+              <b>
+                I. DETAILS OF TAX DEDUCTED AND DEPOSITED IN THE CENTRAL GOVERNMENT ACCOUNT THROUGH
+                BOOK ADJUSTMENT
+              </b>
+              <br />
+              (The deductor to provide payment wise details of tax deducted and deposited with respect
+              to the deductee)
+            </td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td rowspan="2">SI. No.</td>
+            <td rowspan="2">
+              Tax Deposited in respect of the
+              <br />
+              deductee
+              <br />
+              (Rs.)
+            </td>
+            <td colspan="4">Book Identification Number (BIN)</td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td>
+              Receipt Number of Form
+              <br />
+              No. 24G
+            </td>
+            <td>
+              DDO serial number in Form no.
+              <br />
+              24G
+            </td>
+            <td>
+              Date of transfer voucher
+              <br />
+              (dd/mm/yyyy)
+            </td>
+            <td>
+              Status of matching
+              <br />
+              with Form no. 24G
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Total (Rs.)</td>
+            <td></td>
+            <td colspan="4" style="background-color: lightgray"></td>
+          </tr>
+          <tr>
+            <td colspan="6">
+              <b>
+                II. DETAILS OF TAX DEDUCTED AND DEPOSITED IN THE CENTRAL GOVERNMENT ACCOUNT THROUGH
+                CHALLAN
+              </b>
+              <br />
+              (The deductor to provide payment wise details of tax deducted and deposited with respect
+              to the deductee)
+            </td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td rowspan="2">SI. No.</td>
+            <td rowspan="2">
+              Tax Deposited in respect of the
+              <br />
+              deductee
+              <br />
+              (Rs.)
+            </td>
+            <td colspan="4">Challan Identification Number (CIN)</td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td>
+              BSR Code of the Bank
+              <br />
+              Branch
+            </td>
+            <td>
+              Date on which Tax deposited
+              <br />
+              (dd/mm/yyyy)
+            </td>
+            <td>
+              Challan Serial Number
+              <br />
+            </td>
+            <td>
+              Status of matching with
+              <br />
+              OLTAS*
+            </td>
+          </tr>
+          @if (tax_challan[0]) {
+            <tr>
+              <td>{{ tax_challan[0].SrNo }}</td>
+              <td>{{ tax_challan[0].taxamount }}</td>
+              <td>{{ tax_challan[0].bsrCode }}</td>
+              <td>{{ tax_challan[0].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[0].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[0].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[0]) {
+            <tr>
+              <td>1</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[1]) {
+            <tr>
+              <td>{{ tax_challan[1].SrNo }}</td>
+              <td>{{ tax_challan[1].taxamount }}</td>
+              <td>{{ tax_challan[1].bsrCode }}</td>
+              <td>{{ tax_challan[1].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[1].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[1].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[1]) {
+            <tr>
+              <td>2</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[2]) {
+            <tr>
+              <td>{{ tax_challan[2].SrNo }}</td>
+              <td>{{ tax_challan[2].taxamount }}</td>
+              <td>{{ tax_challan[2].bsrCode }}</td>
+              <td>{{ tax_challan[2].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[2].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[2].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[2]) {
+            <tr>
+              <td>3</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[3]) {
+            <tr>
+              <td>{{ tax_challan[3].SrNo }}</td>
+              <td>{{ tax_challan[3].taxamount }}</td>
+              <td>{{ tax_challan[3].bsrCode }}</td>
+              <td>{{ tax_challan[3].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[3].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[3].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[3]) {
+            <tr>
+              <td>4</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+        </table>
+      </div>
+      <br />
+      <div id="page2">
+        <table style="width: 100%; text-align: center; border: none">
+          <tr style="border: 0px; font-weight: bold">
+            <td style="border: 0px">Certificate Number: ABCDEF</td>
+            <td style="border: 0px">TAN of Employer: ABCDEF</td>
+            <td style="border: 0px">PAN of Employee: ABCDEF</td>
+            <td style="border: 0px">Assessment Year: 2020-21</td>
+          </tr>
+        </table>
+        <br />
+        <table style="width: 100%; text-align: center">
+          <tr style="font-weight: bold">
+            <td rowspan="2">SI. No.</td>
+            <td rowspan="2">
+              Tax Deposited in respect of the
+              <br />
+              deductee
+              <br />
+              (Rs.)
+            </td>
+            <td colspan="4">Challan Identification Number (CIN)</td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td>
+              BSR Code of the Bank
+              <br />
+              Branch
+            </td>
+            <td>
+              Date on which Tax deposited
+              <br />
+              (dd/mm/yyyy)
+            </td>
+            <td>
+              Challan Serial Number
+              <br />
+            </td>
+            <td>
+              Status of matching with
+              <br />
+              OLTAS*
+            </td>
+          </tr>
+          @if (tax_challan[4]) {
+            <tr>
+              <td>{{ tax_challan[4].SrNo }}</td>
+              <td>{{ tax_challan[4].taxamount }}</td>
+              <td>{{ tax_challan[4].bsrCode }}</td>
+              <td>{{ tax_challan[4].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[4].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[4].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[4]) {
+            <tr>
+              <td>5</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[5]) {
+            <tr>
+              <td>{{ tax_challan[5].SrNo }}</td>
+              <td>{{ tax_challan[5].taxamount }}</td>
+              <td>{{ tax_challan[5].bsrCode }}</td>
+              <td>{{ tax_challan[5].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[5].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[5].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[5]) {
+            <tr>
+              <td>6</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[6]) {
+            <tr>
+              <td>{{ tax_challan[6].SrNo }}</td>
+              <td>{{ tax_challan[6].taxamount }}</td>
+              <td>{{ tax_challan[6].bsrCode }}</td>
+              <td>{{ tax_challan[6].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[6].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[6].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[6]) {
+            <tr>
+              <td>7</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[7]) {
+            <tr>
+              <td>{{ tax_challan[7].SrNo }}</td>
+              <td>{{ tax_challan[7].taxamount }}</td>
+              <td>{{ tax_challan[7].bsrCode }}</td>
+              <td>{{ tax_challan[7].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[7].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[7].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[7]) {
+            <tr>
+              <td>8</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[8]) {
+            <tr>
+              <td>{{ tax_challan[8].SrNo }}</td>
+              <td>{{ tax_challan[8].taxamount }}</td>
+              <td>{{ tax_challan[8].bsrCode }}</td>
+              <td>{{ tax_challan[8].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[8].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[8].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[8]) {
+            <tr>
+              <td>9</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[9]) {
+            <tr>
+              <td>{{ tax_challan[9].SrNo }}</td>
+              <td>{{ tax_challan[9].taxamount }}</td>
+              <td>{{ tax_challan[9].bsrCode }}</td>
+              <td>{{ tax_challan[9].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[9].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[9].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[9]) {
+            <tr>
+              <td>10</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[10]) {
+            <tr>
+              <td>{{ tax_challan[10].SrNo }}</td>
+              <td>{{ tax_challan[10].taxamount }}</td>
+              <td>{{ tax_challan[10].bsrCode }}</td>
+              <td>{{ tax_challan[10].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[10].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[10].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[10]) {
+            <tr>
+              <td>11</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          @if (tax_challan[11]) {
+            <tr>
+              <td>{{ tax_challan[11].SrNo }}</td>
+              <td>{{ tax_challan[11].taxamount }}</td>
+              <td>{{ tax_challan[11].bsrCode }}</td>
+              <td>{{ tax_challan[11].date | date: 'dd-mm-yyyy' }}</td>
+              <td>{{ tax_challan[11].ChallanSerialNo }}</td>
+              <td>{{ tax_challan[11].oltas }}</td>
+            </tr>
+          }
+          @if (!tax_challan[11]) {
+            <tr>
+              <td>12</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          }
+          <tr style="font-weight: bold">
+            <td>Total (Rs.)</td>
+            <td>{{ TotalTaxChallan }}</td>
+            <td colspan="4" style="background-color: lightgray"></td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr style="font-weight: bold">
+            <td style="border-top: none" colspan="3">Verification</td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td style="border-top: none" colspan="3">
+              I,
+              <u>{{ userDesignation.employee.displayName }}</u>
+              , son/daughter of
+              <u>{{ userDesignation.employee.middleName }}</u>
+              working in the capacity of
+              <u>{{ userDesignation.designation.designationName }}</u>
+              (designation) do hereby certify that a sum of Rs.
+              <u>{{ TotalTaxChallan }}</u>
+              [Rs.
+              <u>Fourty Two Thousand Three Hundred Only</u>
+              (in words)] has been deducted and a sum of Rs.
+              <u>{{ TotalTaxChallan }}</u>
+              [Rs.
+              <u>Fourty Two Thousand Three Hundred</u>
+              Only] has been deposited to the credit of the central Government. I further certify that
+              the information given above is true, complete and correct and is based on the books of
+              account, documents, TDS statements, TDS statements, TDS deposited and other avaiable
+              records.
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 10%; font-weight: bold; text-align: left">Place</td>
+            <td style="width: 40%">{{ userAddress1.cityMaster.cityName }}</td>
+            <td style="width: 40%; font-weight: bold; padding-top: 4%" rowspan="2">
+              (Signature of person responsible for deduction of Tax)
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; text-align: left">Date</td>
+            <td>{{ dateTime }}</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: left">
+              <b>Designation:</b>
+              {{ userDesignation.designation.designationName }}
+            </td>
+            <td style="text-align: left">
+              <b>Full Name:</b>
+              {{ userDesignation.employee.displayName }}
+            </td>
+          </tr>
+        </table>
+        <br />
+        <b>Notes:</b>
+        <br />
+        1. Part B (Annexure) of the certificate in Form No. 16 shall be issued by the employer.
+        <br />
+        2. If an assessee is employed under one employer during the year, Part 'A' of the certificate
+        in Form 16 issued for the quater ending on 31st March of the financial year shall contain the
+        details of tax deducted and deposited for all the quaters of the financial Year
+        <br />
+        3. If an assesse is employed under more than one employer during the year, each of the
+        employers shall issue Part A of the certificate in Form No. 16 pertaining to the period for
+        which such assesse was employed with each of the employers. Part B (Annexure) of the
+        certificate in Form No. 16 may be issued by each of the employers at the option of the
+        assessee.
+        <br />
+        4. To update PAN details in Income Tax Departments database, apply for 'PAN change request'
+        through NSDL or UTITSL.
+        <br />
+      </div>
+    </div>
+  </div>
+}
+
+<br />
+<br />
+
+@if (visible == true) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <div id="page3">
+        <table style="width: 100%; text-align: center">
+          <tr>
+            <td colspan="2" style="font-size: 20px; font-weight: bold; font-family: 'iconsminds'">
+              FORM NO. 16
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="font-weight: bold; font-family: 'iconsminds'; font-size: 15px">
+              PART B
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="font-weight: bold">
+              Certificate under section 203 of the Income-tac Act, 1961 for tax deducted at source on
+              salary
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: bold">Certificate No.</td>
+            <td style="text-align: right; font-weight: bold">Last Updated on 21-Jan-2020</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold">Name and Address of the Employer</td>
+            <td style="font-weight: bold">Name and Address of the Employee</td>
+          </tr>
+          <tr>
+            @if (companyData) {
+              <td style="text-align: left; padding-left: 20px">
+                @for (companyData1 of companyData; track companyData1) {
+                  {{ companyData1.companyName }}
+                  <br />
+                  {{ companyData1.companyAddress }}
+                  <br />
+                  <br />
+                  {{ companyData1.companyEmail }}
+                }
+              </td>
+            }
+            @if (!companyData) {
+              <td style="text-align: left; padding-left: 20px"></td>
+            }
+            <td style="text-align: left; padding-left: 20px">
+              {{ userData.displayName.replace('_', ' ') }}
+              <br />
+              @for (userAddress1 of userAddress; track userAddress1) {
+                {{ userAddress1.houseNumber }} {{ userAddress1.houseName }}
+                {{ userAddress1.landmark }} {{ userAddress1.area }}
+                <br />
+                {{ userAddress1.cityMaster.cityName }}-{{ userAddress1.zipcode }}
+                <br />
+                {{ userAddress1.cityMaster.stateMaster.stateName }}
+              }
+            </td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr>
+            <td style="border-top: none; width: 30%; font-weight: bold">PAN of Deductor</td>
+            <td style="border-top: none; width: 30%; font-weight: bold">TAN of Deductor</td>
+            <td style="border-top: none; font-weight: bold">PAN of Employee</td>
+            <td style="border-top: none; font-weight: bold">
+              Employee Reference No.
+              <br />
+              provided by the Employer
+              <br />
+              (If available)
+            </td>
+          </tr>
+          <tr>
+            <td>---</td>
+            <td>---</td>
+            <td>---</td>
+            <td></td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr>
+            <td style="border-top: none; width: 50%; font-weight: bold">CIT (TDS)</td>
+            <td style="border-top: none; font-weight: bold">Assessment Year</td>
+            <td style="border-top: none; font-weight: bold" colspan="2">Period with the Employer</td>
+          </tr>
+          <tr>
+            <td>
+              The Commissioner of Income Tax (TDS)
+              <br />
+              Room No. 201, 2nd Floor, Navjivan Trust Building, B/h Gujarat
+              <br />
+              Vidhyapith, Ashram Road, Ahmedabad - 380014
+            </td>
+            <td>{{ assessment_year }}</td>
+            <td>
+              From
+              <br />
+              01-Apr-{{ year - 1 }}
+            </td>
+            <td>
+              To
+              <br />
+              31-Mar-{{ year }}
+            </td>
+          </tr>
+        </table>
+        <br />
+        <table style="width: 100%">
+          <tr>
+            <td colspan="2">Details of Salary Paid and any other income and tax deducted</td>
+            <td style="width: 21%; text-align: center">Rs.</td>
+            <td style="width: 21%; text-align: center">Rs.</td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">1.</td>
+            <td colspan="3">Gross Salary</td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(a)</td>
+            <td>Salary as per provisions contained in section 17(1)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(b)</td>
+            <td>
+              Value of perquisites under section 17(2) (as per Form No. 12BA, wherever applicable)
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(c)</td>
+            <td>
+              Profits in lieu of salary under section 17(3) (as per Form No. 12BA, wherever
+              applicable)
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(d)</td>
+            <td colspan="2">Total</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(e)</td>
+            <td>Reported total amount of salary received from other employer (s)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">2.</td>
+            <td colspan="3">Less: allowance to the extent exempt under section 10</td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(a)</td>
+            <td>Travel concession or assistance under section 10(5)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(b)</td>
+            <td>Death-cum-retirement gratuity under section 10(10)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(c)</td>
+            <td>Commuted value of pension under section 10(10A)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(d)</td>
+            <td>Cash equivalent of leave salary encashment under section 10(10AA)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(e)</td>
+            <td>House rent allowance under section 10(13A)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+        </table>
+      </div>
+      <div id="page4">
+        <table style="width: 100%">
+          <tr>
+            <td style="text-align: center">(f)</td>
+            <td>
+              Amount of any other exemption under section 10
+              <br />
+              [Note: Break-up to be filled and signed by employer in the table provide at the bottom
+              of this form]
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(g)</td>
+            <td>Total amount of any other exemption under section 10</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(h)</td>
+            <td>
+              Total amount of exemption claimed under section 10
+              <br />
+              [2(a)+2(b)+2(c)+2(d)+2(e)+2(g)]
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">3.</td>
+            <td>
+              Total amount of salary received from current employer
+              <br />
+              [1(d)-2(h)]
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">4.</td>
+            <td colspan="3">Less: Deductions under section 16</td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(a)</td>
+            <td>Standard deduction under section 16(ia)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(b)</td>
+            <td>Entertainment allowance under section 16(ii)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(c)</td>
+            <td>Tax on employment under section 16(iii)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">5.</td>
+            <td>Total amount of deductions under section 16 [4(a)+4(b)+4(c)]</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">6.</td>
+            <td>Income chargeable under the head "Salaries" [(3+1(e)-5]</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">7.</td>
+            <td colspan="3">
+              Add: Any other income reported by the employee under as per section 192 (2B)
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(a)</td>
+            <td>
+              Income (or admissible loss) from house property reported by employee offered for TDS
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(b)</td>
+            <td>Income under the head Other Sources offered for TDS</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">8.</td>
+            <td>Total amount of other income reported by the employee[7(a)+7(b)]</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">9.</td>
+            <td>Gross total income (6+8)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">10.</td>
+            <td>Deductions under Chapter VI-A</td>
+            <td>Gross Amount</td>
+            <td>Deductible Amount</td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(a)</td>
+            <td>
+              Deduction in respect of life insurance premia, contributions to provident fund etc.
+              under section 80C
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(b)</td>
+            <td>Deduction in respect of contribution to certain pension funds under section 80CCC</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(c)</td>
+            <td>
+              Deduction in respect of contribution by taxpayer to pension scheme under section 80CCD
+              (1)
+            </td>
+            <td>10000</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(d)</td>
+            <td>Total deduction under section 80C, 80CCC and 80CCD(1)</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(e)</td>
+            <td>
+              Deductions in respect of amount paid/deposited to notified pension scheme under section
+              80CCD (1B)
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+        </table>
+      </div>
+      <div id="page5">
+        <table style="width: 100%">
+          <tr>
+            <td style="text-align: center">(f)</td>
+            <td>
+              Deduction in respect of contribution by Employer to pension scheme under section 80CCCD
+              (2)
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(g)</td>
+            <td>Deduction in respect of health insurance premia under section 80D</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="text-align: center">(h)</td>
+            <td>
+              Deduction in respect of interest on loan taken for higher education under section 80E
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+        </table>
+        <table style="width: 100%; border-top: 0px">
+          <tr>
+            <td colspan="2" style="border-top: none"></td>
+            <td style="width: 14%; border-top: none">Gross Amount</td>
+            <td style="width: 14%; border-top: none">Qualifying Amount</td>
+            <td style="width: 14%; border-top: none">Deductible Amount</td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">(i)</td>
+            <td>
+              Total Deduction in respect of donations to certain funds, charitable institutions, etc.
+              under section 80G
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">(j)</td>
+            <td>
+              Deduction in respect of interest on deposits in savings account under section 80TTA
+            </td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">(k)</td>
+            <td>
+              Amount deductible under any other provision(s) of Chapter VI-A
+              <br />
+              [Note: Break-up to be filled and signed by employer in the table provide at the bottom
+              of this form]
+            </td>
+            <td colspan="3"></td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">(l)</td>
+            <td>Total of amount deductible under any other provision(s) of Chapter VI-A</td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+            <td><input type="text" style="border: none; width: -webkit-fill-available" /></td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">11</td>
+            <td>
+              Aggregate of deductible amount under Chapter VI-A [10(a) +10(b) +10(c)+ 10(d)+ 10(e)+
+              10(f)+ 10(g)+ 10(h)+ 10(i) + 10(j)+10(l)]
+            </td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">12</td>
+            <td>Total taxable income (9-11)</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">13</td>
+            <td>Tax on total income</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">14</td>
+            <td>Rebate under section 87A, if applicable</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">15</td>
+            <td>Surcharge, wherever applicable</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">16</td>
+            <td>Health and education cess</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">17</td>
+            <td>Tax payable (13+15+16-14)</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">18</td>
+            <td>Less: Relief under section 89 (attach details)</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 5%; text-align: center">19</td>
+            <td>Net tax payable (17-18)</td>
+            <td colspan="3">
+              <input type="text" style="border: none; width: -webkit-fill-available" />
+            </td>
+          </tr>
+        </table>
+        <table style="width: 100%; text-align: center; border-top: none">
+          <tr style="font-weight: bold">
+            <td style="border-top: none" colspan="3">Verification</td>
+          </tr>
+          <tr style="font-weight: bold">
+            <td style="border-top: none" colspan="3">
+              I, {{ userDesignation.employee.displayName }}, son/daughter of
+              {{ userDesignation.employee.middleName }} working in the capacity of
+              {{ userDesignation.designation.designationName }} (designation) do hereby certify that
+              the information given above is true, complete and correct and is based on the books of
+              account, documents, TDS statements, and other available records.
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 10%; font-weight: bold; text-align: left">Place</td>
+            <td style="width: 40%">{{ userAddress1.cityMaster.cityName }}</td>
+            <td style="width: 40%; font-weight: bold; padding-top: 4%">
+              (Signature of person responsible for deduction of Tax)
+            </td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; text-align: left">Date</td>
+            <td>{{ dateTime }}</td>
+            <td style="text-align: left">
+              <b>Full Name:</b>
+              {{ userDesignation.employee.displayName }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,732 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" (itemsPerPageChange)="onLimitChange($event)"
+  [itemsPerPage]="filterData.limit" (searchKeyUp)="updateFilter($event)" [itemOptionsPerPage]="itemOptionsPerPage"
+(addNewItem)="showAddNewModal()" name="My Task"></app-list-page-header>
+<form #datefilter="ngForm" novalidate></form>
+<div class="row">
+  <div class="col-12 mb-4 data-table-rows">
+    <ngx-datatable [rows]="rows" [scrollbarH]="true" [rowHeight]="50" [footerHeight]="100" [columnMode]="'force'"
+      [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+      (page)="onChange($event)">
+      <ngx-datatable-column name="Task Status" [flexGrow]="1.2" [width]="200">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (row.taskStatus == 0) {
+            <div>
+              <button type="button" class="btn btn-success"
+                (click)="currentTaskID(row.user_TasksID, row.tasks_stagesID); lgModal1.show()">
+                {{ 'Accept' | translate }}
+              </button>
+              {{ ' ' }}
+              <button type="button" class="btn btn-danger" (click)="alertActiveConfirmation(row.user_TasksID)">
+                {{ 'Reject' | translate }}
+              </button>
+              {{ ' ' }}
+            </div>
+          }
+          @if (row.taskStatus == 1) {
+            <div>Accepted</div>
+          }
+          @if (row.taskStatus == 2) {
+            <div>Rejected</div>
+          }
+          @if (row.taskStatus == 3) {
+            <div>Completed</div>
+          }
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Show Details" [flexGrow]="1.2" [width]="180">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (row.parentuserTasksID == '0') {
+            <button type="button" class="btn btn-primary"
+              (click)="lgModal2.show(); loadComponent('TASK'); showdata(row)">
+              Main Task
+            </button>
+          }
+          @if (row.parentuserTasksID != '0') {
+            <button type="button" class="btn btn-info"
+              (click)="lgModal2.show(); loadComponent('TASK'); showdata(row)">
+              Sub Task
+            </button>
+          }
+          {{ ' ' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Reminders" [flexGrow]="1.2" [width]="180">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (true) {
+            <button type="button" class="btn btn-info" (click)="loadData(row);lgModal3.show();">
+              View
+            </button>
+          }
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Completion" [flexGrow]="1.2" [width]="150">
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          <div class="progress-bar-circle position-relative" style="height: 60px; width: 60px">
+            <div class="progressbar-text">
+              {{ row.completionPercentage }} / {{ row.taskWeightage }}
+            </div>
+            <round-progress [current]="+row.completionPercentage" [max]="row.taskWeightage" [responsive]="true"
+              [duration]="800" [animation]="'easeInOutQuart'" [animationDelay]="0" [radius]="50" [rounded]="true"
+            [stroke]="4"></round-progress>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Current Stage" [flexGrow]="1.2" [width]="150">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (row.taskStatus == 1) {
+            <a (click)="editstage(row); lgModal.show()">
+              <span tooltip="Change Task Stage." [class]="'glyph-icon simple-icon-pencil tool_tip'"
+              style="padding-right: 6px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+          }
+          @if (row.taskStatus != 1) {
+            <a (click)="editstage(row); lgModal.show()" style="visibility: hidden">
+              <span tooltip="Change Task Stage." [class]="'glyph-icon simple-icon-pencil tool_tip'"
+              style="padding-right: 6px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+          }
+          {{ row['tasks_stage.TaskStage'] }}{{ ' ' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Task Name" prop="TaskName" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Task Description" prop="TaskDesc" [flexGrow]="1.2"
+      [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Start Date" [flexGrow]="1.2" [width]="150">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.startDate | date : 'dd-MM-yyyy' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Attachment" [flexGrow]="1.2" [width]="150">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (row.attachment != '') {
+            <button type="button" class="btn btn-primary" (click)="view(row.attachment)">
+              View
+            </button>
+          }
+          {{ ' ' }}
+          {{ ' ' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Priority" prop="priority" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Created By" prop="createByUser.displayName" [flexGrow]="1.2"
+      [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Created" [flexGrow]="1.2" [width]="200">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.createdAt | date : 'dd-MM-yyyy h:mm a' }}
+        </ng-template>
+      </ngx-datatable-column>
+      @if (true) {
+        <ngx-datatable-footer>
+          <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+            let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+            <div class="w-100 d-flex justify-content-center">
+              <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+            </div>
+          </ng-template>
+        </ngx-datatable-footer>
+      }
+    </ngx-datatable>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Update Task Stage</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit12()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #organization="ngModel" [(ngModel)]="taskname"
+                  [disabled]="true" name="organization" />
+                <span>Task Name</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #organization1="ngModel" [(ngModel)]="nextstage"
+                  [disabled]="true" name="organization1" />
+                <span>Upcoming Stage</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #remark="ngModel" required name="remark"></textarea>
+                <span>Remark *</span>
+              </label>
+              @if (!remark.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Remark is required!
+                </div>
+              }
+            </div>
+            <div class="col-md-6">
+              @if (nextstage != 'Task Completed') {
+                <button class="btn btn-primary" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Remark</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp1="ngForm" novalidate (ngSubmit)="onSubmit13()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #remark1="ngModel" name="remark1" required></textarea>
+                <span>Remark *</span>
+              </label>
+              @if (!remark1.valid && addcomp1.submitted) {
+                <div class="invalid-tooltip">
+                  Remark is required!
+                </div>
+              }
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              @if (nextstage != 'Task Completed') {
+                <button class="btn btn-primary" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Show Task Details</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide(); changeTab()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div>
+              @if (TaskINFO) {
+                <tabset class="separator-tabs">
+                  <tab heading="Task" (selectTab)="loadComponent('TASK')">
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <tbody>
+                          <tr>
+                            <th>Task Type</th>
+                            <td>
+                              {{
+                              TaskINFO.parentuserTasksID == '0'
+                              ? 'Main Task'
+                              : TaskINFO.parentuserTasksID == null ||
+                              TaskINFO.parentuserTasksID == ''
+                              ? ''
+                              : 'Sub Task'
+                              }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Task Name</th>
+                            <td>{{ TaskINFO.TaskName }}</td>
+                          </tr>
+                          <tr>
+                            <th>Task Description</th>
+                            <td>
+                              <div [innerHTML]="TaskINFO.TaskDesc"></div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Attachment</th>
+                            <td>
+                              @if (TaskINFO.attachment != '') {
+                                <button type="button" class="btn btn-outline-primary btn-xs"
+                                  (click)="view(TaskINFO.attachment)">
+                                  View
+                                </button>
+                              }
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Current Stage</th>
+                            <td>{{ TaskINFO['tasks_stage.TaskStage'] }}</td>
+                          </tr>
+                          <tr>
+                            <th>Start Date</th>
+                            <td>{{ TaskINFO.startDate | date : 'dd-MM-yyyy' }}</td>
+                          </tr>
+                          <tr>
+                            <th>End Date</th>
+                            <td>{{ TaskINFO.endDate | date : 'dd-MM-yyyy' }}</td>
+                          </tr>
+                          <tr>
+                            <th>Priority</th>
+                            <td>{{ TaskINFO.priority }}</td>
+                          </tr>
+                          <tr>
+                            <th>Created by</th>
+                            <td>{{ TaskINFO.createByUser?.displayName }}</td>
+                          </tr>
+                          <tr>
+                            <th>Created Date-Time</th>
+                            <td>
+                              {{ TaskINFO.createdAt | date : 'dd-MM-yyyy h:mm a' }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Task WeightAge</th>
+                            <td>{{ TaskINFO.taskWeightage }}</td>
+                          </tr>
+                          <tr>
+                            <th>Status</th>
+                            <td>
+                              @if (TaskINFO.taskStatus == '0') {
+                                <button type="button" class="btn btn-warning btn-xs">
+                                  Pending
+                                </button>
+                              }
+                              {{
+                              '
+                              '
+                              }}
+                              @if (TaskINFO.taskStatus == '1') {
+                                <button type="button" class="btn btn-success btn-xs">
+                                  Accepted
+                                </button>
+                              }
+                              {{
+                              '
+                              '
+                              }}
+                              @if (TaskINFO.taskStatus == '2') {
+                                <button type="button" class="btn btn-danger btn-xs">
+                                  Rejected
+                                </button>
+                              }
+                              {{
+                              '
+                              '
+                              }}
+                              @if (TaskINFO.taskStatus == '3') {
+                                <button type="button" class="btn btn-primary btn-xs">
+                                  Completed
+                                </button>
+                              }
+                              {{
+                              '
+                              '
+                              }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <br />
+                      @if (TaskRemarks.length > 0) {
+                        <h3>Task History</h3>
+                      }
+                      @if (TaskRemarks.length > 0) {
+                        <table class="table table-striped">
+                          <tr>
+                            <th>Task Stage</th>
+                            <th>Remarks</th>
+                          </tr>
+                          @for (items of TaskRemarks; track items) {
+                            <tbody>
+                              <tr>
+                                <td>{{ items.stage.TaskStage }}</td>
+                                <td>{{ items.remark }}</td>
+                              </tr>
+                            </tbody>
+                          }
+                        </table>
+                      }
+                    </div>
+                  </tab>
+                  @if (TaskINFO.parentuserTasksID != '0') {
+                    <tab heading="Main Task"
+                      (selectTab)="loadComponent('MAINTASK')">
+                      @if (TaskData) {
+                        <div class="tab-content">
+                          <div>
+                            <div class="table-style mb-2">
+                              <div style="color: var(--m-primary); left: 50%; top: 50%" class="la-ball-spin-clockwise">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                              </div>
+                              <table style="width: 100%">
+                                <thead>
+                                  <tr>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Task Type</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Task Name</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Assigned To
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Task Desctiption
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Attachment
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Current Stage
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Start Date
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">End Date</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Priority</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Created By
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Created At
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Task WeightAge
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="text-black" style="font-weight: 600">
+                                  @for (TaskINFO of TaskData; track TaskINFO) {
+                                    <tr class="student bottom-border bottom-border-radius">
+                                      <td class="name-col left-border">
+                                        {{
+                                        TaskINFO.parentuserTasksID == '0'
+                                        ? 'Main Task'
+                                        : TaskINFO.parentuserTasksID == null ||
+                                        TaskINFO.parentuserTasksID == ''
+                                        ? ''
+                                        : 'Sub Task'
+                                        }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.TaskName }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO['userMaster.displayName'] }}
+                                      </td>
+                                      <td id="body" class="name-col left-border" [innerHTML]="TaskINFO.TaskDesc"></td>
+                                      <td class="name-col left-border">
+                                        @if (TaskINFO.attachment != '') {
+                                          <button type="button" class="btn btn-outline-primary btn-xs"
+                                            (click)="view(TaskINFO.attachment)">
+                                            View
+                                          </button>
+                                        }
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO['tasks_stage.TaskStage'] }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.startDate | date : 'dd-MM-yyyy' }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.endDate | date : 'dd-MM-yyyy' }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.priority }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.createByUser }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.createdAt | date : 'dd-MM-yyyy h:mm a' }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.taskWeightage }}
+                                      </td>
+                                      <td>
+                                        @if (TaskINFO.taskStatus == '0') {
+                                          <button type="button" class="btn btn-warning btn-xs">
+                                            Pending
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                        @if (TaskINFO.taskStatus == '1') {
+                                          <button type="button" class="btn btn-success btn-xs">
+                                            Accepted
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                        @if (TaskINFO.taskStatus == '2') {
+                                          <button type="button" class="btn btn-danger btn-xs">
+                                            Rejected
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                        @if (TaskINFO.taskStatus == '3') {
+                                          <button type="button" class="btn btn-primary btn-xs">
+                                            Completed
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                      </td>
+                                    </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </tab>
+                  }
+                  @if (TaskINFO.parentuserTasksID == '0' && TaskINFO.hasSubTask == 'YES') {
+                    <tab heading="Sub Task"
+                      (selectTab)="loadComponent('SUBTASK')">
+                      @if (TaskData) {
+                        <div class="tab-content">
+                          <div>
+                            <div class="table-style mb-2">
+                              <div style="color: var(--m-primary); left: 50%; top: 50%" class="la-ball-spin-clockwise">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                              </div>
+                              <table style="width: 100%">
+                                <thead>
+                                  <tr>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Task Name</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Assigned To
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Task Desctiption
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Attachment
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Current Stage
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Start Date
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">End Date</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Priority</th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Created By
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Created At
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">
+                                      Task WeightAge
+                                    </th>
+                                    <th class="name-col name-col-shadow" style="width: 20%">Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="text-black" style="font-weight: 600">
+                                  @for (TaskINFO of TaskData; track TaskINFO) {
+                                    <tr class="student bottom-border bottom-border-radius">
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.TaskName }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO['userMaster.displayName'] }}
+                                      </td>
+                                      <td id="body" class="name-col left-border" [innerHTML]="TaskINFO.TaskDesc"></td>
+                                      <td class="name-col left-border">
+                                        @if (TaskINFO.attachment != '') {
+                                          <button type="button" class="btn btn-outline-primary btn-xs"
+                                            (click)="view(TaskINFO.attachment)">
+                                            View
+                                          </button>
+                                        }
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO['tasks_stage.TaskStage'] }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.startDate | date : 'dd-MM-yyyy' }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.endDate | date : 'dd-MM-yyyy' }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.priority }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.createByUser }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.createdAt | date : 'dd-MM-yyyy h:mm a' }}
+                                      </td>
+                                      <td class="name-col left-border">
+                                        {{ TaskINFO.taskWeightage }}
+                                      </td>
+                                      <td>
+                                        @if (TaskINFO.taskStatus == '0') {
+                                          <button type="button" class="btn btn-warning btn-xs">
+                                            Pending
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                        @if (TaskINFO.taskStatus == '1') {
+                                          <button type="button" class="btn btn-success btn-xs">
+                                            Accepted
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                        @if (TaskINFO.taskStatus == '2') {
+                                          <button type="button" class="btn btn-danger btn-xs">
+                                            Rejected
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                        @if (TaskINFO.taskStatus == '3') {
+                                          <button type="button" class="btn btn-primary btn-xs">
+                                            Completed
+                                          </button>
+                                        }
+                                        {{
+                                        '
+                                        '
+                                        }}
+                                      </td>
+                                    </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </tab>
+                  }
+                </tabset>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+<div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Reminders</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal3.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Message</th>
+              <th>Received At</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reminder of paginationReminder.data; track reminder) {
+              <tr>
+                <td>{{ reminder.message }}</td>
+                <td>{{ reminder.createdAt | date: 'dd-MM-yyyy h:mm a' }}</td>
+              </tr>
+            }
+            @if (!paginationReminder.data.length) {
+              <tr>
+                <td colspan="4" class="text-center">No reminders found.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <pagination [totalItems]="paginationReminder.totalCount" [itemsPerPage]="paginationReminder.limit" [maxSize]="5"
+          [boundaryLinks]="true" (pageChanged)="changePage($event.page)" [customFirstTemplate]="firstTemplate"
+          [customLastTemplate]="lastTemplate" [customNextTemplate]="nextTemplate"
+        [customPreviousTemplate]="prevTemplate"></pagination>
+
+      </div>
+    </div>
+  </div>
+</div>

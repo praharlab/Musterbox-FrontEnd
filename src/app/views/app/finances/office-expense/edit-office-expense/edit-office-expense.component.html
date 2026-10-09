@@ -1,0 +1,272 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Office Expense</h5>
+    @if (permissionedit.length > 0) {
+      <form #editOfficeExpense="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <ng-container>
+          <div class="row mt-4">
+            <div class="col-md-6" style="margin-bottom: 10px">
+              <span class="text-muted text-small mb-2 top">Choose Office Type *&nbsp;&nbsp;</span>
+              @for (item of officeExpenseTypeArrayData; track item; let i = $index) {
+                <input type="radio" [id]="item.value" name="officeType" [attr.value]="item.value" [value]="item.value"
+                  ngModel #officeType="ngModel" style="margin-right: 1%" required [(ngModel)]="selectedOfficeType"
+                  disabled />
+                  <label [for]="item.value" style="margin-right: 2%">{{ item.name }}</label>
+                  @if (selectedOfficeType == '' && editOfficeExpense.submitted) {
+                    <div class="invalid-tooltip">
+                      Office Type is required!
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+            @if (selectedOfficeType && selectedOfficeType != '') {
+              <div class="row">
+                @if (selectedOfficeType == officeExpenseTypes.BRANCH) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="allbranch" [multiple]="false" bindLabel="branchName"
+                        (ngModelChange)="onSelectBranch($event)" bindValue="branchMasterID" [closeOnSelect]="true" ngModel
+                        [(ngModel)]="editData.branchMasterID" #branch="ngModel" name="branch" placeholder="Choose your option"
+                        [required]="selectedOfficeType == officeExpenseTypes.BRANCH" [readonly]="true">
+                      </ng-select>
+                      <span>Select Branch @if (selectedOfficeType == officeExpenseTypes.BRANCH) {
+                        <span>*</span>
+                      }</span>
+                      @if (!branch.valid && editOfficeExpense.submitted && selectedOfficeType == officeExpenseTypes.BRANCH) {
+                        <div
+                          class="invalid-tooltip">
+                          Branch is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (selectedOfficeType == officeExpenseTypes.SITE) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="allSites" [multiple]="false" bindLabel="siteName" bindValue="siteID"
+                        [closeOnSelect]="true" ngModel [(ngModel)]="editData.siteID" #siteID="ngModel" name="siteID"
+                        placeholder="Choose your option" [required]="selectedOfficeType == officeExpenseTypes.SITE"
+                        [readonly]="true">
+                      </ng-select>
+                      <span>Select Site @if (selectedOfficeType == officeExpenseTypes.SITE) {
+                        <span>*</span>
+                      }</span>
+                      @if (!siteID.valid && editOfficeExpense.submitted && selectedOfficeType == officeExpenseTypes.SITE) {
+                        <div
+                          class="invalid-tooltip">
+                          Site is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #expense_date="ngModel" name="expense_date" required
+                      [(ngModel)]="editData.expense_date" [max]="currDate" [min]="minDate"
+                      (ngModelChange)="onExpenseDateChange($event)" readonly />
+                      <span>Expense Date *</span>
+                      @if (!expense_date.valid && editOfficeExpense.submitted) {
+                        <div class="invalid-tooltip">
+                          Expense Date is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                </div>
+              }
+              <hr />
+              @if (selectedOfficeType && selectedOfficeType != '') {
+                <div class="row">
+                  <br />
+                  @for (value of editData.officeExpenseTransactions; track value; let i = $index) {
+                    <div class="col-md-12">
+                      @if (!value.isDeleted) {
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose Expense Category"
+                                [(ngModel)]="value.officeExpenseHead.officeExpenseCategoryID" name="officeExpenseCategoryID{{ i }}"
+                                required [readonly]="true" (ngModelChange)="onCategoryChange($event, i)"
+                                #officeExpenseCategoryID="ngModel">
+                                @for (category of officeExpenseCategory; track category) {
+                                  <ng-option
+                                    [value]="category.officeExpenseCategoryID">
+                                    {{ category.officeExpenseCategory }}
+                                  </ng-option>
+                                }
+                              </ng-select>
+                              <span>Select Office Expense Category *</span>
+                              @if (!officeExpenseCategoryID.valid && editOfficeExpense.submitted) {
+                                <div class="invalid-tooltip">
+                                  Office Expense Category is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose Expense Head" [(ngModel)]="value.officeExpenseHeadID"
+                                name="officeExpenseHeadID{{ i }}" required [items]="value.filteredExpenseHeads"
+                                [readonly]="checkDisableByAuth(value)" bindLabel="officeExpenseHead" bindValue="officeExpenseHeadID"
+                                #officeExpenseHeadID="ngModel" (change)="onExpenseHeadChange($event, i)">
+                              </ng-select>
+                              <span>Select Office Expense Head *</span>
+                              @if (!officeExpenseHeadID.valid && editOfficeExpense.submitted) {
+                                <div class="invalid-tooltip">
+                                  Office Expense Head is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          @if (!value?.isAdded) {
+                            <div class="col-md-4">
+                              @if (value?.authorizationStatus == 3 && !value?.erpJvid && !value?.payment_Id) {
+                                <button class="btn btn-outline-success btn-xs" type="button"
+                                  >
+                                  Approved
+                                </button>
+                              }
+                              @if (value?.authorizationStatus == 4) {
+                                <button class="btn btn-outline-danger btn-xs" type="button">
+                                  Rejected
+                                </button>
+                              }
+                              @if (value?.authorizationStatus == 0 || value?.authorizationStatus == 1 || value?.authorizationStatus == 2) {
+                                <button class="btn btn-outline-warning btn-xs" type="button"
+                                  >
+                                  Pending
+                                </button>
+                              }
+                              @if (value?.authorizationStatus == 3 && (value?.erpJvid || value?.payment_Id)) {
+                                <button class="btn btn-outline-info btn-xs" type="button"
+                                  >
+                                  Paid
+                                </button>
+                              }
+                              @if (value?.version || value?.version > 0) {
+                                <button class="btn btn-outline-success btn-xs ml-2" type="button"
+                                  >
+                                  Reapplied
+                                </button>
+                              }
+                            </div>
+                          }
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input required class="form-control" type="number" [(ngModel)]="value.expenseAmount"
+                                #expenseAmount="ngModel" name="expenseAmount{{ i }}" [readonly]="checkDisableByAuth(value)" />
+                                <span>Amount *</span>
+                                @if (!expenseAmount.valid && editOfficeExpense.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Amount is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <textarea class="form-control" [(ngModel)]="value.description" name="description{{ i }}"
+                                [readonly]="checkDisableByAuth(value)"></textarea>
+                                <span>Description</span>
+                              </label>
+                            </div>
+                            @for (file of value.attachments; track trackByFn(j, file); let j = $index) {
+                              <div class="col-md-4">
+                                <div class="d-flex justify-content-between">
+                                  <label class="form-group has-float-label mb-1">
+                                    <div>
+                                      <!-- File input -->
+                                      <div>
+                                        <input class="form-control" type="file" value="" accept="image/*,application/pdf"
+                                          (change)="onFileChangeAll($event, i, j)" [disabled]="checkDisableByAuth(value)" />
+                                          <p class="mb-0 text-danger text-right">(.jpg, .jpeg, .png, .pdf)</p>
+                                        </div>
+                                      </div>
+                                      <span>Attachment - {{ j + 1 }}</span>
+                                      <!-- View button for PDFs or non-images (only if not a new File) -->
+                                      @if (file && !showImage(file) && !value.isNewAttachmentFlags[j]) {
+                                        <button type="button"
+                                          class="btn btn-primary btn-xs mt-2" (click)="view(file)">
+                                          {{ 'Attachment' | translate }}
+                                        </button>
+                                      }
+                                      <!-- Image preview -->
+                                      @if (file && showImage(file) && !value.isNewAttachmentFlags[j]) {
+                                        <img [src]="apiURL + file"
+                                          class="mt-2" alt="Attachment" width="100px" (click)="view(file)" />
+                                      }
+                                    </label>
+                                    <!-- Remove Button -->
+                                    @if (value.attachments.length > 1 && value.authorizationStatus != '3' && value.authorizationStatus != '4' && !checkDisableByAuth(value)) {
+                                      <div
+                                        >
+                                        <span class="btn btn-danger" (click)="removeAttachment(i, j)">-</span>
+                                      </div>
+                                    }
+                                  </div>
+                                </div>
+                              }
+                              @if (value?.attachments?.length < 4 && !checkDisableByAuth(value) && value.authorizationStatus != '3' && value.authorizationStatus != '4') {
+                                <div class="col-md-1"
+                                  >
+                                  <span class="button btn btn-success" (click)="addAttachment(i)">+</span>
+                                </div>
+                              }
+                              @if (value.expensePriceRuleID) {
+                                <div class="col-md-12 text-danger mt-1">
+                                  <div>
+                                    Note* :- Price Rule For {{value?.expenseHeadName}} is
+                                    {{value?.rule}}
+                                  </div>
+                                  <br />
+                                </div>
+                              }
+                              <div class="col-md-12 mt-2">
+                                @if (editData.officeExpenseTransactions?.length > 1 && !checkDisableByAuth(value) && permissiondelete.length > 0) {
+                                  <span class="btn btn-danger" (click)="removeTransaction(i)" style="margin-bottom: 3%"
+                                    >
+                                    Remove
+                                  </span>
+                                }
+                                @if (value.authorizationStatus == '4' && formValue?.ListOfficeExpenseComponent?.body?.navigatedFrom == 'ListOfficeExpenseComponent') {
+                                  <div
+                                    >
+                                    <a (click)="navigateToReapplyPage($safeNavigationMigration(value?.officeExpenseTransactionID))">
+                                      <span class="btn btn-success">
+                                        Reapply
+                                      </span>
+                                      {{ ' ' }}
+                                    </a>
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          }
+                          <hr>
+                          </div>
+                        }
+                        @if (editData.officeExpenseTransactions?.length && permissioncreate.length > 0  && formValue?.ListOfficeExpenseComponent?.body?.navigatedFrom == 'ListOfficeExpenseComponent') {
+                          <div class="col-md-12" style="margin-bottom: 20px; text-align: right"
+                            >
+                            <span class="button" class="btn btn-success" (click)="addTransaction()">ADD More</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </ng-container>
+                  <div>
+                    <button class="btn btn-primary mt-4" type="submit" [disabled]="isSubmitDisabled()">{{ 'forms.submit' | translate }}</button>
+                    <button class="btn btn-danger btn-shadow mt-4" (click)="cancel()" style="margin-left: 2%">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              }
+            </div>
+          </div>

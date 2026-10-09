@@ -1,0 +1,109 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Daily Hourly Report" [showSearch]="false" [showOrderBy]="false" [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (clearData)="clear()" (init)="init($event)"
+    (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate" (change)="selectfrom()"
+          required />
+          <span>From Date *</span>
+          @if (!fromdate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              From date is required!
+            </div>
+          }
+        </label>
+      </div>
+      @if (enddate != null) {
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #todate="ngModel" name="todate"
+              [ngModel]="enddate | date: 'yyyy-MM-dd'" required />
+              <span>To Date *</span>
+              @if (!todate.valid && commonFilter?.filterForm?.submitted) {
+                <div class="invalid-tooltip">
+                  To date is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-8">
+          @if (rows.length != 0) {
+            <div class="float-right float-none-xs ">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Export" ngModel #cid2="ngModel" name="cid2" [(ngModel)]="selectedValue"
+                  (ngModelChange)="onOptionSelectDownlad()">
+                  <ng-option value="csv">CSV</ng-option>
+                  <ng-option value="xlsx">XLSX</ng-option>
+                </ng-select>
+              </label>
+            </div>
+          }
+        </div>
+      </app-common-filter>
+    }
+
+    @if (rows.length != 0  && permissionview.length != 0) {
+      <div class="row">
+        <div class="col-12 mb-4 data-table-rows">
+          <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+            [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+            (page)="onChange($event)">
+            <ngx-datatable-column name="Employee Name" prop="Employee Name" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Number" prop="Employee Number" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Code" prop="Employee Code" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Branch" prop="Employee Branch" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Department" prop="Employee Department" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Designation" prop="Employee Designation" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Total Days" prop="Total Days" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            <ngx-datatable-column name="Total Hours" prop="Total Hrs" [flexGrow]="1.2"
+            [width]="180"></ngx-datatable-column>
+            @if (true) {
+              <ngx-datatable-footer>
+                <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                  let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                  <div class="w-100 d-flex justify-content-center">
+                    <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                      [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                      [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                    [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+                  </div>
+                </ng-template>
+              </ngx-datatable-footer>
+            }
+          </ngx-datatable>
+        </div>
+      </div>
+    }
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

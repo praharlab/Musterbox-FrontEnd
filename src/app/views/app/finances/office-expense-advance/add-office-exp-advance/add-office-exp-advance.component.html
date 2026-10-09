@@ -1,0 +1,175 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card">
+  <div class="card-body">
+    <form #addOfficeExpenseAdvance="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <h3 class="mb-5">Add Office Expense Advance</h3>
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              (change)="selectCompany($event)" required [(ngModel)]="filterData.companyMasterID">
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addOfficeExpenseAdvance.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+              (change)="selectBranch($event)" [(ngModel)]="filterData.branchMasterID" required>
+              @for (branch of branchData; track branch) {
+                <ng-option [value]="+branch.branchMasterID">
+                  {{ branch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch *</span>
+            @if (!branch.valid && addOfficeExpenseAdvance.submitted) {
+              <div class="invalid-tooltip">
+                Branch is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="siteData" [(ngModel)]="filterData.siteID" [multiple]="false" bindLabel="siteName"
+              bindValue="siteID" [closeOnSelect]="true" ngModel #siteID="ngModel" name="siteID"
+              placeholder="Choose your option" (ngModelChange)="selectSite($event)">
+            </ng-select>
+            <span>Select Site</span>
+          </label>
+        </div>
+      </div>
+      <hr>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #user="ngModel" name="user" required
+                [(ngModel)]="selectedUser">
+                @for (user of userData; track user) {
+                  <ng-option [value]="+user.userMasterID">
+                    {{ user.displayName }} - ({{ user.userNumber }})
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee *</span>
+              @if (!user.valid && addOfficeExpenseAdvance.submitted) {
+                <div class="invalid-tooltip">
+                  Employee is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input type="number" class="form-control" name="amount" #amount="ngModel" ngModel required>
+              <span>Amount *</span>
+              @if (!amount.valid && addOfficeExpenseAdvance.submitted) {
+                <div class="invalid-tooltip">
+                  Amount is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel name="date" #date="ngModel" [max]="maxDate"
+                required />
+                <span>Date *</span>
+                @if (!date.valid && addOfficeExpenseAdvance.submitted) {
+                  <div class="invalid-tooltip">
+                    Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="officeExpenseAdvanceTransactionTypes" [multiple]="false" bindLabel="key"
+                  bindValue="key" [closeOnSelect]="true" ngModel #transactionType="ngModel"
+                  name="transactionType" placeholder="Choose your option" required [(ngModel)]="selectedTransactionType">
+                </ng-select>
+                <span>Transaction Type *</span>
+                @if (!transactionType.valid && addOfficeExpenseAdvance.submitted) {
+                  <div class="invalid-tooltip">
+                    Transaction Type is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #paymentMode="ngModel" name="paymentMode" [(ngModel)]="selectedPaymentMode" required>
+                  <ng-option value="Cash">Cash</ng-option>
+                  <ng-option value="Cheque">Cheque</ng-option>
+                  <ng-option value="UPI">UPI</ng-option>
+                  <ng-option value="NetBanking">NetBanking</ng-option>
+                </ng-select>
+                <span>Payment Mode *</span>
+                @if (!paymentMode.valid && addOfficeExpenseAdvance.submitted) {
+                  <div class="invalid-tooltip">
+                    Payment Mode is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            @if (selectedPaymentMode && selectedPaymentMode != 'Cash') {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" ngModel #referenceNo="ngModel" name="referenceNo"
+                    required/>
+                    <span>Reference NO *</span>
+                  </label>
+                  @if (!referenceNo.valid && addOfficeExpenseAdvance.submitted) {
+                    <div class="invalid-tooltip">
+                      Reference NO is required!
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (selectedPaymentMode && selectedPaymentMode != 'Cash') {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #referenceDate="ngModel" name="referenceDate" required/>
+                    <span>Reference Date *</span>
+                    @if (!referenceDate.valid && addOfficeExpenseAdvance.submitted) {
+                      <div class="invalid-tooltip">
+                        Reference Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+                  <span>Remarks </span>
+                </label>
+              </div>
+
+            </div>
+            <div>
+              <button class="btn btn-primary mt-4" type="submit">Submit</button>
+              <button class="btn btn-danger btn-shadow mt-4 ml-2"
+                [routerLink]="adminRoot + '/finances/officeExpenseAdvance'">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>

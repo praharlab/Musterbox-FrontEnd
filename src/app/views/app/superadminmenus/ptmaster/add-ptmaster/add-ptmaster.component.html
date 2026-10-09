@@ -1,0 +1,251 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Professional tax</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #fromAmount="ngModel"
+              name="fromAmount"
+              />
+              <span>From Amount *</span>
+              @if (!fromAmount.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  From Amount is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                placeholder=""
+                required
+                ngModel
+                #toAmount="ngModel"
+                name="toAmount"
+                name="toAmount"
+                />
+                <span>To Amount *</span>
+                @if (!toAmount.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    To Amount is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  placeholder=""
+                  required
+                  ngModel
+                  #maleTax="ngModel"
+                  name="maleTax"
+                  />
+                  <span>Male Tax</span>
+                  @if (!maleTax.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Male Tax is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    placeholder=""
+                    required
+                    ngModel
+                    #femaleTax="ngModel"
+                    name="femaleTax"
+                    />
+                    <span>Female Tax</span>
+                    @if (!femaleTax.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Female Tax is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <span><b>PT Calculation * :</b></span>
+                  &nbsp;&nbsp;
+                  <input
+                    type="radio"
+                    name="ptcalculation"
+                    value="monthly"
+                    ngModel
+                    #ptcalculation="ngModel"
+                    style="margin-right: 1%"
+                    [(ngModel)]="ptCalculationType"
+                    required
+                    />
+                    <label for="true" style="margin-right: 1%">Monthly</label>
+                    <input
+                      type="radio"
+                      name="ptcalculation"
+                      value="halfYearly"
+                      ngModel
+                      #ptcalculation="ngModel"
+                      style="margin-right: 1%"
+                      required
+                      [(ngModel)]="ptCalculationType"
+                      />
+                      <label for="false">HalfYearly</label>
+                      @if (!ptcalculation.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          PT Calculation is required!
+                        </div>
+                      }
+                    </div>
+
+                    @if (ptCalculationType == 'halfYearly') {
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select
+                            [multiple]="true" [closeOnSelect]="false"
+                            placeholder="Choose your option"
+                            ngModel
+                            #month="ngModel"
+                            name="month"
+                            required
+                            (change)="selectMonth()"
+                            [(ngModel)]="selectedMonths"
+                            >
+                            @for (month of months; track month) {
+                              <ng-option [value]="month.value">
+                                {{ month.label }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Month *</span>
+                          @if (!month.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Month is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="month"
+                          name="applicableFromYYYYMM"
+                          ngModel
+                          #applicableFromYYYYMM="ngModel"
+                          min="{{ final_date }}"
+                          required
+                          />
+                          <span>Applicable FromYearMonth *</span>
+                          @if (!applicableFromYYYYMM.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Applicable FromYearMonth is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select
+                            placeholder="Choose your option"
+                            (change)="selectcountry($event)"
+                            ngModel
+                            #country1="ngModel"
+                            required
+                            name="country1"
+                            >
+                            @for (countrys of country; track countrys) {
+                              <ng-option [value]="countrys.countryMasterID">
+                                {{ countrys.countryName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Country *</span>
+                          @if (!country1.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Country is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select
+                            placeholder="Choose your option"
+                            (change)="selectstate($event)"
+                            ngModel
+                            #state1="ngModel"
+                            required
+                            name="state1"
+                            >
+                            @for (states of state; track states) {
+                              <ng-option [value]="states.stateMasterID">
+                                {{ states.stateName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>State *</span>
+                          @if (!state1.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              State is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      @if (corporation.length) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel #corp="ngModel" name="corp">
+                              @for (corpo of corporation; track corpo) {
+                                <ng-option [value]="corpo.id">
+                                  {{ corpo.corporationName }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <span>Corporation</span>
+                          </label>
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-12">
+                      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                      <button
+                        class="btn btn-danger btn-shadow mt-4"
+                        [routerLink]="adminRoot + '/superadminmenus/ptmaster'"
+                        style="margin-left: 2%"
+                        >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <simple-notifications
+                [options]="{ position: ['top', 'center'], maxStack: 1 }"
+              ></simple-notifications>

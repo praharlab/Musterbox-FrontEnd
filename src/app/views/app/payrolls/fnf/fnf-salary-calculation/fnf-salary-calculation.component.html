@@ -1,0 +1,736 @@
+<div class="card mb-4">
+  <div class="card-body">
+    @if (showloader) {
+      <div class="w-100 position-absolute h-100 z0">
+        <div style="color: #17a2b8; left: 46%;" class="la-ball-spin-clockwise z999">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    }
+
+    @for (data of rows; track data) {
+      <div>
+        <div style="overflow-x: auto">
+          <table border="0" style="width: 100%">
+            <tbody>
+              <tr>
+                <td class="borderData style">
+                  <span>
+                    <b>Start Date : {{ data.start_date | date: 'dd-MM-yyyy' }}</b>
+                  </span>
+                </td>
+                <td class="borderData style">
+                  <span>
+                    <b>End Date : {{ data.end_date | date: 'dd-MM-yyyy' }}</b>
+                  </span>
+                </td>
+                <td class="borderData"><b>Month : {{data.month}}</b></td>
+                <!-- <td class="borderData"></td> -->
+                <td class="borderData" style="text-align: left;">
+                  @if (data.SalaryDone == 'Y') {
+                    <span>
+                      <b>&#x2705; Salary Calculated By : {{ data.salaryCalculateBy }}</b>
+                    </span>
+                  }
+                </td>
+              </tr>
+              <tr>
+                <!-- <td class="borderData">
+                <span>
+                  <b>{{ data.userName | uppercase }}</b>
+                </span>
+              </td> -->
+              <td class="borderData style">
+                <span>
+                  <b>Month Days : {{ data.MonDays }}</b>
+                </span>
+              </td>
+              <td class="borderData style">
+                <span>
+                  <b>Working Days : {{ data.WorkingDays }}</b>
+                </span>
+              </td>
+              <td class="borderData style">
+                @if (data.verified == 1 && data.calculateon == 'monthly') {
+                  <span>
+                    <b>Paid Days : {{ data.paidDays }}</b>
+                  </span>
+                }
+              </td>
+              <td class="borderData">
+                @if (data.verified == 1) {
+                  <span>
+                    <b>&#x2705; Attendance Verified By : {{ data.verifiedBy }}</b>
+                  </span>
+                }
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <br />
+      <div style="overflow-x: auto">
+        @if (data.sandwhichData && data.sandwhichData.length > 0 ) {
+          <table border="1">
+            <tr>
+              @for (item of data.sandwhichData; track item) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  <div class="container1">
+                    <b>{{ item.leave_name }}</b>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              @for (item of data.sandwhichData; track item) {
+                <td style="text-align: center">
+                  <div class="container1">
+                    {{ item.values }}
+                  </div>
+                </td>
+              }
+            </tr>
+          </table>
+        }
+      </div>
+      <br />
+      <div style="overflow-x: auto">
+        @if (data.calculateon == 'monthly') {
+          <table border="1">
+            <tr>
+              @for (item of data.user_leave; track item) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  @if (item.leave_name != 'Attendance Penalty') {
+                    <div class="container1">
+                      <b>{{ item.leave_name }}</b>
+                    </div>
+                  }
+                  @if (item.leave_name == 'Attendance Penalty' && +item.values > 0) {
+                    <div class="container1">
+                      <b>Attendance Penalty(Days)</b>
+                    </div>
+                  }
+                </td>
+              }
+              @for (item1 of data.penaltyArray; track item1) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  <div class="container1">
+                    <b>{{ item1.leave_name }}</b>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              @for (item of data.user_leave; track item) {
+                <td style="text-align: center">
+                  @if (data.verified == 0) {
+                    <div class="container1">
+                      @if (item.leave_name == 'P') {
+                        <input type="number" [(ngModel)]="item.values" [name]="'namee' + i"
+                          (keyup)="changeAttnVal(data)" (input)="changeAttnVal(data)" [min]="0" />
+                      }
+                      @if (item.leave_name != 'P' && item.leave_name != 'Attendance Penalty') {
+                        <span>
+                          {{ item.values }}
+                        </span>
+                      }
+                    </div>
+                  }
+                  @if (data.verified == 1 && item.leave_name != 'Attendance Penalty') {
+                    <div class="container1">
+                      {{ item.values }}
+                    </div>
+                  }
+                  @if (item.leave_name == 'Attendance Penalty' && +item.values > 0) {
+                    <div class="container1">
+                      {{ item.values }}
+                    </div>
+                  }
+                </td>
+              }
+              @for (item1 of data.penaltyArray; track item1) {
+                <td style="text-align: center">
+                  <div class="container1">
+                    <b>{{ item1.values }}</b>
+                  </div>
+                </td>
+              }
+            </tr>
+          </table>
+        }
+        @if (data.calculateon == 'hourly') {
+          <table border="1">
+            <tr>
+              @for (item of data.user_leave; track item) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  @if (
+                    item.leave_name != 'Working Hours' && item.leave_name != 'Attendance Penalty'
+                    ) {
+                    <div class="container1">
+                      <b>{{ item.leave_name }}</b>
+                    </div>
+                  }
+                  @if (item.leave_name == 'Working Hours') {
+                    <div class="container1">
+                      <b>Paid Hours</b>
+                    </div>
+                  }
+                  @if (item.leave_name == 'Attendance Penalty' && +item.values > 0) {
+                    <div class="container1">
+                      <b>Attendance Penalty(Min)</b>
+                    </div>
+                  }
+                </td>
+              }
+              @for (item1 of data.penaltyArray; track item1) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  <div class="container1">
+                    <b>{{ item1.leave_name }}</b>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              @for (item of data.user_leave; track item) {
+                <td style="text-align: center">
+                  @if (data.verified == 0) {
+                    <div class="container1">
+                      @if (item.leave_name == 'Total Hours') {
+                        <input type="number" [(ngModel)]="item.values"
+                          [name]="'namee' + i" (change)="changehourvalue(data)" />
+                      }
+                      @if (
+                        item.leave_name != 'Total Hours' && item.leave_name != 'Attendance Penalty'
+                        ) {
+                        <span>
+                          {{ item.values }}
+                        </span>
+                      }
+                    </div>
+                  }
+                  @if (data.verified == 1 && item.leave_name != 'Attendance Penalty') {
+                    <div class="container1">
+                      {{ item.values }}
+                    </div>
+                  }
+                  @if (item.leave_name == 'Attendance Penalty' && +item.values > 0) {
+                    <div class="container1">
+                      {{ item.values }}
+                    </div>
+                  }
+                </td>
+              }
+              @for (item1 of data.penaltyArray; track item1) {
+                <td style="text-align: center">
+                  <div class="container1">{{ item1.values }}</div>
+                </td>
+              }
+            </tr>
+          </table>
+        }
+      </div>
+      <br />
+      <div style="overflow-x: auto">
+        @if (((data.verified == 0 && ['onPresentDay','monthlyFix'].includes(data.weekoffPolicyType)) || (data.verified == 1)) && ['AddLeave','AddExtraDays'].includes(data.coff)) {
+          <table border="1"
+            >
+            <tr>
+              <td style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                <div class="container1">
+                  <b>{{ data.coff == 'AddLeave'? 'Add Coff':'Add Extra Days' }}</b>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center">
+                <div class="container1">
+                  @if (data.verified == 0) {
+                    <input type="number" [(ngModel)]="data.coffValue" [name]="'name' + i"
+                      (keyup)="changeCoff(data)" (input)="changeCoff(data)" [min]="0" />
+                  }
+                </div>
+                @if (data.verified == 1) {
+                  <div class="container1">
+                    {{ data.coffValue }}
+                  </div>
+                }
+              </td>
+            </tr>
+          </table>
+        }
+      </div>
+      <br />
+      @if (data.user_leave == '' && data.notJoin) {
+        <div>
+          <div style="text-align: center">
+            <h5>The employee has not joined yet.</h5>
+          </div>
+        </div>
+      }
+      @if (data.user_leave == '' && data.left) {
+        <div>
+          <div style="text-align: center">
+            <h5>The employee has left the company.</h5>
+          </div>
+        </div>
+      }
+      <div class="row justify-content-start">
+        <span class="m-2">
+          @if (data.verified == 0) {
+            <button class="btn btn-success btn-xs form-group" tooltip="Verify Attendance"
+              (click)="alertVerify(data)">
+              Verify
+            </button>
+          }
+          @if (data.verified == 1 && data.SalaryDone == 'N') {
+            <button tooltip="Un-Verify Attendance"
+              class="btn btn-warning btn-xs mb-1 form-group" (click)="alertUnVerify()">
+              Unverified
+            </button>
+          }
+        </span>
+        <span class="m-2">
+          <button class="btn btn-primary btn-xs mb-1 form-group" tooltip="View Attendance"
+            (click)="lgModal.show(); getCalenderData(data)">
+            Attendance
+          </button>
+        </span>
+        <span class="m-2">
+          <!-- <button *ngIf="
+              data.verified == 1 &&
+              data.SalaryDone == 'N' &&
+              data.salaryStructurevalue == true 
+            " tooltip="Calculate Salary" class="btn btn-secondary btn-xs mb-1 form-group"
+          (click)="calculateSalary(data.userMasterID)">
+          Calculate Salary
+        </button> -->
+        @if (
+          data.verified == 1 &&
+          data.SalaryDone == 'N' &&
+          data.salaryStructurevalue == true && !salarybuttonDisabledFNF
+          ) {
+          <app-state-button tooltip="Calculate Salary" [currentState]="salarybuttonState"
+            [btnClass]="'btn btn-secondary btn-xs btn-shadow'" [isDisabled]="salarybuttonDisabled"
+            (click)="calculateSalary(data.userMasterID)">
+            Calculate Salary
+          </app-state-button>
+        }
+        @if (salarybuttonDisabledFNF) {
+          <p style="color: red; font-size: 14px">
+            *Note :- Please Complete FNF Process to Calculate Salary.
+          </p>
+        }
+      </span>
+    </div>
+    @if (data.salaryStructurevalue == false) {
+      <div>
+        <div style="text-align: center">
+          <h5>Employee Salary Structure Not Found !</h5>
+        </div>
+      </div>
+    }
+    @if (data.earningside_salarystructure.length > 0 || data.deductionside_salarystructure.length || data.extraEarning_salarystructure.length) {
+      <div
+        >
+        <div><b>Actual Amount :</b></div>
+        <div style="overflow-x: auto">
+          <table border="1">
+            <tr>
+              @for (item of data.earningside_salarystructure; track item) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  <div class="container1">
+                    <b>{{ (item.payheadDisplayName && item.payheadDisplayName.trim()) ? item.payheadDisplayName :
+                    item.payheadName }}</b>
+                  </div>
+                </td>
+              }
+              @if (data.gross_salarystructure) {
+                <td style="background-color: var(--m-primary-hover); text-align: center; color: white"
+                  >
+                  <div class="container1"><b>{{ (data.gross_salarystructure.payheadDisplayName &&
+                    data.gross_salarystructure.payheadDisplayName.trim()) ?
+                    data.gross_salarystructure.payheadDisplayName :
+                  data.gross_salarystructure.payheadName }}</b></div>
+                </td>
+              }
+              @for (item of data.deductionside_salarystructure; track item) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  <div class="container1">
+                    <b>{{ (item.payheadDisplayName && item.payheadDisplayName.trim()) ? item.payheadDisplayName :
+                    item.payheadName }}</b>
+                  </div>
+                </td>
+              }
+              @for (item of data.extraEarning_salarystructure; track item) {
+                <td
+                  style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                  <div class="container1">
+                    <b>{{ (item.payheadDisplayName && item.payheadDisplayName.trim()) ? item.payheadDisplayName :
+                    item.payheadName }}</b>
+                  </div>
+                </td>
+              }
+              @if (data.netPay_salarystructure) {
+                <td style="background-color: var(--m-primary-hover); text-align: center; color: white"
+                  >
+                  <div class="container1"> <b>{{ (data.netPay_salarystructure.payheadDisplayName &&
+                    data.netPay_salarystructure.payheadDisplayName.trim()) ?
+                    data.netPay_salarystructure.payheadDisplayName :
+                  data.netPay_salarystructure.payheadName }}</b></div>
+                </td>
+              }
+            </tr>
+            <tr>
+              @for (item of data.earningside_salarystructure; track item) {
+                <td style="text-align: center">
+                  <div class="container1">{{ item.EmployeeSalaryAmount }}</div>
+                </td>
+              }
+              @if (data.gross_salarystructure) {
+                <td style="text-align: center">
+                  <div class="container1">
+                    <b>{{ data.gross_salarystructure.EmployeeSalaryAmount }}</b>
+                  </div>
+                </td>
+              }
+              @for (item of data.deductionside_salarystructure; track item) {
+                <td style="text-align: center">
+                  <div class="container1">{{ item.EmployeeSalaryAmount }}</div>
+                </td>
+              }
+              @for (item of data.extraEarning_salarystructure; track item) {
+                <td style="text-align: center">
+                  <div class="container1">{{ item.EmployeeSalaryAmount }}</div>
+                </td>
+              }
+              @if (data.netPay_salarystructure) {
+                <td style="text-align: center">
+                  <div class="container1">
+                    <b>{{ data.netPay_salarystructure.EmployeeSalaryAmount }}</b>
+                  </div>
+                </td>
+              }
+            </tr>
+          </table>
+        </div>
+        <br />
+        <br />
+        @if (data.earningside_employeesalary.length || data.deductionside_employeesalary.length || data.extraEarning_employeesalary.length) {
+          <div
+            >
+            <div><b>Payable Amount :</b></div>
+            <div style="overflow-x: auto">
+              <table border="1">
+                <tr>
+                  @for (item of data.earningside_employeesalary; track item) {
+                    <td
+                      style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                      <div class="container1">
+                        <b>{{ (item.payheadDisplayName && item.payheadDisplayName.trim()) ? item.payheadDisplayName :
+                        item.payheadName }}</b>
+                      </div>
+                    </td>
+                  }
+                  @if (data.gross_employeesalary) {
+                    <td style="background-color: var(--m-primary-hover); text-align: center; color: white"
+                      >
+                      <div class="container1"> <b>{{ (data.gross_employeesalary.payheadDisplayName &&
+                        data.gross_employeesalary.payheadDisplayName.trim()) ?
+                        data.gross_employeesalary.payheadDisplayName :
+                      data.gross_employeesalary.payheadName }}</b></div>
+                    </td>
+                  }
+                  @for (item of data.deductionside_employeesalary; track item) {
+                    <td
+                      style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                      <div class="container1">
+                        <b>{{ (item.payheadDisplayName && item.payheadDisplayName.trim()) ? item.payheadDisplayName :
+                        item.payheadName }}</b>
+                      </div>
+                    </td>
+                  }
+                  @for (item of data.extraEarning_employeesalary; track item) {
+                    <td
+                      style="background-color: var(--m-primary-hover); text-align: center; color: white">
+                      <div class="container1">
+                        <b>{{ (item.payheadDisplayName && item.payheadDisplayName.trim()) ? item.payheadDisplayName :
+                        item.payheadName }}</b>
+                      </div>
+                    </td>
+                  }
+                  @if (data.netPay_employeesalary) {
+                    <td style="background-color: var(--m-primary-hover); text-align: center; color: white"
+                      >
+                      <div class="container1"> <b>{{ (data.netPay_employeesalary.payheadDisplayName &&
+                        data.netPay_employeesalary.payheadDisplayName.trim()) ?
+                        data.netPay_employeesalary.payheadDisplayName :
+                      data.netPay_employeesalary.payheadName }}</b></div>
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  @for (item of data.earningside_employeesalary; track item) {
+                    <td style="text-align: center">
+                      <div class="container1">{{ item.EmployeeSalaryAmount }}</div>
+                    </td>
+                  }
+                  @if (data.gross_employeesalary) {
+                    <td style="text-align: center">
+                      <div class="container1">
+                        <b>{{ data.gross_employeesalary.EmployeeSalaryAmount }}</b>
+                      </div>
+                    </td>
+                  }
+                  @for (item of data.deductionside_employeesalary; track item) {
+                    <td style="text-align: center">
+                      <div class="container1">{{ item.EmployeeSalaryAmount }}</div>
+                    </td>
+                  }
+                  @for (item of data.extraEarning_employeesalary; track item) {
+                    <td style="text-align: center">
+                      <div class="container1">{{ item.EmployeeSalaryAmount }}</div>
+                    </td>
+                  }
+                  @if (data.netPay_employeesalary) {
+                    <td style="text-align: center">
+                      <div class="container1">
+                        <b>{{ data.netPay_employeesalary.EmployeeSalaryAmount }}</b>
+                      </div>
+                    </td>
+                  }
+                </tr>
+              </table>
+            </div>
+            <br />
+            <div class="row">
+              <span class="m-2">
+                <button class="btn btn-danger btn-xs mb-1 form-group" tooltip="Delete Salary"
+                  (click)="deleteSalary(data)">
+                  Delete
+                </button>
+              </span>
+              <span class="m-2">
+                <button class="btn btn-primary btn-xs mb-1 form-group" (click)="lgModal2.show(); salaryslip(data)">
+                  Salary Slip
+                </button>
+              </span>
+              @if (data.salarySlip == true) {
+                <span class="m-2">
+                  <button class="btn btn-xs mb-1 form-group" style="color: white; background-color: #364a68"
+                    tooltip="Release SalarySlip" (click)="issueSalarySlip(data)">
+                    Release
+                  </button>
+                </span>
+              }
+              @if (data.unRelease == true) {
+                <span class="m-2">
+                  <button class="btn btn-info btn-xs mb-1 form-group" tooltip="Un-Release SalarySlip"
+                    (click)="unReleaseSalarySlip(data)">
+                    Un-Release
+                  </button>
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+</div>
+<hr />
+</div>
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Attendance</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (attendance && attendance.length > 0) {
+          <div class="table-style">
+            <div class="table-container">
+              <table style="width: 100%; margin-top: 12px;">
+                <thead>
+                  <tr>
+                    <th class="name-col" style="text-align: center; padding: 0.5em 1em">Name</th>
+                    <th class="name-col" style="text-align: center; padding: 0.5em 1em">Date</th>
+                    <th class="name-col" style="padding: 0.5em 1em">Status</th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Attendance
+                      <br />
+                      InTime
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Attendance
+                      <br />
+                      OutTime
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Shift
+                      <br />
+                      Hours
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Shift
+                      <br />
+                      InTime
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Shift
+                      <br />
+                      OutTime
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      In
+                      <br />
+                      Minutes
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Out
+                      <br />
+                      Minutes
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Working
+                      <br />
+                      Minutes
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">LateBy</th>
+                    <th class="name-col" style="padding: 0.5em 1em">EarlyBy</th>
+                    <th class="name-col" style="padding: 0.5em 1em">Penalty</th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      Penalty
+                      <br />
+                      Deduction
+                    </th>
+                    <th class="name-col" style="padding: 0.5em 1em">
+                      GoEarly
+                      <br />
+                      Used
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of attendance; track item) {
+                    <tr class="student">
+                      <td class="name-col" style="border-left: 1px solid rgb(221, 221, 221); padding: 0.5em 1em">
+                        {{ item.userName }}
+                      </td>
+                      <td class="name-col" style="border-left: 1px solid rgb(221, 221, 221); padding: 0.5em 1em">
+                        {{ item.date }}
+                      </td>
+                      <td style="padding: 0.5em 1em" [class]="checkColor(item.title) + ' name-col'">
+                        {{ item.title }}
+                      </td>
+                      <td style="padding: 0.5em 1em" class="name-col">
+                        {{ item.inTime | date: 'dd-MM-yyyy ' }}
+                        <br />
+                        {{ item.inTime | date: 'h:mm a' }}
+                      </td>
+                      <td style="padding: 0.5em 1em" class="name-col">
+                        {{ item.outTime | date: 'dd-MM-yyyy ' }}
+                        <br />
+                        {{ item.outTime | date: 'h:mm a' }}
+                      </td>
+                      <td class="name-col" style="padding: 0.5em 1em">{{ item.shiftHours }}</td>
+                      <td class="name-col" style="padding: 0.5em 1em">{{ item.shiftInTime }}</td>
+                      <td class="name-col" style="padding: 0.5em 1em">{{ item.shiftOutTime }}</td>
+                      <td class="name-col" style="padding: 0.5em 1em">{{ item.inHours }}</td>
+                      <td class="name-col" style="padding: 0.5em 1em">{{ item.outHours }}</td>
+                      <td class="name-col" style="padding: 0.5em 1em">{{ item.roundOffMinutes }}</td>
+                      <td class="name-col" style="padding: 0.5em 1em">
+                        @if (item.lateBy) {
+                          <span class="late">{{ item.lateBy }}</span>
+                        }
+                      </td>
+                      <td class="name-col" style="padding: 0.5em 1em">
+                        @if (item.earlyBy) {
+                          <span class="late">{{ item.earlyBy }}</span>
+                        }
+                      </td>
+                      <td class="name-col" style="padding: 0.5em 1em">
+                        @if (item.penalty) {
+                          <span class="late">{{ item.penalty }}</span>
+                        }
+                      </td>
+                      <td class="name-col" style="padding: 0.5em 1em">
+                        @if (item.penaltyDeduction) {
+                          <span class="late">
+                            {{ item.penaltyDeduction }}
+                          </span>
+                        }
+                      </td>
+                      <td class="name-col" style="padding: 0.5em 1em">
+                        @if (item.goEarlyUsed != '' && item.goEarlyUsed == 0) {
+                          <span class="late">
+                            {{ item.goEarlyUsed }}
+                          </span>
+                        }
+                        @if (item.goEarlyUsed != '' && item.goEarlyUsed == 1) {
+                          <span class="nolate">
+                            {{ item.goEarlyUsed }}
+                          </span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Show Salary Slip</h4>
+        <button class="btn btn-primary pull-right" (click)="onClickDownloadPdf()">
+          Download PDF
+        </button>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      @if (salarydata) {
+        <div class="modal-body">
+          <pdf-viewer [src]="salarydata.path" [rotation]="0" [original-size]="false" [show-all]="true"
+            [fit-to-page]="false" [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+            [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false"
+          style="width: 100%; height: 1000px"></pdf-viewer>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

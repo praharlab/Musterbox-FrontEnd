@@ -1,0 +1,189 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Tax Challan Details</h5>
+
+    <form #addform="ngForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="empList"
+              bindLabel="name"
+              groupBy="selectedAllGroup"
+              [selectableGroup]="true"
+              [selectableGroupAsModel]="false"
+              bindValue="userMasterID"
+              [closeOnSelect]="true"
+              [(ngModel)]="selecteddata"
+              ngModel
+              prop="userid"
+              #userid="ngModel"
+              name="userid"
+              >
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                Select All
+              </ng-template>
+            </ng-select>
+            <span>Select User</span>
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #assessmentyear="ngModel"
+              name="assessmentyear"
+              >
+              @for (assessmentYear of assessmentYear; track assessmentYear) {
+                <ng-option [value]="assessmentYear">
+                  {{ assessmentYear }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Assesment Year *</span>
+            @if (!assessmentyear.valid && addform.submitted) {
+              <div class="invalid-tooltip">
+                Assessment Year is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Select SrNo" ngModel #SrNo="ngModel" name="SrNo">
+              <ng-option value="1">1</ng-option>
+              <ng-option value="2">2</ng-option>
+              <ng-option value="3">3</ng-option>
+              <ng-option value="4">4</ng-option>
+              <ng-option value="5">5</ng-option>
+              <ng-option value="6">6</ng-option>
+              <ng-option value="7">7</ng-option>
+              <ng-option value="8">8</ng-option>
+              <ng-option value="9">9</ng-option>
+              <ng-option value="10">10</ng-option>
+              <ng-option value="11">11</ng-option>
+              <ng-option value="12">12</ng-option>
+            </ng-select>
+            <span>SrNo *</span>
+            @if (!SrNo.valid && addform.submitted) {
+              <div class="invalid-tooltip">
+                SrNo is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="number"
+              required
+              ngModel
+              #TaxDepositedAmt="ngModel"
+              name="TaxDepositedAmt"
+              value="Gross"
+              />
+              <span>Tax Deposited Amount *</span>
+              @if (!TaxDepositedAmt.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Tax Deposited Amount is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #BSRCode="ngModel"
+                name="BSRCode"
+                />
+                <span>BSRCode *</span>
+                @if (!BSRCode.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    BSRCode is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="date"
+                  required
+                  ngModel
+                  #TaxDepositedDate="ngModel"
+                  name="TaxDepositedDate"
+                  />
+                  <span>Tax Deposited Date *</span>
+                  @if (!TaxDepositedDate.valid && addform.submitted) {
+                    <div class="invalid-tooltip">
+                      Tax Deposited Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    required
+                    ngModel
+                    #ChallanSerialNo="ngModel"
+                    name="ChallanSerialNo"
+                    />
+                    <span>Challan Serial No *</span>
+                    @if (!ChallanSerialNo.valid && addform.submitted) {
+                      <div class="invalid-tooltip">
+                        Challan Serial No is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Select Oltas" ngModel #Oltas="ngModel" name="Oltas">
+                      <ng-option value="U">U</ng-option>
+                      <ng-option value="P">P</ng-option>
+                      <ng-option value="F">F</ng-option>
+                      <ng-option value="O">O</ng-option>
+                    </ng-select>
+                    <span>Oltas *</span>
+                    @if (!Oltas.valid && addform.submitted) {
+                      <div class="invalid-tooltip">
+                        Oltas is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <br />
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button
+                  class="btn btn-danger btn-shadow mt-4"
+                  [routerLink]="adminRoot + '/form16s/tax_challan'"
+                  style="margin-left: 2%"
+                  >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

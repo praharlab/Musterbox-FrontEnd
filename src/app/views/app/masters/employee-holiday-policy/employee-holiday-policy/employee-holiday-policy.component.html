@@ -1,0 +1,75 @@
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                @if (item.holidayPolicyID) {
+                  <p class="list-item-heading mb-1 truncate">
+                    <a tooltip="Please click here to view Holiday Policy details"
+                      [class]="'glyph-icon tool_tip'" style="cursor: pointer"
+                      (click)="getHolidayPolicyDataModal(item); holidayPolicyDataModal.show()">
+                      {{ item.HolidayPolicy.holidayPolicyName | uppercase }}
+                    </a>
+                  </p>
+                }
+                <p class="text-muted mb-0 text-small">
+                  Start Date:-{{ item.applicableDate | date : 'yyyy-MM-dd' }}
+                </p>
+                @if (item.endDate != null) {
+                  <p class="text-muted mb-0 text-small">
+                    End Date:-{{ item.endDate | date : 'yyyy-MM-dd' }}
+                  </p>
+                }
+                <div class="min-width-zero">
+                  <a href="javascript:;">
+                    @if (item.holidaypolicystatus == 'active') {
+                      <button type="button" class="btn btn-success"
+                        style="margin-top: 10%">
+                        {{ 'Active' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                    @if (item.holidaypolicystatus == 'deactive') {
+                      <button type="button" class="btn btn-danger"
+                        style="margin-top: 10%">
+                        {{ 'Deactive' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                  </a>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+
+<div bsModal #holidayPolicyDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          {{ selectedHolidayPolicyName | uppercase }} - Holiday Policy Details
+        </h4>
+        <button type="button" class="btn-close close pull-right" (click)="holidayPolicyDataModal.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-viwe-employee-holiday-policy
+        [getHolidayPolicyID]="getHolidayPolicyID"></app-viwe-employee-holiday-policy>
+      </div>
+    </div>
+  </div>
+</div>

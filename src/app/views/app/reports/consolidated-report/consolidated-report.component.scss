@@ -1,0 +1,283 @@
+body {
+  line-height: 1.6;
+  margin: 2em;
+  min-width: 990px;
+}
+td,
+th {
+  white-space: nowrap;
+  overflow: hidden;
+}
+th {
+  background-color: #134e4a;
+  color: #fff;
+  padding: 0.5em 1em;
+  border: 1px solid white;
+}
+
+td {
+  border: 1px solid #c9c9c9 !important;
+  border-top: 1px solid #eee;
+  padding: 0.5em 1em;
+  text-align: center;
+}
+
+input {
+  cursor: pointer;
+}
+
+/* Column types */
+.missed-col {
+  background-color: #f00;
+}
+
+.missed-col {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  display: inline-block;
+  // width: 100%;
+  padding: 9px;
+}
+
+.missed-col4 {
+  background-color: #f00;
+}
+
+.missed-col4 {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-col1 {
+  background-color: #f00;
+}
+
+.missed-col1 {
+  background-color: lightgreen;
+  color: green;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-col2 {
+  background-color: #f00;
+}
+
+.missed-col2 {
+  background-color: lightyellow;
+  color: black;
+  text-align: center;
+  display: inline-block;
+  // width: 100%;
+  padding: 9px;
+}
+
+.missed-col3 {
+  background-color: #f00;
+}
+
+.missed-col3 {
+  background-color: lightgreen;
+  color: green;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-cols {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  width: 100%;
+}
+.missed-cols1 {
+  background-color: #28a745;
+}
+
+.missed-cols1 {
+  background-color: #28a745;
+  color:  #000000;
+  text-align: center;
+  width: 100%;
+}
+
+.missed-cols2 {
+  background-color: #f00;
+}
+
+.missed-cols2 {
+  background-color: lightyellow;
+  color: black;
+  text-align: center;
+  width: 100%;
+}
+
+.name-col {
+  text-align: left;
+  width: 20%;
+  padding: 17px;
+}
+
+
+
+
+.present {
+  background: #28a745;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+.absent{
+  background: #ff3200;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+.halfday {
+  background: #f78325;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+.notpunchout {
+  background: #8104a0;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+.weekoff{
+  background: #3462f6;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+.holiday{
+  background: #5ab0de;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+.penaltywithdeduction{
+  background: #7b68ee;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+.penaltywithoutdeduction{
+  background: #ffe83d;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+.leave {
+  background: #fc8ca5;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+  padding: 9px;
+}
+
+
+
+
+.present1 {
+  background: #28a745;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.absent1{
+  background: #ff3200;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+.halfday1 {
+  background: #f78325;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.notpunchout1 {
+  background: #8104a0;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.weekoff1{
+  background: #3462f6;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.holiday1{
+  background: #5ab0de;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.penaltywithdeduction1{
+  background: #7b68ee;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.penaltywithoutdeduction1{
+  background: #ffe83d;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}
+
+.leave1 {
+  background: #fc8ca5;
+  color: #000000;
+  text-align: center;
+  width: fit-content;
+  padding: 9px;
+}

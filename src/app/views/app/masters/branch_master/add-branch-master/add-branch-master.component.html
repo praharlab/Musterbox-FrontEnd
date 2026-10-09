@@ -1,0 +1,188 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Branch</h5>
+
+    <form #addbranch="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (allcomp.length > 0) {
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+                name="company" required [(ngModel)]="company_id">
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && addbranch.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-5">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #branchName="ngModel" name="branchName" />
+            <span>Branch Name *</span>
+            @if (!branchName.valid && addbranch.submitted) {
+              <div class="invalid-tooltip">
+                Branch Name is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" placeholder="" required ngModel #branchCode="ngModel"
+              name="branchCode" />
+              <span>Branch Code *</span>
+              @if (!branchCode.valid && addbranch.submitted) {
+                <div class="invalid-tooltip">
+                  Branch Code is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" placeholder="" ngModel #latitude="ngModel" name="latitude" />
+              <span>Latitude</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" placeholder="" ngModel #longitude="ngModel" name="longitude" />
+              <span>Longitude</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" placeholder="" ngModel #radius="ngModel" name="radius" />
+              <span>Radius</span>
+            </label>
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #branchAddress="ngModel" name="branchAddress" required></textarea>
+              @if (!branchAddress.valid && addbranch.submitted) {
+                <div class="invalid-tooltip">
+                  Branch Address is required!
+                </div>
+              }
+              <span>Branch Address *</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcountry($event)" ngModel #country1="ngModel"
+                required name="country1">
+                @for (countrys of country; track countrys) {
+                  <ng-option [value]="countrys.countryMasterID">
+                    {{ countrys.countryName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Branch Country *</span>
+              @if (!country1.valid && addbranch.submitted) {
+                <div class="invalid-tooltip">
+                  Country is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectstate($event)" ngModel #state1="ngModel"
+                [(ngModel)]="selectedstate" required name="state1">
+                @for (states of state; track states) {
+                  <ng-option [value]="states.stateMasterID">
+                    {{ states.stateName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Branch State *</span>
+              @if (!state1.valid && addbranch.submitted) {
+                <div class="invalid-tooltip">
+                  Country is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcity($event)" ngModel #city1="ngModel" required
+                [(ngModel)]="selectedcity" name="city1">
+                @for (citys of city; track citys) {
+                  <ng-option [value]="citys.cityMasterID">
+                    {{ citys.cityName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Branch City *</span>
+              @if (!city1.valid && addbranch.submitted) {
+                <div class="invalid-tooltip">
+                  Country is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" placeholder="" ngModel #gstNumber="ngModel" name="gstNumber" />
+              <span>GST No.</span>
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" placeholder="" ngModel #lwfNumber="ngModel" name="lwfNumber" />
+              <span>LWF No.</span>
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" placeholder="" ngModel #professionaltaxNumber="ngModel"
+                name="professionaltaxNumber" />
+                <span>Professional Tax No.</span>
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" placeholder="" ngModel #pfNumber="ngModel" name="pfNumber" />
+                <span>{{pfNumberlabel}}</span>
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" placeholder="" ngModel #esicNumber="ngModel" name="esicNumber" />
+                <span>{{esicNumberlabel}}</span>
+              </label>
+            </div>
+          </div>
+
+          <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+            [isDisabled]="buttonDisabled" click="onLoginClick()">
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/branch'"
+            style="margin-left: 2%">
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

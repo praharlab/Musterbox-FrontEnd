@@ -1,0 +1,129 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Performance Review </h5>
+
+    @if (comp) {
+      <form #addPerformanceReview="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="company_id" #companyMasterID="ngModel"
+                name="companyMasterID" required (change)="getReviewFormData($event)">
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addPerformanceReview.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" #reviewID="ngModel" name="reviewID" ngModel
+                required>
+                @for (review of reviewFormData; track review) {
+                  <ng-option [value]="review.id">
+                    {{ review.title }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Review Form*</span>
+              @if (!reviewID.valid && addPerformanceReview.submitted) {
+                <div class="invalid-tooltip">
+                  Review Form is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4 " style="visibility: hidden;"></div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #title="ngModel" name="title" required />
+              <span>Title *</span>
+              @if (!title.valid && addPerformanceReview.submitted) {
+                <div class="invalid-tooltip">
+                  Title is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #description="ngModel" name="description"
+              ngModel></textarea>
+              <span>Description </span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #status="ngModel" name="status" required>
+                <ng-option value="Initiated">INITIATED</ng-option>
+                <ng-option value="In Progress">IN PROGRESS</ng-option>
+                <ng-option value="Completed">COMPLETED</ng-option>
+              </ng-select>
+              <span>Select Status *</span>
+              @if (!status.valid && addPerformanceReview.submitted) {
+                <div class="invalid-tooltip">
+                  Status is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate"
+                (change)="selectfrom()" required />
+                <span>Start Date *</span>
+                @if (!fromdate.valid && addPerformanceReview.submitted) {
+                  <div class="invalid-tooltip">
+                    Start Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            @if (enddate != null) {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel #todate="ngModel" name="todate"
+                    [ngModel]="enddate | date: 'yyyy-MM-dd'" required />
+                    <span>To Date</span>
+                  </label>
+                </div>
+              }
+              @if (enddate == null) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" />
+                    <span>End Date *</span>
+                    @if (!fromdate.valid && addPerformanceReview.submitted) {
+                      <div class="invalid-tooltip">
+                        End Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+            </div>
+            <button class="btn btn-primary  btn-shadow mt-4" type="submit" (click)="onSubmit()">
+              Submit
+            </button>
+            &nbsp;
+            <button class="btn btn-danger  btn-shadow mt-4" type="button"
+              [routerLink]="adminRoot + '/pms/performanceReview'">
+              Cancel
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

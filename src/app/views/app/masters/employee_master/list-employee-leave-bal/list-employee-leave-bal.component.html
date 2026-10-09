@@ -1,0 +1,96 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Leave Balance</h5>
+    <div class="col-md-12" style="margin-bottom: 20px">
+      <table border="1" class="col-md-6">
+        <tr>
+          <th colspan="3" style="text-align: center; background-color: lightgray">
+            Balance Details
+          </th>
+        </tr>
+        <tr>
+          <th style="text-align: center">Leave Name</th>
+          <th style="text-align: center">Opening Balance</th>
+          <th style="text-align: center">YearMM</th>
+        </tr>
+        @for (value of UserLeaveBal; track value; let i = $index) {
+          <tr>
+            <td style="text-align: center">{{ value.leavename }} ( {{ value.leavedesc }} )</td>
+            <td style="text-align: center">
+              <input
+                class="form-control"
+                type="number"
+                [(ngModel)]="value.leavebal"
+                [name]="'leavebal_' + i"
+                />
+              </td>
+              <td style="text-align: center">
+                <input
+                  class="form-control"
+                  type="month"
+                  [(ngModel)]="value.YearMM"
+                  [name]="'YearMM_' + i"
+                  />
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary float-right" [disabled]="isdisabled" (click)="onSubmit()">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="mb-4">Monthly Leave Added</h5>
+        <div class="col-md-12" style="margin-bottom: 20px">
+          <table border="1" class="col-md-6">
+            <tr>
+              <th style="text-align: center">Leave Name</th>
+              <th style="text-align: center">No of Leaves</th>
+              <th style="text-align: center">YearMM</th>
+            </tr>
+            @for (value of LeaveBalance; track value; let i = $index) {
+              <tr>
+                <td style="text-align: center">
+                  {{ value['hrLeaveType.LeaveMaster.LeaveName'] }} (
+                  {{ value['hrLeaveType.LeaveMaster.LeaveDesc'] }} )
+                </td>
+                <td style="text-align: center">{{ value.LeaveAddNew }}</td>
+                <td style="text-align: center">
+                  <input
+                    class="form-control"
+                    type="month"
+                    [readonly]="true"
+                    [(ngModel)]="value.YearMM"
+                    [name]="'YearMM_' + i"
+                    />
+                  </td>
+                </tr>
+              }
+            </table>
+          </div>
+          <br />
+          <h5 class="mb-4">Monthly Leave Used</h5>
+          <div class="col-md-12" style="margin-bottom: 20px">
+            <table border="1" class="col-md-6">
+              <tr>
+                <th style="text-align: center">Leave Date</th>
+                <th style="text-align: center">Leave Type</th>
+                <th style="text-align: center">Remark</th>
+              </tr>
+              @for (value of Leaveused; track value; let i = $index) {
+                <tr>
+                  <td style="text-align: center">{{ value.date }}</td>
+                  <td style="text-align: center">{{ value['userLeave.DayType'] }}</td>
+                  <td style="text-align: center">{{ value['userLeave.Remark'] }}</td>
+                </tr>
+              }
+            </table>
+          </div>
+        </div>
+      </div>

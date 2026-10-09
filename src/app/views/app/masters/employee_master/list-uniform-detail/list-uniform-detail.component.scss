@@ -1,0 +1,13 @@
+::ng-deep .tool_tip ~ .tooltip .tooltip-inner {
+    max-width: 150px;
+    font-size: 10px;
+  }
+  
+  p {
+    margin: 0px;
+  }
+
+  .rows {
+    display: flex;
+    gap: 10px;
+  }

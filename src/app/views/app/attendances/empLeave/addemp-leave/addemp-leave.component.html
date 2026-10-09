@@ -1,0 +1,179 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Employee Leave</h5>
+    @if (showLeaveBalance) {
+      <div class="mb-5 ml15">
+        <p class="fs14 fs500 textBalance textBalance mb10">
+          <span>AVAILABLE</span> &nbsp;
+          <span>({{totalLeaveBalance}})</span>
+        </p>
+        <div class="d-flex flex-wrap">
+          @for (item of leaveBalance; track item; let i = $index) {
+            <div class="leaveItem"
+              [ngClass]="{ 'border-right': i !== leaveBalance.length - 1, 'pl0': i == 0 }">
+              <div class="d-flex flex-lg-column flex-md-row flex-sm-row flex-column">
+                <div class="cursor-pointer">
+                  <div class="mb-0 mb-1 d-flex align-items-center">
+                    <p class="fs14 textDark">{{ item.leaveName }}:</p>
+                    <p class="fs18 ml10 fw600 textDark">{{ item.Balance }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+    @if (leaveTypeArray.length > 0) {
+      <form #addEMPleave="ngForm" novalidate>
+        @for (leave of addleave; track leave; let i = $index) {
+          <div class="row"
+            [ngClass]="{'d-none': leave.deleted === true,'col-md-12 my-2': true}">
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" [(ngModel)]="leave.leaveType" name="leaveType{{i}}"
+                  #leaveType="ngModel" [required]="!leave.deleted" (change)="selectLeaveType($event,i)">
+                  @for (LeaveType of leaveTypeArray[i]; track LeaveType) {
+                    <ng-option [value]="LeaveType.leavetran">
+                      {{ LeaveType.leavename }} - ({{ LeaveType.leavedesc }})
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>LeaveType *</span>
+                @if (!leaveType.valid && addEMPleave.submitted && !leave.deleted) {
+                  <div class="invalid-tooltip">
+                    LeaveType is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" [(ngModel)]="leave.dayType" name="dayType{{i}} "
+                  #dayType="ngModel" [required]="!leave.deleted" (change)="changeDay()">
+                  <ng-option value="First Half">First Half</ng-option>
+                  <ng-option value="Second Half">Second Half</ng-option>
+                  <ng-option value="Full Day">Full Day</ng-option>
+                </ng-select>
+                <span>DayType *</span>
+                @if (!dayType.valid && addEMPleave.submitted && !leave.deleted) {
+                  <div class="invalid-tooltip">
+                    dayType is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" name="from{{i}}" [(ngModel)]="leave.from" #from="ngModel"
+                  (change)="changeDay();checkOptionalLeave(i);" [required]="!leave.deleted" />
+                  <span>FromDate *</span>
+                  @if (!from.valid && addEMPleave.submitted && !leave.deleted) {
+                    <div class="invalid-tooltip">
+                      FromDate is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              @if (leave.visible == true) {
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" name="to{{i}}" [(ngModel)]="leave.to" #to="ngModel"
+                      [min]="leave.from" (change)="changeDay();checkOptionalLeave(i);" [required]="!leave.deleted" />
+                      <span>ToDate *</span>
+                      @if (!to.valid && addEMPleave.submitted && !leave.deleted) {
+                        <div class="invalid-tooltip">
+                          ToDate is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                <div class="col-md-1">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" name="days{{i}}" [(ngModel)]="leave.days" readonly />
+                    <span>LeaveDays</span>
+                  </label>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" type="text" [name]="'remark_' + i" [(ngModel)]="leave.remark"></textarea>
+                    <span>Reason</span>
+                  </label>
+                </div>
+                <!-- <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" ngModel placeholder="" accept=".png, .jpg, .jpeg, application/pdf" #file="ngModel"
+                    name="file" (change)="onFileChange($event,i)" [required]="+leave.minLeaveAttachment > 0 && (+leave.days >= +leave.minLeaveAttachment)" />
+                    <span>Attachment {{+leave.minLeaveAttachment > 0 && (+leave.days >= +leave.minLeaveAttachment)?'*':''}} </span>
+                    <div *ngIf="!file.valid && addEMPleave.submitted && !leave.deleted" class="invalid-tooltip">
+                      Attachment is required!
+                    </div>
+                  </label>
+                </div> -->
+                @if (+leave.minLeaveAttachment > 0 && (+leave.days >= +leave.minLeaveAttachment)) {
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="file" ngModel placeholder="" accept=".png, .jpg, .jpeg, application/pdf" #file="ngModel"
+                        name="file" (change)="onFileChange($event,i)" required />
+                        <span>Attachment * </span>
+                        @if (!file.valid && addEMPleave.submitted && !leave.deleted) {
+                          <div class="invalid-tooltip">
+                            Attachment is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  @if (+leave.minLeaveAttachment <= 0 || (+leave.days < +leave.minLeaveAttachment)) {
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="file" ngModel placeholder="" accept=".png, .jpg, .jpeg, application/pdf" #file="ngModel"
+                          name="file" (change)="onFileChange($event,i)" />
+                          <span>Attachment </span>
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-12">
+                      @if (this.optionalholidayArray[i] && this.optionalholidayArray[i].length >0) {
+                        <span
+                          style="color: green;margin: 3%;"> ***You can also apply Optional Holiday for {{this.optionalholidayArray[i]
+                          | date:'dd-MM-yyyy'}}
+                        </span>
+                      }
+                      @if (i != 0) {
+                        <a (click)="removeLeave(i)">
+                          <button class="btn btn-danger" type="button">
+                            <span [class]="'glyph-icon simple-icon-trash tool_tip'" style="color: white"></span>
+                            {{ ' ' }}
+                          </button>
+                        </a>
+                      }
+                    </div>
+                    &nbsp;
+                    &nbsp;
+                  </div>
+                }
+                <div>
+                  <button class="btn btn-primary float-right" type="button" (click)="addLeaveData()">Add</button>
+                </div>
+                <br />
+                <div class="col-md-12">
+                  <button class="btn btn-primary mt-4" type="submit" (click)="onSubmit()" [disabled]="isdisabled">
+                    {{ 'forms.submit' | translate }}
+                  </button>
+                  <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/attendances/employeeLeave'"
+                    style="margin-left: 2%">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+        </div>
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

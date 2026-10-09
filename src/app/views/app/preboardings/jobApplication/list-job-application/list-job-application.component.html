@@ -1,0 +1,668 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showDisplayMode]="false"
+  [searchValue]="users_Body.searchQuery" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="users_Body.limit"
+[itemOptionsPerPage]="itemOptionsPerPage" name="Job Application"></app-list-page-header>
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" [(ngModel)]="company_id" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName"
+                groupBy="selectedAllGroup" (ngModelChange)="selectbranch()" [(ngModel)]="selectedBranch"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="branchMasterID"
+                [closeOnSelect]="false" ngModel #branch="ngModel" name="branch">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Branch</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="alldepartment" [multiple]="true" bindLabel="departmentName"
+                  groupBy="selectedAllGroup" (ngModelChange)="selectdepartment()"
+                  [(ngModel)]="selectedDepartment" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                  bindValue="departmentId" [closeOnSelect]="false" ngModel #department="ngModel"
+                  name="department">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{standalone: true}" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Department</span>
+                </label>
+              </div>
+              <!-- select Job post -->
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="alldesignation" [multiple]="true" bindLabel="designationName"
+                    groupBy="selectedAllGroup" (ngModelChange)="selectdesig()" [(ngModel)]="selecteddesig"
+                    [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="designationId"
+                    [closeOnSelect]="false" ngModel #designation="ngModel" name="designation">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Designation</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="alljobpost" [multiple]="true" bindLabel="jobTitle"
+                      groupBy="selectedAllGroup" (ngModelChange)="selectdedJobPost()"
+                      [(ngModel)]="selectedJobPost" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                      bindValue="jobPostingID" [closeOnSelect]="false" ngModel #jobpost="ngModel" name="jobpost">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Job Post</span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel #jobApplicationStatus="ngModel"
+                        [(ngModel)]="selectedJobAppicationStatus" name="jobApplicationStatus"
+                        (ngModelChange)="selectApplicationStatus()">
+                        <ng-option value="1">Pending</ng-option>
+                        <ng-option value="2">Accepted</ng-option>
+                        <ng-option value="0">Rejected</ng-option>
+                      </ng-select>
+                      <span>Job Appication Status</span>
+                    </label>
+                  </div>
+                  <div class="col-md-12">
+                    <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+                      {{ 'forms.submit' | translate }}
+                    </button>
+                    &nbsp;&nbsp;
+                    <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+                      Clear
+                    </button>
+                    @if (rows && rows.length != 0) {
+                      <button class="btn btn-success form-group ml-2" type="button" (click)="download()"
+                        >
+                        Download Excel
+                      </button>
+                    }
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        }
+
+        @if (rows && rows.length > 0 && permissionview.length != 0) {
+          <div class="row">
+            <div class="col-12 mb-4 data-table-rows">
+              <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+                [limit]="users_Body.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+                (page)="onChange($event)">
+                @if (permissionedit.length != 0) {
+                  <ngx-datatable-column name="Action" prop="jobApplicationStatus" [flexGrow]="1.2" [width]="220"
+                    >
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      @if (
+                        row.jobApplicationStatus == '1'
+                        ) {
+                        <div>
+                          <button type="button" class="btn btn-success"
+                            (click)="openAcceptModalAndSubmit(row.jobApplicationID)">
+                            {{ 'Accept' | translate }}
+                          </button>
+                          {{ ' ' }}
+                          <button type="button" class="btn btn-danger"
+                            (click)="openRejectModalAndSubmit(row.jobApplicationID)">
+                            {{ 'Reject' | translate }}
+                          </button>
+                          {{ ' ' }}
+                        </div>
+                      }
+                    </ng-template>
+                  </ngx-datatable-column>
+                }
+                @if (permissionedit.length != 0) {
+                  <ngx-datatable-column name="Application Status" prop="jobApplicationStatus" [flexGrow]="1.2" [width]="220"
+                    >
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      @if (row.jobApplicationStatus == '0') {
+                        <button type="button" class="btn btn-outline-danger btn-xs">
+                          {{ 'Rejected' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (row.jobApplicationStatus == '1') {
+                        <button type="button" class="btn btn-outline-warning btn-xs"
+                          >
+                          {{ 'Pending' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (row.jobApplicationStatus == '2') {
+                        <button type="button" class="btn btn-outline-success btn-xs"
+                          >
+                          {{ 'Accepted' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                }
+                <ngx-datatable-column name="View Job" [flexGrow]="1.2" [width]="180">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <button type="button" class="btn btn-primary"
+                      (click)="showdata(row.jobApplicationID);lgModal.show();">
+                      View
+                    </button>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Company Name" prop="companyMaster.companyName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Branch Name" prop="branchMaster.branchName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Department Name" prop="department.departmentName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Designation Name" prop="designation.designationName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Job Title" prop="jobPosting.jobTitle" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="First Name" prop="firstName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Middle Name" prop="middleName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Last Name" prop="lastName" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Mobile Number" prop="countryMaster.countryCode" [flexGrow]="1.2" [width]="180">
+                  <ng-template let-row="row" ngx-datatable-cell-template style="text-align: center">
+                    @if (row.userNumberCountryMasterID) {
+                      <div>
+                        {{ row.countryMaster?.countryCode }} - {{ row.userNumber}}
+                      </div>
+                    }
+                    @if (!row.userNumberCountryMasterID) {
+                      <div>
+                        {{ row.userNumber}}
+                      </div>
+                    }
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="E-Mail" prop="email" [flexGrow]="1.2" [width]="130"></ngx-datatable-column>
+                <ngx-datatable-column name="Nationality" prop="nationality" [flexGrow]="1.2" [width]="130"></ngx-datatable-column>
+                <ngx-datatable-column name="Employee Type" prop="employeeType" [flexGrow]="1.2" [width]="130"></ngx-datatable-column>
+                <ngx-datatable-column name="Candidate Comment" prop="candidateComment" [flexGrow]="1.2" [width]="180">
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Applied Date" prop="createdAt" [flexGrow]="1.2" [width]="180">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.createdAt | date: 'dd-MM-yyyy HH:mm' }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Resume" [flexGrow]="1.2" [width]="200">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.resumeAttachment) {
+                      <a href="{{ apiURL }}{{ row.resumeAttachment }}" target="_blank">
+                        <button class="btn btn-outline-primary btn-xs">Resume</button>
+                      </a>
+                    }
+                  </ng-template>
+                </ngx-datatable-column>
+                @if (true) {
+                  <ngx-datatable-footer>
+                    <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                      let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                      <div class="w-100 d-flex justify-content-center">
+                        <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                          [customLastTemplate]="lastTemplate" [itemsPerPage]="users_Body.limit" [maxSize]="5"
+                          [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                        [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+                      </div>
+                    </ng-template>
+                  </ngx-datatable-footer>
+                }
+              </ngx-datatable>
+            </div>
+          </div>
+        }
+
+        <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+          <i class="simple-icon-arrow-left"></i>
+        </ng-template>
+        <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+          <i class="simple-icon-arrow-right"></i>
+        </ng-template>
+        <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-right"></i>
+        </ng-template>
+        <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-left"></i>
+        </ng-template>
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+        <!-- View Job Application -->
+        <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+          [config]="{ backdrop: 'static', keyboard: false }">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">Candidate Application Details</h4>
+                <button type="button" class="btn-close close pull-right" (click)="lgModal.hide();" aria-label="Close">
+                  <span aria-hidden="true" class="visually-hidden">&times;</span>
+                </button>
+              </div>
+              @if (editData) {
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="table-responsive">
+                        <h4>Job Data</h4>
+                        <table class="table table-striped">
+                          <tbody>
+                            <tr>
+                              <th>Company</th>
+                              <td>
+                                {{editData.companyMaster.companyName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Branch</th>
+                              <td>
+                                {{editData.branchMaster.branchName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Department</th>
+                              <td>
+                                {{editData.department.departmentName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Designation</th>
+                              <td>
+                                {{editData.designation.designationName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Job Title</th>
+                              <td>
+                                {{editData.jobPosting.jobTitle}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Job Role Type</th>
+                              <td>
+                                {{editData.jobPosting?.jobRoleClassification?.jobRoleClassificationName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Employment Type</th>
+                              <td>
+                                {{editData.jobPosting.employmentType}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Job Location</th>
+                              <td>
+                                {{editData.jobPosting.jobLocation}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Job Requirements</th>
+                              <td>
+                                {{editData.jobPosting.requirements}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Last Applicable Date</th>
+                              <td>
+                                {{$safeNavigationMigration(editData.jobPosting?.lastApplicableDate) | date : 'dd-MM-yyyy'}}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <br />
+                        <h4>Candidate Data</h4>
+                        <table class="table table-striped">
+                          <tbody>
+                            <tr>
+                              <th>First Name</th>
+                              <td>
+                                {{editData.firstName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Middle Name</th>
+                              <td>
+                                {{editData.middleName }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Last Name</th>
+                              <td>
+                                {{editData.lastName}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>User Number</th>
+                              @if (editData.userNumberCountryMasterID) {
+                                <td>
+                                  {{ editData.countryMaster?.countryCode }} - {{ editData.userNumber}}
+                                </td>
+                              }
+                              @if (!editData.userNumberCountryMasterID) {
+                                <td>
+                                  {{ editData.userNumber}}
+                                </td>
+                              }
+                            </tr>
+                            <tr>
+                              <th>Email</th>
+                              <td>
+                                {{editData.email}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Nationality</th>
+                              <td>
+                                {{editData.nationality}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Employee Type</th>
+                              <td>
+                                {{editData.employeeType}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Resume</th>
+                              <td>
+                                @if (editData.resumeAttachment) {
+                                  <a
+                                    href="{{ apiURL }}{{ editData.resumeAttachment }}" target="_blank">
+                                    <button class="btn btn-outline-primary btn-xs">Resume</button>
+                                  </a>
+                                }
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Applied Date-Time</th>
+                              <td>
+                                {{editData.createdAt | date : 'dd-MM-yyyy HH:mm'}}
+                              </td>
+                            </tr>
+                            @if (editData.jobApplicationStatus == 0) {
+                              <tr>
+                                <th>Rejection Remarks</th>
+                                <td>
+                                  {{editData.rejectionRemarks}}
+                                </td>
+                              </tr>
+                            }
+                            @if (editData.jobApplicationStatus == 2) {
+                              <tr>
+                                <th>Accept Remarks</th>
+                                <td>
+                                  {{editData.acceptRemarks}}
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  @if (editData.jobApplicationStatus == 2) {
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="table-responsive">
+                          <table class="table table-striped">
+                            <tbody>
+                              <tr>
+                                <th>InterView Type</th>
+                                <td>
+                                  {{editData.interViewType}}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>InterView Date</th>
+                                <td>
+                                  {{editData.interViewDate}}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>InterView Time</th>
+                                <td>
+                                  {{editData.interViewTime}}
+                                </td>
+                              </tr>
+                              @if (editData.interViewType == 'virtual') {
+                                <tr>
+                                  <th>InterView Link</th>
+                                  <td>
+                                    {{editData.interViewLink}}
+                                  </td>
+                                </tr>
+                              }
+                              @if (editData.interViewType == 'inperson') {
+                                <tr>
+                                  <th>InterView Address</th>
+                                  <td>
+                                    {{editData.interviewBranch.branchAddress}}
+                                  </td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+
+        <!-- accept request modal -->
+        <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+          [config]="{backdrop: 'static', keyboard: false}">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">Accept Job Application</h4>
+                <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+                  #closeModal1>
+                  <span aria-hidden="true" class="visually-hidden">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form #acceptJobApplicationForm="ngForm" novalidate (ngSubmit)="acceptJobApplication()">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <span>Interview Type *</span>
+                      &nbsp;&nbsp;
+                      <input type="radio" ngModel #interViewType="ngModel" name="amountType1" value="virtual"
+                        [(ngModel)]="selectedInterViewType" required style="margin-right: 1%" />
+                        <label for="true" style="margin-right: 4%">Virtual</label>
+                        <input type="radio" ngModel #interViewType="ngModel" name="amountType1" value="inperson"
+                          [(ngModel)]="selectedInterViewType" required style="margin-right: 1%" />
+                          <label for="false">In-Person @if (!interViewType.valid && acceptJobApplicationForm.submitted) {
+                            <div
+                              class="invalid-tooltip">
+                              InterView Type is required!
+                            </div>
+                          }</label>
+
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="date" placeholder="" ngModel #interViewDate="ngModel"
+                              name="interViewDate" required />
+                              <span>Interview Date *</span>
+                              @if (!interViewDate.valid && acceptJobApplicationForm.submitted) {
+                                <div
+                                  class="invalid-tooltip">
+                                  Interview Date is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="time" ngModel #interViewTime="ngModel" required
+                                name="interViewTime" />
+                                <span>Interview Time *</span>
+                                @if (!interViewTime.valid && acceptJobApplicationForm.submitted) {
+                                  <div
+                                    class="invalid-tooltip">
+                                    Interview Time is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            @if (selectedInterViewType == 'virtual') {
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" ngModel #interViewLink="ngModel"
+                                    [required]="selectedInterViewType == 'virtual'" name="interViewLink" />
+                                    <span>Interview Link *</span>
+                                    @if (!interViewLink.valid && acceptJobApplicationForm.submitted) {
+                                      <div
+                                        class="invalid-tooltip">
+                                        Interview Link is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                              }
+                              @if (selectedInterViewType == 'inperson') {
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <ng-select placeholder="Choose your option" ngModel #interViewBranchMasterID="ngModel"
+                                      name="interViewBranchMasterID" required>
+                                      @for (item of allbranch; track item) {
+                                        <ng-option [value]="item.branchMasterID">
+                                          {{ item.branchName }}
+                                        </ng-option>
+                                      }
+                                    </ng-select>
+                                    <span>Interview Branch *</span>
+                                    @if (!interViewBranchMasterID.valid && acceptJobApplicationForm.submitted) {
+                                      <div
+                                        class="invalid-tooltip">
+                                        Interview Branch is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                              }
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <ng-select placeholder="Choose your option" ngModel #preboardingMasterID="ngModel"
+                                    required name="preboardingMasterID">
+                                    @for (item of allForm; track item) {
+                                      <ng-option [value]="item.preboardingMasterID">
+                                        {{ item.preboardingMasterName }}
+                                      </ng-option>
+                                    }
+                                  </ng-select>
+                                  <span>Select Pre-Boarding Form *</span>
+                                  @if (!preboardingMasterID.valid && acceptJobApplicationForm.submitted) {
+                                    <div
+                                      class="invalid-tooltip">
+                                      Interview Pre-Bording Form is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <label class="form-group has-float-label">
+                                  <textarea type="text" class="form-control" ngModel #acceptRemarks="ngModel"
+                                  name="acceptRemarks"></textarea>
+                                  <span>Accept Remarks</span>
+                                </label>
+                              </div>
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                              {{ 'forms.submit' | translate }}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- reject modal -->
+
+                  <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                    [config]="{backdrop: 'static', keyboard: false}">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title pull-left">Reject Job Application</h4>
+                          <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+                            #closeModal2>
+                            <span aria-hidden="true" class="visually-hidden">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form #rejectJobApplicationForm="ngForm" novalidate (ngSubmit)="rejectJobApplication()">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <textarea type="text" class="form-control" ngModel #rejectionRemarks="ngModel" required
+                                  name="rejectionRemarks"></textarea>
+                                  <span>Rejection Remarks *</span>
+                                  @if (!rejectionRemarks.valid && rejectJobApplicationForm.submitted) {
+                                    <div
+                                      class="invalid-tooltip">
+                                      Rejection Remarks is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                              {{ 'forms.submit' | translate }}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>

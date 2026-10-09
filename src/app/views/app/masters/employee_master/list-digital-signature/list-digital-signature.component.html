@@ -1,0 +1,185 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+<br />
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;">
+          @if (item.signature) {
+            <img
+              alt="Profile"
+              src="{{ apiURL }}uploads/user/signature/{{ item.signature }}"
+              class="img-thumbnail border-0 m-4 list-thumbnail align-self-center"
+              />
+          }
+        </a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%"
+            >
+            <!-- <div class="min-width-zero" >
+            <a href="javascript:;">
+              <p class="list-item-heading mb-1 truncate">Digital Signature</p>
+              <button type="button" class="btn btn-success" *ngIf="item.status == '1'" (click)="alertDeactiveConfirmation(item.employeeDigitalSignatureID);" style="margin-top: 10%;">{{'Active' | translate}}</button>{{" "}}
+              <button type="button" class="btn btn-danger" *ngIf="item.status == '0'" (click)="alertActiveConfirmation(item.employeeDigitalSignatureID);" style="margin-top: 10%;">{{'Deactive' | translate}}</button>{{" "}}
+            </a>
+          </div> -->
+          <div class="min-width-zero">
+            <a href="javascript:;">
+              <p class="list-item-heading mb-1 truncate">Digital Signature</p>
+              @if (item.status == '1') {
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  style="margin-top: 10%"
+                  >
+                  {{ 'Active' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.status == '0') {
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  style="margin-top: 10%"
+                  >
+                  {{ 'Deactive' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+            </a>
+          </div>
+          <div style="margin-top: 14px">
+            <a class="btn btn-outline-primary btn-xs" (click)="lgModal1.show(); edit(item)">EDIT</a>
+            <br />
+            <a
+              class="btn btn-outline-primary btn-xs"
+              (click)="alertConfirmation(item.employeeDigitalSignatureID)"
+              style="margin-top: 10%"
+              >
+              DELETE
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
+
+<div
+  bsModal
+  #lgModal="bs-modal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+  >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Signature</h4>
+        <button
+          type="button"
+          class="btn-close close pull-right"
+          (click)="lgModal.hide()"
+          aria-label="Close"
+          #closeModal
+          >
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="file"
+                  ngModel
+                  #signature="ngModel"
+                  name="signature"
+                  required
+                  (change)="onSelectFile($event)"
+                  />
+                  <span>Digital Signature *</span>
+                  @if (!signature.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Signature is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    bsModal
+    #lgModal1="bs-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+    >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Edit Employee Digital Signature</h4>
+          <button
+            type="button"
+            class="btn-close close pull-right"
+            (click)="lgModal1.hide()"
+            aria-label="Close"
+            #closeModal1
+            >
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (editbyid) {
+            <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="file"
+                      ngModel
+                      #signature="ngModel"
+                      name="signature"
+                      (change)="onSelectFile($event)"
+                      />
+                      <span>Digital Signature</span>
+                      @if (editbyid.signature && !url) {
+                        <img
+                          alt="Profile"
+                          src="{{ apiURL }}uploads/user/signature/{{ editbyid.signature }}"
+                          class="img-thumbnail border-0 m-4 list-thumbnail align-self-center"
+                          />
+                      }
+                      @if (url) {
+                        <img
+                          alt="Profile"
+                          src="{{ url }}"
+                          class="img-thumbnail border-0 m-4 list-thumbnail align-self-center"
+                          />
+                      }
+                    </label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+              </form>
+            }
+          </div>
+        </div>
+      </div>
+    </div>

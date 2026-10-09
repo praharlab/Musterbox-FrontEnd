@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Dashboard"></app-heading>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <tabset class="separator-tabs">
+      <tab heading="Dashboard" (selectTab)="navigate('dashboard')">
+        <div class="row">
+          <div class="col-md-12">
+            <form #companyFilter="ngForm" novalidate>
+              <div class="row">
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" (change)="onCompanyIdChange($event)" ngModel
+                      #companyMasterID="ngModel" name="companyMasterID" [(ngModel)]="defaultCompany">
+                      @for (company of companyData; track company) {
+                        <ng-option [value]="company.companyMasterID">
+                          {{ company.companyName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Company</span>
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col-lg-6 col-xl-4 mb-4">
+            <app-punch-in-out-graph></app-punch-in-out-graph>
+          </div>
+          <div class="col-lg-6 col-xl-4 mb-4">
+            <app-employee-status-graph></app-employee-status-graph>
+          </div>
+          <div class="col-xl-4 col-lg-6 mb-4">
+            <app-payroll-graph></app-payroll-graph>
+          </div>
+          <div class="col-xl-4 col-lg-6 mb-4">
+            <app-miss-punch></app-miss-punch>
+          </div>
+          <div class="col-lg-12 col-xl-8 mb-4">
+            <app-request-box></app-request-box>
+          </div>
+        </div>
+        <div class="mb-4">
+          <app-month-attendance-graph></app-month-attendance-graph>
+        </div>
+
+        <app-punch-in-out></app-punch-in-out>
+
+        <app-employee-status></app-employee-status>
+      </tab>
+      <tab heading="Profile Status" (selectTab)="navigate('profile-status-tab')"></tab>
+
+      <tab heading="Expiry Document" (selectTab)="navigate('expiry-document-tab')"></tab>
+
+      <tab [heading]='confirmLabel' (selectTab)="navigate('to-be-confirmed-employee-tab')"></tab>
+
+      <tab heading="Expiry Joining Document" (selectTab)="navigate('expiry-joining-document-tab')"></tab>
+
+      <tab heading="Assign Biometric Code to User" (selectTab)="navigate('assign-biometric-code-users')"></tab>
+
+      <tab heading="Un-Assigned Biometric Code" (selectTab)="navigate('unassigned-Employee-code')"></tab>
+
+      <tab heading="Assigned Shift" (selectTab)="navigate('assigned-shift')"></tab>
+
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+    </tabset>
+  </div>
+</div>

@@ -1,0 +1,274 @@
+<button class="btn btn-primary btn-shadow mb-1" [routerLink]="adminRoot + '/tickets/listTicket'">
+  Back
+</button>
+
+@if (permissionview.length != 0) {
+  <div class="row app-row">
+    <div class="col-12 chat-app">
+      <!-- Conversation Header -->
+      @if (selectedConversation) {
+        <div class="d-flex flex-row justify-content-between mb-3">
+          <!-- User Profile Image -->
+          <div class="d-flex flex-row chat-heading">
+            <!-- <a class="d-flex" href="javascript:;">
+            <p class="img-thumbnail border-0 rounded-circle ml-0 mr-4 list-thumbnail align-self-center small"
+            style="padding: 22% 0 0 0;">#{{getOtherUser(selectedConversation.users).ticketId}}</p>
+          </a>   -->
+          <div class="d-flex min-width-zero">
+            <div
+              class="card-body p-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              >
+              <div class="min-width-zero">
+                <p class="list-item-heading mb-1 truncate">
+                  #{{ getOtherUser(selectedConversation.users).ticketId }}{{ ' ' }}
+                  {{ getOtherUser(selectedConversation.users).question }}
+                  {{ ' ' }}
+                  <span
+                    type="button"
+                    class="btn-primary simple-icon-info info-icon"
+                    tooltip="Ticket Information"
+                    (click)="showInfo()"
+                  ></span>
+                </p>
+                <p class="mb-0 text-muted text-small">
+                  {{ getOtherUser(selectedConversation.users).status }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <button
+            type="button"
+            class="btn btn-link refresh-button"
+            (click)="refreshChat()"
+            tooltip="Refresh Chat"
+            >
+            <i class="simple-icon-refresh icon"></i>
+          </button>
+        </div>
+      </div>
+    }
+    <div class="separator mb-5"></div>
+    <!-- Messages -->
+    @if (selectedConversation) {
+      <perfect-scrollbar
+        class="scroll"
+        [config]="{ suppressScrollX: true, wheelPropagation: false }"
+        #scroll
+        >
+        @for (m of selectedConversation.messages; track m) {
+          <div
+            [ngClass]="{
+              'float-right': m.sender == currentUserId,
+              'float-left': m.sender != currentUserId,
+              'card d-inline-block mb-3': true
+            }"
+            >
+            <div class="position-absolute pt-1 pr-2 r-0">
+              <span class="text-extra-small text-muted">
+                {{ m.time | date: 'dd-MM-yyyy h:mm a' }}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-row pb-2">
+                <a class="d-flex" href="javascript:;">
+                  <img
+                    [alt]="'img'"
+                    [src]="getUser(m.sender).img"
+                    class="img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall"
+                    />
+                  </a>
+                  <div class="d-flex flex-grow-1 min-width-zero">
+                    <div
+                      class="m-2 pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+                      >
+                      <div class="min-width-zero">
+                        <p class="mb-0 truncate list-item-heading">{{ getUser(m.sender).title }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="chat-text-left">
+                  <p class="mb-0 text-semi-muted">{{ m.text }}</p>
+                  @if (m.attachments && m.attachments.length > 0) {
+                    <div class="mt-2">
+                      <ul class="list-unstyled">
+                        @for (attachment of m.attachments; track attachment) {
+                          <li>
+                            <a href="javascript:;" (click)="showDocument(attachment)">
+                              <i class="simple-icon-paper-clip"></i>
+                              {{ attachment }}
+                            </a>
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          }
+        </perfect-scrollbar>
+      }
+    </div>
+  </div>
+}
+
+<div class="chat-input-container" style="height: auto">
+  @if (images) {
+    <div
+      class="d-flex justify-content-between align-items-center attachemnt-main flex-column"
+      >
+      @for (name of images; track name) {
+        <div class="attachment-names col-md-12">
+          <span style="color: white">{{ name.name }}</span>
+          {{ ' ' }}
+          <button type="button" class="close-icon" (click)="removeAttachment(name)">
+            <i class="simple-icon-close"></i>
+          </button>
+        </div>
+      }
+    </div>
+  }
+  <div class="d-flex justify-content-between align-items-center">
+    <textarea
+      class="form-control flex-grow-1"
+      placeholder="Say something..."
+      [(ngModel)]="message"
+      (keyup)="messageInputKeyUp($event)"
+    ></textarea>
+
+    <div>
+      <button
+        type="button"
+        class="btn btn-outline-primary icon-button large"
+        (click)="attachFile()"
+        >
+        <i class="simple-icon-paper-clip"></i>
+      </button>
+      <input
+        type="file"
+        #fileInput
+        style="display: none"
+        multiple
+        (change)="onFileChange($event)"
+        accept="image/png, image/jpeg, image/png"
+        />
+        <button type="button" class="btn btn-primary icon-button large ml-2" (click)="sendMessage()">
+          <i class="simple-icon-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    bsModal
+    #openModal="bs-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+    >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="btn-close close pull-right"
+            (click)="openModal.hide()"
+            aria-label="Close"
+            #closeModal
+            >
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <img src="{{ imageUrl }}" alt="Image" id="previewImage" class="img-fluid" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    bsModal
+    #openModal2="bs-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+    >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title pull-left">Ticket Information</h5>
+          <button
+            type="button"
+            class="btn-close close pull-right"
+            (click)="openModal2.hide()"
+            aria-label="Close"
+            #closeModal2
+            >
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (responseData) {
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <td style="font-weight: 800">Assign to</td>
+                  @if (responseData.ticketAssignedTo) {
+                    <td>
+                      :&nbsp;{{ responseData.ticketAssignedTo.displayName }}
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  <td style="font-weight: 800">Ticket Category</td>
+                  @if (responseData.ticketCategory) {
+                    <td>
+                      :&nbsp;{{ responseData.ticketCategory.name }}
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  <td style="font-weight: 800">Ticket Sub Category</td>
+                  @if (responseData.ticketSubCategory) {
+                    <td>
+                      :&nbsp;
+                      {{ responseData.ticketSubCategory.name }}
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  <td style="font-weight: 800">Created At</td>
+                  @if (responseData.createdAt) {
+                    <td>
+                      :&nbsp;
+                      {{ responseData.createdAt | date: 'dd-MM-yyyy ' }}
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  <td style="font-weight: 800">Ticket Attachments</td>
+                  <td>:</td>
+                </tr>
+              </tbody>
+            </table>
+          }
+          @for (item of responseData.attachments; track item; let i = $index) {
+            <div>
+              <img alt="Thumbnail" [src]="apiURL + item" class="img-fluid" />
+              <hr />
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

@@ -1,0 +1,125 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name="Shift Validate"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  [showItemsPerPage]="false"
+  [showSearch]="false"
+  [itemOptionsPerPage]="itemOptionsPerPage"
+></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (clearData)="clear()" (getCompany)="getCompany($event)">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input
+          class="form-control"
+          type="date"
+          ngModel
+          #startdate="ngModel"
+          name="startdate"
+          required
+          />
+          <span>From Date *</span>
+          @if (!startdate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              From Date is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input
+            class="form-control"
+            type="date"
+            ngModel
+            #enddate="ngModel"
+            name="enddate"
+            required
+            />
+            <span>To Date *</span>
+            @if (!enddate.valid && commonFilter?.filterForm?.submitted) {
+              <div class="invalid-tooltip">
+                To Date is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <span><b>Shift Selection * :</b></span>
+          &nbsp;&nbsp;
+          <input
+            type="radio"
+            name="shiftSelection"
+            value="auto"
+            ngModel
+            #shiftSelection="ngModel"
+            id="autoShift"
+            style="margin-right: 1%"
+            required
+            />
+            <label
+              for="autoShift"
+              class="hover-label cursor-pointer"
+              style="margin-right: 1%"
+              title="Select this option to automatically determine the shift based on attendance.">
+              Automatic Shift
+            </label>
+            <input
+              type="radio"
+              name="shiftSelection"
+              value="manual"
+              ngModel
+              #shiftSelection="ngModel"
+              id="manualShift"
+              style="margin-right: 1%"
+              required
+              />
+              <label
+                for="manualShift"
+                class="hover-label cursor-pointer"
+                title="Select this option to manually assign a shift from the dropdown.">
+                Manual Shift
+              </label>
+              @if (!shiftSelection.valid && commonFilter?.filterForm?.submitted) {
+                <div class="invalid-tooltip">
+                  Shift Selection is required!
+                </div>
+              }
+            </div>
+            @if (commonFilter?.filterForm?.value?.shiftSelection == 'manual') {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #shiftID="ngModel"
+                    (ngModelChange)="onShiftChange($event)"
+                    name="shiftID"
+                    required
+                    >
+                    @for (item of allshift; track item) {
+                      <ng-option [value]="item.shiftID">
+                        {{ item.shiftName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Shift *</span>
+                </label>
+                @if (!shiftID.valid && commonFilter?.filterForm?.submitted) {
+                  <div class="invalid-tooltip">
+                    Shift is required!
+                  </div>
+                }
+              </div>
+            }
+          </app-common-filter>
+        }
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

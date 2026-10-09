@@ -1,0 +1,134 @@
+@if (leaveBalance && leaveBalance.length > 0) {
+  <div class="scrollStyleTable">
+    <div class="w-100 position-relative">
+      @if (showloader) {
+        <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+    </div>
+    <table border="1" class="Table" width="100%">
+      <tr>
+        <th colspan="10" style="text-align: center; background-color: lightgray">
+          Leave Balance
+        </th>
+      </tr>
+      <tr>
+        <th style="text-align: center" class="tableTh">Leave Name</th>
+        <th style="text-align: center" class="tableTh">Leave Description</th>
+        <th style="text-align: center" class="tableTh">Balance</th>
+        <th style="text-align: center" class="tableTh">Action</th>
+      </tr>
+      @for (leave of leaveBalance; track leave; let i = $index) {
+        <tr>
+          <td style="text-align: center" class="tableTd" width="25%">
+            {{leave?.leaveName}}
+          </td>
+          <td style="text-align: center" class="tableTd" width="25%">
+            {{leave?.LeaveDesc}}
+          </td>
+          <td style="text-align: center" class="tableTd" width="25%">
+            {{ leave?.Balance }}
+          </td>
+          <td style="text-align: center" class="tableTd" width="25%">
+            @if (leave?.Balance != 0) {
+              <button type="button" class="btn btn-danger btn-xs" (click)="leaveAction(leave,'Lapse')">
+                Lapse
+              </button>
+              {{ ' ' }}
+              <span> &nbsp; </span>
+              &nbsp;
+              &nbsp;
+              <button type="button" class="btn btn-success btn-xs" (click)="leaveAction(leave,'Encashment')">
+                En-cash
+              </button>
+              {{ ' ' }}
+            }
+          </td>
+        </tr>
+      }
+    </table>
+    <br />
+    <br />
+  </div>
+}
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    @if (leaveBalanceData) {
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">{{ body.operationType == 'Lapse' ? 'Lapse Balance' : 'Encash Balance'
+          }}</h4>
+          <button type="button" class="btn-close close pull-right" (click)="closeModalFunction()"
+            aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="scrollStyleTable">
+                <table border="1" class="Table" width="100%">
+                  <tr>
+                    <th style="text-align: center" class="tableTh">Leave Name</th>
+                    <th style="text-align: center" class="tableTh">Leave Description</th>
+                    <th style="text-align: center" class="tableTh">Balance</th>
+                  </tr>
+                  <tr>
+                    <td style="text-align: center" class="tableTd" width="25%">
+                      {{leaveBalanceData?.leaveName}}
+                    </td>
+                    <td style="text-align: center" class="tableTd" width="25%">
+                      {{leaveBalanceData?.LeaveDesc}}
+                    </td>
+                    <td style="text-align: center" class="tableTd" width="25%">
+                      {{ leaveBalanceData?.Balance }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <br>
+                <br>
+                  <br>
+                  </div>
+                </div>
+                <form #leaveBalanceForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" required ngModel #balance="ngModel"
+                          name="balance" [(ngModel)]="balanceVal" required
+                          (keydown)="preventArrowKeys($event)" />
+                          <span>Balance *</span>
+                          @if (!balance.valid && leaveBalanceForm.submitted) {
+                            <div class="invalid-tooltip">
+                              Balance is required!
+                            </div>
+                          }
+                          @if (invalidBalance) {
+                            <div class="invalid-tooltip">
+                              Invalid Balance
+                            </div>
+                          }
+                        </label>
+                        <br>
+                          <br>
+                          </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">{{ 'Submit' | translate }}</button>
+                      </form>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>

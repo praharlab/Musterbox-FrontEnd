@@ -1,0 +1,291 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit" (export)="export()"
+name="Pay Slip Generator"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (getCompany)="getCompany($event)" (onClear)="clear()" (clearData)="clear()" (export)="export()"
+    (import)="importExcel()" [showExtraButton]="showGenerateAllButton" extraButtonName="Generate All Pay Slip"
+    (onExtraButtonClick)="generateAllPaySlip($event)">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select [items]="payrollFrequencyType" ngModel #payrollFrequency="ngModel" required
+          name="payrollFrequency" [(ngModel)]="selectedPayrollFrequencyType" (change)="changePayrollFrequency()">
+        </ng-select>
+        <span>Payroll Frequency *</span>
+        @if (!payrollFrequency.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Payroll Frequency Is Required !
+          </div>
+        }
+      </label>
+    </div>
+    @if (['Fortnightly','Weekly'].includes(selectedPayrollFrequencyType)) {
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel required #year="ngModel" name="year"
+            (change)="selectYear($event)" [(ngModel)]="selectedYear">
+            @for (year of years; track year) {
+              <ng-option [value]="year">
+                {{ year }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Year *</span>
+          @if (!year.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Year is required!
+            </div>
+          }
+        </label>
+      </div>
+    }
+    @if (['Fortnightly','Weekly'].includes(selectedPayrollFrequencyType) && selectedYear) {
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel required #dateRange="ngModel" name="dateRange"
+            [(ngModel)]="selectedDateRange" (change)="selectDateRange($event)">
+            @for (data of dateRangeData; track data) {
+              <ng-option [value]="data.title">
+                {{ data.value }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Date Range *</span>
+          @if (!dateRange.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Select Date Range is required!
+            </div>
+          }
+        </label>
+      </div>
+    }
+    @if (selectedPayrollFrequencyType == 'Monthly') {
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="month" required ngModel #month="ngModel" name="month"
+            [(ngModel)]="selectedMonth" required />
+            <span> Select Month *</span>
+            @if (!month.valid && commonFilter?.filterForm?.submitted) {
+              <div class="invalid-tooltip">
+                Month is required!
+              </div>
+            }
+          </label>
+        </div>
+      }
+    </app-common-filter>
+  }
+
+  @if (payslipData?.length > 0) {
+    <div #TABLE>
+      @for (data of payslipData; track data; let i = $index) {
+        <div>
+          <div class="main">
+            <div class="salaryData row">
+              <div class="col-md-2 col-sm-4 col-xs-6">
+                <b>Employee Code : </b>
+                <br>
+                  <p class="m-0">{{data.employeeCode ? data.employeeCode : '-'}}</p>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                  <b>Employee Name : </b>
+                  <br>
+                    <p class="m-0">{{data.displayName ? data.displayName : '-'}}</p>
+                  </div>
+                  <div class="col-md-2 col-sm-4 col-xs-6">
+                    <b>Number : </b>
+                    <p class="m-0">{{data.userNumber ? data.userNumber : '-'}}</p>
+                  </div>
+                  <div class="col-md-2 col-sm-4 col-xs-6">
+                    <b>Branch : </b>
+                    <p class="m-0">{{data.branch ? data.branch : '-'}}</p>
+                  </div>
+                  <div class="col-md-2 col-sm-4 col-xs-6">
+                    <b>Department : </b>
+                    <p class="m-0">{{data.department ? data.department : '-'}}</p>
+                  </div>
+                  <div class="col-md-2 col-sm-4 col-xs-6">
+                    <b>Designation : </b>
+                    <p class="m-0">{{data.designation ? data.designation : '-'}}</p>
+                  </div>
+                </div>
+                <hr>
+                  @if (data?.earning_paySlipData?.length > 0) {
+                    <div>
+                      <div class="row">
+                        <div class="col-md-2 col-sm-4 col-xs-6 d-flex gap-10">
+                          <b>Payroll Frequency :</b>
+                          <p class="m-0">{{data?.payrollFrequency ? data?.payrollFrequency : '-'}}</p>
+                        </div>
+                        @if (data?.payrollFrequency != 'Monthly') {
+                          <div class="col-md-2 col-sm-4 col-xs-6 d-flex gap-10">
+                            <b>From Date: </b>
+                            <p class="m-0">{{data?.startDate ? data?.startDate : '-'}}</p>
+                          </div>
+                        }
+                        @if (data?.payrollFrequency != 'Monthly') {
+                          <div class="col-md-2 col-sm-4 col-xs-6 d-flex gap-10">
+                            <b>To Date: </b>
+                            <p class="m-0">{{data?.endDate ? data?.endDate : '-'}}</p>
+                          </div>
+                        }
+                        @if (data?.payrollFrequency == 'Monthly') {
+                          <div class="col-md-2 col-sm-4 col-xs-6 d-flex gap-10">
+                            <b>Month: </b>
+                            <p class="m-0">{{data?.month ? data?.month : '-'}}</p>
+                          </div>
+                        }
+                      </div>
+                      <div class="table-responsive">
+                        <div class="table">
+                          <tr>
+                            <td></td>
+                            @for (earning of data?.earning_paySlipData; track earning; let s = $index) {
+                              <td>
+                                {{earning?.hrSalaryField?.PHM?.payheadName ? earning?.hrSalaryField?.PHM?.payheadName :
+                                '-'}}
+                              </td>
+                            }
+                            <td>Gross</td>
+                            @for (deduction of data?.deduction_paySlipData; track deduction; let s = $index) {
+                              <td>
+                                {{deduction?.hrSalaryField?.PHM?.payheadName ?
+                                deduction?.hrSalaryField?.PHM?.payheadName : '-'}}
+                              </td>
+                            }
+                            <td>Net Pay</td>
+                          </tr>
+                          <tr>
+                            <td>Actual WorkingHr</td>
+                            @for (earning of data?.earning_paySlipData; track earning; let s = $index) {
+                              <td>
+                                {{earning?.actualWorkingHrs ? earning?.actualWorkingHrs : '-'}}
+                              </td>
+                            }
+                            <td>-</td>
+                            @for (deduction of data?.deduction_paySlipData; track deduction; let s = $index) {
+                              <td>
+                                {{deduction?.actualWorkingHrs ? deduction?.actualWorkingHrs : '-'}}
+                              </td>
+                            }
+                            <td>-</td>
+                          </tr>
+                          <tr>
+                            <td>Amount</td>
+                            @for (earning of data?.earning_paySlipData; track earning; let s = $index) {
+                              <td>
+                                {{earning?.amount ? earning?.amount : '-'}}
+                              </td>
+                            }
+                            <td>{{data.gross}}</td>
+                            @for (deduction of data?.deduction_paySlipData; track deduction; let s = $index) {
+                              <td>
+                                {{deduction?.amount ? deduction?.amount : '-'}}
+                              </td>
+                            }
+                            <td>{{data.netPay ? data.netPay : '-'}}</td>
+                          </tr>
+                          <tr>
+                            <td>YTD</td>
+                            @for (earning of data?.earning_paySlipData; track earning; let s = $index) {
+                              <td>
+                                {{earning?.YTD ? earning?.YTD : '-'}}
+                              </td>
+                            }
+                            <td>-</td>
+                            @for (deduction of data?.deduction_paySlipData; track deduction; let s = $index) {
+                              <td>
+                                {{deduction?.YTD ? deduction?.YTD : '-'}}
+                              </td>
+                            }
+                            <td>-</td>
+                          </tr>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  @if (data?.earning_paySlipData?.length == 0) {
+                    <div>
+                      <p><b>No Earning data found!</b></p>
+                    </div>
+                  }
+                  @if (data?.paySlip?.length == 0) {
+                    <button class="btn btn-success" (click)="generatePaySlip(data)">Generate Pay Slip</button>
+                  }
+                  @if (data?.paySlip?.length > 0) {
+                    <button class="btn btn-primary" (click)="viewPaySlip(data)">View Pay Slip</button>
+                  }
+                </div>
+              </div>
+            }
+            <div class="col-12">
+              <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+                [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit"
+                [maxSize]="5" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+            </div>
+          </div>
+        }
+
+
+        <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"   [config]="{backdrop: 'static', keyboard: false}"
+          >
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">View Pay Slip</h4>
+                <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+                  #closeModal>
+                  <span aria-hidden="true" class="visually-hidden">&times;</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <div>
+                  <button class="btn btn-primary" (click)="downloadPayslip()">Download</button>
+                </div>
+                @if (showSalarySlipData?.path) {
+                  <div style="text-align: center; margin-top: 25px">
+                    <pdf-viewer
+                      [src]="$safeNavigationMigration(showSalarySlipData?.path)"
+                      [rotation]="0"
+                      [original-size]="false"
+                      [show-all]="true"
+                      [fit-to-page]="false"
+                      [zoom]="1"
+                      [zoom-scale]="'page-width'"
+                      [stick-to-page]="false"
+                      [render-text]="true"
+                      [external-link-target]="'blank'"
+                      [autoresize]="true"
+                      [show-borders]="false"
+                      style="height: 1000px"
+                    ></pdf-viewer>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+          <i class="simple-icon-arrow-left"></i>
+        </ng-template>
+        <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+          <i class="simple-icon-arrow-right"></i>
+        </ng-template>
+        <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-right"></i>
+        </ng-template>
+        <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-left"></i>
+        </ng-template>

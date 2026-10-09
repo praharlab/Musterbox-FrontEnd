@@ -1,0 +1,328 @@
+<div bsModal #officeExpenseModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Office Expense Data</h4>
+        <button type="button" class="btn-close close pull-right" (click)="closeModal()" aria-label="Close"
+          #closeViewFormModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (officeExpenseData) {
+          <div>
+            @if (officeExpenseData?.branchMasterID) {
+              <div>
+                <span style="font-size: 14px">
+                  <b>Branch:</b>
+                  {{ officeExpenseData.branchMaster.branchName }}
+                </span>
+              </div>
+            }
+            @if (officeExpenseData?.siteID) {
+              <div>
+                <span style="font-size: 14px">
+                  <b>Site:</b>
+                  {{ officeExpenseData.site.siteName }}
+                </span>
+              </div>
+            }
+            <div>
+              <span style="font-size: 14px">
+                <b>Expense Date:</b>
+                {{ $safeNavigationMigration(officeExpenseData?.expense_date) | date : 'dd-MM-yyyy' || '' }}
+              </span>
+            </div>
+          </div>
+        }
+        @if (officeExpenseData) {
+          <div>
+            <table class="table table-responsive">
+              <!-- [class]="showCheckbox ? 'mainExpenseTable30' : 'mainExpenseTable45'" -->
+              <thead>
+                <tr>
+                  <!-- <th>Version</th> -->
+                  @if (showCheckbox) {
+                    <th>
+                      <input type="checkbox" class="mt-1" [disabled]="checkAllDisabled()"
+                        (change)="checkAll($event)" [(ngModel)]="isAllChecked" />
+                      </th>
+                    }
+                    <!-- <th *ngIf="showCheckbox && actionType != ''"></th> -->
+                    @if (showCheckbox) {
+                      <th>Authorizer Status</th>
+                    }
+                    <th>Applied On</th>
+                    <th>Expense Status</th>
+                    <th>Expense Category</th>
+                    <th>Expense Head</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Attachment - 1</th>
+                    <th>Attachment - 2</th>
+                    <th>Attachment - 3</th>
+                    <th>Attachment - 4</th>
+                    <th>Authorization Criteria</th>
+                    <th>Authorization</th>
+                  </tr>
+                </thead>
+                @for (row of officeExpenseData?.officeExpenseTransactions; track row; let i = $index) {
+                  <tbody>
+                    <tr>
+                      @if (showCheckbox) {
+                        <td>
+                          <input type="checkbox" class="mt-1" [disabled]="checkDisabled(row)"
+                            (change)="getCheckboxValues($event, row)" [(ngModel)]="row.checked" />
+                          </td>
+                        }
+                        @if (showCheckbox) {
+                          <td>
+                            @if (row?.Auth[0]?.authstatus == 2) {
+                              <p class="m-0">
+                                <button class="btn btn-xs btn-outline-warning">Pending</button>
+                              </p>
+                            }
+                            @if (row?.Auth[0]?.authstatus == 1) {
+                              <p class="m-0">
+                                <button class="btn btn-xs btn-outline-success">Approved</button>
+                              </p>
+                            }
+                            @if (row?.Auth[0]?.authstatus == 0) {
+                              <p class="m-0">
+                                <button class="btn btn-xs btn-outline-danger">Rejected</button>
+                              </p>
+                            }
+                          </td>
+                        }
+                        <td>
+                          {{ row.createdAt | date : 'dd-MM-yyyy h:mm a' }}
+                        </td>
+                        <td>
+                          <div>
+                            @if (+row.authorizationStatus == 3 && !row.erpJvid && !row.payment_Id) {
+                              <button class="btn btn-outline-success btn-xs">
+                                Approved
+                              </button>
+                            }
+                            @if (row.authorizationStatus == 4) {
+                              <button class="btn btn-outline-danger btn-xs">
+                                Rejected
+                              </button>
+                            }
+                            @if (+row.authorizationStatus == 0 ||+row.authorizationStatus == 1 ||+row.authorizationStatus == 2) {
+                              <button class="btn btn-outline-warning btn-xs">
+                                Pending
+                              </button>
+                            }
+                            @if (+row.authorizationStatus == 3 && (row.erpJvid || row.payment_Id)) {
+                              <button class="btn btn-outline-info btn-xs">
+                                Paid
+                              </button>
+                            }
+                          </div>
+                        </td>
+                        <td>{{ row.officeExpenseHead?.officeExpenseCategory?.officeExpenseCategory }}</td>
+                        <td>{{ row.officeExpenseHead.officeExpenseHead }}</td>
+                        <td>{{ row.expenseAmount }}</td>
+                        <td>{{ row.description }}</td>
+                        <td>
+                          @if (
+                            row.attachFile &&
+                            !showImage(row.attachFile) &&
+                            row.attachFile != '' &&
+                            row.attachFile != null &&
+                            row.attachFile != 'null'
+                            ) {
+                            <button class="btn btn-primary btn-xs" (click)="view(row.attachFile)">
+                              View
+                            </button>
+                          }
+                          @if (
+                            row.attachFile &&
+                            row.attachFile != null &&
+                            row.attachFile != 'null' &&
+                            showImage(row.attachFile) &&
+                            row.attachFile != ''
+                            ) {
+                            <img [src]="apiURL + row.attachFile" width="50px" alt="Attachment" (click)="view(row.attachFile)" />
+                          }
+                        </td>
+                        <td>
+                          @if (
+                            row.attachFile2 &&
+                            !showImage(row.attachFile2) &&
+                            row.attachFile2 != '' &&
+                            row.attachFile2 != null &&
+                            row.attachFile2 != 'null'
+                            ) {
+                            <button class="btn btn-primary btn-xs" (click)="view(row.attachFile2)">
+                              View
+                            </button>
+                          }
+                          @if (
+                            row.attachFile2 &&
+                            row.attachFile2 != null &&
+                            row.attachFile2 != '' &&
+                            row.attachFile2 != 'null' &&
+                            showImage(row.attachFile2)
+                            ) {
+                            <img [src]="apiURL + row.attachFile2" width="50px" alt="Attachment" (click)="view(row.attachFile2)" />
+                          }
+                        </td>
+                        <td>
+                          @if (
+                            row.attachFile3 &&
+                            !showImage(row.attachFile3) &&
+                            row.attachFile3 != '' &&
+                            row.attachFile3 != null &&
+                            row.attachFile3 != 'null'
+                            ) {
+                            <button class="btn btn-primary btn-xs" (click)="view(row.attachFile3)">
+                              View
+                            </button>
+                          }
+                          @if (
+                            row.attachFile3 &&
+                            row.attachFile3 != null &&
+                            row.attachFile3 != '' &&
+                            row.attachFile3 != 'null' &&
+                            showImage(row.attachFile3)
+                            ) {
+                            <img [src]="apiURL + row.attachFile3" width="50px" alt="Attachment" (click)="view(row.attachFile3)" />
+                          }
+                        </td>
+                        <td>
+                          @if (
+                            row.attachFile4 &&
+                            !showImage(row.attachFile4) &&
+                            row.attachFile4 != '' &&
+                            row.attachFile4 != null &&
+                            row.attachFile4 != 'null'
+                            ) {
+                            <button class="btn btn-primary btn-xs" (click)="view(row.attachFile4)">
+                              View
+                            </button>
+                          }
+                          @if (
+                            row.attachFile4 &&
+                            row.attachFile4 != null &&
+                            row.attachFile4 != '' &&
+                            row.attachFile4 != 'null' &&
+                            showImage(row.attachFile4)
+                            ) {
+                            <img [src]="apiURL + row.attachFile4" width="50px" alt="Attachment" (click)="view(row.attachFile4)" />
+                          }
+                        </td>
+                        <td>{{ row?.AuthorizationCriteriaMaster?.AuthorizationCriteria || '' }}</td>
+                        <td>
+                          <table class="w-100">
+                            <thead>
+                              <tr class="authorizationTable">
+                                <th>Status</th>
+                                <th>Authorizer</th>
+                                <th>Authorized Date</th>
+                                <th>Remarks</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @for (auth of row.officeExpenseAuths; track auth) {
+                                <tr>
+                                  <td>
+                                    @if (auth.authstatus == 2) {
+                                      <p class="m-0">Pending</p>
+                                    }
+                                    @if (auth.authstatus == 1) {
+                                      <p class="m-0">Approved</p>
+                                    }
+                                    @if (auth.authstatus == 0) {
+                                      <p class="m-0">Rejected</p>
+                                    }
+                                  </td>
+                                  <td>
+                                    <p class="m-0">
+                                      {{ auth?.authorizedPerson?.displayName }}
+                                    </p>
+                                  </td>
+                                  <td>
+                                    @if (auth.authstatus != 2) {
+                                      <p class="m-0 white-space-no-wrap">
+                                        {{ auth.updatedAt | date : 'dd-MM-yyyy h:mm a' }}
+                                      </p>
+                                    }
+                                    @if (auth.authstatus == 2) {
+                                      <p class="m-0 white-space-no-wrap">
+                                        &nbsp;
+                                      </p>
+                                    }
+                                  </td>
+                                  <td>
+                                    @if (auth.remarks) {
+                                      <p class="m-0 white-space-no-wrap">
+                                        {{ auth.remarks }}
+                                      </p>
+                                    }
+                                    @if (!auth.remarks || auth.remarks == null || auth.remarks == '') {
+                                      <p class="m-0 white-space-no-wrap">
+                                        &nbsp;
+                                      </p>
+                                    }
+                                  </td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  }
+                </table>
+              </div>
+            }
+            @if (showCheckbox) {
+              <div>
+                <form #acceptRejectForm="ngForm" novalidate>
+                  <div class="row">
+                    @if (selectedRequests.length > 0) {
+                      <div class="col-md-12">
+                        <label class="form-group has-float-label">
+                          <textarea
+                            class="form-control"
+                            type="text"
+                            ngModel
+                            #remark="ngModel"
+                            [(ngModel)]="remarks"
+                            name="remark"
+                          ></textarea>
+                          <span>Remarks</span>
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-12 d-flex justify-content-between">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        (click)="acceptRejectRequest('approve')"
+                        [disabled]="selectedRequests.length == 0"
+                        >
+                        {{ 'Approve' | translate }}
+                      </button>
+                      {{ ' ' }}
+                      <button
+                        type="submit"
+                        class="btn btn-danger"
+                        (click)="acceptRejectRequest('reject')"
+                        [disabled]="selectedRequests.length == 0"
+                        >
+                        {{ 'Reject' | translate }}
+                      </button>
+                      {{ ' ' }}
+                    </div>
+                  </div>
+                </form>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>

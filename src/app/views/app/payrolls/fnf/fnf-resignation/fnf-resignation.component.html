@@ -1,0 +1,313 @@
+<div class="w-100 position-relative">
+  @if (showloader) {
+    <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  }
+</div>
+@if (applicationData) {
+  <div class="scrollStyleTable">
+    <table border="1" class="Table" width="100%">
+      <tr>
+        <th colspan="10" style="text-align: center; background-color: lightgray">
+          Resignation Applications
+        </th>
+      </tr>
+      <tr>
+        <!-- <th style="text-align: center" class="tableTh">Employee Code</th>
+        <th style="text-align: center" class="tableTh">Name</th> -->
+        <th style="text-align: center" class="tableTh">Reason</th>
+        <th style="text-align: center" class="tableTh">Applied Date</th>
+        <th style="text-align: center" class="tableTh">Last Working Day</th>
+        <th style="text-align: center" class="tableTh">Preferred LWD</th>
+        <th style="text-align: center" class="tableTh">Relieving Date</th>
+        <th style="text-align: center" class="tableTh">Show Data</th>
+        <th style="text-align: center" class="tableTh">Attachment</th>
+        <th style="text-align: center" class="tableTh">Task</th>
+      </tr>
+      <tr>
+        <td style="text-align: center" class="tableTd">
+          {{ applicationData?.resigantionReason?.reason || '' }}
+        </td>
+        <td style="text-align: center" class="tableTd">
+          {{ $safeNavigationMigration(applicationData?.appliedDate) | date : 'dd-MM-yyyy' }}
+        </td>
+        <td style="text-align: center" class="tableTd">
+          {{ $safeNavigationMigration(applicationData?.lastworkingdate) | date : 'dd-MM-yyyy' }}
+        </td>
+        <td style="text-align: center" class="tableTd">
+          {{ $safeNavigationMigration(applicationData?.preferredLWDate) | date : 'dd-MM-yyyy' }}
+        </td>
+        <td style="text-align: center" class="tableTd">
+          {{ $safeNavigationMigration(applicationData?.relievingDate) | date : 'dd-MM-yyyy' }}
+        </td>
+        <td style="text-align: center" class="tableTd">
+          <button type="button" class="btn btn-outline-primary btn-xs"
+            (click)="showData(applicationData.resignationID,showDataModal);">
+            View
+          </button>
+        </td>
+        <td style="text-align: center" class="tableTd">
+          @if (applicationData?.attachment && applicationData?.attachment!='') {
+            <button type="button" class="btn btn-primary btn-xs" (click)="viewDocument($safeNavigationMigration(applicationData?.attachment))"
+              >
+              View
+            </button>
+          }
+        </td>
+        <td style="text-align: center">
+          @if (applicationData?.authorizationstatus == 3) {
+            <a (click)="showResignationTask(applicationData.resignationID, viewTaskModal)"
+              >
+              <span [class]="'glyph-icon simple-icon-eye tool_tip cursor-pointer'"
+              style="padding-right: 10px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+          }
+        </td>
+      </tr>
+    </table>
+  </div>
+}
+
+
+@if (!applicationData) {
+  <div class="scrollStyleTable">
+    No Resignation Found !
+  </div>
+}
+
+<br />
+<br />
+
+<ng-template #viewTaskModal class="modal fade" tabindex="-1" aria-labelledby="dialog-sizes-name1">
+
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Clearance & Exit Process</h4>
+    <button type="button" class="btn-close close pull-right" (click)="closeViewModalFunction()" aria-label="Close">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    @if (resignationTaskData && resignationTaskData.length > 0) {
+      <div class="scrollStyleTable">
+        <table border="1" class="Table" width="100%">
+          <tr>
+            <th colspan="10" style="text-align: center; background-color: lightgray">
+              Clearance Data
+            </th>
+          </tr>
+          <tr>
+            <th colspan="10" style="text-align: center">
+              Assigned Date -
+              {{ resignationTaskData[0].createdAt | date : 'dd-MM-yyyy HH:mm:ss a' }}
+            </th>
+          </tr>
+          <tr>
+            <th style="text-align: center" class="tableTh">Assigned To</th>
+            <th style="text-align: center" class="tableTh">Description</th>
+            <th style="text-align: center" class="tableTh">Applicable</th>
+            <th style="text-align: center" class="tableTh">Recovered</th>
+            <th style="text-align: center" class="tableTh">Amount</th>
+            <th style="text-align: center" class="tableTh">Status</th>
+            <th style="text-align: center" class="tableTh">Remarks</th>
+            <th style="text-align: center" class="tableTh">Task Completed Date</th>
+          </tr>
+          @for (task of resignationTaskData; track task) {
+            <tr>
+              <td style="text-align: center" class="tableTd">
+                {{ task.userMaster.displayName }}
+                <br>
+                  {{ task.userMaster.userNumber }}
+                </td>
+                <td style="text-align: center" class="tableTd">
+                  {{ task.resignTask.description }}
+                </td>
+                <td style="text-align: center" class="tableTd">{{ task.isApplicable }}</td>
+                <td style="text-align: center" class="tableTd">
+                  {{ task.isRecovered ? task.isRecovered : '' }}
+                </td>
+                <td style="text-align: center" class="tableTd">
+                  {{ task.amount ? task.amount : 0 }}
+                </td>
+                <td style="text-align: center" class="tableTd">
+                  @if (task.status == 0 || task.status == 2) {
+                    <button type="button"
+                      class="btn btn-outline-warning btn-xs">
+                      Pending
+                    </button>
+                  }
+                  @if (task.status == 1 || task.status == 3) {
+                    <button type="button"
+                      class="btn btn-outline-success btn-xs">
+                      Complete
+                    </button>
+                  }
+                </td>
+                <td style="text-align: center" class="tableTd">{{ task.remarks }}</td>
+                <td style="text-align: center" class="tableTd">
+                  @if (task.updatedAt && (task.status == 1 || task.status == 3)) {
+                    {{ task.updatedAt | date : 'dd-MM-yyyy HH:mm:ss a' }}
+                  }
+                </td>
+              </tr>
+            }
+          </table>
+          <br />
+          <br />
+        </div>
+      }
+
+      @if (resignationTaskData.length == 0) {
+        <div class="scrollStyleTable">
+          No Task Found
+        </div>
+      }
+    </div>
+
+  </ng-template>
+
+
+  <ng-template #showDataModal bsModal class="modal fade" tabindex="-1" aria-labelledby="dialog-sizes-name1"
+    >
+
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Resignation Data</h4>
+      <button type="button" class="btn-close close pull-right" (click)="closeShowModalFunction()" aria-label="Close">
+        <span class="visually-hidden">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="table-responsive">
+        @if (referenceData) {
+          <table class="table table-striped">
+            <tbody>
+              <tr>
+                <th>Employee Name</th>
+                <td>{{ referenceData?.displayName }} ({{ referenceData?.employeeCode }})</td>
+              </tr>
+              <tr>
+                <th>Company</th>
+                <td>{{ referenceData?.companyName }}</td>
+              </tr>
+              <tr>
+                <th>Branch</th>
+                <td>{{ referenceData?.branchName }}</td>
+              </tr>
+              <tr>
+                <th>Department</th>
+                <td>{{ referenceData?.departmentName }}</td>
+              </tr>
+              <tr>
+                <th>Designation</th>
+                <td>{{ referenceData?.designationName }}</td>
+              </tr>
+              <tr>
+                <th>Employee Comment</th>
+                <td id="employeeComment"></td>
+              </tr>
+              <tr>
+                <th>Reason</th>
+                <td>{{ referenceData?.reason || '' }}</td>
+              </tr>
+              <tr>
+                <th>Applied Date</th>
+                <td>{{ $safeNavigationMigration(referenceData?.appliedDate) | date : 'dd-MM-yyyy' }}</td>
+              </tr>
+              <tr>
+                <th>Last Working Date</th>
+                <td>{{ $safeNavigationMigration(referenceData?.lastworkingdate) | date : 'dd-MM-yyyy' }}</td>
+              </tr>
+              <tr>
+                <th>Preferred Last Working Date</th>
+                <td>{{ $safeNavigationMigration(referenceData?.preferredLWDate) | date : 'dd-MM-yyyy' }}</td>
+              </tr>
+              <tr>
+                <th>Relieving Date</th>
+                <td>{{ $safeNavigationMigration(referenceData?.relievingDate) | date : 'dd-MM-yyyy' }}</td>
+              </tr>
+              <tr>
+                <th>Authorization Status</th>
+                <td>
+                  @if (referenceData.authorizationstatus == 3) {
+                    <button class="btn btn-outline-success btn-xs">
+                      Accepted
+                    </button>
+                  }
+                  @if (referenceData.authorizationstatus == 4) {
+                    <button class="btn btn-outline-danger btn-xs">
+                      Rejected
+                    </button>
+                  }
+                  @if (
+                    referenceData.authorizationstatus == 0 ||
+                    referenceData.authorizationstatus == 1 ||
+                    referenceData.authorizationStatus == 2
+                    ) {
+                    <button class="btn btn-outline-warning btn-xs">
+                      Pending
+                    </button>
+                  }
+                  @if (referenceData.authorizationstatus == 5) {
+                    <button class="btn btn-outline-danger btn-xs">
+                      Cancel
+                    </button>
+                  }
+                </td>
+              </tr>
+              <tr>
+                <th>Authorization Criteria</th>
+                <td>{{ referenceData?.AuthorizationCriteria }}</td>
+              </tr>
+            </tbody>
+          </table>
+        }
+        @if (referenceData?.authUserStatus?.length) {
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of referenceData.authUserStatus; track user) {
+                <tr>
+                  <td>{{ user.displayName }}</td>
+                  <td>
+                    @if (user.authstatus == 1) {
+                      <button class="btn btn-outline-success btn-xs">
+                        Accepted
+                      </button>
+                    }
+                    @if (user.authstatus == 0) {
+                      <button class="btn btn-outline-danger btn-xs">
+                        Rejected
+                      </button>
+                    }
+                    @if (user.authstatus == 2) {
+                      <button class="btn btn-outline-warning btn-xs">
+                        Pending
+                      </button>
+                    }
+                  </td>
+                  <td>{{ user.remarks }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  <!-- </div>
+</div> -->
+</ng-template>

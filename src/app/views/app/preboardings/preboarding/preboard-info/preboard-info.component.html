@@ -1,0 +1,567 @@
+<div bsModal #viewFormModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">More Info</h4>
+        <button type="button" class="btn-close close pull-right" (click)="addModalClear()" aria-label="Close"
+          #closeViewFormModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <tabset class="separator-tabs">
+          <tab heading="Updates">
+            <div class="tab-content">
+              @if (morinfo.length != 0) {
+                <table border="1" width="100%">
+                  <tr>
+                    <th colspan="6" style="text-align: center">Pre-Boarding Updates</th>
+                  </tr>
+                  <tr>
+                    <th style="text-align: center">Assigned by</th>
+                    <th style="text-align: center">Status</th>
+                    <th style="text-align: center">Remarks</th>
+                    <th style="text-align: center">Assigned to</th>
+                    <th style="text-align: center">Created Date Time</th>
+                    <th style="text-align: center">Updated Date Time</th>
+                  </tr>
+                  @for (value of morinfo; track value; let i = $index) {
+                    <tr>
+                      <td style="text-align: center">{{ value.createdByUserDetails?.displayName }}</td>
+                      <td style="text-align: center">{{ value.requeststatus }}</td>
+                      <td style="text-align: center">{{ value.remarks }}</td>
+                      @if (value.userMasterID != null) {
+                        <td style="text-align: center">
+                          {{ value.userMaster.displayName }}
+                        </td>
+                      }
+                      @if (
+                        value.userMasterID == null &&
+                        value.requeststatus != 'Accept' &&
+                        value.requeststatus != 'Reject' &&
+                        value.requeststatus != 'OnHold'
+                        ) {
+                        <td style="text-align: center">
+                          HR
+                        </td>
+                      }
+                      @if (
+                        value.userMasterID == null &&
+                        (value.requeststatus == 'Accept' ||
+                        value.requeststatus == 'Reject' ||
+                        value.requeststatus == 'OnHold')
+                        ) {
+                        <td style="text-align: center"></td>
+                      }
+                      <td style="text-align: center">
+                        {{ value.createdAt | date : 'dd-MM-yyyy h:mm a' }}
+                      </td>
+                      <td style="text-align: center">
+                        {{ value.updatedAt | date : 'dd-MM-yyyy h:mm a' }}
+                      </td>
+                    </tr>
+                  }
+                </table>
+              }
+
+              @if (morinfo.length == 0) {
+                <p style="text-align: center">No Updates Found</p>
+              }
+            </div>
+          </tab>
+          <tab heading="View Form">
+            <div class="tab-content">
+              <form #addreport="ngForm" novalidate>
+                <div class="row">
+                  @if (preboardingdata) {
+                    <div class="col-md-12" style="text-align: right; margin-bottom: 20px">
+                      @if (preboardingdata) {
+                        <button type="button" class="btn btn-primary ml-2" aria-label="Close"
+                          (click)="downlaodPreboardingForm()">
+                          <span aria-hidden="true" class="visually-hidden">Download Form</span>
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+                @if (preboardingdata) {
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" required ngModel #firstName="ngModel" name="firstName"
+                          [(ngModel)]="preboardingdata.firstName" disabled />
+                          <span>First Name</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" required ngModel #middleName="ngModel" name="middleName"
+                            [(ngModel)]="preboardingdata.middleName" disabled />
+                            <span>Middle Name</span>
+                          </label>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" required ngModel #lastName="ngModel" name="lastName"
+                              [(ngModel)]="preboardingdata.lastName" disabled />
+                              <span>Last Name</span>
+                            </label>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" name="userNumberCountryMasterID" required ngModel
+                                #userNumberCountryMasterID="ngModel" [(ngModel)]="preboardingdata.userNumberCountryMasterID"
+                                name="userNumberCountryMasterID" disabled>
+                                @for (country of countryData; track country) {
+                                  <ng-option [value]="country.countryMasterID">
+                                    {{ country.countryName }} ({{ country.countryCode }})
+                                  </ng-option>
+                                }
+                              </ng-select>
+                              <span>Select Country Code *</span>
+                            </label>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="number" required ngModel #userNumber="ngModel" name="userNumber"
+                                [(ngModel)]="preboardingdata.userNumber" disabled />
+                                <span>Phone Number</span>
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="date" required ngModel #dob="ngModel" name="dob"
+                                  [ngModel]="preboardingdata.dob | date : 'yyyy-MM-dd'" disabled />
+                                  <span>DOB</span>
+                                </label>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="email" required ngModel #email="ngModel" name="email" disabled
+                                    [(ngModel)]="preboardingdata.email" />
+                                    <span>Email *</span>
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <textarea class="form-control" ngModel #address="ngModel" name="address" required disabled
+                                    [(ngModel)]="preboardingdata.address"></textarea>
+                                    <span>Address *</span>
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <ng-select placeholder="" name="branchMasterID" required ngModel #branchMasterID="ngModel"
+                                      disabled name="branchMasterID" [(ngModel)]="preboardingdata.branchMasterID">
+                                      @for (allBranch of allbranch; track allBranch) {
+                                        <ng-option [value]="allBranch.branchMasterID">
+                                          {{ allBranch.branchName }}
+                                        </ng-option>
+                                      }
+                                    </ng-select>
+                                    <span>Select Branch</span>
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <ng-select placeholder="Choose your option" name="designationID" required ngModel
+                                      #designationID="ngModel" name="designationID" [(ngModel)]="preboardingdata.designationID"
+                                      disabled>
+                                      @for (alldesignation of alldesignation; track alldesignation) {
+                                        <ng-option [value]="alldesignation.designationId">
+                                          {{ alldesignation.designationName }}
+                                        </ng-option>
+                                      }
+                                    </ng-select>
+                                    <span>Select Designation</span>
+                                  </label>
+                                </div>
+                                <div class="col-md-4">
+                                  <label>Employee Type *</label>
+                                  &nbsp;
+                                  <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="national"
+                                    id="national" [(ngModel)]="preboardingdata.employeeType" disabled readonly />
+                                    &nbsp;
+                                    <label for="html">National</label>
+                                    &nbsp;
+                                    <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="expat" id="expat"
+                                      [(ngModel)]="preboardingdata.employeeType" disabled readonly />
+                                      &nbsp;
+                                      <label for="html">Expat</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                      <label class="form-group has-float-label">
+                                        <ng-select placeholder="Choose your option" ngModel #nationality="ngModel"
+                                          [(ngModel)]="preboardingdata.nationality" name="nationality" disabled>
+                                          @for (nation of nationalityList; track nation; let i = $index) {
+                                            <ng-option [value]="nation.name">
+                                              {{ nation.name }}
+                                            </ng-option>
+                                          }
+                                        </ng-select>
+                                        <span>Nationality</span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                }
+                                <hr>
+                                  <div class="row" style="margin-top: 4%">
+                                    @for (fields of customizeFields; track fields) {
+                                      <div class="col-md-6">
+                                        <!-- Title -->
+                                        @if (fields.inputType == titleTypeLabel) {
+                                          <label class="form-group has-float-label">
+                                            <h3>{{ fields.fieldLabel }}</h3>
+                                          </label>
+                                        }
+                                        <!-- Number -->
+                                        @if (fields.inputType == numberTypeLabel) {
+                                          <label class="form-group has-float-label">
+                                            <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                              class="form-control" type="number" ngModel #number="ngModel" name="{{ fields.fieldLabel }}"
+                                              [(ngModel)]="fields.fieldvalue" [readOnly]="true" />
+                                              <span>
+                                                {{ fields.fieldLabel }}
+                                                @if (fields.isRequired) {
+                                                  <span>*</span>
+                                                }
+                                              </span>
+                                            </label>
+                                          }
+                                          <!-- Text -->
+                                          @if (fields.inputType == textTypeLabel) {
+                                            <label class="form-group has-float-label">
+                                              <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                                class="form-control" type="text" ngModel #TEXT="ngModel" name="{{ fields.fieldLabel }}"
+                                                [(ngModel)]="fields.fieldvalue" [readOnly]="true" />
+                                                <span>
+                                                  {{ fields.fieldLabel }}
+                                                  @if (fields.isRequired) {
+                                                    <span>*</span>
+                                                  }
+                                                </span>
+                                              </label>
+                                            }
+                                            <!-- Image -->
+                                            @if (fields.inputType == imageTypeLabel) {
+                                              <label class="form-group has-float-label">
+                                                @if (fields.fieldvalue) {
+                                                  <button class="btn btn-primary"
+                                                    (click)="openFile(fields.fieldvalue, fields.fieldLabel)">
+                                                    View Image
+                                                  </button>
+                                                }
+                                                {{ ' ' }}
+                                                <span>
+                                                  {{ fields.fieldLabel }}
+                                                  @if (fields.isRequired) {
+                                                    <span>*</span>
+                                                  }
+                                                </span>
+                                              </label>
+                                            }
+                                            <!-- PDF -->
+                                            @if (fields.inputType == pdfTypeLabel) {
+                                              <label class="form-group has-float-label">
+                                                @if (fields.fieldvalue) {
+                                                  <button class="btn btn-primary"
+                                                    (click)="openFile(fields.fieldvalue, fields.fieldLabel)">
+                                                    View Pdf
+                                                  </button>
+                                                }
+                                                <span>
+                                                  {{ fields.fieldLabel }}
+                                                  @if (fields.isRequired) {
+                                                    <span>*</span>
+                                                  }
+                                                </span>
+                                              </label>
+                                            }
+                                            <!-- Text Area -->
+                                            @if (fields.inputType == textareaLabel) {
+                                              <label class="form-group has-float-label">
+                                                <textarea title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                                  class="form-control" type="text" ngModel #TEXTAREA="ngModel" name="{{ fields.fieldLabel }}"
+                                                [(ngModel)]="fields.fieldvalue" [readOnly]="true"></textarea>
+                                                <span>
+                                                  {{ fields.fieldLabel }}
+                                                  @if (fields.isRequired) {
+                                                    <span>*</span>
+                                                  }
+                                                </span>
+                                              </label>
+                                            }
+                                            <!-- Radio -->
+                                            @if (fields.inputType == radioTypeLabel) {
+                                              <label>
+                                                {{ fields.fieldLabel }}
+                                                @if (fields.isRequired) {
+                                                  <span>*</span>
+                                                }
+                                              </label>
+                                              <span> &nbsp;&nbsp; </span>
+                                              @for (val of fields.value; track val) {
+                                                <div>
+                                                  <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                                    [value]="val" #RADIO="ngModel" [(ngModel)]="fields.fieldvalue" disabled readonly />
+                                                    &nbsp;
+                                                    <label for="value" style="margin-right: 25px">
+                                                      {{ val }}
+                                                    </label>
+                                                    &nbsp;&nbsp;
+                                                  </div>
+                                                }
+                                                <br />
+                                                <br />
+                                                <br />
+                                              }
+                                              <!-- Dropdown -->
+                                              @if (fields.inputType == dropDownLabel) {
+                                                <label class="form-group has-float-label">
+                                                  <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                                                    name="{{ fields.fieldLabel }}" #DROPDOWN="ngModel" [(ngModel)]="fields.fieldvalue" disabled>
+                                                    @for (val of fields.value; track val) {
+                                                      <ng-option [value]="val">
+                                                        {{ val }}
+                                                      </ng-option>
+                                                    }
+                                                  </ng-select>
+                                                  <span>
+                                                    {{ fields.fieldLabel }}
+                                                    @if (fields.isRequired) {
+                                                      <span>*</span>
+                                                    }
+                                                  </span>
+                                                </label>
+                                              }
+                                              <!-- Signature -->
+                                              @if (fields.inputType == signatureLabel) {
+                                                <label class="form-group has-float-label">
+                                                  @if (fields.fieldvalue) {
+                                                    <div class="container">
+                                                      <img src="{{ apiURL }}uploads/preboarding/{{ fields.fieldvalue }}"
+                                                        style="height: 70px; width: 70px" />
+                                                      </div>
+                                                    }
+                                                    <span>
+                                                      {{ fields.fieldLabel }}
+                                                      @if (fields.isRequired) {
+                                                        <span>*</span>
+                                                      }
+                                                    </span>
+                                                  </label>
+                                                }
+                                                <!-- Date -->
+                                                @if (fields.inputType == dateTypeLabel) {
+                                                  <label class="form-group has-float-label">
+                                                    <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                                      class="form-control" type="date" ngModel #DATE="ngModel" name="{{ fields.fieldLabel }}"
+                                                      [(ngModel)]="fields.fieldvalue" disabled />
+                                                      <span>
+                                                        {{ fields.fieldLabel }}
+                                                        @if (fields.isRequired) {
+                                                          <span>*</span>
+                                                        }
+                                                      </span>
+                                                    </label>
+                                                  }
+                                                  <!-- month -->
+                                                  @if (fields.inputType == monthTypeLabel) {
+                                                    <label class="form-group has-float-label">
+                                                      <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                                        class="form-control" type="month" ngModel #MONTH="ngModel" name="{{ fields.fieldLabel }}"
+                                                        [(ngModel)]="fields.fieldvalue" disabled />
+                                                        <span>
+                                                          {{ fields.fieldLabel }}
+                                                          @if (fields.isRequired) {
+                                                            <span>*</span>
+                                                          }
+                                                        </span>
+                                                      </label>
+                                                    }
+                                                  </div>
+                                                }
+                                              </div>
+                                            </form>
+                                          </div>
+                                        </tab>
+                                        @if (preboardingdata && preboardingdata.jobApplicationID) {
+                                          <tab heading="Job Data">
+                                            <div class="tab-content">
+                                              @if (jobApplicationData) {
+                                                <form #applyJob="ngForm" novalidate>
+                                                  <div class="row">
+                                                    <div class="col-md-6">
+                                                      <label class="form-group has-float-label">
+                                                        <input class="form-control" type="text" required ngModel #firstName="ngModel" name="firstName"
+                                                          [(ngModel)]="jobApplicationData.firstName" [readOnly]="true" />
+                                                          <span>First Name *</span>
+                                                        </label>
+                                                      </div>
+                                                      <div class="col-md-6">
+                                                        <label class="form-group has-float-label">
+                                                          <input class="form-control" type="text" ngModel #middleName="ngModel" name="middleName"
+                                                            [(ngModel)]="jobApplicationData.middleName" [readOnly]="true" />
+                                                            <span>Middle Name</span>
+                                                          </label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                          <label class="form-group has-float-label">
+                                                            <input class="form-control" type="text" required ngModel #lastName="ngModel" name="lastName"
+                                                              [(ngModel)]="jobApplicationData.lastName" [readOnly]="true" />
+                                                              <span>Last Name *</span>
+                                                            </label>
+                                                          </div>
+                                                          <div class="col-md-3" class="col-md-3">
+                                                            <label class="form-group has-float-label">
+                                                              <ng-select placeholder="Choose your option" name="userNumberCountryMasterID" required ngModel
+                                                                #userNumberCountryMasterID="ngModel" name="userNumberCountryMasterID"
+                                                                [(ngModel)]="jobApplicationData.userNumberCountryMasterID" disabled>
+                                                                @for (country of countryData; track country) {
+                                                                  <ng-option [value]="country.countryMasterID">
+                                                                    {{ country.countryName }} ({{ country.countryCode }})
+                                                                  </ng-option>
+                                                                }
+                                                              </ng-select>
+                                                              <span>Select Country Code *</span>
+                                                            </label>
+                                                          </div>
+                                                          <div class="col-md-3">
+                                                            <label class="form-group has-float-label">
+                                                              <input class="form-control" type="number" required ngModel #userNumber="ngModel" name="userNumber"
+                                                                [(ngModel)]="jobApplicationData.userNumber" [readOnly]="true" />
+                                                                <span>Mobile Number *</span>
+                                                              </label>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                              <label class="form-group has-float-label">
+                                                                <input class="form-control" type="email" required ngModel #email="ngModel" name="email"
+                                                                  [(ngModel)]="jobApplicationData.email" [readOnly]="true" />
+                                                                  <span>Email *</span>
+                                                                </label>
+                                                              </div>
+                                                              <div class="col-md-6">
+                                                                <label>Employee Type *</label>
+                                                                &nbsp;&nbsp;
+                                                                <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="national"
+                                                                  [readOnly]="true" [(ngModel)]="jobApplicationData.employeeType" disabled readonly />
+                                                                  &nbsp;
+                                                                  <label for="html">National</label>
+                                                                  &nbsp;&nbsp;
+                                                                  <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="expat"
+                                                                    [readOnly]="true" [(ngModel)]="jobApplicationData.employeeType" disabled readonly />
+                                                                    &nbsp;
+                                                                    <label for="html">Expat</label>
+                                                                  </div>
+                                                                  <div class="col-md-6">
+                                                                    <label class="form-group has-float-label">
+                                                                      <ng-select placeholder="Choose your option" ngModel #nationality="ngModel" required disabled
+                                                                        [(ngModel)]="jobApplicationData.nationality" name="nationality">
+                                                                        @for (nation of nationalityList; track nation; let i = $index) {
+                                                                          <ng-option [value]="nation.name">
+                                                                            {{ nation.name }}
+                                                                          </ng-option>
+                                                                        }
+                                                                      </ng-select>
+                                                                      <span>Nationality *</span>
+                                                                    </label>
+                                                                  </div>
+                                                                  <div class="col-md-6 flex">
+                                                                    <span>Resume &nbsp;&nbsp;&nbsp;</span>
+                                                                    <button type="button" class="btn btn-outline-primary btn-xs"
+                                                                      (click)="view(jobApplicationData.resumeAttachment)">
+                                                                      {{ 'View' | translate }}
+                                                                    </button>
+                                                                  </div>
+                                                                  <div class="col-md-12">
+                                                                    <label class="form-group has-float-label">
+                                                                      <textarea class="form-control" ngModel #candidateComment="ngModel"
+                                                                        [(ngModel)]="jobApplicationData.candidateComment" name="candidateComment"
+                                                                      [readOnly]="true"></textarea>
+                                                                      <span>Candidate Comment</span>
+                                                                    </label>
+                                                                  </div>
+                                                                </div>
+                                                              </form>
+                                                            }
+                                                          </div>
+                                                        </tab>
+                                                      }
+                                                      @if (preboardingdata && preboardingdata.docUploadStatus == 2) {
+                                                        <tab heading="Pre-Boarding Document">
+                                                          <div class="tab-content">
+                                                            @if (designationWiseDocumentData && designationWiseDocumentData.length != 0) {
+                                                              <table border="1" width="100%"
+                                                                >
+                                                                <tr>
+                                                                  <th colspan="7" style="text-align: center">Pre-boarding Document</th>
+                                                                </tr>
+                                                                <tr>
+                                                                  <th style="text-align: center">Sr No.</th>
+                                                                  <th style="text-align: center">Document</th>
+                                                                  <th style="text-align: center">Document Name</th>
+                                                                  <th style="text-align: center">Identification Number</th>
+                                                                  <th style="text-align: center">Issue Date</th>
+                                                                  <th style="text-align: center">From Date</th>
+                                                                  <th style="text-align: center">Expiry Date</th>
+                                                                </tr>
+                                                                @for (item of designationWiseDocumentData; track item; let i = $index) {
+                                                                  <tr>
+                                                                    <td style="text-align: center">
+                                                                      {{ i + 1 }}
+                                                                    </td>
+                                                                    <td style="text-align: center">
+                                                                      @if (item.attachment && item.attachment.length) {
+                                                                        <button type="button" class="btn btn-outline-primary btn-xs"
+                                                                          (click)="view(item.attachment[0])">
+                                                                          {{ 'View' | translate }}
+                                                                        </button>
+                                                                      }
+                                                                    </td>
+                                                                    <td style="text-align: center">
+                                                                      {{ item.joiningDocumentType?.documentName }}
+                                                                    </td>
+                                                                    <td style="text-align: center">
+                                                                      {{ item.identificationNumber }}
+                                                                    </td>
+                                                                    <td style="text-align: center">
+                                                                      @if (item.issueDate != null) {
+                                                                        <div>
+                                                                          {{ item.issueDate | date : 'dd-MM-yyyy' }}
+                                                                        </div>
+                                                                      }
+                                                                    </td>
+                                                                    <td style="text-align: center">
+                                                                      @if (item.fromDate != null) {
+                                                                        <div>
+                                                                          {{ item.fromDate | date : 'dd-MM-yyyy' }}
+                                                                        </div>
+                                                                      }
+                                                                    </td>
+                                                                    <td style="text-align: center">
+                                                                      @if (item.expiryDate != null) {
+                                                                        <div>
+                                                                          {{ item.expiryDate | date : 'dd-MM-yyyy' }}
+                                                                        </div>
+                                                                      }
+                                                                    </td>
+                                                                  </tr>
+                                                                }
+                                                              </table>
+                                                            }
+                                                            @if (designationWiseDocumentData.length == 0) {
+                                                              <p style="text-align: center">
+                                                                No Updates Found
+                                                              </p>
+                                                            }
+                                                          </div>
+                                                        </tab>
+                                                      }
+                                                    </tabset>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

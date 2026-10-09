@@ -1,0 +1,107 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Short Leave</h5>
+
+    <form #addShortLeave="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6" >
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #companyMasterID="ngModel"
+              name="companyMasterID"
+              [(ngModel)]="company_id"
+              required
+              >
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addShortLeave.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #shortLeavePolicyName="ngModel" name="shortLeavePolicyName" />
+            <span>Short Leave Policy Name *</span>
+            @if (!shortLeavePolicyName.valid && addShortLeave.submitted) {
+              <div class="invalid-tooltip">
+                Short Leave Policy Name is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" (change)="changeInputValue(maxMinutes.control, 'minutes')" min="0" required ngModel #maxMinutes="ngModel" name="maxMinutes" />
+            <span>Maximum minutes to apply short leave *</span>
+
+            @if (!maxMinutes.valid && addShortLeave.submitted) {
+              <div>
+                @if (maxMinutes.control.errors?.negativeMinutes) {
+                  <div class="invalid-tooltip">
+                    Minutes cannot be negative!
+                  </div>
+                }
+                @if (maxMinutes.control.errors?.required) {
+                  <div class="invalid-tooltip">
+                    Minutes is required!
+                  </div>
+                }
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" min="0" max="31" (change)="changeInputValue(noOfShortLeave.control, 'noOfLeave')" required ngModel #noOfShortLeave="ngModel" name="noOfShortLeave" />
+            <span>Number of short leave (Monthly) *</span>
+            @if (!noOfShortLeave.valid && addShortLeave.submitted) {
+              <div>
+                @if (noOfShortLeave.control.errors?.negativNoOfLeave) {
+                  <div class="invalid-tooltip">
+                    Short leave number cannot be negative!
+                  </div>
+                }
+                @if (noOfShortLeave.control.errors?.maxNoOfLeave) {
+                  <div class="invalid-tooltip">
+                    Short leave number cannot be more than 31!
+                  </div>
+                }
+                @if (noOfShortLeave.control.errors?.required) {
+                  <div class="invalid-tooltip">
+                    Short leave number is required!
+                  </div>
+                }
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+        <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/short_leave_policy'"
+          style="margin-left: 2%">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

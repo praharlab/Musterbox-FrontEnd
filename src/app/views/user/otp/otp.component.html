@@ -1,0 +1,42 @@
+<div class="card auth-card">
+  <div class="position-relative image-side"></div>
+  <div class="form-side">
+    <a class="c-pointer">
+      <span class="logo-single"></span>
+    </a>
+    <h6 class="mb-4">OTP Verify</h6>
+
+    <form #resetForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <label class="form-group has-float-label">
+        <input
+          class="form-control"
+          type="text"
+          placeholder=""
+          maxlength="4"
+          required
+          ngModel
+          #otp="ngModel"
+          name="otp"
+          />
+          <span>OTP</span>
+          @if (!otp.valid && resetForm.submitted) {
+            <div class="invalid-tooltip">
+              Otp is required!
+            </div>
+          }
+        </label>
+        <div class="d-flex justify-content-between align-items-center">
+          <a routerLink="/user/forgot-password">{{ 'user.forgot-password' | translate }}?</a>
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            VERIFY OTP
+          </app-state-button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <simple-notifications [options]="{ position: ['top', 'center'] }"></simple-notifications>

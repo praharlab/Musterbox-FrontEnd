@@ -1,0 +1,212 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name="Replace Authorization"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  [showItemsPerPage]="false"
+  (addNewItem)="showAddNewModal()"
+  [showSearch]="false"
+  [itemsPerPage]="limit"
+  [itemOptionsPerPage]="itemOptionsPerPage"
+></app-list-page-header>
+<!-- <div class="row">
+<div class="col-12">
+  <app-heading></app-heading>
+  <app-breadcrumb></app-breadcrumb>
+  <div class="separator mb-5"></div>
+</div>
+</div> -->
+<!-- <div style="text-align: right;" *ngIf="permissioncreate.length!=0">
+<button class="btn btn-info mb-1" (click)="showAddNewModal1()" >Add</button>
+</div> -->
+<br />
+@if (permissionedit?.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="selectcompany($event)"
+                ngModel
+                #company="ngModel"
+                name="company"
+                required
+                >
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && addcomp2.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                [items]="ownerList"
+                [multiple]="false"
+                bindLabel="displayName"
+                [selectableGroupAsModel]="false"
+                bindValue="userMasterID"
+                [closeOnSelect]="true"
+                [(ngModel)]="selected"
+                ngModel
+                required
+                #userMasterID="ngModel"
+                name="userMasterID"
+                >
+                <!-- <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" />{{item.name}}
+              </ng-template> -->
+            </ng-select>
+            <span>Find Employee *</span>
+            @if (!userMasterID.valid && addcomp2.submitted) {
+              <div class="invalid-tooltip">
+                Find Employee is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              (change)="selectcompanyTree($event)"
+              ngModel
+              #companyMasterID="ngModel"
+              name="companyMasterID"
+              required
+              >
+              @for (company of allcompanytree; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!companyMasterID.valid && addcomp2.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="companyTreeOwnerList"
+              [multiple]="false"
+              bindLabel="displayName"
+              [selectableGroupAsModel]="false"
+              bindValue="userMasterID"
+              [closeOnSelect]="true"
+              [(ngModel)]="selectTreeCompany1"
+              ngModel
+              required
+              #userMasterID1="ngModel"
+              name="userMasterID1"
+            ></ng-select>
+            <span>Replace Employee *</span>
+            @if (!userMasterID1.valid && addcomp2.submitted) {
+              <div class="invalid-tooltip">
+                Replace Find Employee is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="authdata"
+              [multiple]="true"
+              bindLabel="authorizationMasterName"
+              [selectableGroupAsModel]="false"
+              bindValue="authorizationMasterID"
+              [closeOnSelect]="false"
+              ngModel
+              required
+              #authorizationMasterID="ngModel"
+              name="authorizationMasterID"
+            ></ng-select>
+            <span>Select Authorization *</span>
+            @if (!authorizationMasterID.valid && addcomp2.submitted) {
+              <div class="invalid-tooltip">
+                Authorization is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">
+        {{ 'forms.submit' | translate }}
+      </button>
+      <button
+        class="btn btn-danger"
+        type="button"
+        [routerLink]="adminRoot + '/orgs/listAuthDetails'"
+        style="margin-left: 2%"
+        >
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+}
+<br />
+@if (rows?.length > 0 && permissionedit?.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable
+        [scrollbarH]="true"
+        [rowHeight]="50"
+        [rows]="rows"
+        [columnMode]="'force'"
+        [limit]="filterData.limit"
+        [externalPaging]="true"
+        [count]="page.totalCount"
+        [offset]="page.offset"
+        (page)="onChange($event)"
+        >
+        <ngx-datatable-column
+          name="Authorization Type"
+          prop="name"
+          [flexGrow]="1.2"
+          [width]="130"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="Number of changes"
+          prop="count"
+          [flexGrow]="1.2"
+          [width]="180"
+        ></ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+}
+@if (rows) {
+  <div></div>
+}
+
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

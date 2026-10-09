@@ -1,0 +1,211 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <p class="m-0">Full and Final Settlement | <b>{{userData?.displayName}}</b></p>
+    <button class="btn btn-danger btn-shadow" (click)="navigateToFnF()">Back</button>
+</div>
+
+<app-fnf-user-details #FnfUserDetailsComponent (getUser)="getUser($event)"></app-fnf-user-details>
+
+<accordion [isAnimated]="true" class="mt-4">
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="allStatus.resignationStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!allStatus.resignationStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step1 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Resignation" [isOpen]="step1" class="position-relative" style="z-index: 10;"
+            (isOpenChange)="isOpenChangeHandler($event, 'step1')">
+            <app-fnf-resignation #FnfResignationComponent class="position-relative"
+                (isResignationCompleted)="getResignationStatus($event)" (reloadResignation)="reloadResignation()">
+            </app-fnf-resignation>
+        </accordion-group>
+    </div>
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="allStatus.assetStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!allStatus.assetStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step2 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Assets" class="mt20" [isOpen]="step2"
+            (isOpenChange)="isOpenChangeHandler($event, 'step2')">
+            <app-fnf-assets #FnfAssetsComponent (isAssetCompleted)="getAssetStatus($event)"
+                (reloadAsset)="reloadAsset()">
+
+            </app-fnf-assets>
+        </accordion-group>
+    </div>
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="allStatus.advanceStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!allStatus.advanceStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step3 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Advance" class="mt20" [isOpen]="step3"
+            (isOpenChange)="isOpenChangeHandler($event, 'step3')">
+            <app-fnf-advance #FnfAdvanceComponent (isAdvanceCompleted)="getAdvanceStatus($event)"
+                (reloadAdvance)="reloadAdvance()">
+            </app-fnf-advance>
+        </accordion-group>
+    </div>
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="allStatus.loanStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!allStatus.loanStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step4 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Loan" class="mt20" [isOpen]="step4"
+            (isOpenChange)="isOpenChangeHandler($event, 'step4')">
+            <app-fnf-loan #FnfLoanComponent (isLoanCompleted)="getLoanStatus($event)" (reloadLoan)="reloadLoan()">
+
+            </app-fnf-loan>
+        </accordion-group>
+    </div>
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="allStatus.panaltyStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!allStatus.panaltyStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step5 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Penalty" class="mt20" [isOpen]="step5"
+            (isOpenChange)="isOpenChangeHandler($event, 'step5')">
+
+            <app-fnf-penalty #FnfPenaltyComponent (isPanaltyCompleted)="getPanaltyStatus($event)"
+                (reloadPenalty)="reloadPenalty()">
+
+            </app-fnf-penalty>
+        </accordion-group>
+    </div>
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="allStatus.leaveStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!allStatus.leaveStatus">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step6 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Leave" class="mt20" [isOpen]="step6"
+            (isOpenChange)="isOpenChangeHandler($event, 'step6')">
+            <app-fnf-leave #FnfLeaveComponent (isLeaveBalanceCompleted)="getLeaveStatus($event)"
+                (reloadLeaves)="reloadLeaves()"></app-fnf-leave>
+        </accordion-group>
+    </div>
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="salaryCalculated">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''" *ngIf="!salaryCalculated">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step7 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Salary Calculation" class="mt20" [isOpen]="step7"
+            (isOpenChange)="isOpenChangeHandler($event, 'step7')">
+            <app-fnf-salary-calculation #FnfSalaryCalculationComponent (reloadSalaryCalculation)="reloadSalaryCalculation()" (isSalaryCalculated)="isSalaryCalculated($event)">
+
+            </app-fnf-salary-calculation>
+        </accordion-group>
+    </div>
+
+    <div class="position-relative">
+        <div class="completedIcon" [class]="step1 ? '' : ''" *ngIf="experienceLetter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#066E2F"/>
+              </svg>
+        </div>
+        <div class="pendingIcon" [class]="step1 ? '' : ''"*ngIf="!experienceLetter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 22C4.9247 22 0 17.0753 0 11C0 4.9247 4.9247 0 11 0C17.0753 0 22 4.9247 22 11C22 17.0753 17.0753 22 11 22ZM11 19.8C13.3339 19.8 15.5722 18.8729 17.2225 17.2225C18.8729 15.5722 19.8 13.3339 19.8 11C19.8 8.66609 18.8729 6.42778 17.2225 4.77746C15.5722 3.12714 13.3339 2.2 11 2.2C8.66609 2.2 6.42778 3.12714 4.77746 4.77746C3.12714 6.42778 2.2 8.66609 2.2 11C2.2 13.3339 3.12714 15.5722 4.77746 17.2225C6.42778 18.8729 8.66609 19.8 11 19.8ZM9.9033 15.4L5.236 10.7327L6.7914 9.1773L9.9033 12.2892L16.1249 6.0665L17.6814 7.6219L9.9033 15.4Z" fill="#B6B6B6"/>
+              </svg>
+        </div>
+        <div class="arrowIcon" [class]="step8 ? 'rotate' : ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                <path
+                    d="M0.666876 -9.0335e-07L8.97123e-07 0.646874L5.5 6L11 0.646875L10.3366 -5.79996e-08L5.5 4.70312L0.666876 -9.0335e-07Z"
+                    fill="#1A1A1A" />
+            </svg>
+        </div>
+        <accordion-group heading="Experience Letter" class="mt20" [isOpen]="step8"
+            (isOpenChange)="isOpenChangeHandler($event, 'step8')">
+            <app-fnf-generate-experience-letter #FnfGenerateExperienceLetterComponent
+                (reloadExpLetter)="reloadExpLetter()" (isExperienceLetter)="isExperienceLetter($event)"></app-fnf-generate-experience-letter>
+        </accordion-group>
+    </div>
+</accordion>

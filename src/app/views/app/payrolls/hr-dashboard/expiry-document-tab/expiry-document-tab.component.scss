@@ -1,0 +1,26 @@
+:host ::ng-deep {
+      datatable-footer.datatable-footer {
+        overflow: visible !important;
+        margin-top: 18px;
+      }
+      ngx-datatable.ngx-datatable.fixed-header.fixed-row.virtualized.scroll-horz {
+        margin-top: 19px;
+      }
+      .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+        display: table;
+        // padding: 15px 15px 15px 15px;
+      }
+      .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+        top: 10px !important;
+        padding-bottom: 0px;
+        padding-left: 3px;
+      }
+      .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+        padding-top: 10px;
+        padding-left: 5px;
+        padding-bottom: 7px;
+      }
+      span.ng-clear-wrapper {
+        display: none;
+      }
+    }

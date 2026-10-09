@@ -1,0 +1,132 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Monthly Attendance Entry" [showOrderBy]="false" [showDisplayMode]="false"
+[showSearch]="false" [showItemsPerPage]="false"></app-list-page-header>
+<br />
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="exportData()" (clearData)="clear()">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" required ngModel #yyyymm="ngModel" name="yyyymm" [max]="currentMonth" />
+        <span>Month *</span>
+        @if (!yyyymm.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Month is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}
+
+@if (rows && rows?.length > 0 && permissionview.length) {
+  <div class="row">
+    <div class="col-12 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [externalPaging]="true" [count]="page.totalCount">
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (permissiondelete.length && row.verified == 1 && !row.salaryCalculated && row.salaryPolicyType != 'hourwise') {
+              <a (click)="alertConfirmation(row.userMasterID)">
+                <span tooltip="Delete Monthly Atendance Entry" [class]="'glyph-icon simple-icon-trash tool_tip'"
+                style="padding-right: 6px; font-size: 18px"></span>
+                {{ ' ' }}
+              </a>
+            }
+            @if (row.salaryCalculated) {
+              <button type="button" class="btn btn-outline-success btn-xs">Salary Calculated</button>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Employee Code" prop="EmployeeCode" [flexGrow]="1.2" [width]="150">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Employee Name" [flexGrow]="1.2"
+          [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div>
+              <p class="m-0">
+                {{row.EmployeeName }}
+              </p>
+              <p class="m-0">
+                {{row.Designation}}
+              </p>
+              <p class="m-0">
+                {{row.UserNumber}}
+              </p>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Branch" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div>
+              <p class="m-0">
+                {{row.Branch }}
+              </p>
+              <p class="m-0">
+                {{row.Department}}
+              </p>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Date" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div>
+              <p class="m-0">
+                From: {{row.StartDate | date:'dd-MM-yyyy'}}
+              </p>
+              <p class="m-0">
+                To: {{row.EndDate | date:'dd-MM-yyyy'}}
+              </p>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Present" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+            @if (permissioncreate.length && row.verified == 0 && !row.salaryCalculated && row.salaryPolicyType != 'hourwise') {
+              <input type="number" [min]="0" (keyup)="onPresentChange(row)" (input)="onPresentChange(row)" [(ngModel)]="row.Present" class="form-control" />
+            }
+            @if (permissionedit.length && row.verified == 1 && !row.salaryCalculated && row.salaryPolicyType != 'hourwise') {
+              <input type="number" [min]="0" (keyup)="onPresentChange(row)" (input)="onPresentChange(row)" [(ngModel)]="row.Present" class="form-control" />
+            }
+            @if (((!permissioncreate.length &&  row.verified == 0) || (!permissionedit.length &&  row.verified == 1) || (row.salaryCalculated)) && row.salaryPolicyType != 'hourwise') {
+              <span> {{row.Present}} </span>
+            }
+            @if (row.salaryPolicyType == 'hourwise') {
+              <div>
+                <p class="m-0">
+                  {{'Hourly' }}
+                </p>
+                <p class="m-0">
+                  {{'Salary'}}
+                </p>
+              </div>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Absent" prop="Absent" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="WeekOff" prop="WeekOff" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="Holiday" prop="Holiday" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="PaidLeaves" prop="PaidLeaves" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="UnPaidLeaves" prop="UnPaidLeaves" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+@if (rows && rows?.length > 0) {
+  <div>
+    @if (finalDataToAdd.length) {
+      <button class="btn btn-primary" type="button" (click)="saveData()">Save</button>
+    }
+    <button class="btn btn-danger ml-2" type="button" (click)="cancel()">Cancel</button>
+  </div>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

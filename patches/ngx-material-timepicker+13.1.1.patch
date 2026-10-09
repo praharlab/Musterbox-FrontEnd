@@ -1,0 +1,50 @@
+diff --git a/node_modules/ngx-material-timepicker/fesm2015/ngx-material-timepicker.js b/node_modules/ngx-material-timepicker/fesm2015/ngx-material-timepicker.js
+index 1b7ca67..b42c013 100644
+--- a/node_modules/ngx-material-timepicker/fesm2015/ngx-material-timepicker.js
++++ b/node_modules/ngx-material-timepicker/fesm2015/ngx-material-timepicker.js
+@@ -1438,7 +1438,8 @@ class DomService {
+         this.document = document;
+     }
+     appendTimepickerToBody(timepicker, config) {
+-        this.componentRef = this.cfr.resolveComponentFactory(timepicker).create(this.injector);
++        // Angular 22 removed ComponentFactoryResolver (patched via patch-package)
++        this.componentRef = i0.createComponent(timepicker, { environmentInjector: this.appRef.injector, elementInjector: this.injector });
+         Object.keys(config).forEach(key => this.componentRef.instance[key] = config[key]);
+         this.appRef.attachView(this.componentRef.hostView);
+         const domElement = this.componentRef.hostView
+@@ -1450,14 +1451,14 @@ class DomService {
+         this.appRef.detachView(this.componentRef.hostView);
+     }
+ }
+-DomService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.17", ngImport: i0, type: DomService, deps: [{ token: i0.ComponentFactoryResolver }, { token: i0.ApplicationRef }, { token: i0.Injector }, { token: DOCUMENT, optional: true }], target: i0.ɵɵFactoryTarget.Injectable });
++DomService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.17", ngImport: i0, type: DomService, deps: [{ token: i0.Injector }, { token: i0.ApplicationRef }, { token: i0.Injector }, { token: DOCUMENT, optional: true }], target: i0.ɵɵFactoryTarget.Injectable });
+ DomService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.17", ngImport: i0, type: DomService, providedIn: 'root' });
+ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.17", ngImport: i0, type: DomService, decorators: [{
+             type: Injectable,
+             args: [{
+                     providedIn: 'root'
+                 }]
+-        }], ctorParameters: function () { return [{ type: i0.ComponentFactoryResolver }, { type: i0.ApplicationRef }, { type: i0.Injector }, { type: undefined, decorators: [{
++        }], ctorParameters: function () { return [{ type: i0.Injector }, { type: i0.ApplicationRef }, { type: i0.Injector }, { type: undefined, decorators: [{
+                     type: Optional
+                 }, {
+                     type: Inject,
+diff --git a/node_modules/ngx-material-timepicker/src/app/material-timepicker/services/dom.service.d.ts b/node_modules/ngx-material-timepicker/src/app/material-timepicker/services/dom.service.d.ts
+index e279f1a..f2982f9 100644
+--- a/node_modules/ngx-material-timepicker/src/app/material-timepicker/services/dom.service.d.ts
++++ b/node_modules/ngx-material-timepicker/src/app/material-timepicker/services/dom.service.d.ts
+@@ -1,4 +1,4 @@
+-import { ApplicationRef, ComponentFactoryResolver, Injector, Type } from '@angular/core';
++import { ApplicationRef, Injector, Type } from '@angular/core';
+ import { NgxMaterialTimepickerContainerComponent } from '../components/ngx-material-timepicker-container/ngx-material-timepicker-container.component';
+ import { TimepickerConfig } from '../models/timepicker-config.interface';
+ import * as i0 from "@angular/core";
+@@ -8,7 +8,7 @@ export declare class DomService {
+     private injector;
+     private document;
+     private componentRef;
+-    constructor(cfr: ComponentFactoryResolver, appRef: ApplicationRef, injector: Injector, document: any);
++    constructor(cfr: Injector, appRef: ApplicationRef, injector: Injector, document: any);
+     appendTimepickerToBody(timepicker: Type<NgxMaterialTimepickerContainerComponent>, config: TimepickerConfig): void;
+     destroyTimepicker(): void;
+     static ɵfac: i0.ɵɵFactoryDeclaration<DomService, [null, null, null, { optional: true; }]>;

@@ -1,0 +1,201 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit PRODUCT</h5>
+
+    @if (companydata) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #productName="ngModel"
+                [(ngModel)]="companydata.productName"
+                name="productName"
+                />
+                <span>Product Name *</span>
+                @if (!productName.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Product Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #productCode="ngModel"
+                  [(ngModel)]="companydata.productCode"
+                  name="productCode"
+                  />
+                  <span>Product Code *</span>
+                  @if (!productCode.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Product Code is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <textarea
+                    class="form-control"
+                    type="text"
+                    required
+                    ngModel
+                    #description="ngModel"
+                    [(ngModel)]="companydata.description"
+                    name="description"
+                  ></textarea>
+                  <span>Prodyuct Description *</span>
+                  @if (!description.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Product Description is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    required
+                    ngModel
+                    #productPrice="ngModel"
+                    [(ngModel)]="companydata.productPrice"
+                    name="productPrice"
+                    />
+                    <span>Product Price *</span>
+                    @if (!productPrice.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Product Price is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      required
+                      ngModel
+                      #totalUser="ngModel"
+                      [(ngModel)]="companydata.totalUser"
+                      name="totalUser"
+                      />
+                      <span>Total user *</span>
+                      @if (!totalUser.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Total User is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="text"
+                        required
+                        ngModel
+                        #totalTracking="ngModel"
+                        [(ngModel)]="companydata.totalTracking"
+                        name="totalTracking"
+                        />
+                        <span>Total tracking user *</span>
+                        @if (!totalTracking.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Product Code is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  @if (showMyContainer) {
+                    <h5 class="mb-4">Edit Plan</h5>
+                  }
+                  @if (showMyContainer) {
+                    <div>
+                      @for (formdatas of formdata; track formdatas) {
+                        <div class="row">
+                          <div class="col-md-6">
+                            <input
+                              type="checkbox"
+                              name="parent"
+                              (change)="parentform(formdatas, $event.target.checked)"
+                              [checked]="formdatas.parentid === formdatas.formMasterID ? 'checked' : ''"
+                              [attr.disabled]="formdatas.parentFormMasterID != '' ? 'disabled' : null"
+                              />
+                              &nbsp;&nbsp;
+                              <label for="scales">{{ formdatas.formName }}</label>
+                              @for (parentFormMasterID of formdatas.parentFormMasterID; track parentFormMasterID; let index = $index) {
+                                <div
+                                  style="margin-left: 4%"
+                                  >
+                                  <input
+                                    type="checkbox"
+                                    name="child"
+                                    (change)="childform(parentFormMasterID, $event.target.checked)"
+                [checked]="
+                  parentFormMasterID.parentid === parentFormMasterID.formMasterID ? 'checked' : ''
+                "
+                                    [attr.disabled]="parentFormMasterID != '' ? 'disabled' : null"
+                                    />
+                                    &nbsp;&nbsp;
+                                    <label for="scales">{{ parentFormMasterID.formName }}</label>
+                                    <br />
+                                    @for (operation of parentFormMasterID.operation; track operation) {
+                                      <div style="margin-left: 4%">
+                                        <input
+                                          type="checkbox"
+                                          name="operation"
+                                          [checked]="operation.operationselected === operation.operationID ? 'checked' : ''"
+                  (change)="
+                    operations(formdatas, parentFormMasterID, operation, $event.target.checked)
+                  "
+                                          />
+                                          &nbsp;&nbsp;
+                                          <label for="scales">{{ operation.operationName }}</label>
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        }
+                        <div class="col-md-12">
+                          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                          <button
+                            class="btn btn-danger btn-shadow mt-4"
+                            [routerLink]="adminRoot + '/superadminmenus/product_master'"
+                            style="margin-left: 2%"
+                            >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    }
+                  </div>
+                </div>
+
+                <simple-notifications
+                  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                ></simple-notifications>

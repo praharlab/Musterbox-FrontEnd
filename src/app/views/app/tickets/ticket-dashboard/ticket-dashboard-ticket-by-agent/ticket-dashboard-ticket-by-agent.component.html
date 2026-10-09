@@ -1,0 +1,56 @@
+<div class="card mb-4">
+  <div class="card-body card-bottom-padding">
+    <h5 class="card-title">Ticket Assignees</h5>
+    <div class="scroll dashboard-list-with-thumbs">
+      <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+        @for (item of ticketByAgentData; track item) {
+          <div [data]="item">
+            <div class="d-flex flex-row mb-3 pb-3 border-bottom justify-content-between align-items-center">
+              <a>
+                @if (item.ticketAssignedTo.firstName && item.ticketAssignedTo.lastName && (!item || item.ticketAssignedTo.photo == '' || item.ticketAssignedTo.photo == null)) {
+                  <app-profile-pic
+                    [Class]="'img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall'"
+                    [firstName]="item.ticketAssignedTo.firstName"
+                  [lastName]="item.ticketAssignedTo.lastName"></app-profile-pic>
+                }
+                @if (item.ticketAssignedTo.firstName && item.ticketAssignedTo.lastName && item.ticketAssignedTo.photo == '') {
+                  <app-profile-pic
+                    [Class]="'img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall'"
+                    [firstName]="item.ticketAssignedTo.firstName"
+                  [lastName]="item.ticketAssignedTo.lastName"></app-profile-pic>
+                }
+                @if (item.ticketAssignedTo.firstName && item.ticketAssignedTo.lastName && !item.ticketAssignedTo == null) {
+                  <app-profile-pic
+                    [Class]="'img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall'"
+                    [firstName]="item.ticketAssignedTo.firstName"
+                  [lastName]="item.ticketAssignedTo.lastName"></app-profile-pic>
+                }
+                @if (
+                  item && item.ticketAssignedTo.photo != '' && item.ticketAssignedTo.photo != null
+                  ) {
+                  <img src="{{ apiurl }}/uploads/user/photo/{{ item.ticketAssignedTo.photo }}" alt="img"
+                    class="img-thumbnail border-0 rounded-circle list-thumbnail align-self-center xsmall" />
+                }
+              </a>
+              <div class="pl-3 flex-fill">
+                <a>
+                  <p class="font-weight-medium mb-0">{{ item.ticketAssignedTo.displayName }}</p>
+                  <p class="text-muted mb-0 text-small">{{ item.ticketAssignedTo.userNumber }}</p>
+                </a>
+              </div>
+              <div>
+                <a class="btn btn-outline-primary btn-xs">{{ item.count }}</a>
+              </div>
+            </div>
+          </div>
+        }
+      </perfect-scrollbar>
+    </div>
+    <button type="button" class="btn btn-primary btn-block badge-top-margin border-round">
+      <span class="float-left">Average Ticket Resolution Time</span>
+      <span class="badge badge-secondary float-right border-round">
+        {{ ticketAverageResolutionTime }}&nbsp;hrs
+      </span>
+    </button>
+  </div>
+</div>

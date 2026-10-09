@@ -1,0 +1,322 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Customer</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (childcompany == 'false') {
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #company="ngModel"
+                name="company"
+                [(ngModel)]="companydata.companyMasterID"
+                required
+                >
+                @for (comp of comp; track comp) {
+                  <ng-option [value]="comp.companyMasterID">
+                    {{ comp.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #customerName="ngModel"
+              name="customerName"
+              [(ngModel)]="companydata.customerName"
+              />
+              <span>Customer Name *</span>
+              @if (!customerName.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Customer Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                placeholder=""
+                required
+                ngModel
+                #companyName="ngModel"
+                name="companyName"
+                name="companyName"
+                [(ngModel)]="companydata.companyName"
+                />
+                <span>CustomerCompany Name *</span>
+                @if (!companyName.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder=""
+                  ngModel
+                  #currentLocation="ngModel"
+                  name="currentLocation"
+                  [(ngModel)]="companydata.currentLocation"
+                  />
+                  <span>Current Location</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    placeholder=""
+                    ngModel
+                    #latitude="ngModel"
+                    name="latitude"
+                    [(ngModel)]="companydata.latitude"
+                    />
+                    <span>Latitude</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="number"
+                      placeholder=""
+                      ngModel
+                      #longitude="ngModel"
+                      name="longitude"
+                      [(ngModel)]="companydata.longitude"
+                      />
+                      <span>Longitude</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <textarea
+                        class="form-control"
+                        ngModel
+                        #address="ngModel"
+                        name="address"
+                        required
+                        [(ngModel)]="companydata.address"
+                      ></textarea>
+                      <span>Address *</span>
+                      @if (!address.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Address is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder=""
+                        ngModel
+                        #zipcode="ngModel"
+                        required
+                        name="zipcode"
+                        [(ngModel)]="companydata.zipcode"
+                        />
+                        <span>Zipcode *</span>
+                        @if (!zipcode.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Zipcode is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="text"
+                          placeholder=""
+                          ngModel
+                          #mobileNumber1="ngModel"
+                          name="mobileNumber1"
+                          [(ngModel)]="companydata.mobileNumber1"
+                          required
+                          />
+                          <span>Mobile Number 1 *</span>
+                          @if (!mobileNumber1.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Mobile number is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="text"
+                            placeholder=""
+                            ngModel
+                            #mobileNumber2="ngModel"
+                            [(ngModel)]="companydata.mobileNumber2"
+                            name="mobileNumber2"
+                            />
+                            <span>Mobile Number 2</span>
+                          </label>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-group has-float-label">
+                            <input
+                              class="form-control"
+                              type="email"
+                              placeholder=""
+                              ngModel
+                              #email="ngModel"
+                              [(ngModel)]="companydata.email"
+                              name="email"
+                              />
+                              <span>Email</span>
+                            </label>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <input
+                                class="form-control"
+                                type="text"
+                                placeholder=""
+                                ngModel
+                                #website="ngModel"
+                                [(ngModel)]="companydata.website"
+                                name="website"
+                                />
+                                <span>Website</span>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <ng-select
+                                  placeholder="Choose your option"
+                                  (change)="selectcountry($event)"
+                                  ngModel
+                                  #country1="ngModel"
+                                  [(ngModel)]="countryid"
+                                  required
+                                  name="country1"
+                                  >
+                                  @for (countrys of country; track countrys) {
+                                    <ng-option [value]="countrys.countryMasterID">
+                                      {{ countrys.countryName }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>Country *</span>
+                                @if (!country1.valid && addcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Country is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <ng-select
+                                  placeholder="Choose your option"
+                                  (change)="selectstate($event)"
+                                  ngModel
+                                  #state1="ngModel"
+                                  [(ngModel)]="stateid"
+                                  required
+                                  name="state1"
+                                  >
+                                  @for (states of state; track states) {
+                                    <ng-option [value]="states.stateMasterID">
+                                      {{ states.stateName }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>State *</span>
+                                @if (!state1.valid && addcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Country is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <ng-select
+                                  placeholder="Choose your option"
+                                  (change)="selectcity($event)"
+                                  ngModel
+                                  #city1="ngModel"
+                                  [(ngModel)]="cityid"
+                                  required
+                                  name="city1"
+                                  >
+                                  @for (citys of city; track citys) {
+                                    <ng-option [value]="citys.cityMasterID">
+                                      {{ citys.cityName }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>City *</span>
+                                @if (!city1.valid && addcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Country is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                            <button
+                              class="btn btn-danger btn-shadow mt-4"
+                              [routerLink]="adminRoot + '/masters/customer'"
+                              style="margin-left: 2%"
+                              >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                    <simple-notifications
+                      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                    ></simple-notifications>
+                    <div style="position: relative">
+                      <ngx-ui-loader></ngx-ui-loader>
+                    </div>

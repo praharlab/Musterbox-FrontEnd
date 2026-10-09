@@ -1,0 +1,1561 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 29"></app-heading>
+    <app-breadcrumb title="Form 29"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form
+        #datefilter="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <!-- <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()"> -->
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #company="ngModel"
+                name="company"
+                (change)="selectcompany($event)"
+                required
+                >
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #branchID="ngModel"
+                name="branchID"
+                required
+                >
+                @for (item of branch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch*</span>
+              @if (!branchID.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Branch is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                ngModel
+                #fromyearmonth="ngModel"
+                name="fromyearmonth"
+                required
+                />
+                <span>From yearmonth*</span>
+                @if (!fromyearmonth.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From yearmonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="month"
+                  ngModel
+                  #toyearmonth="ngModel"
+                  name="toyearmonth"
+                  required
+                  />
+                  <span>To yearmonth*</span>
+                  @if (!toyearmonth.valid && datefilter.submitted) {
+                    <div class="invalid-tooltip">
+                      To yearmonth is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-5">
+                <button class="btn btn-primary form-group" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+                <span> &nbsp;&nbsp; </span>
+                @if (Form_29.length != 0) {
+                  <button class="btn btn-success form-group" type="button" (click)="savePdf()">
+                    Download As PDF
+                  </button>
+                }
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    @if (Form_29.length != 0) {
+      <div>
+        <div style="text-align: center">
+          <h1 style="font-weight: 900; font-size: 42px">FORM NO. 29</h1>
+        </div>
+        <p class="MsoNormal" align="center" style="text-align: center">(Prescribed under Rule 111)</p>
+        <p class="MsoNormal" align="center" style="text-align: center">
+          <b>&nbsp;</b>
+        </p>
+        <div class="MsoNormal" align="center" style="text-align: center">
+          <h1 style="font-size: 22px">
+            Register of accidents, major accidents and dangerous occurrences.
+          </h1>
+        </div>
+        <p class="MsoNormal" align="center" style="text-align: center">
+          <b>&nbsp;</b>
+        </p>
+        <table
+          class="MsoNormalTable"
+          cellspacing="0"
+          cellpadding="0"
+          width="691"
+          style="width: 10.2in; border-collapse: collapse; border: none"
+          >
+          @if (companyData) {
+            <tr style="page-break-inside: avoid; height: 60.75pt">
+              <td
+                width="306"
+                valign="top"
+                style="width: 400pt; padding: 0in 5.4pt 0in 5.4pt; height: 60.75pt"
+                >
+                <p class="MsoNormal">
+                  Name of the Company:
+                  <b>{{ companyData.companyName }}</b>
+                </p>
+                <p class="MsoNormal">
+                  Address of Company :
+                  <b>{{ companyData.companyAddress }}</b>
+                </p>
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+            </tr>
+          }
+        </table>
+        <div align="center">
+          <table
+            class="MsoTableGrid"
+            border="1"
+            cellspacing="0"
+            cellpadding="0"
+            style="border-collapse: collapse; border: none"
+            id="form29-content"
+            >
+            <tr>
+              <td
+                valign="top"
+                rowspan="2"
+                style="border: solid gray 1pt; padding: 0.7pt 1.45pt 0.7pt 1.5pt"
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Serial number
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                valign="top"
+                rowspan="2"
+          style="
+            width: 40pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Date &amp; time of notice
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                valign="top"
+                rowspan="2"
+          style="
+            width: 40pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Name and serial
+                      <br />
+                      number of the
+                      <br />
+                      person involved
+                      <br />
+                      in the
+                      <br />
+                      register of adult/
+                      <br />
+                      child register
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="67"
+                valign="top"
+                rowspan="2"
+          style="
+            width: 50.3pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      ESIC Insurance number
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="68"
+                valign="top"
+                rowspan="2"
+          style="
+            width: 60.65pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Date
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="65"
+                valign="top"
+                rowspan="2"
+          style="
+            width: 48.95pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Time
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="47"
+                rowspan="2"
+                valign="top"
+          style="
+            width: 50pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Place
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="36"
+                rowspan="2"
+                valign="top"
+          style="
+            width: 40pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Cause of
+                      <br />
+                      accident
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="98"
+                rowspan="2"
+                valign="top"
+          style="
+            width: 50pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Nature
+                      <br />
+                      of injury/
+                      <br />
+                      dangerous
+                      <br />
+                      occurrence
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="98"
+                rowspan="2"
+                valign="top"
+          style="
+            width: 60pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      What exactly was
+                      <br />
+                      the injured person,
+                      <br />
+                      if any doing at
+                      <br />
+                      that notice
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="67"
+                valign="top"
+                rowspan="2"
+          style="
+            width: 50.3pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Name of the person
+                      <br />
+                      giving the notice
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="66"
+                valign="top"
+                rowspan="2"
+          style="
+            width: 100pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Name,
+                      <br />
+                      address
+                      <br />
+                      and
+                      <br />
+                      occupation
+                      <br />
+                      of two witnesses
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="66"
+                rowspan="2"
+                valign="top"
+                style="width: 50pt; border: solid gray 1pt; padding: 0.7pt 1.45pt 0.7pt 1.5pt"
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Date of return of injured Person to work
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="50"
+                rowspan="2"
+                valign="top"
+          style="
+            width: 60pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Number of days
+                      <br />
+                      the injured person
+                      <br />
+                      was absent from
+                      <br />
+                      the work including
+                      <br />
+                      holidays and off days
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="50"
+                rowspan="2"
+                valign="top"
+          style="
+            width: 40pt;
+            border: solid gray 1pt;
+            border-left: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="text-autospace: none; text-align: center">
+                  <b>
+                    <span style="font-size: 9pt; font-family: 'ITC Officina Sans Book', sans-serif">
+                      Signature and
+                      <br />
+                      designation
+                      <br />
+                      of the person
+                      <br />
+                      who makes the
+                      <br />
+                      entry with date.
+                    </span>
+                  </b>
+                </p>
+              </td>
+            </tr>
+            <br />
+            <!-- <tr>
+            <p class="MsoNormal" style="text-autospace: none;">
+              <b>
+                <span
+          style="
+            font-size: 9pt;
+            font-family: 'ITC Officina Sans Book', sans-serif;
+          "
+                  >
+                  Witness Details
+                </span>
+              </b>
+            </p>
+            <br>
+              <td
+                width="60"
+                valign="top"
+    style="
+      width: 45pt;
+      border-top: none;
+      border-left: none;
+      border-bottom: solid gray 1pt;
+      border-right: solid gray 1pt;
+      padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+    "
+                >
+                <p class="MsoNormal" style="text-autospace: none;">
+                  <a href="#_ftn3" name="_ftnref3" title="">
+                    <span class="MsoFootnoteReference">
+                      <b>
+                        <span
+              style="
+                font-size: 9pt;
+                font-family: 'ITC Officina Sans Book', sans-serif;
+              "
+                          >
+                          <span class="MsoFootnoteReference">
+                            <b>
+                              <span
+                    style="
+                      font-size: 9pt;
+                      font-family: 'ITC Officina Sans Book', sans-serif;
+                    "
+                                >
+                                (1).Name
+                              </span>
+                            </b>
+                          </span>
+                        </span>
+                      </b>
+                    </span>
+                  </a>
+                  <b>
+                    <span
+          style="
+            font-size: 9pt;
+            font-family: 'ITC Officina Sans Book', sans-serif;
+          "
+                      >
+                      (1).Address
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="68"
+                valign="top"
+    style="
+      width: 51.25pt;
+      border-top: none;
+      border-left: none;
+      border-bottom: solid gray 1pt;
+      border-right: solid gray 1pt;
+      padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+    "
+                >
+                <p class="MsoNormal" style="text-autospace: none;">
+                  <b>
+                    <span
+          style="
+            font-size: 9pt;
+            font-family: 'ITC Officina Sans Book', sans-serif;
+          "
+                      >
+                      (1).Occupation
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="56"
+                valign="top"
+    style="
+      width: 42pt;
+      border-top: none;
+      border-left: none;
+      border-bottom: solid gray 1pt;
+      border-right: solid gray 1pt;
+      padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+    "
+                >
+                <p class="MsoNormal" style="text-autospace: none;">
+                  <b>
+                    <span
+          style="
+            font-size: 9pt;
+            font-family: 'ITC Officina Sans Book', sans-serif;
+          "
+                      >
+                      (2).Name
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="56"
+                valign="top"
+    style="
+      width: 42pt;
+      border-top: none;
+      border-left: none;
+      border-bottom: solid gray 1pt;
+      border-right: solid gray 1pt;
+      padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+    "
+                >
+                <p class="MsoNormal" style="text-autospace: none;">
+                  <b>
+                    <span
+          style="
+            font-size: 9pt;
+            font-family: 'ITC Officina Sans Book', sans-serif;
+          "
+                      >
+                      (2).Address
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="56"
+                valign="top"
+    style="
+      width: 42pt;
+      border-top: none;
+      border-left: none;
+      border-bottom: solid gray 1pt;
+      border-right: solid gray 1pt;
+      padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+    "
+                >
+                <p class="MsoNormal" style="text-autospace: none;">
+                  <b>
+                    <span
+          style="
+            font-size: 9pt;
+            font-family: 'ITC Officina Sans Book', sans-serif;
+          "
+                      >
+                      (2).Occupation
+                    </span>
+                  </b>
+                </p>
+              </td>
+            </tr> -->
+            <br />
+            <tr>
+              <td
+                width="63"
+                valign="top"
+          style="
+            width: 47.55pt;
+            border: solid gray 1pt;
+            border-top: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      1
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="66"
+                valign="top"
+          style="
+            width: 49.85pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      2
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="66"
+                valign="top"
+          style="
+            width: 49.2pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      3
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="67"
+                valign="top"
+          style="
+            width: 50.3pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      4
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="68"
+                valign="top"
+          style="
+            width: 50.65pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      5
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="65"
+                valign="top"
+          style="
+            width: 48.95pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      6
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="67"
+                valign="top"
+          style="
+            width: 50.3pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      7
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="66"
+                valign="top"
+          style="
+            width: 49.2pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      8
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="66"
+                valign="top"
+          style="
+            width: 49.15pt;
+            border: solid gray 1pt;
+            border-top: none;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      9
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="50"
+                valign="top"
+          style="
+            width: 37.65pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      10
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="60"
+                valign="top"
+          style="
+            width: 45pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <a href="#_ftn4" name="_ftnref4" title="">
+                    <span class="MsoFootnoteReference">
+                      <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                      ></span>
+                    </span>
+                  </a>
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      11
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="68"
+                valign="top"
+          style="
+            width: 51.25pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      12
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="56"
+                valign="top"
+          style="
+            width: 42pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      13
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="50"
+                valign="top"
+          style="
+            width: 37.8pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      14
+                    </span>
+                  </b>
+                </p>
+              </td>
+              <td
+                width="50"
+                valign="top"
+          style="
+            width: 37.8pt;
+            border-top: none;
+            border-left: none;
+            border-bottom: solid gray 1pt;
+            border-right: solid gray 1pt;
+            padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+          "
+                >
+                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                  <b>
+                    <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                      >
+                      15
+                    </span>
+                  </b>
+                </p>
+              </td>
+            </tr>
+            @for (data of Form_29; track data; let i = $index) {
+              @if (data.Formdata.length == 0) {
+                <tr>
+                  <td
+                    width="43"
+                    valign="top"
+            style="
+              width: 0.45in;
+              border-top: none;
+              border-left: solid gray 1pt;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="text-align: justify">
+                      <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                        >
+                        {{ i + 1 }}
+                      </span>
+                    </p>
+                  </td>
+                  <td
+                    width="36"
+                    valign="top"
+                    colspan="8"
+            style="
+              width: 27pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="text-align: justify">
+                      <span
+                style="
+                  font-size: 9pt;
+                  line-height: 120%;
+                  font-family: 'ITC Officina Sans Book', sans-serif;
+                "
+                        >
+                        <b>No any Accidents for the month of {{ data.monthname }} {{ data.year }}</b>
+                      </span>
+                    </p>
+                  </td>
+                  <td style="border-left: none; border: solid gray 1pt"></td>
+                  <td style="border-left: none; border: solid gray 1pt"></td>
+                  <td style="border-left: none; border: solid gray 1pt"></td>
+                  <td style="border-left: none; border: solid gray 1pt"></td>
+                  <td style="border-left: none; border: solid gray 1pt"></td>
+                  <td style="border-left: none; border: solid gray 1pt"></td>
+                </tr>
+              }
+              @if (data.Formdata.length > 0) {
+                <tr></tr>
+              }
+              @for (data1 of data.Formdata; track data1; let z = $index) {
+                <tr>
+                  <td
+                    width="63"
+                    valign="top"
+            style="
+              width: 47.55pt;
+              border: solid gray 1pt;
+              border-top: none;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ i + 1 }}. ({{ z + 1 }})
+                          <!-- {{i+1+z}} -->
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 85pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.NoticeDate | date: 'dd-MM-yyyy' }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 70pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.displayName }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="67"
+                    valign="top"
+            style="
+              width: 50.3pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.esicNumber }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="68"
+                    valign="top"
+            style="
+              width: 85pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.AccidentDate | date: 'dd-MM-yyyy' }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="65"
+                    valign="top"
+            style="
+              width: 60pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.AccidentTime }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="67"
+                    valign="top"
+            style="
+              width: 70pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.AccidentLocation }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.AccidentCause }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.InjuryNature }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                        ></span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          {{ data1.createByName }}
+                        </span>
+                      </b>
+                    </p>
+                  </td>
+                  <td
+                    width="66"
+                    valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                    >
+                    <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                      <b>
+                        <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                          >
+                          <!-- (1).Name:- {{data.WitnessOneName}}
+                          <br>
+                            (1).Address:- {{data.WitnessOneAddress}}
+                            <br>
+                              (1).Occupation:- {{data.WitnessOneOccupation}}
+                              <br>
+                                <br>
+                                  (2).Name:- {{data.WitnessSecondName}}
+                                  <br>
+                                    (2).Address:- {{data.WitnessSecondAddress}}
+                                    <br>
+                                      (2).Occupation:- {{data.WitnessSecondOccupation}}  -->
+                                      (1) {{ data1.WitnessOneName }},
+                                      <br />
+                                      (1) {{ data1.WitnessOneAddress }},
+                                      <br />
+                                      (1) {{ data1.WitnessOneOccupation }},
+                                      <br />
+                                      <br />
+                                      (2) {{ data1.WitnessSecondName }},
+                                      <br />
+                                      (2) {{ data1.WitnessSecondAddress }},
+                                      <br />
+                                      (2) {{ data1.WitnessSecondOccupation }}
+                                    </span>
+                                  </b>
+                                </p>
+                              </td>
+                              <td
+                                width="66"
+                                valign="top"
+            style="
+              width: 85pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                                >
+                                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                                  <b>
+                                    <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                                      >
+                                      {{ data1.ReturnDate | date: 'dd-MM-yyyy' }}
+                                    </span>
+                                  </b>
+                                </p>
+                              </td>
+                              <td
+                                width="66"
+                                valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                                >
+                                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                                  <b>
+                                    <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                                      >
+                                      {{ data1.TotalDays }}
+                                    </span>
+                                  </b>
+                                </p>
+                              </td>
+                              <td
+                                width="66"
+                                valign="top"
+            style="
+              width: 49.2pt;
+              border-top: none;
+              border-left: none;
+              border-bottom: solid gray 1pt;
+              border-right: solid gray 1pt;
+              padding: 0.7pt 1.45pt 0.7pt 1.5pt;
+            "
+                                >
+                                <p class="MsoNormal" style="line-height: 120%; text-autospace: none">
+                                  <b>
+                                    <span
+                  style="
+                    font-size: 9pt;
+                    line-height: 120%;
+                    font-family: 'ITC Officina Sans Book', sans-serif;
+                  "
+                                    ></span>
+                                  </b>
+                                </p>
+                              </td>
+                            </tr>
+                          }
+                        }
+                      </table>
+                    </div>
+                  </div>
+                }
+
+                <!-- <div class="col-12">
+                <pagination class="justify-content-center" [totalItems]="page.totalCount" [itemsPerPage]="limit" [maxSize]="5"
+                  (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate">
+                </pagination>
+              </div>
+
+            </div>
+
+            <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+              <i class="simple-icon-arrow-right"></i>
+            </ng-template>
+            <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+              <i class="simple-icon-arrow-left"></i>
+            </ng-template> -->

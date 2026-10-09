@@ -1,0 +1,384 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (assetMaster) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Asset Master</h5>
+      <div
+        bsModal
+        #lgModal1="bs-modal"
+        class="modal fade"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Add Asset Category</h4>
+              <button type="button" class="close" aria-label="Close"
+                (click)="closeModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form #addcomp1="ngForm" novalidate (ngSubmit)="onSubmit1()">
+                <div class="row">
+                  @if (childcompany == 'false') {
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <ng-select
+                          placeholder="Choose your option"
+                          ngModel
+                          #company="ngModel"
+                          name="company"
+                          required>
+                          @for (comp of comp; track comp) {
+                            <ng-option
+                              [value]="comp.companyMasterID">
+                              {{ comp.companyName }}
+                            </ng-option>
+                          }
+                        </ng-select>
+                        <span>Select Company *</span>
+                        @if (!company.valid && addcomp1.submitted) {
+                          <div
+                            class="invalid-tooltip">
+                            Company is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="text"
+                        required
+                        ngModel
+                        #assetcategory="ngModel"
+                        name="assetcategory" />
+                        <span>Asset Category *</span>
+                        @if (!assetcategory.valid && addcomp1.submitted) {
+                          <div
+                            class="invalid-tooltip">
+                            Asset Category is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            @if (childcompany == 'false') {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #company="ngModel"
+                    name="company"
+                    (change)="getcompid($event)"
+                    [(ngModel)]="assetMaster.companyMasterID">
+                    @for (comp of comp; track comp) {
+                      <ng-option
+                        [value]="comp.companyMasterID">
+                        {{ comp.companyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Company *</span>
+                  @if (!company.valid && addcomp.submitted) {
+                    <div
+                      class="invalid-tooltip">
+                      User is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            }
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #assetSerialNo="ngModel"
+                  [(ngModel)]="assetMaster.assetSerialNo"
+                  name="assetSerialNo" />
+                  <span>Asset Serial No *</span>
+                  @if (!assetSerialNo.valid && addcomp.submitted) {
+                    <div
+                      class="invalid-tooltip">
+                      Asset Serial No is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="text"
+                    required
+                    ngModel
+                    #assetName="ngModel"
+                    [(ngModel)]="assetMaster.assetName"
+                    name="assetName" />
+                    <span>Asset Name *</span>
+                    @if (!assetName.valid && addcomp.submitted) {
+                      <div
+                        class="invalid-tooltip">
+                        Asset Name is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <ng-select
+                      placeholder="Choose your option"
+                      ngModel
+                      #assetCategoryID="ngModel"
+                      [(ngModel)]="assetMaster.assetCategoryID"
+                      name="assetCategoryID">
+                      @for (assetcategory1 of assetcategory1; track assetcategory1) {
+                        <ng-option
+                          [value]="assetcategory1.assetCategoryID">
+                          {{ assetcategory1.assetCategory }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Asset Category *</span>
+                    @if (!assetCategoryID.valid && addcomp.submitted) {
+                      <div
+                        class="invalid-tooltip">
+                        Asset Category is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-1">
+                  <label class="form-group has-float-label">
+                    <button
+                      (click)="lgModal1.show()"
+                      style="font-size: large"
+                      class="btn btn-primary"
+                      type="button">
+                      +
+                    </button>
+                  </label>
+                </div>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.attachment != '') {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="view(row.attachment)">
+                      View
+                    </button>
+                  }
+                  {{ ' ' }}
+                  {{ ' ' }}
+                </ng-template>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="date"
+                      required
+                      ngModel
+                      #purchaseDate="ngModel"
+                      [(ngModel)]="assetMaster.purchaseDate"
+                      name="purchaseDate" />
+                      <span>Purchase Date *</span>
+                      @if (!purchaseDate.valid && addcomp.submitted) {
+                        <div
+                          class="invalid-tooltip">
+                          Date is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="file"
+                        ngModel
+                        #assetDocument="ngModel"
+                        (change)="onSelectFile($event)"
+                        name="assetDocument" />
+                        <span>Asset Document in PDF</span>
+                      </label>
+                      @if (assetMaster.assetDocument) {
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          (click)="view(assetMaster.assetDocument)">
+                          View
+                        </button>
+                      }
+                    </div>
+                    <br />
+                    <br />
+                    <!-- <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="number"
+                        #quantityValid="ngModel"
+                        [(ngModel)]="assetMaster.quantity"
+                        name="quantity" />
+                        <span>Quantity *</span>
+                        <div *ngIf="!quantityValid && addcomp.submitted"
+                          class="invalid-tooltip">
+                          Quantity must be a positive number!
+                        </div>
+                      </label>
+                    </div> -->
+                    <!-- <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="number"
+                        [(ngModel)]="assetMaster.quantity"
+                        name="quantity"
+                        (keydown)="preventNegative($event)"
+                        #quantityInput="ngModel"
+                        required
+                        min="1" />
+                        <span>Quantity *</span>
+                      </label>
+                    </div> -->
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="number"
+                          required
+                          ngModel
+                          #quantity="ngModel"
+                          [(ngModel)]="assetMaster.quantity"
+                          min="1"
+                          name="quantity" />
+                          <span>Quantity *</span>
+                          @if (!quantity.valid && addcomp.submitted) {
+                            <div
+                              class="invalid-tooltip">
+                              Quantity is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-5">
+                        <label class="form-group has-float-label">
+                          <textarea
+                            class="form-control"
+                            ngModel
+                            #description="ngModel"
+                            [(ngModel)]="assetMaster.description"
+                          name="description"></textarea>
+                          <span>Description</span>
+                        </label>
+                      </div>
+                      <div class="col-md-12">
+                        <button class="btn btn-primary mt-4" type="submit">
+                          {{ 'forms.submit' | translate }}
+                        </button>
+                        <button
+                          class="btn btn-danger btn-shadow mt-4"
+                          [routerLink]="adminRoot + '/masters/assetMaster'"
+                          style="margin-left: 2%">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div
+                  bsModal
+                  #lgModal1="bs-modal"
+                  class="modal fade"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title pull-left">Add Asset Category</h4>
+                        <button
+                          type="button"
+                          class="close"
+                          aria-label="Close"
+                          #closeModal1
+                          (click)="closeModal()">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form #addcomp1="ngForm" novalidate (ngSubmit)="onSubmit1()">
+                          <div class="row">
+                            @if (childcompany == 'false') {
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <ng-select
+                                    placeholder="Choose your option"
+                                    ngModel
+                                    #company="ngModel"
+                                    name="company"
+                                    required>
+                                    @for (comp of comp; track comp) {
+                                      <ng-option
+                                        [value]="comp.companyMasterID">
+                                        {{ comp.companyName }}
+                                      </ng-option>
+                                    }
+                                  </ng-select>
+                                  <span>Select Company *</span>
+                                  @if (!company.valid && addcomp1.submitted) {
+                                    <div
+                                      class="invalid-tooltip">
+                                      Company is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            }
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input
+                                  class="form-control"
+                                  type="text"
+                                  required
+                                  ngModel
+                                  #assetcategory="ngModel"
+                                  name="assetcategory" />
+                                  <span>Asset Category *</span>
+                                  @if (!assetcategory.valid && addcomp1.submitted) {
+                                    <div
+                                      class="invalid-tooltip">
+                                      Asset Category is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <simple-notifications
+                  [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+                </div>
+              }

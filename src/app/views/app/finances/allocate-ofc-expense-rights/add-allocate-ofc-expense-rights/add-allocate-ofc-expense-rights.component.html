@@ -1,0 +1,91 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card">
+  <div class="card-body">
+    <form #allocationAddForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <h4>Add Allocate Office Expense Rights</h4>
+      <div class="row mt-4">
+        @if (company.length > 0) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" [(ngModel)]="company_id" required>
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && allocationAddForm.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectBranch($event)" ngModel
+              #branch="ngModel" name="branch" [(ngModel)]="selectedBranch" required>
+              @for (allbranch of allbranch; track allbranch) {
+                <ng-option [value]="allbranch.branchMasterID">
+                  {{ allbranch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Branch *</span>
+          </label>
+          @if (!branch.valid && allocationAddForm.submitted) {
+            <div class="invalid-tooltip">
+              Branch is required!
+            </div>
+          }
+        </div>
+        @if (allSites.length > 0) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #site="ngModel" name="site" [(ngModel)]="selectedSite">
+                @for (site of allSites; track site) {
+                  <ng-option [value]="site.siteID">
+                    {{ site.siteName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Sites</span>
+            </label>
+          </div>
+        }
+        @if (allUsers.length > 0) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allUsers" [multiple]="false" bindLabel="displayNameWithNumber"
+                bindValue="userMasterID" [closeOnSelect]="false" ngModel #user="ngModel" name="user"
+                placeholder="Choose your option" [required]="true">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index"
+                  *ngIf="multiUser">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    name="selectUser" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select User *</span>
+              @if (!user.valid && allocationAddForm.submitted) {
+                <div class="invalid-tooltip">
+                  User is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+
+      </div>
+      <div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+        <button class="btn btn-danger ml-2" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

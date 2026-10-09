@@ -1,0 +1,350 @@
+<!-- accept request modal -->
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Approve Auth Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (referencedata) {
+          <div class="row">
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Employee Name:
+              </b>{{referencedata.displayName}} ({{referencedata.userNumber}})
+            </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Applied On: </b>
+          {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Employee Code: </b>{{
+          referencedata.employeeCode }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+    </span>
+  </div>
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+  </span>
+</div>
+@if (referencedata.division != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+  </span>
+</div>
+}
+@if (referencedata.workingArea != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+<div>
+  @if (referencedata) {
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Coff Date</th>
+          <td>{{ referencedata?.LeaveCreatedDate }}</td>
+          <th>Created By</th>
+          <td>{{ referencedata?.createdByUser }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>In Time</th>
+          <td>{{ referencedata.InDateTime | date : 'dd-MM-yyyy HH:mm'}}</td>
+          <th>Out Time</th>
+          <td>{{ referencedata.OutDateTime | date : 'dd-MM-yyyy HH:mm' }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>Requested Compensatory Off</th>
+          <td>{{ referencedata?.LeaveAddNew }}</td>
+          <th>Authorization Status</th>
+          <td>
+            @if (referencedata.authorizationStatus == 3) {
+              <button class="btn btn-outline-success btn-xs">
+                Approved
+              </button>
+            }
+            @if (referencedata.authorizationStatus == 4) {
+              <button class="btn btn-outline-danger btn-xs">
+                Rejected
+              </button>
+            }
+            @if (
+              referencedata.authorizationStatus == 0 ||
+              referencedata.authorizationStatus == 1 ||
+              referencedata.authorizationStatus == 2
+              ) {
+              <button class="btn btn-outline-warning btn-xs">
+                Pending
+              </button>
+            }
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  }
+  <div class="row">
+    <div class="col-md-12">
+      <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ referencedata?.AuthorizationCriteria }}
+    </span>
+  </div>
+</div>
+<br>
+  @if (referencedata?.authUserStatus?.length) {
+    <table class="table">
+      <thead>
+      </thead>
+      <tbody>
+        @for (user of referencedata.authUserStatus; track user) {
+          <tr>
+            <td style="width: 120px;">
+              @if (user.authstatus == 1) {
+                <button class="btn btn-outline-success btn-xs">
+                  Approved
+                </button>
+              }
+              @if (user.authstatus == 0) {
+                <button class="btn btn-outline-danger btn-xs">
+                  Rejected
+                </button>
+              }
+              @if (user.authstatus == 2) {
+                <button class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+            </td>
+            <td>{{ user.displayName }}</td>
+            <td>
+              @if (user.authstatus != 2) {
+                <p class="mb0">Updated At :</p>
+              }
+              @if (user.authstatus != 2) {
+                <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+              }
+            </td>
+            <td>{{ user.remarks }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <hr>
+    </div>
+  </div>
+  <form #accept="ngForm" novalidate (ngSubmit)="acceptCompensatoryOff()">
+    <div class="row">
+      <div class="col-md-12">
+        <label class="form-group has-float-label">
+          <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+          <span>Remarks</span>
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-success" type="submit">
+      {{ 'Approve' | translate }}
+    </button>
+  </form>
+</div>
+</div>
+</div>
+</div>
+
+<!-- reject modal -->
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Reject Auth Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+          #closeModal2>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (referencedata) {
+          <div class="row">
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Employee Name:
+              </b>{{referencedata.displayName}} ({{referencedata.userNumber}})
+            </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Applied On: </b>
+          {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Employee Code: </b>{{
+          referencedata.employeeCode }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+    </span>
+  </div>
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+  </span>
+</div>
+@if (referencedata.division != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+  </span>
+</div>
+}
+@if (referencedata.workingArea != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+<div>
+  @if (referencedata) {
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Coff Date</th>
+          <td>{{ referencedata?.LeaveCreatedDate }}</td>
+          <th>Created By</th>
+          <td>{{ referencedata?.createdByUser }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>In Time</th>
+          <td>{{ referencedata.InDateTime | date : 'dd-MM-yyyy HH:mm'}}</td>
+          <th>Out Time</th>
+          <td>{{ referencedata.OutDateTime | date : 'dd-MM-yyyy HH:mm' }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>Requested Compensatory Off</th>
+          <td>{{ referencedata?.LeaveAddNew }}</td>
+          <th>Authorization Status</th>
+          <td>
+            @if (referencedata.authorizationStatus == 3) {
+              <button class="btn btn-outline-success btn-xs">
+                Approved
+              </button>
+            }
+            @if (referencedata.authorizationStatus == 4) {
+              <button class="btn btn-outline-danger btn-xs">
+                Rejected
+              </button>
+            }
+            @if (
+              referencedata.authorizationStatus == 0 ||
+              referencedata.authorizationStatus == 1 ||
+              referencedata.authorizationStatus == 2
+              ) {
+              <button class="btn btn-outline-warning btn-xs">
+                Pending
+              </button>
+            }
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  }
+  <div class="row">
+    <div class="col-md-12">
+      <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ referencedata?.AuthorizationCriteria }}
+    </span>
+  </div>
+</div>
+<br>
+  @if (referencedata?.authUserStatus?.length) {
+    <table class="table">
+      <thead>
+      </thead>
+      <tbody>
+        @for (user of referencedata.authUserStatus; track user) {
+          <tr>
+            <td style="width: 120px;">
+              @if (user.authstatus == 1) {
+                <button class="btn btn-outline-success btn-xs">
+                  Approved
+                </button>
+              }
+              @if (user.authstatus == 0) {
+                <button class="btn btn-outline-danger btn-xs">
+                  Rejected
+                </button>
+              }
+              @if (user.authstatus == 2) {
+                <button class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+            </td>
+            <td>{{ user.displayName }}</td>
+            <td>
+              @if (user.authstatus != 2) {
+                <p class="mb0">Updated At :</p>
+              }
+              @if (user.authstatus != 2) {
+                <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+              }
+            </td>
+            <td>{{ user.remarks }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <hr>
+    </div>
+  </div>
+  <form #reject="ngForm" novalidate (ngSubmit)="rejectCompensatoryOff()">
+    <div class="row">
+      <div class="col-md-12">
+        <label class="form-group has-float-label">
+          <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+          <span>Remarks</span>
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-danger" type="submit">
+      {{ 'Reject' | translate }}
+    </button>
+  </form>
+</div>
+</div>
+</div>
+</div>

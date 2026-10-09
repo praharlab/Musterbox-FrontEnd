@@ -1,0 +1,203 @@
+<app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+  (getCompany)="getCompany($event)" [heading]="'Import Expense Payment'" cancelRoute="/finances/expense_payment"
+  (onExtraButtonClick)="downloadDemoExcel($event)" (emitUsers)="emitUsers($event)" (init)="init($event)"
+  [showRequiredFields]="showRequiredFields" [showExtraButton]="showExtraButton" extraButtonName="Demo Excel"
+  extraButtonType="submit">
+
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate" required />
+      <span>From Date *</span>
+      @if (!fromDate.valid && commonFilter?.filterForm?.submitted) {
+        <div class="invalid-tooltip">
+          From Date is required!
+        </div>
+      }
+    </label>
+  </div>
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="date" ngModel #toDate="ngModel" name="toDate" required />
+      <span>To Date *</span>
+      @if (!toDate.valid && commonFilter?.filterForm?.submitted) {
+        <div class="invalid-tooltip">
+          To Date is required!
+        </div>
+      }
+    </label>
+  </div>
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="file" ngModel #file="ngModel" accept=".xlsx, .xls" name="file"
+        (change)="onFileChange($event)" />
+        <span>Import File *</span>
+        @if (file.valid) {
+          <p>{{ fileName }}</p>
+        }
+        @if (!file.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            File is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+
+  @if (validatedRows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              <span> &nbsp;&nbsp; </span>
+              @if (validatedRows.length > 0 && (isEdited == true || remarksCount>0)) {
+                <button class="btn btn-primary" type="submit" (click)="reValidateData()"
+                  >
+                  Re-Validate
+                </button>
+              }
+              @if (validatedRows.length > 0 && isEdited == false && remarksCount==0) {
+                <button class="btn btn-primary" type="submit" (click)="saveData()"
+                  >
+                  Submit
+                </button>
+              }
+            </div>
+            @if (validatedRows.length > 0 && remarksCount != 0) {
+              <div class="col-md-12 text-danger" style="font-size: 16px; padding: 2%"
+                >
+                <div>{{ remarksNote }}</div>
+              </div>
+            }
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 50px">Sr. No</th>
+                  <th style="width: 50px">Actions</th>
+                  @if (validatedRows.length > 0 &&remarksCount>0) {
+                    <th>Remarks</th>
+                  }
+                  <th>Employee Name</th>
+                  <th>Expense Data</th>
+                  <th>Payment Mode *</th>
+                  <th>Payment Date *</th>
+                  <th>Refrence No</th>
+                  <th>Refrence Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of validatedRows; track item; let i = $index) {
+                  <tr>
+                    @if (!item.isDeleted) {
+                      <td style="width: 50px">
+                        <div style="width: 50px">
+                          {{ i + 1 }}
+                        </div>
+                      </td>
+                      <td style="width: 50px">
+                        <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                          Remove
+                        </button>
+                      </td>
+                      @if (validatedRows.length > 0 &&remarksCount>0) {
+                        <td >
+                          <div>
+                            <ul style="padding-left: 20px; margin: 0;">
+                              @for (remark of item.remarks; track remark) {
+                                <li>
+                                  {{ remark }}
+                                </li>
+                              }
+                            </ul>
+                          </div>
+                        </td>
+                      }
+                      <td>
+                        <div>
+                          Name - {{ item.displayName }} @if (item.employeeCode && item.employeeCode != '' && item.employeeCode != null) {
+                          <span
+                            >
+                            ({{ item.employeeCode }})
+                          </span>
+                        }
+                        <br />
+                        Branch - {{ item.branch }}
+                        <br />
+                        Department - {{ item.department }}
+                        <br />
+                        Designation - {{ item.designation }}
+                        <br />
+                        Contact Number - {{ item.userNumber }}
+                        <br />
+                      </div>
+                    </td>
+                    <td>
+                      <div>
+                        Expense Date - {{ item.expenseDate }}
+                        <br />
+                        Expense Voucher Number - {{ item.userExpenseID }}
+                        <br />
+                        Total Expense Amount - {{ item.amount }}
+                      </div>
+                    </td>
+                    <td>
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #paymentmode="ngModel"
+                          [(ngModel)]="item.paymentmode" name="paymentmode{{ i }}" required
+                          (change)="onProductNameChange($event)">
+                          <ng-option value="Cash">Cash</ng-option>
+                          <ng-option value="Cheque">Cheque</ng-option>
+                          <ng-option value="UPI">UPI</ng-option>
+                          <ng-option value="NetBanking">NetBanking</ng-option>
+                        </ng-select>
+                        <span>Payment Mode *</span>
+                        @if (!paymentmode.valid && tableForm.submitted) {
+                          <div class="invalid-tooltip">
+                            Payment Mode is required!
+                          </div>
+                        }
+                      </label>
+                    </td>
+                    <td>
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="date" ngModel #paymentDate="ngModel"
+                          name="paymentDate{{ i }}" required [(ngModel)]="item.paymentDate"
+                          (change)="onProductNameChange($event)" />
+                          <span>Payment Date *</span>
+                          @if (!paymentDate.valid && tableForm.submitted) {
+                            <div class="invalid-tooltip">
+                              Payment Date is required!
+                            </div>
+                          }
+                        </label>
+                      </td>
+                      <td>
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #referenceNO="ngModel"
+                            name="referenceNO{{ i }}" [(ngModel)]="item.referenceNO"
+                            (change)="onProductNameChange($event)" />
+                            <span>Refrence No.</span>
+                          </label>
+                        </td>
+                        <td>
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="date" ngModel #referenceDate="ngModel"
+                              name="referenceDate{{ i }}" [(ngModel)]="item.referenceDate"
+                              (change)="onProductNameChange($event)" />
+                              <span>Refrence Date</span>
+                            </label>
+                          </td>
+                        }
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

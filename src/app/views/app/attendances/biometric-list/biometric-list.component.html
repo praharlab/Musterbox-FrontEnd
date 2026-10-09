@@ -1,0 +1,108 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showAddOnly]="permissioncreate" [showOrderBy]="false" [showSearch]="false"
+  [showDisplayMode]="false" [showItemsPerPage]="false" name="Biometric List"
+(addNewItem)="showAddNewModal()"></app-list-page-header>
+
+@if (permissionview.length != 0 && company1 && company1.length) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [closeOnSelect]="false" [multiple]="true" ngModel #company="ngModel" name="company"
+                [(ngModel)]="company_id" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+<div style="text-align: right">
+  @if (rows.length > 0 && (permissionedit.length != 0 || permissiondelete.length != 0)) {
+    <button class="btn btn-primary form-group" type="button" (click)="alertConfirmation()"
+      >
+      Delete All
+    </button>
+  }
+  <span> &nbsp; </span>
+</div>
+<br />
+@if (permissionview.length != 0 && rows.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [columnMode]="'force'" [limit]="rows.length"
+        [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset">
+        <ngx-datatable-column name="Sr No" prop="srNo" [flexGrow]="1.2" [width]="50"></ngx-datatable-column>
+        <ngx-datatable-column name="Company" prop="companyName" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+        <ngx-datatable-column name="Biometric Serial No" prop="serialno" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="Integration Type" prop="integrationType" [flexGrow]="1.2"
+        [width]="100"></ngx-datatable-column>
+        <ngx-datatable-column name="Server IP" prop="serverIp" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+        <ngx-datatable-column name="Online Status" prop="onlineStatus" [flexGrow]="1.2" [width]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.integrationType == 'AIFaceAttendance') {
+              <button class="btn btn-shadow" [class]="row.onlineStatus == 'online' ? 'btn-outline-success' : 'btn-outline-danger'">
+                {{row.onlineStatus}}
+              </button>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="User" [sortable]="true" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a (click)="navigateToBiometricPage(row)">
+              @if (row.integrationType === 'AIFaceAttendance') {
+                <button type="button" class="btn btn-primary">
+                  User
+                </button>
+              }
+              {{ ' ' }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Direction" prop="direction" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+        <ngx-datatable-column name="Algorithm" [flexGrow]="1.2" [width]="250">
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">{{ algoName }}</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ description }}
+      </div>
+    </div>
+  </div>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

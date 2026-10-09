@@ -1,0 +1,38 @@
+::ng-deep .tool_tip ~ .tooltip .tooltip-inner {
+  max-width: 150px;
+  font-size: 10px;
+}
+
+/* Ensure the parent container has position relative */
+.position-relative {
+  position: relative;
+}
+
+/* Style for the close icon */
+.close-icon {
+  cursor: pointer;
+  background: none;
+  border: none;
+  position: absolute;
+  border-radius: 10px;
+  padding: 0;
+}
+
+/* Hover effect for the close icon */
+.close-icon:hover {
+  color: #ff3333;
+}
+
+.button-style {
+  margin: 0; /* Adjust if necessary */
+}
+
+.close-icon-company{
+  top: -12px; /* Adjust this value as needed */
+  right: -10px; /* Adjust this value as needed */
+}
+
+.close-icon-authsign{
+  top: -12px; /* Adjust this value as needed */
+  right: 2px; /* Adjust this value as needed */
+}

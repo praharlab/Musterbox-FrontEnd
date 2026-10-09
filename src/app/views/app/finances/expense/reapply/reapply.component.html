@@ -1,0 +1,183 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (expensedata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Reapply Expense</h5>
+      <form #editexpense="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #expenseDate="ngModel" name="expenseDate" disabled
+                [(ngModel)]="expensedata.userExpense.expense_date" />
+                <span>Expense Date</span>
+              </label>
+            </div>
+            @if (expensedata.userExpense.visitID && visitdata.length > 0) {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #visitID="ngModel" name="visitID" required
+                    [(ngModel)]="expensedata.userExpense.visitID" disabled>
+                    @for (visitdatas of visitdata; track visitdatas) {
+                      <ng-option [value]="visitdatas.visitID">
+                        {{ visitdatas.customer.companyName }} ({{
+                        visitdatas.visitDate | date: 'dd-MM-yyyy'
+                        }})
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Visit</span>
+                </label>
+              </div>
+            }
+            @if (expensedata.userExpense.visitID && visitdata.length > 0) {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel #visitDate="ngModel" name="visitDate" disabled
+                    [(ngModel)]="expensedata.visitDate" />
+                    <span>Visit Date</span>
+                  </label>
+                </div>
+              }
+              @if (expensedata.userExpense.ToursMasterID && tourdata.length > 0) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #ToursMasterID="ngModel" name="ToursMasterID"
+                      [(ngModel)]="expensedata.userExpense.ToursMasterID" disabled>
+                      @for (tourdatas of tourdata; track tourdatas) {
+                        <ng-option [value]="+tourdatas.ToursMasterID">
+                          {{ tourdatas.ToursName }} ({{ tourdatas.FromDate | date: 'dd-MM-yyyy' }})
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Tour *</span>
+                  </label>
+                </div>
+              }
+              @if (expensedata.userExpense.projectID && projectData.length > 0) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #projectID="ngModel" name="projectID" disabled
+                      [(ngModel)]="expensedata.userExpense.projectID">
+                      @for (project of projectData; track project) {
+                        <ng-option [value]="+project.projectID">
+                          {{ project.projectName }} @if (project?.display_id) {
+                          <span>({{ project?.display_id }})</span>
+                        }
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Project *</span>
+                </label>
+              </div>
+            }
+          </div>
+          <hr>
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #expenseCategoryId="ngModel" name="expenseCategoryId"
+                    [(ngModel)]="expensedata.expenseHead.expenseCategoryId" (change)="onCategoryChange($event, i)">
+                    @for (category of expensecategory; track category) {
+                      <ng-option [value]="+category.expenseCategoryId">
+                        {{ category.expenseCategory }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Expense Category *</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" [(ngModel)]="expensedata.expenseHeadId" #expenseHeadId="ngModel"
+                    name="expenseHeadId" required>
+                    @for (head of expenseHeadData; track head) {
+                      <ng-option [value]="head.expenseHeadId">
+                        {{ head.expenseHead }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Expense Head *</span>
+                  @if (!expenseHeadId.valid && editexpense.submitted) {
+                    <div class="invalid-tooltip">
+                      Expense Head is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="number" [(ngModel)]="expensedata.expenseAmount" ngModel
+                    #expenseAmount="ngModel" name="expenseAmount" />
+                    <span>Amount *</span>
+                    @if (!expenseAmount.valid && editexpense.submitted) {
+                      <div class="invalid-tooltip">
+                        Amount is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" type="text" [(ngModel)]="expensedata.description" #description="ngModel"
+                    name="description"></textarea>
+                    <span>Description</span>
+                  </label>
+                </div>
+                @for (file of expensedata.attachments; track trackByFn(j, file); let j = $index) {
+                  <div class="col-md-4">
+                    <div class="d-flex justify-content-between">
+                      <label class="form-group has-float-label">
+                        <div>
+                          <!-- File input -->
+                          <div>
+                            <input class="form-control" type="file" name="file{{ j }}" value="" (change)="onFileChangeAll($event, j)" accept="image/*,application/pdf"/>
+                          </div>
+                        </div>
+                        <span>Attachment - {{ j + 1 }}</span>
+                        <!-- View button for PDFs or non-images (only if not a new File) -->
+                        @if (file && !showImage(file) && !expensedata.isNewAttachmentFlags[j]) {
+                          <button type="button"
+                            class="btn btn-primary btn-xs mt-2" (click)="view(file)">
+                            {{ 'Attachment' | translate }}
+                          </button>
+                        }
+                        <!-- Image preview -->
+                        @if (file && showImage(file)) {
+                          <img [src]="apiURL + file" class="mt-2" alt="Attachment" width="100px"
+                            (click)="view(file)" />
+                        }
+                      </label>
+                      <!-- Remove Button -->
+                      @if (expensedata.attachments.length > 1) {
+                        <div>
+                          <span class="btn btn-danger" (click)="removeAttachment(j)">-</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (expensedata?.attachments?.length < 4) {
+                  <div class="col-md-4">
+                    <span class="btn btn-success" (click)="addAttachment()">+</span>
+                  </div>
+                }
+                <br>
+                </div>
+                <div>
+                  <div class="d-flex">
+                    <button class="btn btn-primary mt-2" type="submit">
+                      {{ 'forms.submit' | translate }}
+                    </button>
+                    <button class="btn btn-danger mt-2 ml-2" type="btn" [routerLink]="this.adminRoot + '/finances/expense'">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        }
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

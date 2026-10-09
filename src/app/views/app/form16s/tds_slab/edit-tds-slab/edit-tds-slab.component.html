@@ -1,0 +1,107 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit TDS Slab Challan</h5>
+
+    <form #editform="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="month"
+              required
+              ngModel
+              #YearMonth="ngModel"
+              name="YearMonth"
+              value="Gross"
+              [(ngModel)]="editformdata.YearMonth"
+              />
+              <span>YearMonth *</span>
+              @if (!YearMonth.valid && editform.submitted) {
+                <div class="invalid-tooltip">
+                  YearMonth is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="number"
+                required
+                ngModel
+                #FromAmount="ngModel"
+                name="FromAmount"
+                [(ngModel)]="editformdata.FromAmount"
+                />
+                <span>FromAmount *</span>
+                @if (!FromAmount.valid && editform.submitted) {
+                  <div class="invalid-tooltip">
+                    FromAmount is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #ToAmount="ngModel"
+                  name="ToAmount"
+                  value="Gross"
+                  [(ngModel)]="editformdata.ToAmount"
+                  />
+                  <span>ToAmount *</span>
+                  @if (!ToAmount.valid && editform.submitted) {
+                    <div class="invalid-tooltip">
+                      ToAmount is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    required
+                    ngModel
+                    #TdsRate="ngModel"
+                    name="TdsRate"
+                    value="Gross"
+                    [(ngModel)]="editformdata.TdsRate"
+                    />
+                    <span>TdsRate *</span>
+                    @if (!TdsRate.valid && editform.submitted) {
+                      <div class="invalid-tooltip">
+                        TdsRate is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <br />
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button
+                  class="btn btn-danger btn-shadow mt-4"
+                  [routerLink]="adminRoot + '/form16s/tds_slab'"
+                  style="margin-left: 2%"
+                  >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

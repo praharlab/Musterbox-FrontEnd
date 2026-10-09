@@ -1,0 +1,100 @@
+:host ::ng-deep {
+    .ng-select .ng-select-container {
+      border-radius: 20px !important;
+      font-size: 0.8rem;
+      padding: 0.15rem;
+      line-height: 1;
+      outline: initial !important;
+      box-shadow: initial !important;
+    }
+  
+    .ng-dropdown-panel.ng-select-bottom {
+      top: 100%;
+      border-bottom-right-radius: 2px !important;
+      border-bottom-left-radius: 2px !important;
+      // border-top-color: #e6e6e6;
+      margin-top: -1px;
+      border-radius: 5% !important;
+    }
+  
+  
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-optgroup.ng-option-disabled {
+      /* background: white; */
+      cursor: default;
+      font-weight: 600 !important;
+  }
+  
+    .ng-select.ng-select-single .ng-select-container {
+      height: 36px !important;
+      border: none !important;
+    }
+  
+    .ng-select .ng-select-container,
+    .ng-select.ng-select-opened > .ng-select-container {
+      background-color: #f8f8f8 !important;
+    }
+  
+    .ng-dropdown-panel.ng-select-bottom {
+      margin-top: 1px !important;
+      border: none !important;
+      border-top-color: white !important;
+      background-color: #f8f8f8 !important;
+    }
+  
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-child {
+      background: #f8f8f8 !important;
+      padding: 3px 22px !important;
+    }
+  
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+      background-color: var(--m-primary) !important;
+      color: #fff !important;
+    }
+  
+    .ng-select .ng-arrow-wrapper {
+      cursor: pointer;
+      position: relative;
+      text-align: center;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      display: none !important;
+      user-select: none;
+    }
+  
+    .navbar .search input {
+      border: initial;
+      background: transparent;
+      outline: initial !important;
+      font-size: 0.8rem;
+      width: 93%;
+      color: #3a3a3a;
+      padding: 0px !important;
+      line-height: 2;
+    }
+  }
+  
+  // select {
+  //   appearance: none;
+  //   -webkit-appearance: none;
+  //   -moz-appearance: none;
+  //   background: transparent;
+  //   padding-right: 25px;
+  // }
+  
+  // .selectClass {
+  //   border: none;
+  //   height: 39px;
+  //   padding: 0.4rem 1rem;
+  //   color: #747171;
+  // }
+  
+  .icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    font-size: 17px;
+    color: #d8d8d8;
+  }
+  

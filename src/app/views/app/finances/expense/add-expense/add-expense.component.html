@@ -1,0 +1,254 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Expense</h5>
+    <form #addexpense="ngForm" novalidate (ngSubmit)="onSubmit()">
+      @if (showExpensePurposeRow) {
+        <div class="row">
+          <div class="col-md-6" style="margin-bottom: 10px">
+            <span class="text-muted text-small mb-2 top">Choose Expense Purpose *&nbsp;&nbsp;</span>
+            @for (item of expenseTypeArrayData; track item; let i = $index) {
+              <input type="radio" [id]="item.value" name="purpose" [attr.value]="item.value" [value]="item.value" ngModel
+                #purpose="ngModel" (change)="onExpensePurposeChange($event)" style="margin-right: 1%" required />
+                <label [for]="item.value" style="margin-right: 2%">{{ item.name }}</label>
+                @if (!purpose.valid && addexpense.submitted) {
+                  <div class="invalid-tooltip">
+                    Expense Purpose is required!
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+        @if (expensePurpose) {
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #expense_date="ngModel" name="expense_date" required
+                  [(ngModel)]="selectedExpenseDate" [max]="currDate" [min]="minDate"
+                  (ngModelChange)="onExpenseDateChange($event)" />
+                  <span>Expense Date *</span>
+                  @if (!expense_date.valid && addexpense.submitted) {
+                    <div class="invalid-tooltip">
+                      Expense Date is required!
+                    </div>
+                  }
+                </label>
+                @if (minDate) {
+                  <p class="red text-left">Expenses can only be submitted for dates between
+                    {{ minDate | date:'dd-MM-yyyy'}} and {{ currDate | date: 'dd-MM-yyyy'}}, inclusive.
+                  </p>
+                }
+              </div>
+              <ng-container>
+                @if (expensePurpose && expensePurpose == expenseTypesObj.TOUR) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel #ToursMasterID="ngModel" name="ToursMasterID"
+                        [(ngModel)]="selectedTour" required>
+                        @for (tourdatas of tourdata; track tourdatas) {
+                          <ng-option [value]="tourdatas.ToursMasterID">
+                            {{ tourdatas.ToursName }} ({{ tourdatas.FromDate | date: 'dd-MM-yyyy' }})
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Tour *</span>
+                      @if (!ToursMasterID.valid && addexpense.submitted) {
+                        <div class="invalid-tooltip">
+                          Tour is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (expensePurpose && expensePurpose == expenseTypesObj.VISIT) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="date" ngModel #visitDate="ngModel" name="visitDate" required
+                        [(ngModel)]="selectedVisitDate" (ngModelChange)="getUserVisitData($event)" />
+                        <span>Vist Date *</span>
+                        @if (!visitDate.valid && addexpense.submitted) {
+                          <div class="invalid-tooltip">
+                            Visit Date is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    @if (selectedVisitDate) {
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel #visitID="ngModel" name="visitID" required
+                            [(ngModel)]="selectedVisit">
+                            @for (visitdatas of visitdata; track visitdatas) {
+                              <ng-option [value]="visitdatas.visitID">
+                                {{ visitdatas.customer.companyName }} ({{
+                                visitdatas.visitDate | date: 'dd-MM-yyyy'
+                                }})
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Visit *</span>
+                          @if (!visitID.valid && addexpense.submitted) {
+                            <div class="invalid-tooltip">
+                              Visit is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                  }
+                  @if (expensePurpose && expensePurpose == expenseTypesObj.PROJECT) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #projectID="ngModel" name="projectID" required
+                          [(ngModel)]="selectedProject">
+                          @for (project of projectData; track project) {
+                            <ng-option [value]="project.projectID">
+                              {{ project.projectName }} @if (project?.display_id) {
+                              <span>({{ project?.display_id }})</span>
+                            }
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Project *</span>
+                      @if (!projectID.valid && addexpense.submitted) {
+                        <div class="invalid-tooltip">
+                          Project is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+              </ng-container>
+            </div>
+            <hr />
+            <div class="row">
+              <br />
+              @for (value of values; track value; let i = $index) {
+                <div class="col-md-12">
+                  @if (!value.isDeleted) {
+                    <div class="row">
+                      <!-- Expense Category Dropdown -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose Expense Category" [(ngModel)]="value.expenseCategoryId"
+                            name="expenseCategoryId{{ i }}" required (change)="onCategoryChange(value.expenseCategoryId, i)"
+                            #expenseCategoryId="ngModel">
+                            @for (category of expensecategory; track category) {
+                              <ng-option [value]="category.expenseCategoryId">
+                                {{ category.expenseCategory }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Expense Category *</span>
+                          @if (!expenseCategoryId.valid && addexpense.submitted) {
+                            <div class="invalid-tooltip">
+                              Category is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <!-- Expense Head Dropdown (linked to selected category) -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose Expense Head" [(ngModel)]="value.expenseHeadId"
+                            name="expenseHeadId{{ i }}" required [items]="value.filteredExpenseHeads" bindLabel="expenseHead"
+                            bindValue="expenseHeadId" #expenseHeadId="ngModel" (change)="onExpenseHeadChange($event, i)">
+                          </ng-select>
+                          <span>Select Expense Head *</span>
+                          @if (!expenseHeadId.valid && addexpense.submitted) {
+                            <div class="invalid-tooltip">
+                              Expense Head is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <!-- Expense Amount -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input required class="form-control" type="number" [(ngModel)]="value.expenseAmount"
+                            #expenseAmount="ngModel" name="expenseAmount{{ i }}" />
+                            <span>Amount *</span>
+                            @if (!expenseAmount.valid && addexpense.submitted) {
+                              <div class="invalid-tooltip">
+                                Amount is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <!-- Description -->
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <textarea class="form-control" [(ngModel)]="value.description" name="description{{ i }}"></textarea>
+                            <span>Description</span>
+                          </label>
+                        </div>
+                        <!-- Attachments -->
+                        @for (file of value.attachments; track trackByFn(j, file); let j = $index) {
+                          <div
+                            class="d-flex col-md-4 justify-content-between">
+                            <div>
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="file" name="file{{j}}{{i}}" [value]=""
+                                  (change)="onFileChangeAll($event, i, j)" accept="image/*,application/pdf" />
+                                  <span>Attachment - {{ j + 1 }}</span>
+                                </label>
+                                <p class="red text-right">(.jpg, .jpeg, .png, .pdf)</p>
+                              </div>
+                              @if (value?.attachments?.length > 1) {
+                                <div>
+                                  <span class="btn btn-danger" (click)="removeAttachment(i, j)">-</span>
+                                </div>
+                              }
+                            </div>
+                          }
+                          <!-- Add Attachment Button -->
+                          @if (value?.attachments?.length < 4) {
+                            <div class="col-md-1">
+                              <span class="button btn btn-success" (click)="addAttachment(i)">+</span>
+                            </div>
+                          }
+                          <!-- Rule Note -->
+                          @if (value.expensePriceRuleID) {
+                            <div class="col-md-12 text-danger mt-1">
+                              <div>
+                                Note* :- Price Rule For {{value?.expenseHeadName}} is
+                                {{value?.rule}}
+                              </div>
+                              <br />
+                            </div>
+                          }
+                          <!-- Remove Button -->
+                          <div class="col-md-12 mt-2">
+                            @if (values.length > 1) {
+                              <span class="btn btn-danger" (click)="removeTransaction(i)" style="margin-bottom: 3%"
+                                >
+                                Remove
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (values.length) {
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: right">
+                      <span class="button" class="btn btn-success" (click)="addTransaction()">ADD More</span>
+                    </div>
+                  }
+                </div>
+              }
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/finances/expense'"
+                  style="margin-left: 2%">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

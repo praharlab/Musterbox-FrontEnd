@@ -1,0 +1,100 @@
+@if (showMyContainer) {
+  <div class="container p-4"
+    style="font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+    <div class="row mb-4">
+      <div class="col-md-12 text-center">
+        <h4 style="color: #007bff; font-weight: 600;">Upload Preboarding Documents!</h4>
+        <hr style="border-top: 2px solid #007bff; width: 60px; margin: 10px auto;">
+      </div>
+    </div>
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      @for (item of preBordingDocumentData; track item; let i = $index) {
+        <div class="card mb-4 p-3"
+          style="border: 1px solid #dee2e6; border-radius: 10px;">
+          <div class="mb-3">
+            <h5 style="color: #343a40;">{{item['joiningDocumentType.documentName']}}</h5>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Upload Document *</label>
+              <input class="form-control" type="file" ngModel
+                [accept]="item['joiningDocumentType.documentFileType']" #attachment="ngModel"
+                name="attachment{{i}}" (change)="onFileChange($event,i)" required />
+                @if (!attachment.valid && addcomp.submitted) {
+                  <div class="text-danger small mt-1">
+                    {{item['joiningDocumentType.documentName']}} is required!
+                  </div>
+                }
+              </div>
+              @if (item['joiningDocumentType.hasIdentificationNumber']) {
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Identification Number *</label>
+                  <input class="form-control" type="text" ngModel #hasIdentificationNumber="ngModel"
+                    name="hasIdentificationNumber{{i}}" [(ngModel)]="item.identificationNumber"
+                    [required]="item['joiningDocumentType.hasIdentificationNumber']" />
+                    @if (!hasIdentificationNumber.valid && addcomp.submitted) {
+                      <div class="text-danger small mt-1">
+                        {{item['joiningDocumentType.documentName']}} Identification Number is required!
+                      </div>
+                    }
+                  </div>
+                }
+                @if (item['joiningDocumentType.hasFromDate']) {
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">From Date *</label>
+                    <input class="form-control" type="date" ngModel #hasFromDate="ngModel" name="hasFromDate{{i}}"
+                      [(ngModel)]="item.fromDate" [required]="item['joiningDocumentType.hasFromDate']" />
+                      @if (!hasFromDate.valid && addcomp.submitted) {
+                        <div class="text-danger small mt-1">
+                          {{item['joiningDocumentType.documentName']}} From Date is required!
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (item['joiningDocumentType.hasIssueDate']) {
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Issue Date *</label>
+                      <input class="form-control" type="date" ngModel #hasIssueDate="ngModel" name="hasIssueDate{{i}}"
+                        [(ngModel)]="item.issueDate" [required]="item['joiningDocumentType.hasIssueDate']" />
+                        @if (!hasIssueDate.valid && addcomp.submitted) {
+                          <div class="text-danger small mt-1">
+                            {{item['joiningDocumentType.documentName']}} Issue Date is required!
+                          </div>
+                        }
+                      </div>
+                    }
+                    @if (item['joiningDocumentType.hasExpiryDate']) {
+                      <div class="col-md-4 mb-3">
+                        <label class="form-label">Expiry Date *</label>
+                        <input class="form-control" type="date" ngModel #hasExpiryDate="ngModel" name="hasExpiryDate{{i}}"
+                          [(ngModel)]="item.expiryDate" [required]="item['joiningDocumentType.hasExpiryDate']" />
+                          @if (!hasExpiryDate.valid && addcomp.submitted) {
+                            <div class="text-danger small mt-1">
+                              {{item['joiningDocumentType.documentName']}} Expiry Date is required!
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary px-5">Submit</button>
+                </div>
+              </form>
+            </div>
+          }
+
+          @if (showMyMessage) {
+            <div>
+              <div
+                style="font-family: Arial, sans-serif; background-color: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh;">
+                <div
+                  style="background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+                  <h2 style="color: #28a745;">🎉 Response Recorded!</h2>
+                  <p style="color: #333; margin-top: 10px;">Thank you! Your document has been successfully submitted.
+                  </p>
+                </div>
+              </div>
+            </div>
+          }

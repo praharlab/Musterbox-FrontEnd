@@ -1,0 +1,239 @@
+<div class="card mb-4">
+  <div class="card-header my-2" style="flex-direction: column">
+    <h3 class="card-header text-left my-2">Request</h3>
+
+    <div class="icon-cards-row">
+      <div class="row">
+        <!-- Leave Card -->
+        <div class="col-md-4 mb-1">
+          <div class="card">
+            <div class="card-body text-center">
+              @if (showloader == 'true') {
+                <div
+                  style="color: #17a2b8; left: 45%; top: 45%"
+                  class="la-ball-spin-clockwise"
+                  >
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              }
+              <p style="font-size: 1.5em">Leave</p>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a
+                    class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="ViewstatusAll('1', 'leave')"
+                    >
+                    Approve
+                  </a>
+                  <span class="badge badge-success">{{ leaveapproveCount }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a
+                    (click)="ViewstatusAll('2', 'leave')"
+                    class="text-decoration-none text-primary text-small font-weight-medium"
+                    >
+                    Pending
+                  </a>
+                  <span class="badge btn-warning">{{ leavependingCount }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a
+                    class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="ViewstatusAll('0', 'leave')"
+                    >
+                    Rejected
+                  </a>
+                  <span class="badge btn-danger">{{ leaverejectedCount }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Advance Card -->
+        <!-- <div class="col-md-4 mb-2">
+        <div class="card h-100"
+          >
+          <div class="card-body text-center">
+            <p class=" mb-4" style="font-size: 1.5em;">Advance</p>
+            <div class="text-left mb-2">
+              <div class="text-left d-flex justify-content-between align-items-center">
+                <a class="text-decoration-none " (click)="ViewstatuAdvance('1')"
+                [routerLink]="['/app/advancePayment']">Approve</a>
+                <span class="badge btn-success">{{advanceapprove}}</span>
+              </div>
+            </div>
+            <div class="text-left mb-2">
+              <div class="text-left d-flex justify-content-between align-items-center">
+                <a class="text-decoration-none "
+                [routerLink]="['/app/advancePayment']">Pending</a>
+                <span class="badge btn-warning">{{advancependingCount}}</span>
+              </div>
+            </div>
+            <div class="text-left mb-2">
+              <div class="text-left d-flex justify-content-between align-items-center">
+                <a class="text-decoration-none " (click)="ViewstatuAdvance('2')"
+                [routerLink]="['/app/advancePayment']">Rejected</a>
+                <span class="badge btn-danger">{{advancerejected}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- Loan -->
+      <!-- <div class="col-md-4 mb-2">
+      <div class="card h-100"
+        >
+        <div class="card-body text-center">
+          <p class=" mb-4" style="font-size: 1.5em;">Loan</p>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a class="text-decoration-none " (click)="Viewstatusloan('1')"
+              [routerLink]="['/app/loanUserwise']">Approve</a>
+              <span class="badge badge-success">{{ loanapprove }}</span>
+            </div>
+          </div>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a [routerLink]="['/app/loanMaster']"
+              class="text-decoration-none ">Pending</a>
+              <span class="badge btn-warning">{{ loanCount }}</span>
+            </div>
+          </div>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a class="text-decoration-none " (click)="Viewstatusloan('2')"
+              [routerLink]="['/app/loanUserwise']">Rejected</a>
+              <span class="badge btn-danger">{{ loanrejected }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div> -->
+    <!-- Expense -->
+    <div class="col-md-4 mb-1">
+      <div class="card">
+        <div class="card-body text-center">
+          @if (showloader == 'true') {
+            <div
+              style="color: #17a2b8; left: 45%; top: 45%"
+              class="la-ball-spin-clockwise"
+              >
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <p style="font-size: 1.5em">Expense</p>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a
+                class="text-decoration-none text-primary text-small font-weight-medium"
+                (click)="ViewstatusAll('1', 'expense')"
+                >
+                Approve
+              </a>
+              <span class="badge badge-success">{{ expenseAuthorizationsapprove }}</span>
+            </div>
+          </div>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a
+                class="text-decoration-none text-primary text-small font-weight-medium"
+                (click)="ViewstatusAll('2', 'expense')"
+                >
+                Pending
+              </a>
+              <span class="badge badge-warning">{{ expenseAuthorizationspendingCount }}</span>
+            </div>
+          </div>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a
+                class="text-decoration-none text-primary text-small font-weight-medium"
+                (click)="ViewstatusAll('0', 'expense')"
+                >
+                Rejected
+              </a>
+              <span class="badge badge-danger">{{ expenseAuthorizationsrejected }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- OverTime -->
+    <div class="col-md-4 mb-1">
+      <div class="card">
+        <div class="card-body text-center">
+          @if (showloader == 'true') {
+            <div
+              style="color: #17a2b8; left: 45%; top: 45%"
+              class="la-ball-spin-clockwise"
+              >
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <p style="font-size: 1.5em">OverTime</p>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a
+                class="text-decoration-none text-primary text-small font-weight-medium"
+                (click)="ViewstatusAll('1', 'overtime')"
+                >
+                Approve
+              </a>
+              <span class="badge badge-success">{{ OTapprove }}</span>
+            </div>
+          </div>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a
+                class="text-decoration-none text-primary text-small font-weight-medium"
+                (click)="ViewstatusAll('2', 'overtime')"
+                >
+                Pending
+              </a>
+              <span class="badge btn-warning">{{ OTcount }}</span>
+            </div>
+          </div>
+          <div class="text-left mb-2">
+            <div class="text-left d-flex justify-content-between align-items-center">
+              <a
+                class="text-decoration-none text-primary text-small font-weight-medium"
+                (click)="ViewstatusAll('0', 'overtime')"
+                >
+                Rejected
+              </a>
+              <span class="badge btn-danger">{{ OTrejected }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>

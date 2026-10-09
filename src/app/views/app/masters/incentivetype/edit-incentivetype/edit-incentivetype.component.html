@@ -1,0 +1,154 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (companydata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Incentive Details</h5>
+      <form #filterform="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel [attr.disabled]="true"
+                [(ngModel)]="companydata['companyMaster.companyName']" #companyName="ngModel" name="companyName"
+                required />
+                <span>Select Company *</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" placeholder="" required ngModel #incentivetypename="ngModel"
+                  name="incentivetypename" [(ngModel)]="companydata.incentivetypename"
+                  [readOnly]="nonEditableList.includes(companydata.incentivetypename.trim().toLowerCase())? true:false" />
+                  <span>Incentive Type name *</span>
+                  @if (!incentivetypename.valid && filterform.submitted) {
+                    <div class="invalid-tooltip">
+                      Incentive Type Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              @if (nonEditableList.includes(companydata.incentivetypename.trim().toLowerCase())) {
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" placeholder="" ngModel #inc_type_displayName="ngModel"
+                      name="inc_type_displayName" [(ngModel)]="companydata.inc_type_displayName" />
+                      <span> Display Name </span>
+                    </label>
+                  </div>
+                }
+                <div class="col-md-12">
+                  <label for="yes">
+                    <input type="checkbox" (change)="calltoshow($event)" #showinsalaryslip="ngModel" name="showinsalaryslip"
+                      [(ngModel)]="companydata.showinsalaryslip" />
+                      <span>Show in salary slip</span>
+                    </label>
+                  </div>
+                  @if (datashow) {
+                    <div class="col-md-5" style="margin-bottom: 10px">
+                      <input type="radio" name="show" value="gross" #show="ngModel" [(ngModel)]="companydata.consider"
+                        style="margin-right: 1%" (click)="applicablePFESIC($event)" required />
+                        <label for="consider" style="margin-right: 2%">Consider in gross salary</label>
+                        <input type="radio" name="show" value="net" #show="ngModel" [(ngModel)]="companydata.consider"
+                          style="margin-right: 1%" (click)="applicablePFESIC($event)" required />
+                          <label for="netsalary">Not Consider in gross salary</label>
+                          @if (!show.valid && filterform.submitted) {
+                            <div class="invalid-tooltip">
+                              Please Select One!
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (showPFESIC == true) {
+                        <div class="col-md-12">
+                          <label for="yes">
+                            <input type="checkbox" ngModel #pfApplicable="ngModel" [(ngModel)]="companydata.pfApplicable"
+                              name="pfApplicable" />
+                              <span>PF Applicable</span>
+                            </label>
+                          </div>
+                        }
+                        @if (showPFESIC == true) {
+                          <div class="col-md-12">
+                            <label for="yes">
+                              <input type="checkbox" ngModel #esicApplicable="ngModel" [(ngModel)]="companydata.esicApplicable"
+                                name="esicApplicable" />
+                                <span>ESIC Applicable</span>
+                              </label>
+                            </div>
+                          }
+                          @if (showPFESIC == true && companydata.esicApplicable == true) {
+                            <div class="col-md-12 row">
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="number" ngModel #employeeESICPer="ngModel" name="employeeESICPer"
+                                    [(ngModel)]="employeeESICPercentage" />
+                                    <span>&nbsp;Employee Side ESIC Percentage *</span>
+                                  </label>
+                                  @if (!employeeESICPer.valid && filterform.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Employee Side ESIC Percentage is required!
+                                    </div>
+                                  }
+                                </div>
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="number" ngModel #EmployerESICPer="ngModel" name="EmployerESICPer"
+                                      [(ngModel)]="employerESICPercentage" />
+                                      <span>&nbsp;Employer Side ESIC Percentage *</span>
+                                    </label>
+                                    @if (!EmployerESICPer.valid && filterform.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Employer Side ESIC Percentage is required!
+                                      </div>
+                                    }
+                                  </div>
+                                </div>
+                              }
+                              <!--
+                              <div class="col-md-5"  *ngIf="datashow" style="margin-bottom: 10px">
+                                <input
+                                  type="radio"
+                                  name="show"
+                                  value="gross"
+                                  #show="ngModel"
+                                  [(ngModel)]="companydata.consider"
+                                  style="margin-right: 1%;"
+                                  required
+                                  />
+                                  <label for="consider" style="margin-right: 2%;">Consider in gross salary </label>
+                                  <input
+                                    type="radio"
+                                    name="show"
+                                    value="net"
+                                    #show="ngModel"
+                                    [(ngModel)]="companydata.consider"
+                                    style="margin-right: 1%;"
+                                    required
+                                    />
+                                    <label for="netsalary">Not Consider in gross salary</label>
+                                    <div
+          *ngIf="
+            !show.valid && filterform.submitted
+          "  
+                                      class="invalid-tooltip"
+                                      >
+                                      Please Select One!
+                                    </div>
+                                  </div>
+                                  -->
+                                  <div class="col-md-12">
+                                    <button class="btn btn-primary mt-4" type="submit">
+                                      {{ 'forms.submit' | translate }}
+                                    </button>
+                                    <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/list-incentivetype'"
+                                      style="margin-left: 2%">
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              </form>
+                              <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+                            </div>
+                          </div>
+                        }

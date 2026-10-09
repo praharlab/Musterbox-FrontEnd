@@ -1,0 +1,18 @@
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 100%;
+  padding: 10px;
+  height: 920px; /* Should be removed. Only for demonstration */
+}
+
+.vl {
+  border-left: 2px dashed;
+}
+
+/* Clear floats after the columns */
+.rows:after {
+  content: '';
+  display: table;
+  clear: both;
+}

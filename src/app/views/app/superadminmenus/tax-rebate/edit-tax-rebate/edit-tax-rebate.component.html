@@ -1,0 +1,66 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Tax Rebate</h5>
+    <form #filterForm="ngForm" novalidate>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #financialYear="ngModel" name="financialYear"
+              [(ngModel)]="currentData.financialYear" required>
+              @for (year of yearData; track year) {
+                <ng-option [value]="year">
+                  {{ year }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Financial Year *</span>
+            @if (!financialYear.valid && filterForm.submitted) {
+              <div class="invalid-tooltip">
+                Financial Year is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #regime="ngModel" name="regime" [(ngModel)]="currentData.regime" required>
+              @for (regime of regimeArray; track regime) {
+                <ng-option [value]="regime">
+                  {{ regime}}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Regime *</span>
+            @if (!regime.valid && filterForm.submitted) {
+              <div class="invalid-tooltip">
+                Regime is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" required ngModel #amount="ngModel" name="amount" [(ngModel)]="currentData.amount" onwheel="return false;"/>
+            <span>Amount *</span>
+            @if (!amount.valid && filterForm.submitted) {
+              <div class="invalid-tooltip">
+                Amount is required and Must be Positive value!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" type="submit" (click)="onSubmit()">
+          Submit
+        </button>
+        <button class="btn btn-danger ml-2" type="button" (click)="cancel()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

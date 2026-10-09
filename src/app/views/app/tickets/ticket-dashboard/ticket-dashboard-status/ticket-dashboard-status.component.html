@@ -1,0 +1,23 @@
+<div class="card">
+  <div class="card-body">
+    @if (this.showloader == 'true') {
+      <div
+        style="color: #17a2b8; left: 50%"
+        class="la-ball-spin-clockwise"
+        >
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    <h5 class="card-title">Ticket Status</h5>
+    <div class="chart-container dashboard-quick-post">
+      <div [class]="class"><canvas #chart></canvas></div>
+    </div>
+  </div>
+</div>

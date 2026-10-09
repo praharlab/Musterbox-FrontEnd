@@ -1,0 +1,112 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Bonus Policy</h5>
+
+    @if (bonuspolicydata) {
+      <form #addbonuspolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Company -->
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                [(ngModel)]="bonuspolicydata.companyMasterID" (change)="selectCompany($event)" required>
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && addbonuspolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <!-- Bonus Policy Name -->
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #bonusPolicyName="ngModel"
+                name="bonusPolicyName" [(ngModel)]="bonuspolicydata.bonusPolicyName" />
+                <span>Bonus Policy Name *</span>
+                @if (!bonusPolicyName.valid && addbonuspolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Bonus Policy Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #bonuscycle="ngModel" name="bonuscycle"
+                  [(ngModel)]="bonuspolicydata.bonusCycle" required>
+                  <ng-option value="January to December">January to December</ng-option>
+                  <ng-option value="April to March">April to March</ng-option>
+                </ng-select>
+                <span>Bonus Cycle *</span>
+                @if (!bonuscycle.valid && addbonuspolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Bonus Cycle is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #bonuscredittype="ngModel"
+                  name="bonuscredittype" [(ngModel)]="bonuspolicydata.bonusCreditType" required>
+                  <ng-option value="previous">Previous</ng-option>
+                  <ng-option value="current">Current</ng-option>
+                </ng-select>
+                <span>Bonus Credit Type *</span>
+                @if (!bonuscredittype.valid && addbonuspolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Bonus Credit Type is required!
+                  </div>
+                }
+              </label>
+            </div>
+            @if (bonuspolicydata.bonusCreditType == 'current') {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #bonuscreditcycle="ngModel"
+                    name="bonuscreditcycle" [(ngModel)]="bonuspolicydata.bonusCreditCycle" required>
+                    <ng-option value="monthly">Monthly</ng-option>
+                    <ng-option value="quarterly">Quarterly</ng-option>
+                    <ng-option value="halfYearly">HalfYearly</ng-option>
+                    <ng-option value="yearly">Yearly</ng-option>
+                  </ng-select>
+                  <span>Bonus Credit Cycle *</span>
+                  @if (!bonuscreditcycle.valid && addbonuspolicy.submitted) {
+                    <div class="invalid-tooltip">
+                      Bonus Credit Cycle is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            }
+            <div class="col-md-12">
+              <input type="checkbox" ngModel #payinsalary="ngModel" [(ngModel)]="bonuspolicydata.payInSalary"
+                name="payinsalary" />
+                <label for="yes" style="margin-left: 1%"><b>Pay In Salary</b>  </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/bonus_policy'"
+                  style="margin-left: 2%">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

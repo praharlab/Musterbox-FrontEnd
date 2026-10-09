@@ -1,0 +1,46 @@
+<div class="position-relative d-inline-block ">
+  <div dropdown>
+    <button id="button-basic" dropdownToggle type="button" id="notificationButton"
+      class="header-icon btn btn-empty d-none d-md-block ">
+      <i class="iconsminds-mail" style="font-size: 18px;color: var(--m-text);"></i>
+      <span
+        class="badge badge-primary rounded-circle position-absolute top-0 end-0 translate-middle p-1 bedgeStyle">
+        {{messageTotalCount}}
+      </span>
+    </button>
+    <button id="button-basic" (click)="redirect()" type="button" id="notificationButton"
+      class="header-icon btn btn-empty d-block d-md-none ">
+      <i class="iconsminds-mail" style="font-size: 18px;color: var(--m-text);"></i>
+      <span
+        class="badge badge-primary rounded-circle position-absolute top-0 end-0 translate-middle p-1 bedgeStyle">
+        {{messageTotalCount}}
+      </span>
+    </button>
+    <div id="dropdown-basic" *dropdownMenu class="dropdown-menu dropdown-menu-right" id="notificationDropdown">
+      <perfect-scrollbar #scroll class="scroll" style="scroll-behavior: smooth;"
+        [config]="{ suppressScrollX: true, wheelPropagation: false }">
+        @for (messageItem of messageResData; track messageItem; let index = $index) {
+          <div class="d-flex flex-row mb-2 pb-2  pr-3 border-bottom"
+            >
+            <div class="pl-1 cursor-pointer">
+              <div class="text-white"> <i [class]="setIcon(messageItem.activityTable)"
+              style="color: #ffffff;"></i> {{setType(messageItem.activityTable)}}
+            </div>
+            <a (click)="redirect()">
+              <p class="text-white font-weight-bold mb-1 text-justify">{{messageItem.message}}
+              </p>
+              <div class="d-flex justify-content-between">
+                <span class="text-white font-weight-light mb-0 text-small">{{messageItem.createdAt |
+                date: 'dd-MM-yyyy'}}</span>
+                <span class="text-white font-weight-light mb-0 text-small">{{messageItem.createdAt |
+                date: 'h:mm a'}}</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      }
+    </perfect-scrollbar>
+    <button class="btn btn-xs btn-info float-right" (click)="redirect()">View More</button>
+  </div>
+</div>
+</div>

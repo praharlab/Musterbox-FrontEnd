@@ -1,0 +1,470 @@
+<router-outlet></router-outlet>
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/masters/employee'" style="margin-bottom: 22px">
+  Back
+</button>
+
+<app-sortable-statistics-row [userId]="userId"></app-sortable-statistics-row>
+
+<div class="text-right">
+  <button class="btn btn-primary" (click)="navigateToAddBiometric()">Add To Biometric</button>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div>
+      <h1>{{ companydata.displayName }}</h1>
+      <div class="text-zero top-right-button-container"></div>
+    </div>
+    <div>
+      <tabset class="separator-tabs">
+        <tab heading="PROFILE" (selectTab)="loadComponent('PROFILE')">
+          <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-12 col-lg-5 col-xl-6 col-left" style="margin-top: 5%">
+                @if (!imgshow1) {
+                  <span>
+                    @if (companydata.firstName && companydata.lastName) {
+                      <app-profile-pic (click)="fileInput.click()"
+                        [Style]="'height: 90px; width: 90px;border-radius : 0.75rem'"
+                        [Class]="'img-thumbnail card-img social-profile-img c-pointer'" [firstName]="companydata.firstName"
+                      [lastName]="companydata.lastName"></app-profile-pic>
+                    }
+                  </span>
+                }
+
+                @if (imgshow1) {
+<span style="
+                    display: flex;
+                    position: relative;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+                    <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ companydata.photo }}"
+                      (click)="fileInput.click()" class="img-thumbnail card-img social-profile-img c-pointer"
+                      style="height: 90px; width: 90px" />
+                    </span>
+                  }
+
+                  @if (url) {
+                    <img alt="Profile" [src]="url" (click)="fileInput.click()"
+                      class="img-thumbnail card-img social-profile-img c-pointer"
+                      style="height: 90px; width: 90px" />
+                  }
+                  <input #fileInput type="file" hidden (change)="onSelectFile($event)" accept="image/*" />
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <br />
+                      <div class="row  mb-4">
+                        <div class="col-md-12">
+                          @if (imgshow1) {
+                            <button type="button" tooltip="Remove Profile Photo" class="btn btn-outline-danger btn-xs"
+                              (click)="deleteProfileImage()" style="float: right; margin-top: -10px">
+                              Remove Profile Photo
+                            </button>
+                          }
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" required ngModel #companyName1="ngModel"
+                              [(ngModel)]="companydata['companyMaster.companyName']" name="companyName1" readonly />
+                              <span>Company Name</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" required ngModel #firstNAme="ngModel"
+                                [(ngModel)]="companydata.firstName" name="firstNAme" (keydown)="preventNumber($event)" />
+                                <span>First Name *</span>
+                                @if (!firstNAme.valid && addcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    First Name is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" ngModel #middleNAme="ngModel" name="middleNAme"
+                                  [(ngModel)]="companydata.middleName" (keydown)="preventNumber($event)" />
+                                  <span>Middle Name</span>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" required ngModel #lastNAme="ngModel"
+                                    [(ngModel)]="companydata.lastName" name="lastNAme" (keydown)="preventNumber($event)" />
+                                    <span>Last Name *</span>
+                                    @if (!lastNAme.valid && addcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Last Name is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                              </div>
+                              <div class="row mb-4">
+                                <div class="col-md-12">
+
+                                  <span>Gender *</span>
+                                  &nbsp;&nbsp;
+                                  <input type="radio" name="gender" value="male" ngModel #gender="ngModel"
+                                    [(ngModel)]="companydata.gender" style="margin-right: 2%" required />
+                                    <label for="true" style="margin-right: 2%">Male</label>
+
+                                    <input type="radio" name="gender" value="female" ngModel #gender="ngModel"
+                                      [(ngModel)]="companydata.gender" style="margin-right: 2%" required />
+                                      <label for="false" style="margin-right: 2%">Female</label>
+
+                                      <input type="radio" name="gender" value="other" ngModel #gender="ngModel"
+                                        [(ngModel)]="companydata.gender" style="margin-right: 2%" required />
+                                        <label for="other">Other</label>
+
+                                        @if (!gender.valid && addcomp.submitted) {
+                                          <div class="invalid-tooltip">
+                                            gender is required!
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <ng-select placeholder="Choose your option" ngModel #maratialStatus="ngModel"
+                                            [(ngModel)]="companydata.maratialStatus" name="maratialStatus" required>
+                                            <ng-option value="Single">Single</ng-option>
+                                            <ng-option value="Married">Married</ng-option>
+                                            <ng-option value="Widowed">Widowed</ng-option>
+                                            <ng-option value="Separated">Separated</ng-option>
+                                            <ng-option value="Divorced">Divorced</ng-option>
+                                          </ng-select>
+                                          <span>Select Marital Status *</span>
+                                          @if (!maratialStatus.valid && addcomp.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Marital Status is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="physicalDisability" ngModel #physicalDisability="ngModel"
+                                            [(ngModel)]="companydata.physicalDisability" name="physicalDisability" />
+                                            <span>Physical Disability</span>
+                                          </label>
+                                        </div>
+
+                                      </div>
+
+
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-12 col-lg-7 col-xl-6 col-right" style="margin-top: 5%">
+                                  <div class="card mb-4">
+                                    <div class="card-body">
+                                      @if (companydata.userFaces) {
+                                        <div class="row mb-4">
+                                          <div style="display: flex">
+                                            <p class="text-muted text-small mb-2 top">User Face &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                          </div>
+                                          <div style="display: flex">
+                                            @for (item of companydata.userFaces; track item) {
+                                              <div>
+                                                <a href="{{ apiURL }}uploads/user-faces/{{ item }}" target="_blank">
+                            <img alt="User-Face" src="{{ apiURL }}uploads/user-faces/{{ item }}" style="
+                              max-width: 100%;
+                              height: 100px;
+                              object-fit: contain;
+                              margin-bottom: 10px;
+                            " />
+                                                  </a>
+                                                  <button type="button" tooltip="remove" class="close-icon button-style"
+                                                    (click)="deleteUserFace()">
+                                                    <i class="simple-icon-close"></i>
+                                                  </button>
+                                                </div>
+                                              }
+                                            </div>
+                                          </div>
+                                        }
+                                        <div class="row">
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <ng-select placeholder="Choose your option" name="userNumberCountryMasterID" required ngModel
+                                                #userNumberCountryMasterID="ngModel" name="userNumberCountryMasterID"
+                                                [(ngModel)]="companydata.userNumberCountryMasterID">
+                                                @for (country of countryData; track country) {
+                                                  <ng-option [value]="country.countryMasterID">
+                                                    {{ country.countryName }} ({{ country.countryCode }})
+                                                  </ng-option>
+                                                }
+                                              </ng-select>
+                                              <span>Country Code *</span>
+                                              @if (!userNumberCountryMasterID.valid && addcomp.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  Country Code is required!
+                                                </div>
+                                              }
+                                            </label>
+
+
+                                          </div>
+                                          <div class="col-md-8">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="number" required ngModel #userNumber="ngModel"
+                                                name="userNumber" [(ngModel)]="companydata.userNumber" />
+                                                <span>Mobile Number *</span>
+                                                @if (!isPihMobileNo) {
+                                                  <div class="pihMobile">
+                                                    @if (addcomp.value.userNumber && addcomp.value.userNumber.toString().length !== 10 && addcomp.submitted) {
+                                                      <div
+                                                        class="invalid-tooltip">
+                                                        Mobile Number should be of 10 digits!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                }
+                                                @if (isPihMobileNo) {
+                                                  <div class="pihMobile">
+                                                    @if (addcomp.value.userNumber && (addcomp.value.userNumber.toString().length < 8 || addcomp.value.userNumber.toString().length > 14) && addcomp.submitted) {
+                                                      <div
+                                                        class="invalid-tooltip">
+                                                        Mobile Number should be between 8 to 14 digits!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                }
+                                                @if (!userNumber.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Mobile Number is Required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          </div>
+
+
+                                          <div class="row">
+
+                                            <div class="col-md-6">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="number" ngModel #othernumber="ngModel"
+                                                  [min]="isPihMobileNo ? 8 : 10" [max]="isPihMobileNo ? 14 : 10" name="othernumber"
+                                                  [(ngModel)]="companydata.otherContactNumber" />
+                                                  <span>{{othernumberLabel}}</span>
+                                                  @if (!isPihMobileNo) {
+                                                    <div class="pihMobile">
+                                                      @if (addcomp.value.othernumber && addcomp.value.othernumber.toString().length !== 10 && addcomp.submitted) {
+                                                        <div
+                                                          class="invalid-tooltip">
+                                                          {{othernumberLabel}} should be of 10 digits!
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                  }
+                                                  @if (isPihMobileNo) {
+                                                    <div class="pihMobile">
+                                                      @if (addcomp.value.othernumber && (addcomp.value.othernumber.toString().length < 8 || addcomp.value.othernumber.toString().length > 14) && addcomp.submitted) {
+                                                        <div
+                                                          class="invalid-tooltip">
+                                                          {{othernumberLabel}} should be between 8 to 14 digits!
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                  }
+                                                  @if (!othernumber.valid && addcomp.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      {{othernumberLabel}} is Required!
+                                                    </div>
+                                                  }
+                                                </label>
+                                              </div>
+
+                                              <div class="col-md-6">
+                                                <label class="form-group has-float-label">
+                                                  <input class="form-control" type="number" ngModel #cugNumber="ngModel"
+                                                    [min]="isPihMobileNo ? 8 : 10" [max]="isPihMobileNo ? 14 : 10" name="cugNumber"
+                                                    [(ngModel)]="companydata.cugNumber" />
+                                                    <span>Cug Number</span>
+                                                    @if (!isPihMobileNo) {
+                                                      <div class="pihMobile">
+                                                        @if (addcomp.value.cugNumber && addcomp.value.cugNumber.toString().length !== 10 && addcomp.submitted) {
+                                                          <div
+                                                            class="invalid-tooltip">
+                                                            Cug Number should be of 10 digits!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                    }
+                                                    @if (isPihMobileNo) {
+                                                      <div class="pihMobile">
+                                                        @if (addcomp.value.cugNumber && (addcomp.value.cugNumber.toString().length < 8 || addcomp.value.cugNumber.toString().length > 14) && addcomp.submitted) {
+                                                          <div
+                                                            class="invalid-tooltip">
+                                                            Cug Number should be between 8 to 14 digits!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                    }
+                                                    @if (!cugNumber.valid && addcomp.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Cug Number is Required!
+                                                      </div>
+                                                    }
+                                                  </label>
+                                                </div>
+                                              </div>
+                                              <div class="row">
+                                                <div class="col-md-6">
+                                                  <label class="form-group has-float-label">
+                                                    <input class="form-control" type="email" required email ngModel #email="ngModel"
+                                                      [(ngModel)]="companydata.email" name="email" />
+                                                      <span>Email *</span>
+                                                      @if (!email.valid && addcomp.submitted) {
+                                                        <div class="invalid-tooltip">
+                                                          Email is required!
+                                                        </div>
+                                                      }
+                                                      @if (email?.errors?.email && addcomp.submitted) {
+                                                        <div class="invalid-tooltip">
+                                                          Email must be a valid address!
+                                                        </div>
+                                                      }
+                                                    </label>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                    <label class="form-group has-float-label">
+                                                      <input class="form-control" type="officalEmail" email ngModel #officalEmail="ngModel"
+                                                        [(ngModel)]="companydata.officalEmail" name="officalEmail" />
+                                                        <span>Official Email</span>
+                                                        @if (officalEmail?.errors?.email&& addcomp.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Offical Email must be a valid address!
+                                                          </div>
+                                                        }
+                                                      </label>
+                                                    </div>
+                                                  </div>
+
+                                                  <div class="row mb-4">
+                                                    <div class="col-md-12">
+
+                                                      <span>Lock Profile Picture *</span>
+                                                      &nbsp;&nbsp;
+                                                      <input type="radio" id="yes" name="lockProfilePicture" value="yes" ngModel
+                                                        #lockProfilePicture="ngModel" [(ngModel)]="companydata.lockProfilePicture"
+                                                        style="margin-right: 2%" required />
+                                                        <label for="yes" style="margin-right: 2%">Yes</label>
+
+                                                        <input type="radio" id="no" name="lockProfilePicture" value="no" ngModel
+                                                          #lockProfilePicture="ngModel" [(ngModel)]="companydata.lockProfilePicture"
+                                                          style="margin-right: 2%" required />
+                                                          <label for="false" style="margin-right: 2%">No</label>
+                                                          @if (!lockProfilePicture.valid && addcomp.submitted) {
+                                                            <div class="invalid-tooltip">
+                                                              Lock Profile is required!
+                                                            </div>
+                                                          }
+                                                        </div>
+                                                      </div>
+
+                                                      <button class="btn btn-primary" type="submit">
+                                                        {{ 'forms.submit' | translate }}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </form>
+                                          </tab>
+                                          <tab heading="EMPLOYEE JOINING DETAILS" (selectTab)="loadComponent('EMPLOYEEJOININGDETAILS')"></tab>
+
+                                          <tab heading="ADDRESS" (selectTab)="loadComponent('ADDRESS')"></tab>
+                                          <tab heading="EXPERIENCE" (selectTab)="loadComponent('EXPERIENCE')"></tab>
+                                          <tab heading="EDUCATION" (selectTab)="loadComponent('EDUCATION')"></tab>
+                                          <tab heading="DOCUMENT" (selectTab)="loadComponent('DOCUMENT')"></tab>
+                                          <tab heading="JOINING DOCUMENT" (selectTab)="loadComponent('JOINING DOCUMENT')"></tab>
+                                          <tab heading="FAMILY" (selectTab)="loadComponent('FAMILY')"></tab>
+                                          <tab heading="EMPLOYEE SKILL CATEGORY" (selectTab)="loadComponent('EMPLOYEESKILLCATEGORY')"></tab>
+                                          <tab heading="SKILLS" (selectTab)="loadComponent('SKILLS')"></tab>
+                                          <tab heading="REPORTS TO" (selectTab)="loadComponent('REPORTS TO')"></tab>
+                                          <tab heading="BRANCH" (selectTab)="loadComponent('BRANCH')"></tab>
+                                          <tab heading="DEPARTMENT" (selectTab)="loadComponent('DEPARTMENT')"></tab>
+                                          <tab heading="DESIGNATION" (selectTab)="loadComponent('DESIGNATION')"></tab>
+                                          <tab heading="DIVISION" (selectTab)="loadComponent('DIVISION')"></tab>
+                                          <tab heading="WORKING AREA" (selectTab)="loadComponent('WORKINGAREA')"></tab>
+
+                                          <tab heading="SHIFT" (selectTab)="loadComponent('SHIFT')"></tab>
+                                          <tab heading="ATTENDANCE POLICY" (selectTab)="loadComponent('ATTENDANCEPOLICY')"></tab>
+                                          <tab heading="LATEIN EARLYGO POLICY" (selectTab)="loadComponent('LATEINEARLYGOPOLICY')"></tab>
+                                          <tab heading="WORKING LOCATION" (selectTab)="loadComponent('WORKINGLOCATION')"></tab>
+                                          @if (assignSalaryPolicyPermissionView.length != 0) {
+                                            <tab heading="SALARY POLICY"
+                                            (selectTab)="loadComponent('SALARYPOLICY')"></tab>
+                                          }
+                                          <tab heading="WEEKOFF POLICY" (selectTab)="loadComponent('WEEKOFFPOLICY')"></tab>
+                                          <tab heading="HOLIDAY POLICY" (selectTab)="loadComponent('HOLIDAYPOLICY')"></tab>
+                                          <tab heading="LEAVE POLICY" (selectTab)="loadComponent('LEAVEPOLICY')"></tab>
+                                          <tab heading="SHORT LEAVE POLICY" (selectTab)="loadComponent('SHORTLEAVEPOLICY', true)"></tab>
+                                          <tab heading="ATTENDANCE BONUS POLICY" (selectTab)="loadComponent('ATTENDNCE BONUS POLICY')"></tab>
+                                          <tab heading="FOOD ALLOWANCE POLICY" (selectTab)="loadComponent('FOODALLOWANCEPOLICY')"></tab>
+                                          @if (assignBonusPolicy.length) {
+                                            <tab heading="BONUS POLICY" (selectTab)="loadComponent('BONUSPOLICY')"></tab>
+                                          }
+
+                                          <tab heading="PROJECT" (selectTab)="loadComponent('PROJECT')"></tab>
+                                          <tab heading="COMPANY DOCUMENT" (selectTab)="loadComponent('COMPANYDOCUMENT')"></tab>
+                                          <tab heading="DIGITAL SIGNATURE" (selectTab)="loadComponent('DIGITALSIGNATURE')"></tab>
+                                          <tab heading="UNIFORM DETAIL" (selectTab)="loadComponent('UNIFORMDETAIL')"></tab>
+
+                                          <tab heading="ID CARD" (selectTab)="loadComponent('IDCARD')"></tab>
+                                          @if (salaryStructurePermissionView.length != 0) {
+                                            <tab heading="SALARY STRUCTURE"
+                                            (selectTab)="loadComponent('SALARYSTRUCTURE')"></tab>
+                                          }
+                                          <tab heading="LEAVE OPENING BALANCE" (selectTab)="loadComponent('LEAVEOPENINGBALANCE')"></tab>
+                                          @if (authorizationPermissionView.length != 0) {
+                                            <tab heading="AUTHORIZATION"
+                                            (selectTab)="loadComponent('AUTHORIZATION')"></tab>
+                                          }
+                                          @if (assignLetterPermissionView.length != 0) {
+                                            <tab heading="LETTERS" (selectTab)="loadComponent('LETTERS')">
+                                            </tab>
+                                          }
+
+                                          @if (incrementPermissionView.length != 0) {
+                                            <tab heading="INCREMENT" (selectTab)="loadComponent('INCREMENT')">
+                                            </tab>
+                                          }
+                                          @if (employeeResignationPermissionView.length != 0) {
+                                            <tab heading="RESIGNATION"
+                                            (selectTab)="loadComponent('RESIGNATION')"></tab>
+                                          }
+                                          @if (assignDiscrepancyLetterPermissionView.length != 0) {
+                                            <tab heading="DISCREPANCY LETTER"
+                                              (selectTab)="loadComponent('DISCREPANCYLETTER')">
+                                            </tab>
+                                          }
+                                          @if (personalInfoView.length != 0) {
+                                            <tab heading="PERSONAL INFORMATION"
+                                              (selectTab)="loadComponent('PERSONALINFORMATION')">
+                                            </tab>
+                                          }
+                                        </tabset>
+                                        <ng-container #componentContainer></ng-container>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

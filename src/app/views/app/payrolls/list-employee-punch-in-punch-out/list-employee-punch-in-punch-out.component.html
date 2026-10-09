@@ -1,0 +1,216 @@
+<button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/dashboards/analytics'"
+  style="margin-bottom: 22px">
+  Back
+</button>
+
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Employee Punch In & Punch Out" [showOrderBy]="false" [showDisplayMode]="false"
+  [showSearch]="false" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              [(ngModel)]="filterData.companyMasterID" disabled>
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+          </label>
+        </div>
+
+
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate"
+              (change)="selectfrom()" [(ngModel)]="filterData.fromdate" required />
+              <span>From Date *</span>
+              @if (!fromdate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #reprttype="ngModel" name="reprttype"
+                [(ngModel)]="reprortype" required>
+                <ng-option value="dailyattendance">Present Absent Report</ng-option>
+                <ng-option value="intimeouttime">Intime Outtime Report</ng-option>
+              </ng-select>
+              <span>Attendance Report Type *</span>
+              @if (!reprttype.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Report Type is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            <span> &nbsp;&nbsp; </span>
+            @if (rows.length != 0) {
+              <button class="btn btn-info  form-group " (click)="download()"
+              >Export</button>
+            }
+
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  @if (rows) {
+    <div class="row">
+      <div class="col-12 mb-4 data-table-rows">
+        <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+          [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+          (page)="onChange($event)">
+          @if (datefilter.value.reprttype === 'dailyattendance') {
+            <ngx-datatable-column name="Employee Code" prop="employeecode" [flexGrow]="1.2"
+            [width]="110"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Name" prop="userName" [flexGrow]="1.2"
+            [width]="110"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Number" prop="userNumber" [flexGrow]="1.2"
+            [width]="110"></ngx-datatable-column>
+            <ngx-datatable-column name="Branch" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.branch }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Department" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.department }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Designation" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.designation }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Attendance Type" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.attendancetype }}
+              </ng-template>
+            </ngx-datatable-column>
+          }
+          @if (datefilter.value.reprttype === 'intimeouttime') {
+            <ngx-datatable-column name="Employee Code" prop="employeecode" [flexGrow]="1.2"
+            [width]="110"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Name" prop="userName" [flexGrow]="1.2"
+            [width]="110"></ngx-datatable-column>
+            <ngx-datatable-column name="Employee Number" prop="userNumber" [flexGrow]="1.2"
+            [width]="110"></ngx-datatable-column>
+            <ngx-datatable-column name="Branch" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.branch || '' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Department" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.department || '' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Designation" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.designation || '' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="ShiftIn Time" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.shiftInTime || '' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="ShiftOut Time" [sortable]="true" [flexGrow]="1.2" [width]="80">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row.attendancedata[0]?.shiftOutTime || '' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="PunchIn Time" [sortable]="true" [flexGrow]="1.2" [width]="150">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (row.attendancedata && row.attendancedata.length > 0) {
+                  <div>
+                    @if (row.attendancedata[0]?.intime && row.attendancedata[0]?.intime != '-') {
+                      <div>
+                        {{ ($safeNavigationMigration(row.attendancedata[0]?.intime) | date: 'dd-MM-yyyy HH:mm') || '' }}
+                      </div>
+                    }
+                  </div>
+                }
+              </ng-template>''
+            </ngx-datatable-column>
+            <ngx-datatable-column name="PunchOut Time" [sortable]="true" [flexGrow]="1.2" [width]="150">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (row.attendancedata && row.attendancedata.length > 0) {
+                  <div>
+                    @if (row.attendancedata[0]?.intime &&  row.attendancedata[0]?.outtime != '-') {
+                      <div>
+                        {{ $safeNavigationMigration(row.attendancedata[0]?.outtime) | date: 'dd-MM-yyyy HH:mm' || '' }}
+                      </div>
+                    }
+                  </div>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+          }
+          @if (true) {
+            <ngx-datatable-footer>
+              <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                <div class="w-100 d-flex justify-content-center">
+                  <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                    [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                    [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                    [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate">
+                  </pagination>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
+          }
+        </ngx-datatable>
+      </div>
+    </div>
+  }
+
+
+  <br />
+  @if (!attendancedata) {
+    <div style="text-align: center">
+      <h5>No Data Found</h5>
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>

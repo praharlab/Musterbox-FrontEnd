@@ -1,0 +1,91 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="LWF Challan"></app-heading>
+    <app-breadcrumb title="LWF Challan"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel required #company="ngModel" name="company"
+                (change)="selectcompany($event)">
+                @for (comp of comp; track comp) {
+                  <ng-option [value]="comp.companyMasterID">
+                    {{ comp.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                [(ngModel)]="selectedBranch">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" ngModel #fromdate="ngModel" required name="fromdate" />
+              <span>Select Month *</span>
+              @if (!fromdate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Month is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'Search' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            @if (finaldata == true) {
+              <button type="button" class="btn btn-primary form-group" (click)="onClickDownloadPdf()"
+                style="margin-left: 10px">
+                Save as PDF
+              </button>
+            }
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+
+
+@if (lwfChallanData) {
+  <div class="d-flex justify-content-center mt-4">
+    <pdf-viewer [src]="lwfChallanData" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+      [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+      [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false"
+    style="width: 80%; height: 750px"></pdf-viewer>
+  </div>
+}
+
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

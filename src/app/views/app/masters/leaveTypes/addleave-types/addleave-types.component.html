@@ -1,0 +1,186 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add LeaveType</h5>
+
+    <form #addleavetype="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+              required>
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company*</span>
+            @if (!companyMasterID.valid && addleavetype.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #LeaveID="ngModel" name="LeaveID" required>
+              @for (leave of leaveMaster; track leave) {
+                <ng-option [value]="leave.LeaveID">
+                  {{ leave.LeaveName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Leave*</span>
+            @if (!LeaveID.valid && addleavetype.submitted) {
+              <div class="invalid-tooltip">
+                Leave Type is required!
+              </div>
+            }
+          </label>
+        </div>
+        <!-- <div class="col-md-3">
+        <label class="form-group has-float-label">
+          <ng-select
+            placeholder="Choose your option"
+            ngModel
+            #Eff_Total="ngModel"
+            name="Eff_Total"
+            required
+            >
+            <ng-option value="1">1</ng-option>
+            <ng-option value="-1">-1</ng-option>
+          </ng-select>
+          <span>Calculation Effect*</span>
+          <div *ngIf="!Eff_Total.valid && addleavetype.submitted" class="invalid-tooltip">
+            Effect is required!
+          </div>
+        </label>
+      </div> -->
+      <div class="col-md-3">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="number" ngModel #SortIndex="ngModel" name="SortIndex" required />
+          <span>SortIndex *</span>
+          @if (!SortIndex.valid && addleavetype.submitted) {
+            <div class="invalid-tooltip">
+              SortIndex is required!
+            </div>
+          }
+        </label>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="number" ngModel #Leave_Max_Days="ngModel" name="Leave_Max_Days"
+            required />
+            <span>Yearly leave (in days) *</span>
+            @if (!Leave_Max_Days.valid && addleavetype.submitted) {
+              <div class="invalid-tooltip">
+                Yearly leave is required!
+              </div>
+            }
+          </label>
+        </div>
+        <!-- <div class="col-md-3">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="number"  ngModel #Leave_Elegibility_Days="ngModel"  name="Leave_Elegibility_Days"/>
+          <span>Leave Elegibility Days</span>
+        </label>
+      </div>
+      <div class="col-md-3">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="number"  ngModel #Leave_per_Days="ngModel"  name="Leave_per_Days"/>
+          <span>Leave Per Days</span>
+        </label>
+      </div> -->
+      <!-- <div class="col-md-3">
+      <label>Allow On Holiday</label>&nbsp;&nbsp;
+      <input type="radio"  name="Allow_On_H"  ngModel #Allow_On_H="ngModel"  value="Y" required checked>&nbsp;
+      <label for="html">YES</label>&nbsp;&nbsp;
+      <input type="radio"  name="Allow_On_H"  ngModel #Allow_On_H="ngModel" value="N" required>&nbsp;
+      <label for="css">NO</label><br><br>
+      <div *ngIf="!Allow_On_H.valid && addleavetype.submitted" class="invalid-tooltip">Field is required!</div>
+    </div> -->
+    <div class="col-md-3">
+      <label>Leave Carry Forward*</label>
+      &nbsp;&nbsp;
+      <input type="radio" name="Leave_CF" ngModel #Leave_CF="ngModel" value="Y" required checked />
+      &nbsp;
+      <label for="html">YES</label>
+      &nbsp;&nbsp;
+      <input type="radio" name="Leave_CF" ngModel #Leave_CF="ngModel" value="N" required />
+      &nbsp;
+      <label for="css">NO</label>
+      <br />
+      <br />
+      @if (!Leave_CF.valid && addleavetype.submitted) {
+        <div class="invalid-tooltip">
+          Field is required!
+        </div>
+      }
+    </div>
+    <div class="col-md-3">
+      <label>Show In Leave Type*</label>
+      &nbsp;&nbsp;
+      <input type="radio" name="Leave_Allow" ngModel #Leave_Allow="ngModel" value="Y" required checked />
+      &nbsp;
+      <label for="html">YES</label>
+      &nbsp;&nbsp;
+      <input type="radio" name="Leave_Allow" ngModel #Leave_Allow="ngModel" value="N" required />
+      &nbsp;
+      <label for="css">NO</label>
+      <br />
+      <br />
+      @if (!Leave_Allow.valid && addleavetype.submitted) {
+        <div class="invalid-tooltip">
+          Field is required!
+        </div>
+      }
+    </div>
+    <!-- <div class="col-md-3">
+    <label>Allow Field Entry*</label>
+    &nbsp;&nbsp;
+    <input
+      type="radio"
+      name="Allow_Field_Entry"
+      ngModel
+      #Allow_Field_Entry="ngModel"
+      value="Y"
+      required
+      checked
+      />
+      &nbsp;
+      <label for="html">YES</label>
+      &nbsp;&nbsp;
+      <input
+        type="radio"
+        name="Allow_Field_Entry"
+        ngModel
+        #Allow_Field_Entry="ngModel"
+        value="N"
+        required
+        />
+        &nbsp;
+        <label for="css">NO</label>
+        <br />
+        <br />
+        <div *ngIf="!Allow_Field_Entry.valid && addleavetype.submitted" class="invalid-tooltip">
+          Field is required!
+        </div>
+      </div> -->
+    </div>
+    <button class="btn btn-primary" type="submit" [disabled]="isdisabled">
+      {{ 'forms.submit' | translate }}
+    </button>
+    <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/masters/leavetypes'"
+      style="margin-left: 2%">
+      Cancel
+    </button>
+  </form>
+</div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

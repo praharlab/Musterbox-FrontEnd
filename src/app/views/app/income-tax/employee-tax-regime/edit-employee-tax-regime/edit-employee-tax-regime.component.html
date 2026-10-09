@@ -1,0 +1,64 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Employee Tax Regime</h5>
+    @if (permissionedit.length != 0 && regimedata) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit1()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #company="ngModel" name="company"
+                [(ngModel)]="regimedata['userMaster.companyMaster.companyName']" readonly />
+                <span> Company Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #user="ngModel" name="user"
+                  [(ngModel)]="regimedata['userMaster.displayName']" readonly />
+                  <span> User Name</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #financialYear="ngModel" name="financialYear"
+                    [(ngModel)]="regimedata.financialYear" readonly />
+                    <span> Financial Year </span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #regime="ngModel" name="regime"
+                      [(ngModel)]="regimedata.regime" required>
+                      <ng-option value="Old Regime">Old Regime</ng-option>
+                      <ng-option value="New Regime">New Regime</ng-option>
+                    </ng-select>
+                    <span>Select Regime *</span>
+                    @if (!regime.valid && datefilter.submitted) {
+                      <div class="invalid-tooltip">
+                        Regime is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <button class="btn btn-primary form-group" type="submit">
+                    {{ 'Submit' | translate }}
+                  </button>
+                  &nbsp;&nbsp;
+                  <button class="btn btn-danger form-group"
+                    [routerLink]="adminRoot + '/incometax/list_employee_tax_regime'" style="margin-left: 2%">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

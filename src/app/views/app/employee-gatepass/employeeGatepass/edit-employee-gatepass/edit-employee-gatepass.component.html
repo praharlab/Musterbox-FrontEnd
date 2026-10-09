@@ -1,0 +1,119 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Employee Gate Pass</h5>
+      <form #editEmpGatepass="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" ngModel #guarantor1="ngModel" name="guarantor1"
+                [(ngModel)]="editData.companyMaster.companyName" disabled />
+                <span>Select Company *</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="employee" [multiple]="false" bindLabel="displayName"
+                  bindValue="userMasterID" ngModel #userMasterID="ngModel" name="userMasterID"
+                  [(ngModel)]="editData.employee.userMasterID" required>
+                  <ng-template ng-optgroup-tmp let-item="item">
+                    {{ item.displayName }}
+                  </ng-template>
+                </ng-select>
+                <span>Employee*</span>
+                @if (!userMasterID.valid && editEmpGatepass.submitted) {
+                  <div class="invalid-tooltip">
+                    Employee is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #description="ngModel" required name="description"
+                [(ngModel)]="editData.description"></textarea>
+                <span>Description *</span>
+                @if (!description.valid && editEmpGatepass.submitted) {
+                  <div class="invalid-tooltip">
+                    Description is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #date="ngModel" name="date" required
+                  [min]="editData.createdAt" [(ngModel)]="editData.date" />
+                  <span>Date</span>
+                  @if (!date.valid && editEmpGatepass.submitted) {
+                    <div class="invalid-tooltip">
+                      Date For is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-2">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="time" ngModel #fromTime="ngModel" name="fromTime" required
+                    [(ngModel)]="editData.fromTime" />
+                    <span>From Time</span>
+                    @if (!fromTime.valid && editEmpGatepass.submitted) {
+                      <div class="invalid-tooltip">
+                        FromTime For is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="time" ngModel #toTime="ngModel" name="toTime" required
+                      [(ngModel)]="editData.toTime" />
+                      <span>To Time</span>
+                      @if (!toTime.valid && editEmpGatepass.submitted) {
+                        <div class="invalid-tooltip">
+                          toTime For is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label mt-2">
+                      <div style="display: flex; align-items: center;">Purpose * :
+                        <div style="margin-left: 10px;">
+                          <input type="radio" name="purposeFor" value="Company" #purposeFor="ngModel"
+                            [(ngModel)]="editData.purposeFor" required ngModel>
+                            <span style="margin-left: 5px;">Company
+                            Work</span>
+                          </div>
+                          <div style="margin-left: 20px;">
+                            <input type="radio" name="purposeFor" value="Personal" #purposeFor="ngModel"
+                              [(ngModel)]="editData.purposeFor" required ngModel>
+                              <span style="margin-left: 5px;">Personal
+                              Work</span>
+                            </div>
+                          </div>
+                          @if (!purposeFor.valid && editEmpGatepass.submitted) {
+                            <div class="invalid-tooltip">
+                              Purpose For is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    </div>
+                    <app-state-button [btnClass]="'btn btn-primary btn-shadow mt-2'" [currentState]="buttonState"
+                      [isDisabled]="buttonDisabled" click="onLoginClick()">
+                      {{ 'forms.submit' | translate }}
+                    </app-state-button>
+                    <button class="btn btn-danger btn-shadow mt-2"
+                      [routerLink]="adminRoot + '/employeegatepasses/list_empgatepass'" style="margin-left: 2%">
+                      Cancel
+                    </button>
+                  </form>
+                </div>
+              </div>
+            }
+
+            <simple-notifications [options]="{position: ['top', 'center'],maxStack : 1}"></simple-notifications>

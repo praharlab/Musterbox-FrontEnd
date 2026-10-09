@@ -1,0 +1,401 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<h3>Add Accident Form</h3>
+<div class="card">
+  <div class="card-body">
+    <form #addAccident="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              (change)="selectcompany($event)"
+              required
+              >
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addAccident.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #branch="ngModel"
+              name="branch"
+              (change)="selectbranch($event)"
+              >
+              @for (item of allbranch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+
+        @if (branchfilter == false) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #userMasterID="ngModel"
+                name="userMasterID"
+                required
+                >
+                @for (item of employee; track item) {
+                  <ng-option [value]="item.userMasterID">
+                    {{ item.displayName }} - {{ item.userNumber }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee *</span>
+            </label>
+            @if (!userMasterID.valid && addAccident.submitted) {
+              <div class="invalid-tooltip">
+                Employee is required!
+              </div>
+            }
+          </div>
+        }
+
+        @if (branchfilter == true) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #userMasterID="ngModel"
+                name="userMasterID"
+                required
+                >
+                @for (item of employeedata; track item) {
+                  <ng-option [value]="item.userMasterID">
+                    {{ item.displayName }} - {{ item.userNumber }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee *</span>
+            </label>
+            @if (!userMasterID.valid && addAccident.submitted) {
+              <div class="invalid-tooltip">
+                Employee is required!
+              </div>
+            }
+          </div>
+        }
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="date"
+              ngModel
+              #NoticeDate="ngModel"
+              name="NoticeDate"
+              required
+              />
+              <span>Notice Date *</span>
+              @if (!NoticeDate.valid && addAccident.submitted) {
+                <div class="invalid-tooltip">
+                  Notice Date is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                ngModel
+                #AccidentDate="ngModel"
+                name="AccidentDate"
+                (change)="calcdays()"
+                required
+                />
+                <span>Accident Date *</span>
+                @if (!AccidentDate.valid && addAccident.submitted) {
+                  <div class="invalid-tooltip">
+                    Accident Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  [ngxTimepicker]="visitpicker"
+                  class="form-control"
+                  placeholder="Enter Accident Time"
+                  ngModel
+                  #AccidentTime="ngModel"
+                  name="AccidentTime"
+                  required
+                  />
+                  <ngx-material-timepicker #visitpicker></ngx-material-timepicker>
+                  <span>Accident Time *</span>
+                  @if (!AccidentTime.valid && addAccident.submitted) {
+                    <div class="invalid-tooltip">
+                      Accident Time is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <textarea
+                    class="form-control"
+                    ngModel
+                    #AccidentLocation="ngModel"
+                    name="AccidentLocation"
+                    required
+                  ></textarea>
+                  <span>Accident Location *</span>
+                  @if (!AccidentLocation.valid && addAccident.submitted) {
+                    <div class="invalid-tooltip">
+                      Accident Location is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <textarea
+                    ngModel
+                    #AccidentCause="ngModel"
+                    name="AccidentCause"
+                    rows="3"
+                    cols="45"
+                    required
+                  ></textarea>
+                  <span>Accident Cause *</span>
+                  @if (!AccidentCause.valid && addAccident.submitted) {
+                    <div class="invalid-tooltip">
+                      Accident Cause is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #InjuryNature="ngModel"
+                    name="InjuryNature"
+                    required
+                    >
+                    <ng-option value="Minor">Minor</ng-option>
+                    <ng-option value="Major">Major</ng-option>
+                    <ng-option value="Danjerous">Danjerous</ng-option>
+                  </ng-select>
+                  <span>Nature Of Injury *</span>
+                  @if (!InjuryNature.valid && addAccident.submitted) {
+                    <div class="invalid-tooltip">
+                      Nature Of Injury is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+              <div class="col-md-12">
+                <h6>(1).Witness :-</h6>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="text"
+                    ngModel
+                    #WitnessOneName="ngModel"
+                    name="WitnessOneName"
+                    required
+                    />
+                    <span>Name *</span>
+                    @if (!WitnessOneName.valid && addAccident.submitted) {
+                      <div class="invalid-tooltip">
+                        This is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea
+                      class="form-control"
+                      ngModel
+                      #WitnessOneAddress="ngModel"
+                      name="WitnessOneAddress"
+                      required
+                    ></textarea>
+                    <span>Address *</span>
+                    @if (!WitnessOneAddress.valid && addAccident.submitted) {
+                      <div class="invalid-tooltip">
+                        This is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      ngModel
+                      #WitnessOneOccupation="ngModel"
+                      name="WitnessOneOccupation"
+                      required
+                      />
+                      <span>Occupation *</span>
+                      @if (!WitnessOneOccupation.valid && addAccident.submitted) {
+                        <div
+                          class="invalid-tooltip"
+                          >
+                          This is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+
+                  <div class="col-md-12">
+                    <h6>(2).Witness :-</h6>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="text"
+                        ngModel
+                        #WitnessSecondName="ngModel"
+                        name="WitnessSecondName"
+                        required
+                        />
+                        <span>Name *</span>
+                        @if (!WitnessSecondName.valid && addAccident.submitted) {
+                          <div class="invalid-tooltip">
+                            This is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <textarea
+                          class="form-control"
+                          ngModel
+                          #WitnessSecondAddress="ngModel"
+                          name="WitnessSecondAddress"
+                          required
+                        ></textarea>
+                        <span>Address *</span>
+                        @if (!WitnessSecondAddress.valid && addAccident.submitted) {
+                          <div
+                            class="invalid-tooltip"
+                            >
+                            This is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="text"
+                          ngModel
+                          #WitnessSecondOccupation="ngModel"
+                          name="WitnessSecondOccupation"
+                          required
+                          />
+                          <span>Occupation *</span>
+                          @if (!WitnessSecondOccupation.valid && addAccident.submitted) {
+                            <div
+                              class="invalid-tooltip"
+                              >
+                              This is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="date"
+                            ngModel
+                            #ReturnDate="ngModel"
+                            name="ReturnDate"
+                            (change)="calcdays()"
+                            />
+                            <span>Return Date</span>
+                          </label>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input
+                              class="form-control"
+                              type="number"
+                              ngModel
+                              #TotalDays="ngModel"
+                              name="TotalDays"
+                              min="0"
+                              max="maxdays"
+                              [ngModel]="days"
+                              />
+                              <span>No. of Absent Days</span>
+                            </label>
+                          </div>
+
+                          <div class="col-md-4">
+                            <button class="btn btn-primary form-group" type="submit">
+                              {{ 'forms.submit' | translate }}
+                            </button>
+                            &nbsp;&nbsp;
+                            <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+                              Clear
+                            </button>
+                            &nbsp;&nbsp;
+                            <button
+                              class="btn btn-danger form-group ml-1"
+                              [routerLink]="adminRoot + '/payrolls/list_employee_accident'"
+                              >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <simple-notifications
+                    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                  ></simple-notifications>

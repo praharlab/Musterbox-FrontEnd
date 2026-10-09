@@ -1,0 +1,237 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="getSalaryDate(); lgModal.show()">Add</button>
+</div>
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    @if (item.weekOffPolicyID) {
+                      <p class="list-item-heading mb-1 truncate">
+                        <a tooltip="Please click here to view Weeok off Policy details" [class]="'glyph-icon tool_tip'"
+                          style="cursor: pointer" (click)="getWeekOffPolicyDataModal(item); weekOffPolicyDataModal.show()">
+                          {{ item.weekoff.weekOffPolicyName | uppercase }}
+                        </a>
+                      </p>
+                    }
+                  </div>
+                  <div>
+                    <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+                    <!-- <a class="btn btn-outline-danger btn-xs" (click)="alertConfirmation(item.employeeWeekOffID)"
+                    *ngIf="item.showDelete">
+                    DELETE
+                  </a> -->
+                </div>
+              </div>
+              <!-- <div class="d-flex mt-2" style="margin-top: 5%"  *ngIf="item.weekoff.createdByUserDetails != null">
+              <p class="text-muted mb-0 text-small">
+                <strong>Policy Created</strong> by {{ item.weekoff.createdByUserDetails.displayName }}, at {{
+                item.weekoff.createdAt
+                | date: 'dd-MM-yyyy hh:mm a' }}
+              </p>
+            </div>
+            <div class="d-flex mt-1" style="margin-top: 1px" *ngIf="item.weekoff.updatedByUserDetails != null">
+              <p class="text-muted mb-0 text-small">
+                <strong>Policy Updated</strong> by {{ item.weekoff.updatedByUserDetails.displayName }}, at {{
+                item.weekoff.updatedAt
+                | date: 'dd-MM-yyyy hh:mm a' }}
+              </p>
+            </div> -->
+            <hr>
+              <p class="text-muted mb-0 text-small">
+                Start Date : {{ item.applicableDate | date: 'dd-MM-yyyy' }}
+              </p>
+              @if (item.endDate != null) {
+                <p class="text-muted mb-0 text-small">
+                  End Date : {{ item.endDate | date: 'dd-MM-yyyy' }}
+                </p>
+              }
+              <div style="margin-top: 2%;">
+                <p class="text-muted mb-0 text-small">
+                  <strong>Assigned</strong> by {{ item.createdByUserDetails.displayName}}, at {{
+                  item.createdAt
+                  | date: 'dd-MM-yyyy hh:mm a' }}
+                </p>
+              </div>
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  @if (item.weekoffpolicystatus == 'active') {
+                    <button type="button" class="btn btn-success"
+                      style="margin-top: 10%">
+                      {{ 'Active' | translate }}
+                    </button>
+                  }
+                  {{ ' ' }}
+                  @if (item.weekoffpolicystatus == 'deactive') {
+                    <button type="button" class="btn btn-danger"
+                      style="margin-top: 10%">
+                      {{ 'Deactive' | translate }}
+                    </button>
+                  }
+                  {{ ' ' }}
+                </a>
+              </div>
+            </a>
+          </div>
+          <div style="margin-top: 14px">
+            <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+            <!-- <a
+            class="btn btn-outline-primary btn-xs"
+            (click)="alertConfirmation(item.employeeWeekOffID)"
+            style="margin-top: 10%"
+            >
+            DELETE
+          </a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}
+</div>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Weekoff</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #weekOffPolicyID="ngModel" name="weekOffPolicyID"
+                  required>
+                  @for (item of allweekoff; track item) {
+                    <ng-option [value]="item.weekOffPolicyID">
+                      {{ item.weekOffPolicyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select WeekOff Policy *</span>
+              </label>
+              @if (!weekOffPolicyID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Weekoff Policy is required!
+                </div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel required #applicableDate="ngModel"
+                  name="applicableDate">
+                  <ng-option value="0">Past Month</ng-option>
+                  <ng-option value="1">Current Month</ng-option>
+                  <ng-option value="2">Upcoming Month</ng-option>
+                </ng-select>
+                <span>Applicable from *</span>
+              </label>
+              @if (!applicableDate.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Applicable Date is required!
+                </div>
+              }
+            </div>
+            <!-- <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="Date" [(ngModel)]="dateNG" ngModel #applicableDate="ngModel" (change)="checksalaryDate($event.target.value)" [min]="visibledate" name="applicableDate" required/>
+              <span>Applicable Date *</span>
+            </label>
+            <div *ngIf="!applicableDate.valid && addcomp.submitted" class="invalid-tooltip">Applicable Date is required!</div>
+          </div> -->
+        </div>
+
+        <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Employee Weekoff</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (editbyid) {
+          <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #weekOffPolicyID="ngModel"
+                    [ngModel]="editbyid.weekOffPolicyID" name="weekOffPolicyID" required>
+                    @for (item of allweekoff; track item) {
+                      <ng-option [value]="item.weekOffPolicyID">
+                        {{ item.weekOffPolicyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select WeekOff Policy *</span>
+                </label>
+                @if (!weekOffPolicyID.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Weekoff Policy is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="Date" ngModel #applicableDate="ngModel"
+                    [ngModel]="editbyid.applicableDate | date: 'yyyy-MM-dd'" name="applicableDate" required />
+                    <span>Applicable Date *</span>
+                  </label>
+                  @if (!applicableDate.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Applicable Date is required!
+                    </div>
+                  }
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #weekOffPolicyDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">
+            {{ selectedWeekOffPolicyName | uppercase }} - WeekOfflicy Details
+          </h4>
+          <button type="button" class="btn-close close pull-right" (click)="weekOffPolicyDataModal.hide()"
+            aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-view-week-off-policy [getWeekOffPolicyID]="getWeekOffPolicyID"></app-view-week-off-policy>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,307 @@
+<!-- <div class="card mb-4" *ngIf="permissionview.length > 0"> -->
+<div class="card mb-4">
+  <div class="card-body">
+    <form #filterForm="ngForm" novalidate>
+      @if (heading != '') {
+        <h4>{{heading}}</h4>
+      }
+      <div class="row mt-4">
+        @if (!hideFilters.includes(filterFields.Company)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel required #company="ngModel" name="company"
+                (change)="selectcompany($event, true)" [(ngModel)]="body.companyMasterID">
+                @for (company of allCompanies; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && filterForm.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.Branch)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allBranches" [multiple]="multiBranch" bindLabel="branchName" groupBy="selectedAllGroup"
+                (ngModelChange)="selectBranch()" [(ngModel)]="selectedBranch" [selectableGroup]="true"
+                [selectableGroupAsModel]="false" bindValue="branchMasterID" [closeOnSelect]="false" ngModel
+                #branch="ngModel" name="branch" placeholder="Choose your option">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{ standalone: true }" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.Department)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allDepartments" [multiple]="multiDepartment" bindLabel="departmentName"
+                groupBy="selectedAllGroup" [(ngModel)]="selectedDepartment" (ngModelChange)="selectDepartment()"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="departmentId" [closeOnSelect]="false"
+                ngModel #department="ngModel" name="department" placeholder="Choose your option">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Department</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.Designation)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allDesignations" [multiple]="multiDesignation" bindLabel="designationName"
+                [(ngModel)]="selectedDesignation" groupBy="selectedAllGroup" (ngModelChange)="selectDesignation()"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="designationId"
+                [closeOnSelect]="false" ngModel #designation="ngModel" name="designation"
+                placeholder="Choose your option">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Designation</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.Division)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allDivisions" [multiple]="false" bindLabel="divisionName" [(ngModel)]="selectedDivision"
+                (ngModelChange)="selectDivision()" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                bindValue="id" [closeOnSelect]="true" ngModel #division="ngModel" placeholder="Choose your option"
+                name="division">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Division</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.WorkingArea)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allWorkingAreas" [multiple]="false" bindLabel="workingAreaName"
+                [(ngModel)]="selectedWorkingArea" groupBy="selectedAllGroup" (ngModelChange)="selectWorkingArea()"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="true" ngModel
+                #workingArea="ngModel" name="workingArea" placeholder="Choose your option">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Working Area</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.Project)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #projectID="ngModel" name="projectID"
+                [(ngModel)]="selectedProject" (ngModelChange)="selectProject()">
+                @for (item of allProjects; track item) {
+                  <ng-option [value]="item.projectID">
+                    {{ item.projectName }}
+                    @if (item?.display_id) {
+                      <span>({{ item?.display_id}})</span>
+                    }
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Project</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.SkillCategory)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #skillCategory="ngModel" name="skillCategory"
+                [(ngModel)]="  selectedSkillCategory" (change)="selectSkill()">
+                <ng-option value="skilled">Skilled</ng-option>
+                <ng-option value="unskilled">Unskilled</ng-option>
+                <ng-option value="semiskilled">Semi-skilled</ng-option>
+              </ng-select>
+              <span>Skill Category</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.SalaryType)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select ngModel #salarytype="ngModel" name="salarytype" (change)="selectSalaryType()"
+                [(ngModel)]="selectedSalaryType" placeholder="Choose your option">
+                <ng-option value="M">Manager</ng-option>
+                <ng-option value="S">Staff</ng-option>
+                <ng-option value="W">Wages</ng-option>
+              </ng-select>
+              <span>Salary Type</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.EmployementType)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="employmentTypes" ngModel #employmentType="ngModel" placeholder="Choose your option"
+                [(ngModel)]="selectedEmployementType" name="employmentType" (change)="selectEmployement()">
+              </ng-select>
+              <span>Employment Type</span>
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.Status)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #status="ngModel" name="status"
+                [(ngModel)]="selectedStatus" (change)="selectStatus()" required>
+                <ng-option value="1">Active</ng-option>
+                <ng-option value="0">Deactive</ng-option>
+              </ng-select>
+              <span>Select User Status *</span>
+              @if (!status.valid && filterForm.submitted) {
+                <div class="invalid-tooltip">
+                  Status is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+
+        @if (!hideFilters.includes(filterFields.User)) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allUsers" [multiple]="multiUser" bindLabel="displayNameWithNumber"
+                groupBy="selectedAllGroup" [selectableGroup]="multiUser" [selectableGroupAsModel]="false"
+                [bindValue]="userBindValue" [closeOnSelect]="!multiUser" ngModel [(ngModel)]="selectedUsers"
+                #user="ngModel" name="user" placeholder="Choose your option" (ngModelChange)="emitUser($event);"
+                [required]="showRequiredFields.includes(requiredFields.User)">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index" *ngIf="multiUser">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectUser" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select User @if (showRequiredFields.includes(requiredFields.User)) {
+                <span>*</span>
+              }</span>
+              @if (!user.valid && filterForm.submitted) {
+                <div class="invalid-tooltip">
+                  User is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <ng-content></ng-content>
+
+        <div class="col-md-12">
+          @if (showButtons.includes(buttonFields.Submit)) {
+            <button #submitBtn class="btn btn-primary form-group ml-2" type="submit" (click)="onSubmitClick()"
+              >
+              Submit
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.SUBMIT_EXPORT)) {
+            <button class="btn btn-success form-group ml-2" type="submit" (click)="onSubmitClick()"
+              >
+              Export
+            </button>
+          }
+          @if (showCustomExportButton) {
+            <button class="btn btn-success form-group ml-2" type="submit" (click)="onExcelClick()"
+              >
+              {{customExportButtonName}}
+            </button>
+          }
+          @if (showCustomPdfButton) {
+            <button class="btn btn-success form-group ml-2" type="submit" (click)="onPdfClick()"
+              >
+              {{customPdfButtonName}}
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.Clear)) {
+            <button class="btn btn-danger form-group ml-2" type="button" (click)="clear(true)"
+              >
+              Clear
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.Excel)) {
+            <button class="btn btn-success form-group ml-2" type="button" (click)="onExport()"
+              >
+              Download Excel
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.CSV)) {
+            <button class="btn btn-success form-group ml-2" type="button" (click)="onExportCSV()"
+              >
+              Download CSV
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.EXCELWITHLOGS)) {
+            <button class="btn btn-success form-group ml-2" type="button" (click)="onExportWithLogs()"
+              >
+              Excel With Logs
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.Import)) {
+            <button class="btn btn-info form-group ml-2" type="button" (click)="onImport()"
+              >
+              {{ importButtonLabel }}
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.Pdf)) {
+            <button class="btn btn-success form-group ml-2" type="button" (click)="onClickPdf()"
+              >
+              Download PDF
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.SENDMAIL)) {
+            <button class="btn btn-success form-group ml-2" type="button" (click)="onSendMailClick()"
+              >
+              Send Mail
+            </button>
+          }
+          @if (showButtons.includes(buttonFields.Cancel) && cancelRoute) {
+            <button class="btn btn-danger form-group ml-2" type="button" (click)="cancel()"
+              >
+              Cancel
+            </button>
+          }
+          @if (showExtraButton) {
+            <button class="btn btn-success form-group ml-2" [type]="extraButtonType" (click)="emitExtraButtonClick()"
+              >
+              {{extraButtonName}}
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+    <br />
+  </div>
+</div>

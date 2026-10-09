@@ -1,0 +1,110 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Outdoor Duty Application Report" [showOrderBy]="false" [showDisplayMode]="false"
+  [showSearch]="false" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" [showItemsPerPage]="rows.length != 0"
+[showItemsPerPage]="rows.length != 0"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit1($event)"
+    (init)="init($event)" (clear)="clear()" (clearData)="clear()"
+    (emitUsers)="emitUsers($event)" (exportCSV)="download()" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" required />
+        <span>From Date *</span>
+        @if (!startdate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            From Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" required />
+        <span>To Date *</span>
+        @if (!enddate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            To Date is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}
+
+
+@if (rows && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Employee Code" prop="Employee Code" [flexGrow]="1.2"
+        [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column name="Employee Name" prop="Employee Name" [flexGrow]="1.2"
+        [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column name="Branch" prop="Branch" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column name="Department" prop="Department" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Designation" prop="Designation" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Division" prop="Division" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="From Date" prop="From Date" [flexGrow]="1.2" [width]="120">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row['From Date'] | date: 'dd-MM-yyyy' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="To Date" prop="To Date" [flexGrow]="1.2" [width]="120">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row['To Date'] | date: 'dd-MM-yyyy' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Total Days" prop="Total Days" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Approved Days" prop="Approved Days" [flexGrow]="1.2"
+        [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Cancelled Days" prop="Cancelled Days" [flexGrow]="1.2"
+        [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Applied" prop="Applied" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Auth Criteria" prop="Auth Criteria" [flexGrow]="1.2"
+        [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column [flexGrow]="1.2" [width]="200">
+          <ng-template let-column="column" ngx-datatable-header-template>Authorization</ng-template>
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{row.Authorization}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Status" prop="Status" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column name="Reason" prop="Reason" [flexGrow]="1.2" [width]="170"></ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

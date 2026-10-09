@@ -1,0 +1,100 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Goal Review </h5>
+
+    @if (emlpoyeeGoalData && employeeGoalReviewData) {
+      <form #addEmployeeGoalReview="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #companyMasterID="ngModel"
+                [attr.disabled]="true"
+                [(ngModel)]="employeeGoalReviewData.employeeGoal.goalMaster.companyMaster.companyName"
+                name="companyMasterID" />
+                <span>Select Company *</span>
+                @if (!companyMasterID.valid && addEmployeeGoalReview.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #employeeGoalID="ngModel"
+                  [(ngModel)]="emlpoyeeGoalData" name="employeeGoalID" [attr.disabled]="true" />
+                  <span>Select Employee Goal*</span>
+                  @if (!employeeGoalID.valid && addEmployeeGoalReview.submitted) {
+                    <div class="invalid-tooltip">
+                      Employee Goal is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #reviewer="ngModel"
+                    [(ngModel)]="employeeGoalReviewData.reviewer.userMasterID" name="reviewer" required>
+                    @for (item of employeeCompany; track item) {
+                      <ng-option [value]="item.userMasterID">
+                        {{ item.displayName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Reviewers *</span>
+                  @if (!reviewer.valid && addEmployeeGoalReview.submitted) {
+                    <div class="invalid-tooltip">
+                      Reviewers is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-3"></div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #remarks="ngModel"
+                    [(ngModel)]="employeeGoalReviewData.remarks" name="remarks" />
+                    <span>Remarks </span>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" ngModel #targetGiven="ngModel"
+                      placeholder="please enter target given" [(ngModel)]="employeeGoalReviewData.targetGiven"
+                      name="targetGiven" min="0" max="100" />
+                      <span>Target Given </span>
+                    </label>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" ngModel #targetAchieved="ngModel"
+                        placeholder="please enter target achieved"
+                        [(ngModel)]="employeeGoalReviewData.targetAchieved" name="targetAchieved" min="0"
+                        max="100" />
+                        <span>Target Achieved </span>
+                      </label>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span><b>Is Review Completed? :</b></span>
+                      &nbsp;&nbsp;
+                      <div class="pt-1">
+                        <input type="checkbox" [(ngModel)]="employeeGoalReviewData.isCompleted" name="isCompleted">
+                      </div>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary  btn-shadow mt-4" type="submit" (click)="onSubmit()">
+                    Submit
+                  </button>
+                  &nbsp;
+                  <button class="btn btn-danger  btn-shadow mt-4" type="button" [routerLink]="adminRoot + '/pms/goalReview'">
+                    Cancel
+                  </button>
+                </form>
+              }
+            </div>
+          </div>
+
+          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

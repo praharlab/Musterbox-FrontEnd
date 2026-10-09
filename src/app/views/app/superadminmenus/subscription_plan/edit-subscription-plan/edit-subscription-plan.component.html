@@ -1,0 +1,130 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (companydata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Subscription For Company</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="selectproduct($event)"
+                [(ngModel)]="companydata.productMasterID"
+                ngModel
+                #productm="ngModel"
+                [readonly]="true"
+                name="productm"
+                required
+                >
+                @for (product of product; track product) {
+                  <ng-option [value]="product.productMasterID">
+                    {{ product.productName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Product *</span>
+              @if (!productm.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Product is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                required
+                ngModel
+                #startDate="ngModel"
+                [ngModel]="companydata.startDate | date: 'yyyy-MM-dd'"
+                name="startDate"
+                />
+                <span>Start Date *</span>
+                @if (!startDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Start Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="date"
+                  required
+                  ngModel
+                  #endDate="ngModel"
+                  [ngModel]="companydata.endDate | date: 'yyyy-MM-dd'"
+                  name="endDate"
+                  />
+                  <span>End Date *</span>
+                  @if (!endDate.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      End Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="text"
+                    required
+                    ngModel
+                    #totalUser="ngModel"
+                    [(ngModel)]="companydata.totalUser"
+                    name="totalUser"
+                    />
+                    <span>Total user *</span>
+                    @if (!totalUser.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Total User is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      required
+                      ngModel
+                      #totalTracking="ngModel"
+                      [(ngModel)]="companydata.totalTracking"
+                      name="totalTracking"
+                      />
+                      <span>Total tracking user *</span>
+                      @if (!totalTracking.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Product Code is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button
+                  class="btn btn-danger"
+                  [routerLink]="adminRoot + '/superadminmenus/company_subscription'"
+                  style="margin-left: 2%"
+                  >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        }
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

@@ -1,0 +1,71 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add TDS Sub Section Limit</h5>
+
+    @if (tdsSubSectionLimitData) {
+      <form #editTdsSubSectionLimit="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #tdsSectionID="ngModel" [(ngModel)]="section"
+                name="tdsSectionID" disabled />
+                <span>Select TDS Section</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #tdsSubSectionCategoryID="ngModel"
+                  [(ngModel)]="sectionCategory" name="tdsSubSectionCategoryID" disabled />
+                  <span>Select TDS Sub Section Category</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #tdsSubSectionID="ngModel"
+                    [(ngModel)]="subSection" name="tdsSubSectionID" disabled />
+                    <span>Select TDS Sub Section</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="month" ngModel #YYYYMM="ngModel"
+                      [(ngModel)]="applicableYYYYMM" name="YYYYMM" required />
+                      <span>Select Applicable Year Month *</span>
+                      @if (!YYYYMM.valid && editTdsSubSectionLimit.submitted) {
+                        <div
+                          class="invalid-tooltip">
+                          Applicable Year Month is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" ngModel #maxLimit="ngModel" name="maxLimit"
+                        [(ngModel)]="tdsSubSectionLimitData.maxLimit" required />
+                        <span>TDS SubSection Limit *</span>
+                        @if (!maxLimit.valid && editTdsSubSectionLimit.submitted) {
+                          <div class="invalid-tooltip">
+                            TDS SubSection Limit is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary btn-lg btn-shadow mt-4" type="submit" (click)="onSubmit()"
+                    style="margin-left: 2%">
+                    Submit
+                  </button>
+                  <button class="btn btn-danger btn-lg btn-shadow mt-4" type="button" (click)="cancel()"
+                    style="margin-left: 2%">
+                    Cancel
+                  </button>
+                </form>
+              }
+            </div>
+          </div>
+
+          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,431 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (showForm && showForm1) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="companyLogo text-center mb-4">
+        @if (imgShow) {
+          <div>
+            <img class="img-responsive mb-2" width="150px" height="50px" style="object-fit: contain;"
+              src="{{ apiURL }}uploads/company/logo/{{ companyData?.companyLogo }}" />
+            </div>
+          }
+          <h3>{{companyData?.companyName}}</h3>
+        </div>
+        <form #addpreboarding="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #firstName="ngModel" name="firstName" />
+                <span>First Name *</span>
+                @if (!firstName.valid && addpreboarding.submitted) {
+                  <div class="invalid-tooltip">
+                    First Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #middleName="ngModel" name="middleName" />
+                <span>Middle Name</span>
+                <!-- <div *ngIf="!middleName.valid && addpreboarding.submitted" class="invalid-tooltip">
+                Middle Name is required!
+              </div> -->
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #lastName="ngModel" name="lastName" />
+              <span>Last Name *</span>
+              @if (!lastName.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Last Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3"class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" name="userNumberCountryMasterID" required ngModel #userNumberCountryMasterID="ngModel"
+                name="userNumberCountryMasterID"[(ngModel)]="selectedCountryCode">
+                @for (country of countryData; track country) {
+                  <ng-option [value]="country.countryMasterID">
+                    {{country.countryName}} ({{ country.countryCode }})
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Country Code *</span>
+              @if (!userNumberCountryMasterID.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Country Code is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" required ngModel #userNumber="ngModel" name="userNumber" />
+              <span>Phone Number *</span>
+              @if (!userNumber.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Phone Number is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" required ngModel #dob="ngModel" name="dob" />
+              <span>DOB *</span>
+              @if (!dob.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  DOB is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="email" required ngModel #email="ngModel" name="email" />
+              <span>Email *</span>
+              @if (!email.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Email is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #address="ngModel" name="address" required></textarea>
+              <span>Address *</span>
+              @if (!address.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Address is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" name="branchMasterID" required ngModel #branchMasterID="ngModel"
+                name="branchMasterID">
+                @for (allbranch of allBranch; track allbranch) {
+                  <ng-option [value]="allbranch.branchMasterID">
+                    {{ allbranch.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch *</span>
+              @if (!branchMasterID.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Branch is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" name="designationID" required ngModel #designationID="ngModel"
+                name="designationID">
+                @for (alldesignation of alldesignation; track alldesignation) {
+                  <ng-option [value]="alldesignation.designationId">
+                    {{ alldesignation.designationName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Designation *</span>
+              @if (!designationID.valid && addpreboarding.submitted) {
+                <div class="invalid-tooltip">
+                  Designation is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          @for (fields of fields1; track fields; let i = $index) {
+            <div class="col-md-6">
+              <!-- title -->
+              @if (fields.inputType == 'title') {
+                <label class="form-group has-float-label">
+                  <h3>{{ fields.fieldLabel }}</h3>
+                </label>
+              }
+              <!-- number -->
+              @if (fields.inputType == 'number' && fields.isRequired == false) {
+                <div class="form-group">
+                  <label class="text-justify">{{ fields.fieldLabel }}</label>
+                  <input placeholder="{{ fields.mousehovermessage }}" class="form-control" type="number" ngModel
+                    #{{fields.fieldLabel}}="ngModel" name="{{ fields.fieldLabel }}" />
+                    <!-- <span>{{ fields.fieldLabel }}</span> -->
+                  </div>
+                }
+                <!-- text -->
+                @if (fields.inputType == 'text' && fields.isRequired == false) {
+                  <div class="form-group">
+                    <label class="text-justify">{{ fields.fieldLabel }}</label>
+                    <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                      class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                      name="{{ fields.fieldLabel }}" />
+                      <!-- <span>{{ fields.fieldLabel }}</span> -->
+                    </div>
+                  }
+                  <!-- image -->
+                  @if (fields.inputType == 'image' && fields.isRequired == false) {
+                    <label class="form-group has-float-label">
+                      <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                        class="form-control" type="file"
+                        (change)="onSelectFile($event, fields.preboardingFormCustomizeID, fields.fieldLabel)"
+                        name="{{ fields.fieldLabel }}" />
+                        <span>{{ fields.fieldLabel }}</span>
+                      </label>
+                    }
+                    <!-- pdf -->
+                    @if (fields.inputType == 'pdf' && fields.isRequired == false) {
+                      <label class="form-group has-float-label">
+                        <input title="{{ fields.mousehovermessage }}" accept="image/jpeg,image/png,image/jpg"
+                          placeholder="{{ fields.mousehovermessage }}" class="form-control" type="file" accept="application/pdf"
+                          (change)="onSelectFile($event, fields.preboardingFormCustomizeID, fields.fieldLabel)"
+                          name="{{ fields.fieldLabel }}" />
+                          <span>{{ fields.fieldLabel }}</span>
+                        </label>
+                      }
+                      <!-- textarea -->
+                      @if (fields.inputType == 'textarea' && fields.isRequired == false) {
+                        <div class="form-group">
+                          <label class="text-justify">{{ fields.fieldLabel }}</label>
+                          <textarea title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                            class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                          name="{{ fields.fieldLabel }}"></textarea>
+                          <!-- <span>{{ fields.fieldLabel }}</span> -->
+                        </div>
+                      }
+                      <!-- radio -->
+                      @if (fields.inputType == 'radio' && fields.isRequired == false) {
+                        <div class="row"
+                          style="margin-left: 1%; margin-bottom: 2%">
+                          <label style="margin-right: 30px">
+                            <b>{{ fields.fieldLabel }}</b>
+                          </label>
+                          @for (values of fields.value; track values) {
+                            <div>
+                              <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                [value]="values" style="margin-right: 10px" />
+                                <label for="value" style="margin-right: 25px">
+                                  {{ values }}
+                                </label>
+                              </div>
+                            }
+                          </div>
+                        }
+                        <!-- dropdown -->
+                        @if (fields.inputType == 'dropdown' && fields.isRequired == false) {
+                          <div class="form-group">
+                            <label class="text-justify">{{ fields.fieldLabel }}</label>
+                            <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}">
+                              @for (values of fields.value; track values) {
+                                <ng-option [value]="values">
+                                  {{ values }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <!-- <span>{{ fields.fieldLabel }}</span> -->
+                          </div>
+                        }
+                        <!-- signature -->
+                        @if (fields.inputType == 'signature' && fields.isRequired == false) {
+                          <div class="form-group has-float-label"
+                            style="margin-top: 50px">
+                            <label class="text-justify">{{ fields.fieldLabel }} *</label>
+                            <div class="container">
+                              <ngx-signature-pad [config]="config" ngModel #sign #signature="ngModel"></ngx-signature-pad>
+                            </div>
+                            <button type="button" (click)="getImage(fields.preboardingFormCustomizeID)" class="btn btn-success"
+                              style="margin-top: 12px; margin-left: 63%; width: 37%">
+                              Confirm Sign
+                            </button>
+                          </div>
+                        }
+                        <!-- image2 -->
+                        @if (fields.inputType == 'image' && fields.isRequired == true) {
+                          <label class="form-group has-float-label">
+                            <input title="{{ fields.mousehovermessage }}" #image="ngModel" required="true" ngModel
+                              placeholder="{{ fields.mousehovermessage }}" class="form-control" type="file"
+                              accept="image/jpeg,image/png,image/jpg"
+                              (change)="onSelectFile($event, fields.preboardingFormCustomizeID, fields.fieldLabel)"
+                              name="{{ fields.fieldLabel }}" />
+                              <span>{{ fields.fieldLabel }} *</span>
+                              @if (!image.valid && addpreboarding.submitted) {
+                                <div class="invalid-tooltip">
+                                  {{ fields.fieldLabel }} is required!
+                                </div>
+                              }
+                              n
+                            </label>
+                          }
+                          <!-- pdf2 -->
+                          @if (fields.inputType == 'pdf' && fields.isRequired == true) {
+                            <label class="form-group has-float-label">
+                              <input #PDF="ngModel" title="{{ fields.mousehovermessage }}" ngModel required="true"
+                                placeholder="{{ fields.mousehovermessage }}" accept="application/pdf" class="form-control" type="file"
+                                (change)="onSelectFile($event, fields.preboardingFormCustomizeID, fields.fieldLabel)"
+                                name="{{ fields.fieldLabel }}" />
+                                <span>{{ fields.fieldLabel }} *</span>
+                                @if (!PDF.valid && addpreboarding.submitted) {
+                                  <div class="invalid-tooltip">
+                                    {{ fields.fieldLabel }} is required!
+                                  </div>
+                                }
+                              </label>
+                            }
+                            <!-- number2 -->
+                            @if (fields.inputType == 'number' && fields.isRequired == true) {
+                              <div class="form-group">
+                                <label class="text-justify">{{ fields.fieldLabel }}</label>
+                                <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                  class="form-control" type="number" ngModel #number="ngModel" name="{{ fields.fieldLabel }}" required />
+                                  <!-- <span>{{ fields.fieldLabel }} *</span> -->
+                                  @if (!number.valid && addpreboarding.submitted) {
+                                    <div class="invalid-tooltip">
+                                      {{ fields.fieldLabel }} is required!
+                                    </div>
+                                  }
+                                </div>
+                              }
+                              <!-- text2 -->
+                              @if (fields.inputType == 'text' && fields.isRequired == true) {
+                                <div class="form-group">
+                                  <div></div>
+                                  <label class="text-justify">{{ fields.fieldLabel }}</label>
+                                  <input title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                    class="form-control" type="text" ngModel #TEXT="ngModel" name="{{ fields.fieldLabel }}" required />
+                                    <!-- <span>{{ fields.fieldLabel }} *</span> -->
+                                    @if (!TEXT.valid && addpreboarding.submitted) {
+                                      <div class="invalid-tooltip">
+                                        {{ fields.fieldLabel }} is required!
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                                <!-- textarea2 -->
+                                @if (fields.inputType == 'textarea' && fields.isRequired == true) {
+                                  <div class="form-group">
+                                    <label class="text-justify">{{ fields.fieldLabel }}</label>
+                                    <textarea title="{{ fields.mousehovermessage }}" placeholder="{{ fields.mousehovermessage }}"
+                                      class="form-control" type="text" ngModel #TEXTAREA="ngModel" name="{{ fields.fieldLabel }}"
+                                    required></textarea>
+                                    <!-- <span>{{ fields.fieldLabel }} *</span> -->
+                                    @if (!TEXTAREA.valid && addpreboarding.submitted) {
+                                      <div class="invalid-tooltip">
+                                        {{ fields.fieldLabel }} is required!
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                                <!-- radio2 -->
+                                @if (fields.inputType == 'radio' && fields.isRequired == true) {
+                                  <div class="row"
+                                    style="margin-left: 1%; margin-bottom: 2%">
+                                    <label style="margin-right: 30px">
+                                      <b>{{ fields.fieldLabel }} *</b>
+                                    </label>
+                                    @for (values of fields.value; track values) {
+                                      <div>
+                                        <input type="radio" name="{{ fields.fieldLabel }}" ngModel #RADIO="ngModel" [value]="values"
+                                          style="margin-right: 10px" required />
+                                          <label for="value" style="margin-right: 25px">
+                                            {{ values }}
+                                          </label>
+                                          @if (!RADIO.valid && addpreboarding.submitted) {
+                                            <div class="invalid-tooltip">
+                                              {{ fields.fieldLabel }} is required!
+                                            </div>
+                                          }
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  <!-- dropdown2 -->
+                                  @if (fields.inputType == 'dropdown' && fields.isRequired == true) {
+                                    <div class="form-group">
+                                      <label class="text-justify">{{ fields.fieldLabel }}</label>
+                                      <ng-select placeholder="Choose your option" ngModel #DROPDOWN="ngModel" name="{{ fields.fieldLabel }}"
+                                        required>
+                                        @for (values of fields.value; track values) {
+                                          <ng-option [value]="values">
+                                            {{ values }}
+                                          </ng-option>
+                                        }
+                                      </ng-select>
+                                      <!-- <span>{{ fields.fieldLabel }} *</span> -->
+                                      @if (!DROPDOWN.valid && addpreboarding.submitted) {
+                                        <div class="invalid-tooltip">
+                                          {{ fields.fieldLabel }} is required!
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  <!-- signature2 -->
+                                  @if (fields.inputType == 'signature' && fields.isRequired == true) {
+                                    <div class="form-group has-float-label"
+                                      style="margin-top: 50px">
+                                      <label class="text-justify">{{ fields.fieldLabel }} *</label>
+                                      <div class="container">
+                                        <ngx-signature-pad [config]="config" ngModel #sign #SIGNATURE="ngModel" required></ngx-signature-pad>
+                                      </div>
+                                      @if (!SIGNATURE.valid && sign.submitted && addpreboarding.submitted) {
+                                        <div class="invalid-tooltip">
+                                          {{ fields.fieldLabel }} is required!
+                                        </div>
+                                      }
+                                      <button type="button" (click)="getImage(fields.preboardingFormCustomizeID)" class="btn btn-success"
+                                        style="margin-top: 12px; margin-left: 63%; width: auto">
+                                        Confirm Sign
+                                      </button>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+                            <br />
+                            <br />
+                            <br />
+                            <button class="btn btn-primary" type="submit">
+                              {{ 'forms.submit' | translate }}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    }
+
+                    @if (!showForm) {
+                      <div class="card mb-4">
+                        <div class="card-body">
+                          @if (company1.companyLogo) {
+                            <div style="margin: auto; width: 100%; text-align: center">
+                              <img class="img-responsive" width="200px" height="200px"
+                                src="{{ apiURL }}uploads/company/logo/{{ company1.companyLogo }}" />
+                                <br />
+                              </div>
+                            }
+                            @if (!company1.companyLogo) {
+                              <div style="margin: auto; text-align: center">
+                                <br />
+                                <h1>{{ company1.companyName }}</h1>
+                                <br />
+                                <br />
+                              </div>
+                            }
+                            <br />
+                            <div style="margin: auto; text-align: center">
+                              <h1>Your Application Submitted Successfully</h1>
+                            </div>
+                          </div>
+                        </div>
+                      }
+
+                      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

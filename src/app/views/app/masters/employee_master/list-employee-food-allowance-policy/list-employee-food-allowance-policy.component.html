@@ -1,0 +1,168 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="getFoodAllowancePolicyData(); lgModal.show()">Add</button>
+</div>
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero w-100">
+              <a href="javascript:;">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    @if (item.id) {
+                      <p class="list-item-heading mb-1 truncate">
+                        <a tooltip="Please click here to  view Food allowance Policy details"
+                          [class]="'glyph-icon tool_tip'" style="cursor: pointer"
+                          (click)="getfoodAllowancePolicyDataModal(item); foodAllowancePolicyDataModal.show()">
+                          {{ item['foodAllowancePolicy.foodAllowancePolicyName'] | uppercase }}
+                        </a>
+                      </p>
+                    }
+                  </div>
+                </div>
+                @if (item['foodAllowancePolicy.createdByUserDetails.displayName'] != null) {
+                  <div class="d-flex mt-2" style="margin-top: 5%"
+                    >
+                    <p class="text-muted mb-0 text-small">
+                      <strong>Policy Created</strong> by {{
+                      item['foodAllowancePolicy.createdByUserDetails.displayName'] }}, at {{
+                      item['foodAllowancePolicy.createdAt']
+                      | date: 'dd-MM-yyyy hh:mm a' }}
+                    </p>
+                  </div>
+                }
+                @if (item['foodAllowancePolicy.updatedByUserDetails.displayName'] != null) {
+                  <div class="d-flex mt-1" style="margin-top: 1px"
+                    >
+                    <p class="text-muted mb-0 text-small">
+                      <strong>Policy Updated</strong> by {{
+                      item['foodAllowancePolicy.updatedByUserDetails.displayName'] }}, at {{
+                      item['foodAllowancePolicy.updatedAt']
+                      | date: 'dd-MM-yyyy hh:mm a' }}
+                    </p>
+                  </div>
+                }
+                <hr>
+                  <p class="text-muted mb-0 text-small">
+                    Start Date : {{ item.startDate | date: 'dd-MM-yyyy' }}
+                  </p>
+                  <p class="text-muted mb-0 text-small">
+                    End Date : {{ item.endDate | date: 'dd-MM-yyyy' }}
+                  </p>
+                  <div style="margin-top: 2%;">
+                    <p class="text-muted mb-0 text-small">
+                      <strong>Assigned</strong> by {{ item['createdByUserDetails.displayName']}}, at {{
+                      item.createdAt
+                      | date: 'dd-MM-yyyy hh:mm a' }}
+                    </p>
+                  </div>
+                  <div class="min-width-zero">
+                    <a href="javascript:;">
+                      @if (item.foodAllowancePolicyStatus == 'active') {
+                        <button type="button" class="btn btn-success"
+                          style="margin-top: 10%">
+                          {{ 'Active' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (item.foodAllowancePolicyStatus == 'deactive') {
+                        <button type="button" class="btn btn-danger"
+                          style="margin-top: 10%">
+                          {{ 'Deactive' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </a>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Food Allowance Policy</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #AddFoodAllowancePolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #foodAllowancePolicyId="ngModel"
+                    name="foodAllowancePolicyId" required>
+                    @for (item of allFoodAllowancePolicy; track item) {
+                      <ng-option [value]="item.id">
+                        {{ item.foodAllowancePolicyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Food Allowance Policy *</span>
+                </label>
+                @if (!foodAllowancePolicyId.valid && AddFoodAllowancePolicy.submitted) {
+                  <div
+                    class="invalid-tooltip">
+                    Food Allowance Policy is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel required #startDate="ngModel"
+                    name="startDate">
+                    <ng-option value="0">Past Month</ng-option>
+                    <ng-option value="1">Current Month</ng-option>
+                    <ng-option value="2">Upcoming Month</ng-option>
+                  </ng-select>
+                  <span>Applicable from *</span>
+                </label>
+                @if (!startDate.valid && AddFoodAllowancePolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Applicable from is required!
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div bsModal #foodAllowancePolicyDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">
+            {{ selectedFoodAllowancePolicyName | uppercase }} - Food Allowance Policy Details
+          </h4>
+          <button type="button" class="btn-close close pull-right" (click)="foodAllowancePolicyDataModal.hide()"
+            aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-view-food-allowance-policy
+          [getFoodAllowancePolicyID]="getFoodAllowancePolicyID"></app-view-food-allowance-policy>
+        </div>
+      </div>
+    </div>
+  </div>

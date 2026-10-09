@@ -1,0 +1,1320 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 11"></app-heading>
+    <app-breadcrumb title="Form 11"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              (change)="selectcompany($event)" required>
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+              (change)="selectbranch($event)">
+              @for (item of allbranch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch*</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel" name="userMasterID" required>
+              @for (item of employeedata; track item) {
+                <ng-option [value]="item.userMasterID">
+                  {{ item.displayName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Employee *</span>
+          </label>
+          @if (!userMasterID.valid && datefilter.submitted) {
+            <div class="invalid-tooltip">
+              Employee is required!
+            </div>
+          }
+        </div>
+
+        <div class="col-md-5">
+          <button class="btn btn-primary form-group" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+          &nbsp;&nbsp;
+          <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          <span> &nbsp;&nbsp; </span>
+          @if (finaldata == true) {
+            <button class="btn btn-success form-group" type="button" onclick="window.print()">
+              Download As PDF
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="Generator" content="Microsoft Word 15 (filtered)" />
+    <title>FORM 11</title>
+    <style type="text/css">
+      * {
+      box-sizing: border-box;
+    }
+
+    body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  page[size='A4'] {
+  width: 790px;
+  height: 1000px;
+}
+
+page {
+background: white;
+display: block;
+margin: 0 auto;
+}
+
+p {
+margin: 0;
+padding: 0;
+}
+</style>
+</head>
+@if (finaldata == true) {
+  <div>
+    <body lang="EN-US" style="word-wrap: break-word; padding-bottom: 0px">
+      <div id="example">
+        <div style="width: fit-content; padding: 0 40px">
+          <div class="MsoNormalTable"
+            style="margin-left: 0.9pt; border-collapse: collapse; border: none; width: fit-content">
+            <div style="size: a4">
+              <!-- PDF CONTENT START -->
+              <div style="font-weight: 900">
+                <!-- HEADER -->
+                <div style="font-weight: 600px">
+                  <div class="text-right">
+                  <h3 style="
+                        font-size: 34px;
+
+                        font-weight: 600;
+                      ">
+                      <b>Form No. 11</b>
+                    </h3>
+                    <h3 style="font-size: 34px; font-weight: 600"><b>Declaration From</b></h3>
+                    <h5 style="font-size: 18px; margin-top: 0px; font-weight: 600">
+                      <b>(To be retained by the Employer for future reference)</b>
+                    </h5>
+                  </div>
+                <div style="
+                      position: absolute;
+                      width: 10px;
+                      height: 10px;
+                      margin: -6rem 0 0 0;
+                      left: 33px;
+                    ">
+                    <img style="width: 140px" src="../../../../assets/img/EPFO_Logo.png" alt="Italian Trulli" />
+                  </div>
+                  <div>
+                    <div class="text-center" style="margin-left: 83px">
+                      <h1 style="font-size: 36px; font-weight: 600">
+                        <b>Employees’ Provident Fund Organization</b>
+                      </h1>
+                      <h6 style="font-size: 20px; line-height: 32px; font-weight: 600">
+                        <b>
+                          THE EMPLOYEES’ PROVIDENT FUNDS SCHEME, 1952 (PARAGRAPH-34 & 57)
+                          <br />
+                          &
+                          <br />
+                          THE EMPLOYEES’ PENSION SCHEME, 1995 (PARAGRAPH-24)
+                        </b>
+                      </h6>
+                    </div>
+                    <div>
+                      <h6 class="text-center" style="font-size: 17px !important; margin-top: 10px; line-height: 30px">
+                        <b>
+                          <u>
+                            DECLARATION BY A PERSON TAKING UP EMPLOYMENT IN AN ESTABLISHMENT ON
+                            WHICH EMPLOYEES’ PROVIDENT FUND SCHEME, 1952 AND/OR EMPLOYEES’ PENSION
+                            SCHEME, 1995 IS APPLICABLE.
+                          </u>
+                        </b>
+                      </h6>
+                    </div>
+                    <div>
+                      <h6 class="col-12 text-center" style="margin: 0px 0px 0 10px; font-size: 18px !important">
+                        <b>(PLEASE GO THROUGH THE INSTRUCTIONS)</b>
+                      </h6>
+                    </div>
+                  </div>
+                </div>
+                <!-- MAIN CONTENT -->
+                <div style="font-size: 18px !important; font-weight: 600">
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>1)</span>
+                    </div>
+                    <div class="col-1" style="padding: 0px; margin-left: -3px">
+                      <span>Name</span>
+                    </div>
+                    <div class="col-2 text-center" style="padding-left: 0px; padding-right: 0px; margin-left: -21px">
+                      <div>
+                        (TITLE)
+                        <br />
+                      </div>
+                      <div>
+                        <span style="border: 1px solid black; padding: 2px">MR.</span>
+                        <span style="border: 1px solid black; padding: 2px">MS.</span>
+                        <span style="border: 1px solid black; padding: 2px">MRS.</span>
+                        <br />
+                      </div>
+                      <div>(PLEASE TICK)</div>
+                    </div>
+                    <div class="col-8" style="margin-left: -14px">
+                      <table border="1" style="width: 100%; text-align: center">
+                        <tr>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[1] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[2] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[3] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[4] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[5] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[6] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[7] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[8] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[9] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[10] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[11] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[12] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[13] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[14] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[15] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[16] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[17] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[18] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[19] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[20] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[21] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[22] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[23] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[24] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[25] }}</td>
+                        </tr>
+                        <tr>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[26] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[27] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[28] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[29] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[30] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[31] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[32] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[33] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[34] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[35] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[36] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[37] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[38] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[39] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[40] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[41] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[42] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[43] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[44] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[45] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[46] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[47] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[48] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[49] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[50] }}</td>
+                        </tr>
+                        <tr>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[51] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[52] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[53] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[54] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[55] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[56] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[57] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[58] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[59] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[60] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[61] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[62] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[63] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[64] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[65] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[66] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[67] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[68] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[69] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[70] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[71] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[72] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[73] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[74] }}</td>
+                          <td style="width: 4%; height: 28px">{{ fullNameArray[75] }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>2)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px; margin-left: -3px">
+                      <span>Date of Birth</span>
+                    </div>
+                    <div class="col-7" style="margin-left: 23px; text-align: center">
+                      <table border="1" style="width: 100%">
+                        <tr class="text-center">
+                          <td>D</td>
+                          <td>D</td>
+                          <td>M</td>
+                          <td>M</td>
+                          <td>Y</td>
+                          <td>Y</td>
+                          <td>Y</td>
+                          <td>Y</td>
+                        </tr>
+                        <tr style="height: 22px">
+                          <td>{{ dobArray[9] }}</td>
+                          <td>{{ dobArray[10] }}</td>
+                          <td>{{ dobArray[6] }}</td>
+                          <td>{{ dobArray[7] }}</td>
+                          <td>{{ dobArray[1] }}</td>
+                          <td>{{ dobArray[2] }}</td>
+                          <td>{{ dobArray[3] }}</td>
+                          <td>{{ dobArray[4] }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>3)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px; margin-left: -3px">
+                      <span>
+                        FATHER’S/
+                        <br />
+                        HUSBAND’S NAME
+                      </span>
+                    </div>
+                    <div class="col-1 text-center" style="padding-left: 0px; padding-right: 0px">
+                      <div>
+                        <span style="border: 1px solid black; padding: 2px">MR.</span>
+                      </div>
+                    </div>
+                    <div class="col-8" style="margin-left: -19px">
+                      <table border="1" style="width: 100%; text-align: center">
+                        <tr>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[1] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[2] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[3] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[4] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[5] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[6] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[7] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[8] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[9] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[10] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[11] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[12] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[13] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[14] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[15] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[16] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[17] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[18] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[19] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[20] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[21] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[22] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[23] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[24] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[25] }}</td>
+                        </tr>
+                        <tr>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[26] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[27] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[28] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[29] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[30] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[31] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[32] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[33] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[34] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[35] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[36] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[37] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[38] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[39] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[40] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[41] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[42] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[43] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[44] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[45] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[46] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[47] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[48] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[49] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[50] }}</td>
+                        </tr>
+                        <tr>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[51] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[52] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[53] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[54] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[55] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[56] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[57] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[58] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[59] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[60] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[61] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[62] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[63] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[64] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[65] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[66] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[67] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[68] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[69] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[70] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[71] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[72] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[73] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[74] }}</td>
+                          <td style="width: 27.93px; height: 28px">{{ middleNameArray[75] }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>4)</span>
+                    </div>
+                    <div class="col-5" style="padding: 0px; margin-left: -3px">
+                      <span>RELATIONSHIP IN RESPECT OF (3) ABOVE</span>
+                      <br />
+                      <span>(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-6">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 2px 30px">FATHER</td>
+                          <td style="padding: 2px 30px">HUSBAND</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 2px 30px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 2px 30px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>5)</span>
+                    </div>
+                    <div class="col-4" style="padding: 0px; margin-left: -3px">
+                      <span>GENDER</span>
+                      <br />
+                      <span>(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-7">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 2px 30px">MALE</td>
+                          <td style="padding: 2px 30px">FEMALE</td>
+                          <td style="padding: 2px 30px">TRANSGENDER</td>
+                        </tr>
+                        @if (rows.gender == 'null') {
+                          <tr style="text-align: center; height: 24px">
+                            <td style="padding: 2px 30px"></td>
+                            <td style="padding: 2px 30px"></td>
+                            <td style="padding: 2px 30px"></td>
+                          </tr>
+                        }
+                        @if (rows.gender == 'male') {
+                          <tr style="text-align: center; height: 24px">
+                            <td style="padding: 2px 30px">&#10004;</td>
+                            <td style="padding: 2px 30px"></td>
+                            <td style="padding: 2px 30px"></td>
+                          </tr>
+                        }
+                        @if (rows.gender == 'female') {
+                          <tr style="text-align: center; height: 24px">
+                            <td style="padding: 2px 30px"></td>
+                            <td style="padding: 2px 30px">&#10004;</td>
+                            <td style="padding: 2px 30px"></td>
+                          </tr>
+                        }
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>6)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px; margin-left: -3px">
+                      <span>MOBILE NUMBER</span>
+                      <br />
+                      <span>(IF ANY)</span>
+                    </div>
+                    <div class="col-9">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[1] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[2] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[3] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[4] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[5] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[6] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[7] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[8] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[9] }}</td>
+                          <td style="padding: 6px 10px">{{ mobileNumberArray[10] }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>7)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px; margin-left: -3px">
+                      <span>EMAIL ID(IF ANY)</span>
+                    </div>
+                    <div class="col-9">
+                      <table border="1" style="width: 100%; text-align: center">
+                        <tr>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[1] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[2] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[3] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[4] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[5] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[6] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[7] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[8] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[9] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[10] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[11] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[12] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[13] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[14] }}</td>
+                        </tr>
+                        <tr>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[15] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[16] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[17] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[18] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[19] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[20] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[21] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[22] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[23] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[24] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[25] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[26] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[27] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[28] }}</td>
+                        </tr>
+                        <tr>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[29] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[30] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[31] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[32] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[33] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[34] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[35] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[36] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[37] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[38] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[39] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[40] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[41] }}</td>
+                          <td style="height: 35px; width: 34.82px">{{ emailArray[42] }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>8)</span>
+                    </div>
+                    <div class="col-11" style="padding: 0px; margin-left: -3px">
+                      <span>
+                        WHETHER EARLIER A MEMBER OF THE EMPLOYEES’ PROVIDENT FUND SCHEME, 1952?
+                      </span>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-6 text-right" style="padding: 0px; margin-left: -3px">
+                      <span>(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-6">
+                      <table border="1" class="text-center">
+                        <tr>
+                          <td style="padding: 5px 70px"><b>YES</b></td>
+                          <td style="padding: 5px 70px"><b>NO</b></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>9)</span>
+                    </div>
+                    <div class="col-11" style="padding: 0px; margin-left: -3px">
+                      <span>WHETHER EARLIER A MEMBER OF THE EMPLOYEES’ PENSION SCHEME, 1995?</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-6 text-right" style="padding: 0px; margin-left: -3px">
+                      <span>(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-6">
+                      <table border="1" class="text-center">
+                        <tr>
+                          <td style="padding: 5px 70px"><b>YES</b></td>
+                          <td style="padding: 5px 70px"><b>NO</b></td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-top: 20px; padding-left: 36px">
+                  <span style="font-size: 14px">
+                    <b>
+                      IF RESPONSE TO ANY OR BOTH OF (8) & (9) ABOVE IS YES, THEN
+                      <u>MANDATORILY</u>
+                      FILL UP THE PREVIOUS EMPLOYMENT DETAILS AT (10,11&12):
+                    </b>
+                  </span>
+                </div>
+                <div class="text-center" style="margin: 42px 0 42px 0; font-weight: 600; font-size: 16px">
+                  PAGE 1 of
+                  <b>3</b>
+                </div>
+                <div style="font-size: 18px !important; font-weight: 600">
+                <div style="
+                      background-color: rgb(195 195 195);
+                      padding: 0 0 0 15px;
+                      margin-top: 62px;
+                      page-break-before: always;
+                      page-break-inside: avoid;
+                      clear: both;
+                    ">
+                    <b>A. PREVIOUS EMPLOYMENT DETAILS</b>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>10)&nbsp;</span>
+                    </div>
+                    <div class="col-11" style="padding: 0px; margin-left: -3px">
+                      <span>
+                        THE DETAILS OF THE UNIVERSAL ACCOUNT NUMBER (UAN) OR PREVIOUS PF MEMBERID:
+                      </span>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-2 text-center" style="padding: 0px; margin-left: -3px">
+                      <span><b>UAN</b></span>
+                      <span>
+                        <br />
+                        OR
+                      </span>
+                    </div>
+                    <div class="col-6">
+                      <table border="1" class="text-center" style="width: 100%">
+                        <tr>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[1] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[2] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[3] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[4] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[5] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[6] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[7] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[8] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[9] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[10] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[11] }}</td>
+                          <td style="padding: 3px 11px; height: 32px">{{ uanNumberArray[12] }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1 text-center" style="padding: 0px; margin-left: -17px">
+                      <span></span>
+                    </div>
+                    <div class="col-2" style="padding: 0px; margin-left: -3px">
+                      <span>
+                        <b>
+                          PREVIOUS PF
+                          <br />
+                          MEMBER ID
+                        </b>
+                      </span>
+                    </div>
+                    <div class="col-9">
+                      <table border="1" class="text-center">
+                        <tr>
+                          <td style="padding: 3px 11px; color: rgb(98, 95, 95)">REGION CODE</td>
+                          <td style="padding: 3px 11px; color: rgb(98, 95, 95)">OFFICE CODE</td>
+                          <td style="padding: 3px 11px; color: rgb(98, 95, 95)">
+                            ESTABLISHMENT ID
+                          </td>
+                          <td style="padding: 3px 11px; color: rgb(98, 95, 95)">EXTENSION</td>
+                          <td style="padding: 3px 11px; color: rgb(98, 95, 95)">ACCOUNT NUMBER</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>11)</span>
+                    </div>
+                    <div class="col-4">
+                      <span>DATE OF EXIT FOR PREVIOUS</span>
+                      <br />
+                      <span>MEMBER ID (DD/MM/YYYY)</span>
+                    </div>
+                    <div class="col-7" style="margin-left: 64px">
+                      <table border="1">
+                        <tr class="text-center">
+                          <td style="padding: 4px 15px">D</td>
+                          <td style="padding: 4px 15px">D</td>
+                          <td style="padding: 4px 15px">M</td>
+                          <td style="padding: 4px 15px">M</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                      <span>12)</span>
+                    </div>
+                    <div class="col-11" style="padding: 0 0 0 6px">
+                      <span>
+                        (A) IF SCHEME CERTIFICATE ISSUED FOR PREVIOUS EMPLOYMENT, THEN SCHEME
+                        CERTIFICATE NUMBER:
+                        <span>__________</span>
+                      </span>
+                      <br />
+                      <span>
+                        (B) IF PENSION PAYMENT ORDER (PPO) ISSUED FOR PREVIOUS EMPLOYMENT, THEN PPO
+                        NUMBER:
+                        <span>__________</span>
+                      </span>
+                    </div>
+                  </div>
+                <div style="
+                      background-color: rgb(195 195 195);
+                      padding: 0 0 0 15px;
+                      margin: 25px 0px;
+                    ">
+                    <b>B. OTHER DETAILS</b>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px">
+                      <span>13)</span>
+                    </div>
+                    <div class="col-5" style="padding: 0px">
+                      <span>INTERNATIONAL WORKER</span>
+                      <br />
+                      <span>(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-6">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 2px 70px">YES</td>
+                          <td style="padding: 2px 70px">NO</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 2px 70px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 2px 70px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px; color: white">
+                      <span></span>
+                    </div>
+                    <div class="col-11" style="padding: 0px">
+                      <span>
+                        <b>
+                          IF THE REPLY TO (13) ABOVE IS YES, THEN ENTER THE DETAILS IN 13(A), 13(B)
+                          & 13(C):
+                        </b>
+                      </span>
+                      <br />
+                      <span>13(A) COUNTRY OF ORIGIN (Please Tick)</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-12" style="padding-left: 90px">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 5px 70px">INDIA</td>
+                          <td style="padding: 5px 70px">
+                            OTHER THAN INDIA (IF YES, PLEASE
+                            <br />
+                            MENTION NAME OF THE COUNTRY)
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 5px 70px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 5px 70px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px; color: white">
+                      <span></span>
+                    </div>
+                    <div class="col-11" style="padding: 0px">
+                      <span>13(B) PASSPORT NUMBER</span>
+                      <span>_________________________________</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px; color: white">
+                      <span></span>
+                    </div>
+                    <div class="col-4" style="padding: 0px">
+                      <span>13(C) PASSPORT VALID FROM</span>
+                      <br />
+                    </div>
+                    <div class="col-7">
+                      <table border="1">
+                        <tr class="text-center">
+                          <td style="padding: 4px 15px">D</td>
+                          <td style="padding: 4px 15px">D</td>
+                          <td style="padding: 4px 15px">M</td>
+                          <td style="padding: 4px 15px">M</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px; color: white">
+                      <span></span>
+                    </div>
+                    <div class="col-4" style="padding: 0px">
+                      <span class="text-right">TO</span>
+                      <br />
+                    </div>
+                    <div class="col-7">
+                      <table border="1">
+                        <tr class="text-center">
+                          <td style="padding: 4px 15px">D</td>
+                          <td style="padding: 4px 15px">D</td>
+                          <td style="padding: 4px 15px">M</td>
+                          <td style="padding: 4px 15px">M</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                          <td style="padding: 4px 15px">Y</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 4px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px">
+                      <span>14)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px">
+                      <span>EDUCATIONAL QUALIFICATION</span>
+                      <br />
+                      <span>(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-9">
+                      <table border="1" style="font-size: 14px; font-weight: 800">
+                        <tr>
+                          <td>ILLITERATE</td>
+                          <td>NON- MATRIC</td>
+                          <td>MATRIC</td>
+                          <td>SENIOR SECONDARY</td>
+                          <td>GRADUATE</td>
+                          <td>POST GRADUATE</td>
+                          <td>DOCTOR</td>
+                          <td>TECHNICAL/ PROFESSIONAL</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 10px 8px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px">
+                      <span>15)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px">
+                      <span>MARITAL STATUS</span>
+                      <br />
+                      <span style="margin-top: 5px">(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-9">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 5px 10px">MARRIED</td>
+                          <td style="padding: 5px 10px">UNMARRIED</td>
+                          <td style="padding: 5px 10px">WIDOW/ WIDOWER</td>
+                          <td style="padding: 5px 10px">DIVORCEE</td>
+                        </tr>
+                        @if (rows.maratialStatus == 'null') {
+                          <tr style="height: 24px">
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                          </tr>
+                        }
+                        @if (rows.maratialStatus == 'Married') {
+                          <tr>
+                            <td style="padding: 5px 10px; text-align: center">&#10004;</td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                          </tr>
+                        }
+                        @if (rows.maratialStatus == 'Single') {
+                          <tr>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center">&#10004;</td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                          </tr>
+                        }
+                        @if (rows.maratialStatus == 'Widowed') {
+                          <tr>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center">&#10004;</td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                          </tr>
+                        }
+                        @if (rows.maratialStatus == 'Divorced') {
+                          <tr>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center">&#10004;</td>
+                          </tr>
+                        }
+                        @if (rows.maratialStatus == 'Separated') {
+                          <tr>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center"></td>
+                            <td style="padding: 5px 10px; text-align: center">&#10004;</td>
+                          </tr>
+                        }
+                      </table>
+                    </div>
+                  </div>
+                  <div style="display: flex; flex-direction: row; margin-top: 20px">
+                    <div class="col-1" style="padding-right: 0px; margin-right: -18px">
+                      <span>16)</span>
+                    </div>
+                    <div class="col-2" style="padding: 0px">
+                      <span>SPECIALLY ABLED</span>
+                      <br />
+                      <span style="margin-top: 5px">(PLEASE TICK)</span>
+                    </div>
+                    <div class="col-3">
+                      <table border="1">
+                        <tr>
+                          <td style="padding: 2px 25px">YES</td>
+                          <td style="padding: 2px 25px">NO</td>
+                        </tr>
+                        <tr style="text-align: center">
+                          <td style="padding: 2px 25px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td style="padding: 2px 25px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="col-6">
+                      <table border="1">
+                        <!-- <tr
+                        style="padding: 2px 25px"> IF YES, TICK THE CATEGORY
+                      </tr> -->
+                      <tr>
+                        <th colspan="4" style="text-align: center">IF YES, TICK THE CATEGORY</th>
+                      </tr>
+                      <tr>
+                        <td style="padding: 2px 15px">LOCOMOTIVE</td>
+                        <td style="padding: 2px 15px">VISUAL</td>
+                        <td style="padding: 2px 15px">HEARING</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 2px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 2px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 2px 15px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center" style="margin: 52px 0px 42px 0; font-weight: 600; font-size: 16px">
+                PAGE 2 of
+                <b>3</b>
+              </div>
+              <div style="
+                    page-break-before: always;
+                    page-break-inside: avoid;
+                    clear: both;
+                    font-size: 16px;
+                    font-weight: 600 !important;
+                  ">
+                <div style="display: flex; flex-direction: row; margin-top: 70px">
+                  <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                    <span>17)</span>
+                  </div>
+                  <div class="col-2" style="padding: 0px">
+                    <span>KYC DETAILS</span>
+                  </div>
+                  <div class="col-9">
+                    <table border="1" style="font-size: 14px; width: 100%">
+                      <tr>
+                        <td style="padding: 5px 10px"><b>KYC DOCUMENT TYPE</b></td>
+                        <td style="padding: 5px 10px"><b>NAME AS ON KYC DOCUMENT</b></td>
+                        <td style="padding: 5px 10px"><b>NUMBER</b></td>
+                        <td style="padding: 5px 10px"><b>REMARKS, IF ANY</b></td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>BANK ACCOUNT-1*</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">{{ rows?.bankAccountNo }}</td>
+                        <td style="padding: 5px 10px; color: rgb(195 195 195)">IFSC CODE*</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>NPR/AADHAAR</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">{{ rows?.adharCard }}</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px">
+                          <b>
+                            PERMANENT ACCOUNT
+                            <br />
+                            NUMBER (PAN)
+                          </b>
+                        </td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">{{ rows?.pancard }}</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>PASSPORT</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px; color: rgb(195 195 195)">EXPIRY DATE</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>DRIVING LICENCE</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px; color: rgb(195 195 195)">EXPIRY DATE</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>ELECTION CARD</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>RATION CARD</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 5px 10px"><b>ESIC CARD</b></td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="padding: 5px 10px">{{ rows?.esicNumber }}</td>
+                        <td style="padding: 5px 10px">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      </tr>
+                    </table>
+                    <div style="
+                          text-align: center;
+                          border: 1px solid black;
+                          margin-right: 8px;
+                          width: 100%;
+                          font-size: 12px;
+                        ">
+                      <b>
+                        * Mandatory Field (NOTE: BANK ACCOUNT NUMBER (ALONG WITH IFSC CODE) IS
+                        MANDATORY.
+                      </b>
+                      YOU ARE HOWEVER ADVISED TO PROVIDE ALL KYC DOCUMENTS AVAILABLE WITH YOU IN
+                      ADDITION TO MANDATORY KYCSTO AVAIL BETTER SERVICES.
+                      <b>SELF-ATTESTED PHOTOCOPIES OF THE DOCUMENTS</b>
+                      MUST BE ATTACHED WITH THIS FORM
+                    </div>
+                  </div>
+                </div>
+                <div style="
+                      background-color: rgb(195 195 195);
+                      padding: 0 0 0 15px;
+                      margin: 20px 0px;
+                    ">
+                  <b>C. UNDERTAKING:</b>
+                </div>
+                <div style="display: flex; flex-direction: row; margin: 10px 0 5px 0">
+                  <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                    <span><b>A.</b></span>
+                  </div>
+                  <div class="col-11" style="padding: 0px; margin-left: -3px; font-weight: 500; line-height: 22px">
+                    <span>
+                      <b>
+                        I CERTIFY THAT ALL THE INFORMATION GIVEN ABOVE IS TRUE TO THE BEST OF MY
+                        KNOWLEDGE AND BELIEF.
+                      </b>
+                    </span>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: row; margin-top: 4px; font-weight: 500">
+                  <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                    <span><b>B.</b></span>
+                  </div>
+                  <div class="col-11" style="padding: 0px; margin-left: -3px">
+                    <span>
+                      <b>IN CASE, EARLIER A MEMBER OF EPF SCHEME, 1952 AND/OR EPS, 1995,</b>
+                    </span>
+                    <br />
+                    <span>
+                      <b>(I) I HAVE ENSURED THE CORRECTNESS OF MY UAN/ PREVIOUS PF MEMBER ID.</b>
+                    </span>
+                    <br />
+                    <span class="text-justify">
+                      <b>
+                        (II) THIS MAY ALSO BE TREATED AS MY REQUEST FOR TRANSFER OF FUNDS AND
+                        SERVICE DETAILS IF APPLICABLE FROM THE PREVIOUS ACCOUNT AS DECLARED ABOVE
+                        TO THE PRESENT P.F. ACCOUNT. (THE TRANSFER WOULD BE POSSIBLE ONLY IF THE
+                        IDENTIFIED KYC DETAILS APPROVED BY PREVIOUS EMPLOYER HAS BEEN VERIFIED BY
+                        PRESENT EMPLOYER USING HIS DIGITAL SIGNATURE CERTIFICATE).
+                      </b>
+                    </span>
+                    <br />
+                    <span>
+                      <b>
+                        (III) I AM AWARE THAT I CAN SUBMIT MY NOMINATION FORM THROUGH UAN BASED
+                        MEMBER PORTA.
+                      </b>
+                    </span>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: row">
+                  <div class="col-3" style="padding-right: 0px; margin-top: 35px; font-weight: 500">
+                    <span>
+                      <b>DATE: {{ newcurrentTime }}</b>
+                    </span>
+                    <br />
+                    <span>
+                      <b>PLACE: {{ rows?.branch_city }}</b>
+                    </span>
+                  </div>
+                  <div class="col-9 text-right" style="padding-right: 0px; margin-top: 35px; font-weight: 500">
+                    <br />
+                    <span><b>SIGNATURE OF MEMBER</b></span>
+                  </div>
+                </div>
+                <div class="text-center" style="background-color: rgb(195 195 195); margin: 7px 0; padding: 0px 207px">
+                  <span><b>DECLARATION BY PRESENT EMPLOYER</b></span>
+                </div>
+                <div style="display: flex; flex-direction: row">
+                  <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                    <span><b>A.</b></span>
+                  </div>
+                  <div class="col-11" style="padding: 0px; margin-left: -3px">
+                    <span>
+                      THE MEMBER Mr./Ms./Mrs. ………………………….. HAS JOINED
+                      ON................................... AND HAS BEEN ALLOTTED PF MEMBER ID
+                      …………………………………………..
+                    </span>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: row; margin-top: 4px">
+                  <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                    <span>B.</span>
+                  </div>
+                  <div class="col-11" style="padding: 0px; margin-left: -3px">
+                    <span>
+                      IN CASE THE PERSON WAS EARLIER NOT A MEMBER OF EPF SCHEME, 1952 AND EPS,
+                      1995:
+                    </span>
+                    <br />
+                    <span><b>&#x2022;</b></span>
+                    <span style="padding-left: 20px">
+                      <b>(POST ALLOTMENT OF UAN) THE UAN ALLOTTED FOR THE MEMBER IS …………………………</b>
+                    </span>
+                    <br />
+                    <span><b>&#x2022;</b></span>
+                    <span style="padding-left: 20px">
+                      <b>PLEASE TICK THE APPROPRIATE OPTION:</b>
+                    </span>
+                    <br />
+                    <span style="margin-left: 54px">
+                      THE KYC DETAILS OF THE ABOVE MEMBER IN THE UAN DATABASE
+                    </span>
+                    <br />
+                    <span style="margin-left: 53px">□</span>
+                    <span style="padding-left: 20px">HAVE NOT BEEN UPLOADED</span>
+                    <br />
+                    <span style="margin-left: 53px">□</span>
+                    <span style="padding-left: 20px">HAVE BEEN UPLOADED BUT NOT APPROVED</span>
+                    <br />
+                    <span style="margin-left: 53px">□</span>
+                    <span style="padding-left: 20px">
+                      HAVE BEEN UPLOADED AND APPROVED WITH DSC
+                    </span>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: row; margin-top: 4px">
+                  <div class="col-1" style="padding-right: 0px; margin-right: -22px">
+                    <span>C.</span>
+                  </div>
+                  <div class="col-11" style="padding: 0px; margin-left: -3px">
+                    <span>
+                      C.IN CASE THE PERSON WAS EARLIER A MEMBER OF EPF SCHEME, 1952 AND EPS, 1995:
+                    </span>
+                    <br />
+                    <span>&#x2022;</span>
+                    <span style="padding-left: 20px">
+                      THE ABOVE MEMBER ID OF THE MEMBER AS MENTIONED IN (A) ABOVE HAS BEEN TAGGED
+                      WITH HIS/HER UAN/PREVIOUS MEMBER ID AS DECLARED BY MEMBER.
+                    </span>
+                    <br />
+                    <span><b>&#x2022;</b></span>
+                    <span style="padding-left: 20px">
+                      <b>PLEASE TICK THE APPROPRIATE OPTION:</b>
+                    </span>
+                    <br />
+                    <span style="margin-left: 53px">□</span>
+                    <span style="padding-left: 20px">
+                      THE KYC DETAILS OF THE ABOVE MEMBER IN THE UAN DATABASE HAVE BEEN APPROVED
+                      WITH
+                      <span style="padding: 0px 0px 0px 55px">
+                        DIGITAL SIGNATURE CERTIFICATE AND TRANSFER REQUEST HAS BEEN GENERATED ON
+                        PORTAL.
+                      </span>
+                    </span>
+                    <br />
+                    <span style="margin-left: 53px">□</span>
+                    <span style="padding-left: 20px">
+                      AS THE DSC OF ESTABLISHMENT ARE NOT REGISTERED WITH EPFO, THE MEMBER HAS
+                      BEEN
+                      <span style="padding: 0px 0px 0px 55px">
+                        INFORMED TO FILE PHYSICAL CLAIM (FORM-13) FOR TRANSFER OF FUNDS FROM HIS
+                      </span>
+                      <span style="padding: 0px 0px 0px 55px">PREVIOUS ESTABLISHMENT.</span>
+                    </span>
+                    <br />
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: row; margin-top: 4px">
+                  <div class="col-1" style="padding-right: 0px; margin-top: 30px; font-weight: 500">
+                    <span><b>DATE:</b></span>
+                  </div>
+                  <div class="col-11 text-right" style="padding-right: 0px; margin-top: 30px; font-weight: 500">
+                    <span><b>SIGNATURE OF EMPLOYER WITH SEAL OF ESTABLISHMENT</b></span>
+                  </div>
+                </div>
+                <div class="text-center" style="margin: 25px 0 0 0">
+                  PAGE 3 of
+                  <b>3</b>
+                </div>
+              </div>
+            </div>
+            <!-- PDF CONTENT END -->
+          </div>
+        </div>
+      </div>
+      <div class="box wide hidden-on-narrow"></div>
+    </div>
+  </body>
+</div>
+}
+
+</html>

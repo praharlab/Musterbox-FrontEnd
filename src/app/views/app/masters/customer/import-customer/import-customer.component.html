@@ -1,0 +1,273 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-4">Import Customer</h4>
+    <form #addimportuser="ngForm" novalidate (ngSubmit)="validateData()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company" required
+              [(ngModel)]="filterData.companyMasterID" (change)="companyChange($event)">
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="file" ngModel #file="ngModel" (change)="onFileChange($event)"
+              accept=".xlsx, .xls" name="file" required />
+              <span>Import File *</span>
+              @if (file.valid) {
+                <p>{{ fileName }}</p>
+              }
+            </label>
+            @if (!file.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                File is required!
+              </div>
+            }
+          </div>
+          <div class="col-md-4">
+            <button (click)="downloadDemoExcel()" type="button" class="btn btn-success btn-xs">
+              Download Demo Excel
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          @if (!isValidated) {
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          }
+          @if (isValidated) {
+            <button class="btn btn-primary" type="button" (click)="clear()">
+              Clear
+            </button>
+          }
+          <span> &nbsp;&nbsp; </span>
+          <button class="btn btn-danger" type="button" (click)="prev()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              <span> &nbsp;&nbsp; </span>
+              @if (isEdited && remarksCount > 0) {
+                <button class="btn btn-primary" type="submit" (click)="reValidateData()">
+                  Re-Validate
+                </button>
+              }
+              @if (!isEdited && remarksCount == 0) {
+                <button class="btn btn-primary" type="submit" (click)="saveData()">
+                  Submit
+                </button>
+              }
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Actions</th>
+                  <th>Remarks</th>
+                  <th>Customer Name *</th>
+                  <th>Customer Company Name *</th>
+                  <th>Current Location</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <th>Mobile Number - 1 *</th>
+                  <th>Mobile Number - 2</th>
+                  <th>E-Mail</th>
+                  <th>WebSite</th>
+                  <th>Customer Address *</th>
+                  <th>ZipCode *</th>
+                  <th>Country *</th>
+                  <th>State *</th>
+                  <th>City *</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of rows; track item; let i = $index) {
+                  <tr>
+                    <td>
+                      <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                        Remove
+                      </button>
+                    </td>
+                    <td>
+                      <div style="width: 250px">
+                        {{ item.remarks }}
+                      </div>
+                    </td>
+                    <td>
+                      <input type="text" name="customerName{{ i }}" [(ngModel)]="item.customerName" #customerName="ngModel"
+                        style="width: 250px" class="form-control" (change)="onCustomerDataChange($event)" pattern=".*\S.*"
+                        required />
+                        @if (customerName.errors?.pattern && tableForm.submitted) {
+                          <div class="invalid-tooltip1">
+                            Customer Name is required!
+                          </div>
+                        }
+                        @if (customerName.errors?.required && tableForm.submitted) {
+                          <div class="invalid-tooltip1">
+                            Customer Name is required!
+                          </div>
+                        }
+                      </td>
+                      <td>
+                        <input type="text" name="companyName{{ i }}" [(ngModel)]="item.companyName" #companyName="ngModel"
+                          style="width: 250px" class="form-control" (change)="onCustomerDataChange($event)" pattern=".*\S.*"
+                          required />
+                          @if (companyName.errors?.pattern && tableForm.submitted) {
+                            <div class="invalid-tooltip1">
+                              Customer Company Name is required!
+                            </div>
+                          }
+                          @if (companyName.errors?.required && tableForm.submitted) {
+                            <div class="invalid-tooltip1">
+                              Customer Company Name is required!
+                            </div>
+                          }
+                        </td>
+                        <td>
+                          <input type="text" name="currentLocation{{ i }}" [(ngModel)]="item.currentLocation"
+                            #currentLocation="ngModel" style="width: 250px" class="form-control"
+                            (change)="onCustomerDataChange($event)" pattern=".*\S.*" />
+                          </td>
+                          <td>
+                            <input type="text" name="latitude{{ i }}" (change)="onCustomerDataChange($event)"
+                              [(ngModel)]="item.latitude" #latitude="ngModel" style="width: 250px" class="form-control" />
+                            </td>
+                            <td>
+                              <input type="text" name="longitude{{ i }}" (change)="onCustomerDataChange($event)"
+                                [(ngModel)]="item.longitude" #longitude="ngModel" style="width: 250px" class="form-control" />
+                              </td>
+                              <td>
+                                <input type="number" (change)="onCustomerDataChange($event)" name="mobileNumber1{{ i }}"
+                                  [(ngModel)]="item.mobileNumber1" #mobileNumber1="ngModel" style="width: 250px" class="form-control"
+                                  required />
+                                  @if (mobileNumber1.errors?.pattern && tableForm.submitted) {
+                                    <div class="invalid-tooltip1">
+                                      Mobile Number is required!
+                                    </div>
+                                  }
+                                  @if (mobileNumber1.errors?.required && tableForm.submitted) {
+                                    <div class="invalid-tooltip1">
+                                      Mobile Number is required!
+                                    </div>
+                                  }
+                                </td>
+                                <td>
+                                  <input type="number" (change)="onCustomerDataChange($event)" name="mobileNumber2{{ i }}"
+                                    [(ngModel)]="item.mobileNumber2" #mobileNumber2="ngModel" style="width: 250px" class="form-control" />
+                                  </td>
+                                  <td>
+                                    <input type="text" (change)="onCustomerDataChange($event)" name="email{{ i }}" [(ngModel)]="item.email"
+                                      #email="ngModel" style="width: 250px" class="form-control" />
+                                    </td>
+                                    <td>
+                                      <input type="text" (change)="onCustomerDataChange($event)" name="website{{ i }}"
+                                        [(ngModel)]="item.website" #website="ngModel" style="width: 250px" class="form-control" />
+                                      </td>
+                                      <td>
+                                        <textarea name="address{{ i }}" [(ngModel)]="item.address" #address="ngModel" style="width: 250px"
+                                        class="form-control" (change)="onCustomerDataChange($event)" pattern=".*\S.*" required></textarea>
+                                        @if (address.errors?.pattern && tableForm.submitted) {
+                                          <div class="invalid-tooltip1">
+                                            Customer Address is required!
+                                          </div>
+                                        }
+                                        @if (address.errors?.required && tableForm.submitted) {
+                                          <div class="invalid-tooltip1">
+                                            Customer Address is required!
+                                          </div>
+                                        }
+                                      </td>
+                                      <td>
+                                        <input type="text" (change)="onCustomerDataChange($event)" name="zipcode{{ i }}"
+                                          [(ngModel)]="item.zipcode" #zipcode="ngModel" style="width: 250px" class="form-control" required />
+                                        </td>
+                                        <td>
+                                          <select name="countryMasterID{{ i }}" [(ngModel)]="item.countryMasterID" #countryMasterID="ngModel"
+                  class="form-control" style="width: 250px" (change)="
+                    onCustomerDataChange($event); Changeselectcountry(item.countryMasterID, i)
+                  " required>
+                                            @for (countrys of country; track countrys) {
+                                              <option [value]="countrys.countryMasterID">
+                                                {{ countrys.countryName }}
+                                              </option>
+                                            }
+                                          </select>
+                                          @if (countryMasterID.errors?.required && tableForm.submitted) {
+                                            <div class="invalid-tooltip1">
+                                              Branch Country is required!
+                                            </div>
+                                          }
+                                        </td>
+                                        <td>
+                                          <select name="stateMasterID{{ i }}" [(ngModel)]="item.stateMasterID" #stateMasterID="ngModel"
+                                            class="form-control" style="width: 250px"
+                                            (change)="onCustomerDataChange($event); Changeselectstate(item.stateMasterID, i)" required>
+                                            @for (state of item.stateDropdown; track state) {
+                                              <option [value]="state.stateMasterID">
+                                                {{ state.stateName }}
+                                              </option>
+                                            }
+                                          </select>
+                                          @if (stateMasterID.errors?.required && tableForm.submitted) {
+                                            <div class="invalid-tooltip1">
+                                              Branch State is required!
+                                            </div>
+                                          }
+                                        </td>
+                                        <td>
+                                          <select name="cityMasterID{{ i }}" [(ngModel)]="item.cityMasterID" #cityMasterID="ngModel"
+                                            class="form-control" style="width: 250px"
+                                            (change)="onCustomerDataChange($event); Changeselectcity(item.cityMasterID)" required>
+                                            @for (city of item.cityDropdown; track city) {
+                                              <option [value]="city.cityMasterID">
+                                                {{ city.cityName }}
+                                              </option>
+                                            }
+                                          </select>
+                                          @if (cityMasterID.errors?.required && tableForm.submitted) {
+                                            <div class="invalid-tooltip1">
+                                              Branch City is required!
+                                            </div>
+                                          }
+                                        </td>
+                                      </tr>
+                                    }
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div class="row mt-3">
+                                <div class="col">
+                                  <button type="button" class="btn btn-success btn-xs" (click)="addRow()">Add Row</button>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      }
+
+                      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

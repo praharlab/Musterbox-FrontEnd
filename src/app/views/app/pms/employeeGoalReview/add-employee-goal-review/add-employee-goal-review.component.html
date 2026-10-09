@@ -1,0 +1,156 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Goal Review </h5>
+
+    @if (comp) {
+      <form #addEmployeeGoalReview="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="company_id" #companyMasterID="ngModel"
+                name="companyMasterID" required (change)="selectcompany($event)">
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addEmployeeGoalReview.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="employeegoal_Id"
+                #employeeGoalID="ngModel" name="employeeGoalID" ngModel
+                (change)="selectEmployeeGoal($event)" required>
+                @for (goal of emlpoyeeGoalData; track goal) {
+                  <ng-option [value]="goal">
+                    {{ goal.goalAssignedTo.displayName }}_{{goal.goalMaster.title}}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee Goal*</span>
+              @if (!employeeGoalID.valid && addEmployeeGoalReview.submitted) {
+                <div class="invalid-tooltip">
+                  Employee Goal is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #reviewerBranch="ngModel"
+                [(ngModel)]="branch" name="reviewerBranch" (change)="selectReviewerBranch($event)">
+                @for (item of allReviewerBranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Reviewers Branch</span>
+            </label>
+          </div>
+          @if (!branchFilter) {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select [items]="employeeCompany" [multiple]="true" bindLabel="displayName"
+                  groupBy="selectedAllGroup" [(ngModel)]="employee" [selectableGroup]="true"
+                  [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false" ngModel
+                  #reviewer="ngModel" name="reviewer" required>
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Reviewers *</span>
+                @if (!reviewer.valid && addEmployeeGoalReview.submitted) {
+                  <div class="invalid-tooltip">
+                    Reviewers is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          @if (branchFilter) {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select [items]="employeeBranch" [multiple]="true" bindLabel="displayName"
+                  groupBy="selectedAllGroup" [(ngModel)]="employee" [selectableGroup]="true"
+                  [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false" ngModel
+                  #reviewer="ngModel" name="reviewer" required>
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Reviewers *</span>
+                @if (!reviewer.valid && addEmployeeGoalReview.submitted) {
+                  <div class="invalid-tooltip">
+                    Reviewers is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+        </div>
+        @if (kpiData.length != 0) {
+          <div class="my-2 ">
+            <h4 style="font-weight: 600;">Goal Details :</h4>
+          </div>
+        }
+        @if (kpiData.length != 0) {
+          <div class="row" style="padding: 0 0 0 15px">
+            <div class="table-style mb-2">
+              <table style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="name-col name-col-shadow">
+                      KRA
+                    </th>
+                    <th class="name-col name-col-shadow">KPI</th>
+                    <th class="name-col name-col-shadow">
+                      Target Given
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="text-black" style="font-weight: 600;">
+                  @for (item of kpiData; track item; let i = $index) {
+                    <tr class="student bottom-border bottom-border-radius"
+                      >
+                      <td class="name-col left-border">
+                        {{ item.kraTitle }}
+                      </td>
+                      <td class="name-col">
+                        {{ item.title }}
+                      </td>
+                      <td class="name-col">
+                        {{ item.targetGiven}}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+        <button class="btn btn-primary  btn-shadow mt-4" type="submit" (click)="onSubmit()">
+          Submit
+        </button>
+        &nbsp;
+        <button class="btn btn-danger  btn-shadow mt-4" type="button" [routerLink]="adminRoot + '/pms/goalReview'">
+          Cancel
+        </button>
+      </form>
+    }
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

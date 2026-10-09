@@ -1,0 +1,61 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Erp Account Master</h5>
+
+    @if (erpaccountmaster) {
+      <form #editerpaccountmaster="ngForm" novalidate (ngSubmit)="onSubmit()" >
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel" name="userMasterID" required
+                [(ngModel)]="erpaccountmaster.userMasterID">
+                @for (user of user; track user) {
+                  <ng-option [value]="user.userMasterID">
+                    {{ user.name }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select User *</span>
+              @if (!userMasterID.valid && editerpaccountmaster.submitted) {
+                <div class="invalid-tooltip">
+                  User is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #erpAcountID="ngModel" name="erpAcountID"
+                [(ngModel)]="erpaccountmaster.erpAcountID" required>
+                @for (erpdata1 of erpdata1; track erpdata1) {
+                  <ng-option [value]="erpdata1.AccountMasterId">
+                    {{ erpdata1.AccountName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Erp Account ID *</span>
+              @if (!erpAcountID.valid && editerpaccountmaster.submitted) {
+                <div class="invalid-tooltip">
+                  Erp Account ID is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <app-state-button [btnClass]="'btn btn-primary mt-4'" [currentState]="buttonState" [isDisabled]="buttonDisabled"
+          click="onLoginClick()">
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/finances/erpAccountMaster'"
+          style="margin-left: 2%">
+          Cancel
+        </button>
+      </form>
+    }
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

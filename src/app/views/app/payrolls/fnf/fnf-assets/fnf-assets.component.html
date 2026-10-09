@@ -1,0 +1,114 @@
+<div class="w-100 position-relative">
+  @if (showloader) {
+    <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  }
+</div>
+@if (applicationData && applicationData.length > 0) {
+  <div class="scrollStyleTable">
+    <table border="1" class="Table" width="100%">
+      <tr>
+        <th colspan="10" style="text-align: center; background-color: lightgray">
+          Assets
+        </th>
+      </tr>
+      <tr>
+        <th style="text-align: center" class="tableTh">Asset Category Name</th>
+        <th style="text-align: center" class="tableTh">Asset Name</th>
+        <th style="text-align: center" class="tableTh">Assigned Date</th>
+        <th style="text-align: center" class="tableTh">Assigned Quantity</th>
+        <th style="text-align: center" class="tableTh">Description</th>
+        <th style="text-align: center" class="tableTh">Return</th>
+      </tr>
+      @for (application of applicationData; track application; let i = $index) {
+        <tr>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.assetCategory?.assetCategory || '' }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.assetMaster?.assetName }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ $safeNavigationMigration(application?.assignDate) | date : 'dd-MM-yyyy' }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.quantity }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.description }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            @if (application.returnDate == null) {
+              <button type="button" class="btn btn-xs btn-danger" (click)="lgModal.show(); return(application)"
+                >
+                Return
+              </button>
+            }
+            {{ ' ' }}
+          </td>
+        </tr>
+      }
+    </table>
+    <br />
+    <br />
+  </div>
+}
+
+
+
+
+
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Return Asset</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (editbyid) {
+          <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" [max]="currDate" [min]="minDate" placeholder="" ngModel
+                    #returnDate="ngModel" name="returnDate" required />
+                    <span>Return Date *</span>
+                  </label>
+                  @if (!returnDate.valid && addcomp2.submitted) {
+                    <div class="invalid-tooltip">
+                      Invalid Date!
+                    </div>
+                  }
+                </div>
+              </div>
+              <br />
+              <br />
+              <div class="col-md-12">
+                <app-state-button [currentState]="buttonState" [btnClass]="'btn btn-primary btn-shadow'"
+                  [isDisabled]="buttonDisabled" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </app-state-button>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

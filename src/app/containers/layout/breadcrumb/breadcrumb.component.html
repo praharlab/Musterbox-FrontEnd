@@ -1,0 +1,14 @@
+@if (crumbs.length) {
+  <nav
+    class="breadcrumb-container d-none d-sm-block d-lg-inline-block"
+    aria-label="breadcrumb"
+    >
+    <ol class="breadcrumb pt-0">
+      @for (crumb of crumbs; track crumb) {
+        <li class="breadcrumb-item">
+          <a [routerLink]="crumb.url">{{ crumb.label | translate }}</a>
+        </li>
+      }
+    </ol>
+  </nav>
+}

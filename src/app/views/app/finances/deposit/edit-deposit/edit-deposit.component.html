@@ -1,0 +1,323 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Deposit</h5>
+
+    <div
+      bsModal
+      #lgModal1="bs-modal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="dialog-sizes-name1"
+      [config]="{ backdrop: 'static', keyboard: false }"
+      >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Add Deposit Category</h4>
+            <button
+              type="button"
+              class="btn-close close pull-right"
+              (click)="lgModal1.hide()"
+              aria-label="Close"
+              #closeModal
+              >
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #addcomp1="ngForm" novalidate (ngSubmit)="onSubmit1(); lgModal1.hide()">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select
+                      placeholder="Choose your option"
+                      ngModel
+                      #companyMasterID="ngModel"
+                      name="companyMasterID"
+                      required
+                      >
+                      @for (comp of company; track comp) {
+                        <ng-option [value]="comp.companyMasterID">
+                          {{ comp.companyName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Company *</span>
+                    @if (!companyMasterID.valid && addcomp1.submitted) {
+                      <div
+                        class="invalid-tooltip"
+                        >
+                        Company is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      required
+                      ngModel
+                      #depositcategoryname="ngModel"
+                      name="depositcategoryname"
+                      />
+                      <span>Deposit Category *</span>
+                      @if (!depositcategoryname.valid && addcomp1.submitted) {
+                        <div
+                          class="invalid-tooltip"
+                          >
+                          Deposit Category is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      @if (depositdata) {
+        <form #editdeposit="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #companyMasterID="ngModel"
+                  name="companyMasterID"
+                  (change)="companyid($event)"
+                  [(ngModel)]="depositdata.companyMasterID"
+                  disabled
+                  >
+                  @for (company of company; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company </span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #userMasterID="ngModel"
+                  name="userMasterID"
+                  [(ngModel)]="depositdata.userMasterID"
+                  disabled
+                  >
+                  @for (user of user; track user) {
+                    <ng-option [value]="user.userMasterID">
+                      {{ user.displayName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select User </span>
+              </label>
+            </div>
+            <div class="col-md-5">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #depositCategoryID="ngModel"
+                  name="depositCategoryID"
+                  required
+                  [(ngModel)]="depositdata.depositCategoryID"
+                  >
+                  @for (category of category; track category) {
+                    <ng-option [value]="category.depositcategoryid">
+                      {{ category.depositcategoryname }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Deposit Category *</span>
+                @if (!depositCategoryID.valid && editdeposit.submitted) {
+                  <div class="invalid-tooltip">
+                    Deposit Category is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-1">
+              <label class="form-group has-float-label">
+                <button
+                  (click)="lgModal1.show()"
+                  style="font-size: large"
+                  class="btn btn-primary"
+                  type="button"
+                  >
+                  +
+                </button>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #amount="ngModel"
+                  name="amount"
+                  [(ngModel)]="depositdata.amount"
+                  />
+                  <span>Amount *</span>
+                  @if (!amount.valid && editdeposit.submitted) {
+                    <div class="invalid-tooltip">
+                      Amount is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <textarea
+                    class="form-control"
+                    ngModel
+                    #description="ngModel"
+                    name="description"
+                    [(ngModel)]="depositdata.description"
+                  ></textarea>
+                  <span>Description</span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #depositReceiveAs="ngModel"
+                    name="depositReceiveAs"
+                    required
+                    (change)="depositreceived($event)"
+                    [(ngModel)]="depositdata.depositReceiveAs"
+                    >
+                    <ng-option value="cash">Cash/Bank</ng-option>
+                    <ng-option value="salary">Salary</ng-option>
+                  </ng-select>
+                  <span>Select Deposit Received As *</span>
+                  @if (!depositReceiveAs.valid && editdeposit.submitted) {
+                    <div class="invalid-tooltip">
+                      Deposit Received As is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              @if (showdate) {
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="date"
+                      ngModel
+                      required
+                      #dateOfDeposit="ngModel"
+                      name="dateOfDeposit"
+                      [(ngModel)]="depositdata.dateOfDeposit"
+                      />
+                      <span>Date Of Deposit *</span>
+                      @if (!dateOfDeposit.valid && editdeposit.submitted) {
+                        <div class="invalid-tooltip">
+                          Date Of Deposit is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (salary) {
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="month"
+                        ngModel
+                        required
+                        #salaryMonth="ngModel"
+                        name="salaryMonth"
+                        [(ngModel)]="depositdata.salaryMonth"
+                        />
+                        <span>Salary Month *</span>
+                        @if (!salaryMonth.valid && editdeposit.submitted) {
+                          <div class="invalid-tooltip">
+                            Salary Month is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <!-- <div class="col-md-12">
+                  <hr />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select
+                      placeholder="Choose your option"
+                      ngModel
+                      #depositPayAs="ngModel"
+                      name="depositPayAs"
+                      required
+                      (change)="depositpayable($event)"
+                      [(ngModel)]="depositdata.depositPayAs"
+                      >
+                      <ng-option value="cash">Cash/Bank</ng-option>
+                      <ng-option value="salary">Salary</ng-option>
+                      <ng-option value="FNF">FNF</ng-option>
+                    </ng-select>
+                    <span>Select Deposit Payable As *</span>
+                    <div *ngIf="!depositPayAs.valid && editdeposit.submitted" class="invalid-tooltip">
+                      Deposit Payable As is required!
+                    </div>
+                  </label>
+                </div>
+                <div class="col-md-6" *ngIf="showsalary">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="month"
+                      ngModel
+                      required
+                      #salaryMonthPayable="ngModel"
+                      name="salaryMonthPayable"
+                      [(ngModel)]="depositdata.salaryMonthToPay"
+                      />
+                      <span>Salary Month To Pay*</span>
+                      <div *ngIf="!salaryMonthPayable.valid && editdeposit.submitted" class="invalid-tooltip">
+                        Salary Month To Pay is required!
+                      </div>
+                    </label>
+                  </div> -->
+                </div>
+                <app-state-button
+                  [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+                  [currentState]="buttonState"
+                  [isDisabled]="buttonDisabled"
+                  click="onLoginClick()"
+                  >
+                  {{ 'forms.submit' | translate }}
+                </app-state-button>
+                <button
+                  class="btn btn-danger btn-lg btn-shadow mt-4"
+                  [routerLink]="adminRoot + '/finances/deposit'"
+                  style="margin-left: 2%"
+                  >
+                  Cancel
+                </button>
+              </form>
+            }
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

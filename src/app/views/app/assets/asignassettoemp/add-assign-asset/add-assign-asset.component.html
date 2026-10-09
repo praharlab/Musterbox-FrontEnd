@@ -1,0 +1,145 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Employee Asset</h5>
+
+    @if (product.length != 0) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" (change)="alldata($event);"
+                name="companyMasterID" [(ngModel)]="selectedCompany" required>
+                @for (product of product; track product) {
+                  <ng-option [value]="product.companyMasterID">
+                    {{ product.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel" [(ngModel)]="selectedUser"
+                name="userMasterID" required>
+                @for (ownerList of ownerList; track ownerList) {
+                  <ng-option [value]="ownerList.userMasterID">
+                    {{ownerList.displayName}}
+                  </ng-option>
+                }
+              </ng-select>
+              @if (!userMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Employee is required!
+                </div>
+              }
+              <span>Select Employee *</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #assetCategoryID="ngModel" name="assetCategoryID"
+                required (change)="assetNameselect($event)" [(ngModel)]="selectedCategory">
+                @for (asset of asset; track asset) {
+                  <ng-option [value]="asset.assetCategoryID">
+                    {{ asset.assetCategory }}
+                  </ng-option>
+                }
+              </ng-select>
+              @if (!assetCategoryID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Asset Category is required!
+                </div>
+              }
+              <span>Select Asset Category *</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #assetName="ngModel" name="assetName" required
+                [(ngModel)]="selectedName">
+                @for (assetN of assetN; track assetN) {
+                  <ng-option [value]="assetN.assetMasterID">
+                    {{ assetN.assetName }} {{ assetN.assetSerialNo }}
+                  </ng-option>
+                }
+              </ng-select>
+              @if (!assetName.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Asset Name is Required!
+                </div>
+              }
+              <span>Asset Name *</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #description="ngModel" name="description" required></textarea>
+              @if (!description.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Description is required!
+                </div>
+              }
+              <span>Asset Description *</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" required ngModel #quantity="ngModel" min="1" name="quantity" />
+              <span>Quantity *</span>
+              @if (!quantity.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Quantity is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" placeholder="" ngModel #assignDate="ngModel" name="assignDate"
+                required (change)="changeReturnDate($event.target.value)" />
+                <span>Assign Date *</span>
+                @if (!assignDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Assign Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" placeholder="" ngModel #returnDate="ngModel" name="returnDate"
+                  [max]="currDate" [min]="minDate" [(ngModel)]="returnDate1" />
+                  <span>Return Date</span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" placeholder="" multiple (change)="onFileChange($event)" />
+                  <span>Asset Images</span>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button class="btn btn-primary btn-shadow btn-lg mt-4" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+              <button class="btn btn-danger btn-shadow btn-lg mt-4" [routerLink]="adminRoot + '/assets/assetassigntoemp'"
+                style="margin-left: 2%">
+                Cancel
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

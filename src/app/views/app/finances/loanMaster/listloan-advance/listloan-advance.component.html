@@ -1,0 +1,25 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (rows) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="scrollBarHorizontal" [rowHeight]="50" [rows]="rows" [columnMode]="'force'">
+        <ngx-datatable-column name="Amount" prop="Amount" [flexGrow]="1.2" [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="GivenDate" prop="givenDate" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.givenDate | date: 'dd-MM-yyyy' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="PaymentMode" prop="paymentmode" [flexGrow]="1.2" [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="ReferenceNO" prop="refrenceNo" [flexGrow]="1.2" [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="ReferenceDate" prop="refrenceDate" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="Remark" prop="remarks" [flexGrow]="1.2" [width]="200"></ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+    <button class="btn btn-danger btn-shadow" (click)="Backbtn()" style="margin-left: 2%">
+      Back to Advance Loan
+    </button>
+  </div>
+}

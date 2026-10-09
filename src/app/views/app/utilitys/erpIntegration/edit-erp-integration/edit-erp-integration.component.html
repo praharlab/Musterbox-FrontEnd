@@ -1,0 +1,120 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit ERP Integration</h5>
+
+    @if (erpdata) {
+      <form #lettertemp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                [(ngModel)]="erpdata.companyMasterID" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && lettertemp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" #ERPName="ngModel" name="ERPName"
+                [(ngModel)]="erpdata.erpName" required ngModel>
+                <ng-option value="ERPNext">ERPNext</ng-option>
+                <ng-option value="Munimji ERP">Munimji ERP</ng-option>
+              </ng-select>
+              <span>ERP Name *</span>
+              @if (!ERPName.valid && lettertemp.submitted) {
+                <div class="invalid-tooltip">
+                  ERP Name is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #apiKey="ngModel" name="apiKey"
+                [(ngModel)]="erpdata.apiKey" />
+                <span>Api Key</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #apiSecret="ngModel" name="apiSecret"
+                  [(ngModel)]="erpdata.apiSecret" />
+                  <span>Api Secret</span>
+                </label>
+              </div>
+              <div class="col-md-8">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" required ngModel #baseURl="ngModel"
+                    [(ngModel)]="erpdata.baseUrl" name="baseURl" />
+                    <span>BaseUrl Name *</span>
+                    @if (!baseURl.valid && lettertemp.submitted) {
+                      <div class="invalid-tooltip">
+                        Base URl Name is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #empCodeUrl="ngModel" name="empCodeUrl"
+                      [(ngModel)]="erpdata.empCodeUrl" />
+                      <span>Get Employee Code Url</span>
+                    </label>
+                  </div>
+                  <div class="col-md-8">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #syncEmployee="ngModel" name="syncEmployee"
+                        [(ngModel)]="erpdata.advanceExpenceUrl" />
+                        <span>Advance Expene Payment Url</span>
+                      </label>
+                    </div>
+                    <div class="col-md-8">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #expenseUrl="ngModel" name="expenseUrl"
+                          [(ngModel)]="erpdata.expenseUrl" />
+                          <span>Expense Url</span>
+                        </label>
+                      </div>
+                      <div class="col-md-8">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #expenseHeadUrl="ngModel" name="expenseHeadUrl"
+                            [(ngModel)]="erpdata.expenseHeadUrl"/>
+                            <span>ExpenseHead Url</span>
+                          </label>
+                        </div>
+                        <div class="col-md-8">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" ngModel #salarySyncUrl="ngModel" name="salarySyncUrl"
+                              [(ngModel)]="erpdata.salarySyncUrl"/>
+                              <span>Salary Sync Url</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                          <button class="btn btn-danger btn-shadow mt-4"
+                            [routerLink]="adminRoot + '/utilitys/list_erpIntegration'" style="margin-left: 2%">
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    }
+                  </div>
+                </div>
+
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

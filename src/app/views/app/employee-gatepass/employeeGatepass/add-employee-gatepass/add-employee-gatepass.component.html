@@ -1,0 +1,162 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Employee Gate Pass</h5>
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+              name="companyMasterID" required (change)="selectcompany($event)" [(ngModel)]="company_id">
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+              (change)="selectbranch($event)">
+              @for (item of allbranch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="employee" [multiple]="false" bindLabel="displayName"
+              bindValue="userMasterID" [(ngModel)]="selectedUser" ngModel #userMasterID="ngModel"
+              name="userMasterID" required>
+              <ng-template ng-optgroup-tmp let-item="item">
+                {{ item.displayName }}
+              </ng-template>
+            </ng-select>
+            <span>Employee*</span>
+            @if (!userMasterID.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Employee is required!
+              </div>
+            }
+          </label>
+        </div>
+
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #date="ngModel" required name="date" [min]="todayDate"/>
+            <span>Date*</span>
+            @if (!date.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Date is required!
+              </div>
+            }
+
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="time" ngModel #fromTime="ngModel" required name="fromTime" />
+            <span>From Time*</span>
+            @if (!fromTime.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                From Time is required!
+              </div>
+            }
+
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="time" ngModel #toTime="ngModel" required name="toTime" />
+            <span>To Time*</span>
+            @if (!toTime.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                To Time is required!
+              </div>
+            }
+
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <textarea class="form-control" ngModel #description="ngModel" required
+            name="description"></textarea>
+            <span>Description *</span>
+            @if (!description.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Description is required!
+              </div>
+            }
+          </label>
+        </div>
+
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label mt-2">
+            <div style="display: flex; align-items: center;">Purpose * :
+              <div style="margin-left: 10px;">
+                <input type="radio" name="purposeFor" value="Company" #purposeFor="ngModel" required ngModel>
+                <span style="margin-left: 5px;">Company
+                Work</span>
+              </div>
+              <div style="margin-left: 20px;">
+                <input type="radio" name="purposeFor" value="Personal" #purposeFor="ngModel" required ngModel>
+                <span style="margin-left: 5px;">Personal
+                Work</span>
+              </div>
+            </div>
+            @if (!purposeFor.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Purpose For is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <!-- <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose Status" ngModel #status="ngModel" name="status" required>
+            <ng-option value="Pending">Pending</ng-option>
+            <ng-option value="Approved">Approved</ng-option>
+            <ng-option value="Reject">Reject</ng-option>
+          </ng-select>
+          <span>Status *</span>
+          <div *ngIf="!status.valid && addcomp.submitted" class="invalid-tooltip">
+            Status is required!
+          </div>
+
+        </label>
+      </div> -->
+    </div>
+    <app-state-button [btnClass]="'btn btn-primary btn-shadow mt-2'" [currentState]="buttonState"
+      [isDisabled]="buttonDisabled" click="onLoginClick()">
+      {{ 'forms.submit' | translate }}
+    </app-state-button>
+    <button class="btn btn-danger btn-shadow mt-2"
+      [routerLink]="adminRoot + '/employeegatepasses/list_empgatepass'" style="margin-left: 2%">
+      Cancel
+    </button>
+  </form>
+</div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

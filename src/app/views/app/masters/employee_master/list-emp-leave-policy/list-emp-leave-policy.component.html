@@ -1,0 +1,1212 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+<br />
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <p class="list-item-heading mb-1 truncate" style="white-space: normal">
+                @for (item12 of item.leavePolicy; track item12; let i = $index) {
+                  <span
+                    tooltip="Please click here to view Leave Policy details"
+                    [class]="'glyph-icon tool_tip'">
+                    @if ((item.leavePolicy.length-1) == i) {
+                      <a style="cursor: pointer"
+                        (click)="getLeavePolicy(item12.employeeLeavePolicyID); lgModal2.show()">
+                        {{ item12.leavePolicyName }}
+                      </a>
+                    }
+                    @if ((item.leavePolicy.length-1) != i) {
+                      <a style="cursor: pointer"
+                        (click)="getLeavePolicy(item12.employeeLeavePolicyID); lgModal2.show()">
+                        {{ item12.leavePolicyName }},
+                      </a>
+                    }
+                  </span>
+                }
+              </p>
+              <p class="text-muted mb-0 text-small">
+                Start Date:-{{ item.applicableDate | date: 'yyyy-MM-dd' }}
+              </p>
+              @if (item.endDate != null) {
+                <p class="text-muted mb-0 text-small">
+                  End Date:-{{ item.endDate | date: 'yyyy-MM-dd' }}
+                </p>
+              }
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  @if (item.leavePolicyStatus == 'active') {
+                    <button type="button" class="btn btn-success"
+                      style="margin-top: 10%">
+                      {{ 'Active' | translate }}
+                    </button>
+                  }
+                  {{ ' ' }}
+                  @if (item.leavePolicyStatus == 'deactive') {
+                    <button type="button" class="btn btn-danger"
+                      style="margin-top: 10%">
+                      {{ 'Deactive' | translate }}
+                    </button>
+                  }
+                  {{ ' ' }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Leave Policy</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide();resetModel()"
+          aria-label="Close" #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addleavepolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select multiple="true" [closeOnSelect]="false" placeholder="Choose your option"
+                  ngModel #employeeLeavePolicyID="ngModel" name="employeeLeavePolicyID" required>
+                  @for (item of allLeavePolicy; track item) {
+                    <ng-option [value]="item.id">
+                      {{ item.leavePolicyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Leave Policy *</span>
+              </label>
+              @if (!employeeLeavePolicyID.valid && addleavepolicy.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Leave Policy is required!
+                </div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel required #applicableDate="ngModel"
+                  name="applicableDate">
+                  <ng-option value="0">Past Month</ng-option>
+                  <ng-option value="1">Current Month</ng-option>
+                  <ng-option value="2">Upcoming Month</ng-option>
+                </ng-select>
+                <span>Applicable from *</span>
+              </label>
+              @if (!applicableDate.valid && addleavepolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Applicable Date is required!
+                </div>
+              }
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left"> Employee Leave Policy</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        @if (empleavedata) {
+          <form #addcomp="ngForm">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #emppolicyname="ngModel"
+                    name="emppolicyname" [(ngModel)]="empleavedata.leavePolicyName" readonly required />
+                    <span>Employee Leave Policy Name *</span>
+                    @if (!emppolicyname.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Employee Leave Policy Name is
+                      required!</div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                      [(ngModel)]="empleavedata.companyMasterId" required [readonly]="true">
+                      @for (comp of comp; track comp) {
+                        <ng-option [value]="comp.companyMasterID">
+                          {{ comp.companyName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Company *</span>
+                    @if (!company.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                      Company is required! </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #leave="ngModel" name="leave"
+                      [(ngModel)]="empleavedata.leaveId" required [readonly]="true">
+                      @for (leave of leavedata; track leave) {
+                        <ng-option [value]="leave.LeaveMaster.LeaveID">
+                          {{ leave.LeaveMaster.LeaveName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Leave*</span>
+                    @if (!leave.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">Employee
+                        Leave type is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #leavetype="ngModel"
+                      name="leavetype" [(ngModel)]="empleavedata.leaveType" required [readonly]="true">
+                      <option value="Pro Rata basis">Pro Rata</option>
+                      <option value="Earn basis">Earn Basis</option>
+                    </ng-select>
+                    <span>Leave Type *</span>
+                    @if (!leavetype.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">Leave
+                      type is required!</div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" ngModel #yearly="ngModel" name="yearly"
+                      [(ngModel)]="empleavedata.yearlyLeave" required readonly />
+                      <span>No of Leaves *</span>
+                      @if (!yearly.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">Leaves
+                        is required!</div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel #leaveoperation="ngModel"
+                        name="leaveoperation" [(ngModel)]="empleavedata.leaveOperationalYear"
+                        [readonly]="true" required>
+                        <option value="Janaury to December">Janaury to December</option>
+                        <option value="April To March">April To March</option>
+                      </ng-select>
+                      <span>Leave Operational Year *</span>
+                      @if (!leaveoperation.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Leave Operational Year is
+                        required!</div>
+                      }
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  @if (hide == true) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" [(ngModel)]="selectedMinimumDays"
+                          (change)="changeDays($event)" [max]="31" [min]="1" ngModel #minday="ngModel"
+                          name="minday" [(ngModel)]="empleavedata.minDaysRequire" readonly required />
+                          <span>Minimum Days Require*</span>
+                          @if (!minday.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">Min Days
+                            is required!</div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    @if (hide == true) {
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <select class="form-control" ngModel #earnbasistype="ngModel" name="earnbasistype"
+                            [(ngModel)]="empleavedata.earnBaseType" [disabled]="true" required>
+                            <option value="Physical Present">Physical Present</option>
+                            <option value="Physical Present + Weekly Off">Physical Present +
+                            Weekly Off</option>
+                            <option value="Physical present + Weekly Off+ Leave">Physical
+                            present + Weekly Off+ Leave</option>
+                            <option value="Paid Days">Paid Days</option>
+                          </select>
+                          <span>Earn Basis Types *</span>
+                          @if (!earnbasistype.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Earn Basis Types is
+                            required!</div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #creditperiod="ngModel"
+                          name="creditperiod" [(ngModel)]="empleavedata.creditPeriod" [readonly]="true"
+                          required>
+                          <option value="Monthly">Monthly</option>
+                          <option value="Quarterly">Quarterly</option>
+                          <option value="Half Yearly">Half Yearly</option>
+                          <option value="Yearly">Yearly</option>
+                        </ng-select>
+                        <span> Select Credit Period *</span>
+                        @if (!creditperiod.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Credit Period is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" ngModel #creditdate="ngModel"
+                          name="creditdate" [(ngModel)]="empleavedata.creditDate" [readonly]="true"
+                          required />
+                          <span>Credit Date*</span>
+                          @if (!creditdate.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                            Credit Date is required!</div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel #credittype="ngModel"
+                            name="credittype" [(ngModel)]="empleavedata.creditType" [readonly]="true" required>
+                            <option value="Pre">Pre</option>
+                            <option value="Post">Post</option>
+                          </ng-select>
+                          <span> Select Credit Type *</span>
+                          @if (!credittype.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                            Credit Type is required!</div>
+                          }
+                        </label>
+                      </div>
+                    </div>
+                    <!-- Leave Carry Forward -->
+                    <!-- <div class="row">
+                    <div class="col-md-4 mb-2">
+                      <span>Carry Forward *</span>
+                      &nbsp;&nbsp;
+                      <input type="radio" name="carryForward" value="Y" [(ngModel)]="empleavedata.carryForward"
+                        #carryForward="ngModel" style="margin-right: 1%;" required disabled />
+                        <label for="true" style="margin-right: 1%;">Yes</label>
+                        <input type="radio" name="carryForward" value="N" [(ngModel)]="empleavedata.carryForward"
+                          #carryForward="ngModel" style="margin-right: 1%;" required disabled />
+                          <label for="false">No</label>
+                          <div *ngIf="!carryForward.valid && addcomp.submitted" class="invalid-tooltip">
+                            Carry Forward is required !
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-2" *ngIf="empleavedata.carryForward == 'Y'">
+                          <span>Set Carry Foward Limit * </span>
+                          &nbsp;&nbsp;
+                          <input type="radio" name="carryForwardLimit" value="all"
+                            [(ngModel)]="empleavedata.carryForwardLimit" #carryForwardLimit="ngModel"
+                            style="margin-right: 1%;" required disabled />
+                            <label for="true" style="margin-right: 1%;">All Leaves</label>
+                            <input type="radio" name="carryForwardLimit" value="setLimit"
+                              [(ngModel)]="empleavedata.carryForwardLimit" #carryForwardLimit="ngModel"
+                              style="margin-right: 1%;" required disabled />
+                              <label for="false">Set Limit</label>
+                              <div *ngIf="!carryForwardLimit.valid && addcomp.submitted" class="invalid-tooltip">
+                                Set Carry Foward Limit is required !
+                              </div>
+                            </div>
+                            <div class="col-md-6 mb-2"
+                              *ngIf="empleavedata.carryForward == 'Y' && empleavedata.carryForwardLimit == 'setLimit'">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="number" [min]="1" required ngModel
+                                  #leavesToCarryForward="ngModel" name="leavesToCarryForward"
+                                  [(ngModel)]="empleavedata.leavesToCarryForward" readonly />
+                                  <span>Enter No. Of Leaves To Carry Forward *</span>
+                                  <div *ngIf="!leavesToCarryForward.valid && addcomp.submitted" class="invalid-tooltip">
+                                    No. Of Leaves To Carry
+                                    Forward is
+                                  required!</div>
+                                </label>
+                              </div>
+                              <div class="col-md-6 mb-2" *ngIf="empleavedata.carryForward == 'N'">
+                                <span>Leave Lapse * </span>
+                                &nbsp;&nbsp;
+                                <input type="radio" name="leaveLapse" value="monthly" ngModel #leaveLapse="ngModel"
+                                  style="margin-right: 1%;" required [(ngModel)]="empleavedata.leaveLapse" disabled />
+                                  <label for="true" style="margin-right: 1%;">Monthly</label>
+                                  <input type="radio" name="leaveLapse" value="yearly" ngModel #leaveLapse="ngModel"
+                                    style="margin-right: 1%;" required [(ngModel)]="empleavedata.leaveLapse" disabled />
+                                    <label for="false">Yearly</label>
+                                    <div *ngIf="!leaveLapse.valid && addcomp.submitted" class="invalid-tooltip">
+                                      Leave Lapse is required !
+                                    </div>
+                                  </div>
+                                </div> -->
+                                <div class="row ">
+                                  <div class="col-md-6 mb-2">
+                                    <span>Set Number of Maximum days for put Leaves in Advance *</span>
+                                    &nbsp;&nbsp;
+                                    <input type="radio" name="defaultfutureRight" value="1"
+                                      [(ngModel)]="showallowFutureApplyDays" #defaultfutureRight="ngModel"
+                                      style="margin-right: 1%;" required disabled />
+                                      <label for="true" style="margin-right: 1%;">Yes</label>
+                                      <input type="radio" name="defaultfutureRight" value="0"
+                                        [(ngModel)]="showallowFutureApplyDays" #defaultfutureRight="ngModel"
+                                        style="margin-right: 1%;" required disabled />
+                                        <label for="false">No</label>
+                                        @if (!defaultfutureRight.valid && addcomp.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Set Number of Maximum days for put Leaves in Advance is required !
+                                          </div>
+                                        }
+                                      </div>
+                                      @if (showallowFutureApplyDays == '1') {
+                                        <div class="col-md-6 mb-2">
+                                          <label class="form-group has-float-label">
+                                            <ng-select name="selectedNumber" ngModel #selectedNumber="ngModel"
+                                              [(ngModel)]="empleavedata.allowFutureApplyDays" required disabled
+                                              style="margin-left: 8px;">
+                                              @for (number of numberRange; track number) {
+                                                <ng-option [value]="number">{{
+                                                number }}</ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Numbers Of Days*:</span>
+                                            @if (!selectedNumber.valid && addcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Numbers Of Days is required !
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                      }
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-6 mb-2">
+                                        <span>Set Number of Maximum days for put Past Leave *</span>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" name="defaultpastRight" value="1" [(ngModel)]="showallowPastApplyDays"
+                                          #defaultpastRight="ngModel" style="margin-right: 1%;" required disabled />
+                                          <label for="true" style="margin-right: 1%;">Yes</label>
+                                          <input type="radio" name="defaultpastRight" value="0" [(ngModel)]="showallowPastApplyDays"
+                                            #defaultpastRight="ngModel" style="margin-right: 1%;" required disabled />
+                                            <label for="false">No</label>
+                                            @if (!defaultpastRight.valid && addcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Past apply days Permission is required!
+                                              </div>
+                                            }
+                                          </div>
+                                          @if (showallowPastApplyDays == '1') {
+                                            <div class="col-md-6 mb-2">
+                                              <label class="form-group has-float-label">
+                                                <ng-select name="selectedNumber1" #selectedNumber1="ngModel" ngModel
+                                                  [(ngModel)]="empleavedata.allowPastApplyDays" required disabled
+                                                  style="margin-left: 8px;">
+                                                  @for (number of numberRange1; track number) {
+                                                    <ng-option [value]="number">{{
+                                                    number }}</ng-option>
+                                                  }
+                                                </ng-select>
+                                                <span>Numbers Of Days*:</span>
+                                                @if (!selectedNumber1.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Numbers Of Days is required !
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="row">
+                                          <div class="col-md-6 mb-2">
+                                            <span>Set Maximum Leaves allowed at a time *</span>
+                                            &nbsp;&nbsp;
+                                            <input type="radio" name="allowMinInMonth" value="1" [(ngModel)]="showallowMinInMonth"
+                                              #allowMinInMonth="ngModel" style="margin-right: 1%;" required disabled />
+                                              <label for="true" style="margin-right: 1%;">Yes</label>
+                                              <input type="radio" name="allowMinInMonth" value="0" [(ngModel)]="showallowMinInMonth"
+                                                #allowMinInMonth="ngModel" style="margin-right: 1%;" required disabled />
+                                                <label for="false">No</label>
+                                                @if (!allowMinInMonth.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Maximum month Days Permission is required!
+                                                  </div>
+                                                }
+                                              </div>
+                                              @if (showallowMinInMonth == '1') {
+                                                <div class="col-md-6 mb-2">
+                                                  <label class="form-group has-float-label">
+                                                    <ng-select name="selectedNumber2" #selectedNumber2="ngModel" ngModel
+                                                      [(ngModel)]="empleavedata.allowMinInMonth" required disabled
+                                                      style="margin-left: 8px;">
+                                                      @for (number of numberRange2; track number) {
+                                                        <ng-option [value]="number">{{
+                                                        number }}</ng-option>
+                                                      }
+                                                    </ng-select>
+                                                    <span>Maximum number of Leave Allowed at a time*</span>
+                                                    @if (!selectedNumber2.valid && addcomp.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Maximum number of Leave Allowed is required !
+                                                      </div>
+                                                    }
+                                                  </label>
+                                                </div>
+                                              }
+                                            </div>
+                                            <div class="row">
+                                              <div class="col-md-6 mb-2">
+                                                <span>Set Maximum Leaves in a Month *</span>
+                                                &nbsp;&nbsp;
+                                                <input type="radio" name="allowMaxInMonth" value="1" [(ngModel)]="showallowMaxInMonth"
+                                                  #allowMaxInMonth="ngModel" style="margin-right: 1%;" required disabled />
+                                                  <label for="true" style="margin-right: 1%;">Yes</label>
+                                                  <input type="radio" name="allowMaxInMonth" value="0" [(ngModel)]="showallowMaxInMonth"
+                                                    #allowMaxInMonth="ngModel" style="margin-right: 1%;" required disabled />
+                                                    <label for="false">No</label>
+                                                    @if (!allowMaxInMonth.valid && addcomp.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Maximum allow month days Permission is required!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                  @if (showallowMaxInMonth == '1') {
+                                                    <div class="col-md-6 mb-2">
+                                                      <label class="form-group has-float-label">
+                                                        <ng-select name="selectedNumber3" #selectedNumber3="ngModel" ngModel
+                                                          [(ngModel)]="empleavedata.allowMaxInMonth" required disabled
+                                                          style="margin-left: 8px;">
+                                                          @for (number of numberRange3; track number) {
+                                                            <ng-option [value]="number">{{
+                                                            number }}</ng-option>
+                                                          }
+                                                        </ng-select>
+                                                        <span>Maximum Leave in a month*:</span>
+                                                        @if (!selectedNumber3.valid && addcomp.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Maximum Leave in a month is required !
+                                                          </div>
+                                                        }
+                                                      </label>
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <!-- Set Maximum Leaves In Quartrly -->
+                                                <div class="row">
+                                                  <div class="col-md-6 mb-2">
+                                                    <span>Set Maximum Leaves Quarterly *</span>
+                                                    &nbsp;&nbsp;
+                                                    <input type="radio" name="allowMaxInQuarterData" value="1"
+                                                      [(ngModel)]="allowMaxInQuarter_value" #allowMaxInQuarterData="ngModel"
+                                                      style="margin-right: 1%;" required disabled/>
+                                                      <label for="true" style="margin-right: 1%;">Yes</label>
+                                                      <input type="radio" name="allowMaxInQuarterData" value="0"
+                                                        [(ngModel)]="allowMaxInQuarter_value" #allowMaxInQuarterData="ngModel"
+                                                        style="margin-right: 1%;" required disabled/>
+                                                        <label for="false">No</label>
+                                                        @if (!allowMaxInQuarterData.valid && addcomp.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Maximum Leaves Quarterly is required!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      @if (allowMaxInQuarter_value == '1') {
+                                                        <div class="col-md-6 mb-2">
+                                                          <label class="form-group has-float-label">
+                                                            <ng-select name="allowMaxInQuarter" #allowMaxInQuarter="ngModel" ngModel
+                                                              [(ngModel)]="empleavedata.allowMaxInQuarter" required disabled style="margin-left: 8px;">
+                                                              @for (number of numberRange3; track number) {
+                                                                <ng-option [value]="number">{{
+                                                                number }}</ng-option>
+                                                              }
+                                                            </ng-select>
+                                                            <span>Maximum Leave in a Quarter*:</span>
+                                                            @if (!allowMaxInQuarter.valid && addcomp.submitted) {
+                                                              <div class="invalid-tooltip">
+                                                                Maximum Number is required!
+                                                              </div>
+                                                            }
+                                                          </label>
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                    <div class="row">
+                                                      <div class="col-md-6 mb-2">
+                                                        <span>Set Maximum Leaves in a HalfYearly *</span>
+                                                        &nbsp;&nbsp;
+                                                        <input type="radio" name="allowMaxInHalfYearData" value="1"
+                                                          [(ngModel)]="allowMaxInHalfYear_value" #allowMaxInHalfYearData="ngModel"
+                                                          style="margin-right: 1%;" required disabled />
+                                                          <label for="true" style="margin-right: 1%;">Yes</label>
+                                                          <input type="radio" name="allowMaxInHalfYearData" value="0"
+                                                            [(ngModel)]="allowMaxInHalfYear_value" #allowMaxInHalfYearData="ngModel"
+                                                            style="margin-right: 1%;" required disabled/>
+                                                            <label for="false">No</label>
+                                                            @if (!allowMaxInHalfYearData.valid && addcomp.submitted) {
+                                                              <div class="invalid-tooltip">
+                                                                Maximum Leaves in a HalfYearly is required!
+                                                              </div>
+                                                            }
+                                                          </div>
+                                                          @if (allowMaxInHalfYear_value == '1') {
+                                                            <div class="col-md-6 mb-2">
+                                                              <label class="form-group has-float-label">
+                                                                <ng-select name="allowMaxInHalfYear" #allowMaxInHalfYear="ngModel" ngModel required
+                                                                  [(ngModel)]="empleavedata.allowMaxInHalfYear" style="margin-left: 8px;" disabled>
+                                                                  @for (number of numberRange3; track number) {
+                                                                    <ng-option [value]="number">{{
+                                                                    number }}</ng-option>
+                                                                  }
+                                                                </ng-select>
+                                                                <span>Maximum Leave in a Half Year*:</span>
+                                                                @if (!allowMaxInHalfYear.valid && addcomp.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    Maximum Number is required!
+                                                                  </div>
+                                                                }
+                                                              </label>
+                                                            </div>
+                                                          }
+                                                        </div>
+                                                        <div class="row">
+                                                          <div class="col-md-6 mb-2">
+                                                            <span>Set Maximum Leaves in a Year *</span>
+                                                            &nbsp;&nbsp;
+                                                            <input type="radio" name="allowMaxInYearData" value="1" [(ngModel)]="allowMaxInYear_value"
+                                                              #allowMaxInYearData="ngModel" style="margin-right: 1%;" required disabled />
+                                                              <label for="true" style="margin-right: 1%;">Yes</label>
+                                                              <input type="radio" name="allowMaxInYearData" value="0" [(ngModel)]="allowMaxInYear_value"
+                                                                #allowMaxInYearData="ngModel" style="margin-right: 1%;" required disabled />
+                                                                <label for="false">No</label>
+                                                                @if (!allowMaxInYearData.valid && addcomp.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    Maximum Leaves in a Year is required!
+                                                                  </div>
+                                                                }
+                                                              </div>
+                                                              @if (allowMaxInYear_value == '1') {
+                                                                <div class="col-md-6 mb-2">
+                                                                  <label class="form-group has-float-label">
+                                                                    <ng-select name="allowMaxInYear" #allowMaxInYear="ngModel" ngModel required
+                                                                      [(ngModel)]="empleavedata.allowMaxInYear" style="margin-left: 8px;" disabled >
+                                                                      @for (number of numberRange3; track number) {
+                                                                        <ng-option [value]="number">{{
+                                                                        number }}</ng-option>
+                                                                      }
+                                                                    </ng-select>
+                                                                    <span>Maximum Leave in a Year*:</span>
+                                                                    @if (!allowMaxInYear.valid && addcomp.submitted) {
+                                                                      <div class="invalid-tooltip">
+                                                                        Maximum Number is required!
+                                                                      </div>
+                                                                    }
+                                                                  </label>
+                                                                </div>
+                                                              }
+                                                            </div>
+                                                            <div class="row">
+                                                              <div class="col-md-6 mb-2">
+                                                                <span>Is an attachment required *</span>
+                                                                &nbsp;&nbsp;
+                                                                <input type="radio" name="min_leave_attachment" value="1"
+                                                                  [(ngModel)]="minLeaveforAttachment" #min_leave_attachment="ngModel"
+                                                                  style="margin-right: 1%;" required disabled />
+                                                                  <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                  <input type="radio" name="min_leave_attachment" value="0"
+                                                                    [(ngModel)]="minLeaveforAttachment" #min_leave_attachment="ngModel"
+                                                                    style="margin-right: 1%;" required disabled />
+                                                                    <label for="false">No</label>
+                                                                    @if (!min_leave_attachment.valid && addcomp.submitted) {
+                                                                      <div class="invalid-tooltip">
+                                                                        Is an attachment is required!
+                                                                      </div>
+                                                                    }
+                                                                  </div>
+                                                                  @if (minLeaveforAttachment == '1') {
+                                                                    <div class="col-md-6 mb-2">
+                                                                      <label class="form-group has-float-label">
+                                                                        <ng-select name="min_leave_attachment1" #min_leave_attachment1="ngModel" ngModel
+                                                                          required disabled style="margin-left: 8px;"
+                                                                          [(ngModel)]="empleavedata.min_leave_attachment">
+                                                                          @for (number of minAttachmentArray; track number) {
+                                                                            <ng-option [value]="number">{{
+                                                                            number }}</ng-option>
+                                                                          }
+                                                                        </ng-select>
+                                                                        <span> Attachment is require if number of leaves greater than or equal to *:</span>
+                                                                        @if (!min_leave_attachment1.valid && addcomp.submitted) {
+                                                                          <div class="invalid-tooltip">
+                                                                            Number of leaves is required!
+                                                                          </div>
+                                                                        }
+                                                                      </label>
+                                                                    </div>
+                                                                  }
+                                                                </div>
+                                                                <div class="row">
+                                                                  <div class="col-md-6">
+                                                                    <span>Allow Half Day*</span>
+                                                                    &nbsp;&nbsp;
+                                                                    <input type="radio" name="halfday" value="1" [(ngModel)]="showallowHalfDays"
+                                                                      #hlafday="ngModel" style="margin-right: 1%;" required disabled />
+                                                                      <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                      <input type="radio" name="halfday" value="0" [(ngModel)]="showallowHalfDays"
+                                                                        #halfday="ngModel" style="margin-right: 1%;" required disabled />
+                                                                        <label for="false">No</label>
+                                                                        @if (!halfday.valid && addcomp.submitted) {
+                                                                          <div class="invalid-tooltip">
+                                                                            Allow Half Day Permission is required!
+                                                                          </div>
+                                                                        }
+                                                                      </div>
+                                                                      <div class="col-md-6">
+                                                                        <label class="form-group has-float-label">
+                                                                          <ng-select [items]="ownerList" [multiple]="true" bindLabel="name"
+                                                                            bindValue="userMasterID" [closeOnSelect]="false"
+                                                                            placeholder="Select employment Type" [(ngModel)]="empleavedata.employementType"
+                                                                            ngModel #employementtype="ngModel" name="employementtype" required disabled>
+                                                                          </ng-select>
+                                                                          <span>Employment Type*</span>
+                                                                          @if (!employementtype.valid && addcomp.submitted) {
+                                                                            <div class="invalid-tooltip">
+                                                                              Employment Type is required!
+                                                                            </div>
+                                                                          }
+                                                                        </label>
+                                                                      </div>
+                                                                    </div>
+                                                                    <!-- <div class="row mt-4">
+                                                                    <div class="col-md-6 mb-2">
+                                                                      <span>Leave Encashment*</span>
+                                                                      &nbsp;&nbsp;
+                                                                      <input type="radio" name="leaveencash" value="1" [(ngModel)]="empleavedata.leaveEncashment"
+                                                                        #encashment="ngModel" style="margin-right: 1%;" required disabled />
+                                                                        <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                        <input type="radio" name="leaveencash" value="0" [(ngModel)]="empleavedata.leaveEncashment"
+                                                                          #encashment="ngModel" style="margin-right: 1%;" required disabled />
+                                                                          <label for="false">No</label>
+                                                                          <div *ngIf="!encashment.valid && addcomp.submitted" class="invalid-tooltip">
+                                                                            Leave Encashment is required!
+                                                                          </div>
+                                                                        </div>
+                                                                        <div class="col-md-6" *ngIf="empleavedata.leaveEncashment == '1' ">
+                                                                          <label class="form-group has-float-label">
+                                                                            <input class="form-control" type="number"
+                                                                              [(ngModel)]="empleavedata.cappingLeaveEncashment" required ngModel
+                                                                              #capping="ngModel" name="capping" readonly />
+                                                                              <span>Capping on leave Encashment*</span>
+                                                                              &nbsp;&nbsp;
+                                                                              <div *ngIf="!capping.valid && addcomp.submitted" class="invalid-tooltip">Capping
+                                                                              Leave is required!</div>
+                                                                            </label>
+                                                                          </div>
+                                                                        </div> -->
+                                                                        <div class="row">
+                                                                          <div class="col-md-4">
+                                                                            <label class="form-group has-float-label">
+                                                                              <ng-select placeholder="Choose your option" ngModel [multiple]="true"
+                                                                                [closeOnSelect]="false" #priority="ngModel" name="priority"
+                                                                                (change)="onPriorityChange(selectedPriority)" [(ngModel)]="selectedPriority"
+                                                                                required [readonly]="true">
+                                                                                <ng-option value="carryForward">Carry Forward</ng-option>
+                                                                                <ng-option value="encashment">Encashment</ng-option>
+                                                                                <ng-option value="lapse">Lapse</ng-option>
+                                                                              </ng-select>
+                                                                              <span> Select Priority for Policy *</span>
+                                                                              @if (!priority.valid && addcomp.submitted) {
+                                                                                <div class="invalid-tooltip">Priority is
+                                                                                  required!
+                                                                                </div>
+                                                                              }
+                                                                            </label>
+                                                                          </div>
+                                                                        </div>
+                                                                        <!-- montly  -->
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 mb-2">
+                                                                            <span><b>Set Monthly Policy for Carry Forward,Encashment and Lapse *</b></span>
+                                                                            &nbsp;&nbsp;
+                                                                            <input type="radio" name="monthly_CF_ENC_LPS" [value]="true"
+                                                                              [(ngModel)]="selectedmonthly_CF_ENC_LPS" #monthly_CF_ENC_LPS="ngModel"
+                                                                              style="margin-right: 1%;" disabled
+                                                                              (change)="setPolicy(selectedmonthly_CF_ENC_LPS,'monthly')" required />
+                                                                              <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                              <input type="radio" name="monthly_CF_ENC_LPS" [value]="false"
+                                                                                [(ngModel)]="selectedmonthly_CF_ENC_LPS" #monthly_CF_ENC_LPS="ngModel"
+                                                                                style="margin-right: 1%;" disabled
+                                                                                (change)="setPolicy(selectedmonthly_CF_ENC_LPS,'monthly')" required />
+                                                                                <label for="false">No</label>
+                                                                                @if (!monthly_CF_ENC_LPS.valid && addcomp.submitted) {
+                                                                                  <div class="invalid-tooltip">
+                                                                                    field is required!
+                                                                                  </div>
+                                                                                }
+                                                                              </div>
+                                                                            </div>
+                                                                            @if (selectedmonthly_CF_ENC_LPS) {
+                                                                              <div>
+                                                                                @for (monthly_Policy of monthly_PolicyArray; track monthly_Policy; let i = $index) {
+                                                                                  <div>
+                                                                                    <div class="row ml-2">
+                                                                                      <div class="col-md-4 mb-2">
+                                                                                        <span>Set {{ monthly_Policy.type == 'carryForward'?'Carry Forward*':monthly_Policy.type ==
+                                                                                        'encashment'?'Encashment *':'Lapse *' }}</span>
+                                                                                        &nbsp;&nbsp;
+                                                                                        <input type="radio" #monthly_setPolicy="ngModel" name="monthly_setPolicy{{i}}"
+                                                                                          [value]="true" [(ngModel)]="monthly_Policy.setPolicy" style="margin-right: 1%;"
+                                                                                          (change)="setPolicyChild(monthly_Policy)"
+                                                                                          required disabled />
+                                                                                          <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                          <input type="radio" name="monthly_setPolicy{{i}}" [value]="false"
+                                                                                            (change)="setPolicyChild(monthly_Policy)" [(ngModel)]="monthly_Policy.setPolicy"
+                                                                                            style="margin-right: 1%;" disabled required />
+                                                                                            <label for="false">No</label>
+                                                                                            @if (!monthly_Policy.disable && !monthly_setPolicy.valid && addcomp.submitted) {
+                                                                                              <div
+                                                                                                class="invalid-tooltip">Field is required!
+                                                                                              </div>
+                                                                                            }
+                                                                                          </div>
+                                                                                          @if (monthly_Policy.setPolicy) {
+                                                                                            <div class="col-md-4 mb-2">
+                                                                                              <span>Set {{ monthly_Policy.type == 'carryForward'?'Carry Forward':monthly_Policy.type ==
+                                                                                              'encashment'?'Encashment':'Lapse' }} Limit *:</span>
+                                                                                              &nbsp;&nbsp;
+                                                                                              <input type="radio" #monthly_category="ngModel" name="monthly_category{{i}}"
+                                                                                                value="allLeave" [(ngModel)]="monthly_Policy.setPolicy_category"
+                                                                                                style="margin-right: 1%;"
+                                                                                                (change)="setRemainingObjDisable(i,monthly_Policy.setPolicy_category,'monthly')"
+                                                                                                required disabled />
+                                                                                                <label style="margin-right: 1%;" for="allLeave">All Leave</label>
+                                                                                                <input type="radio" #monthly_category="ngModel" name="monthly_category{{i}}"
+                                                                                                  value="setLimit" style="margin-right: 1%;"
+                                                                                                  [(ngModel)]="monthly_Policy.setPolicy_category"
+                                                                                                  (change)="setRemainingObjDisable(i,monthly_Policy.setPolicy_category,'monthly')"
+                                                                                                  required disabled/>
+                                                                                                  <label for="setLimit">Set Limit</label>
+                                                                                                  @if (!monthly_category.valid && addcomp.submitted) {
+                                                                                                    <div class="invalid-tooltip">
+                                                                                                      Category is required!
+                                                                                                    </div>
+                                                                                                  }
+                                                                                                </div>
+                                                                                              }
+                                                                                              @if (monthly_Policy.setPolicy_category == 'setLimit' && monthly_Policy.setPolicy && (monthly_PolicyArray.length-1) > i) {
+                                                                                                <div class="col-md-4 mb-2"
+                                                                                                  >
+                                                                                                  <label class="form-group has-float-label">
+                                                                                                    <ng-select name="monthly_limit{{i}}" #monthly_limit="ngModel" ngModel
+                                                                                                      [(ngModel)]="monthly_Policy.limit" required style="margin-left: 8px;" disabled>
+                                                                                                      @for (number of limitArray; track number) {
+                                                                                                        <ng-option [value]="number">{{
+                                                                                                        number }}</ng-option>
+                                                                                                      }
+                                                                                                    </ng-select>
+                                                                                                    <span>Enter Limit *</span>
+                                                                                                    @if (!monthly_limit.valid && addcomp.submitted) {
+                                                                                                      <div class="invalid-tooltip">
+                                                                                                      Limit is required!</div>
+                                                                                                    }
+                                                                                                  </label>
+                                                                                                </div>
+                                                                                              }
+                                                                                            </div>
+                                                                                          </div>
+                                                                                        }
+                                                                                      </div>
+                                                                                    }
+                                                                                    <!-- Quarterly  -->
+                                                                                    <div class="row">
+                                                                                      <div class="col-md-6 mb-2">
+                                                                                        <span><b>Set Quarterly Policy for Carry Forward,Encashment and Lapse *</b></span>
+                                                                                        &nbsp;&nbsp;
+                                                                                        <input type="radio" name="quarterly_CF_ENC_LPS" [value]="true"
+                                                                                          [(ngModel)]="selectedquarterly_CF_ENC_LPS" #quarterly_CF_ENC_LPS="ngModel"
+                                                                                          style="margin-right: 1%;" disabled
+                                                                                          (change)="setPolicy(quarterly_CF_ENC_LPS,'quarterly')" required />
+                                                                                          <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                          <input type="radio" name="quarterly_CF_ENC_LPS" [value]="false"
+                                                                                            [(ngModel)]="selectedquarterly_CF_ENC_LPS" #quarterly_CF_ENC_LPS="ngModel"
+                                                                                            style="margin-right: 1%;" disabled
+                                                                                            (change)="setPolicy(selectedquarterly_CF_ENC_LPS,'quarterly')" required />
+                                                                                            <label for="false">No</label>
+                                                                                            @if (!quarterly_CF_ENC_LPS.valid && addcomp.submitted) {
+                                                                                              <div class="invalid-tooltip">
+                                                                                                field is required!
+                                                                                              </div>
+                                                                                            }
+                                                                                          </div>
+                                                                                        </div>
+                                                                                        @if (selectedquarterly_CF_ENC_LPS) {
+                                                                                          <div>
+                                                                                            @for (quarterly_Policy of quarterly_PolicyArray; track quarterly_Policy; let i = $index) {
+                                                                                              <div>
+                                                                                                <div class="row ml-2">
+                                                                                                  <div class="col-md-4 mb-2">
+                                                                                                    <span>Set {{ quarterly_Policy.type == 'carryForward'?'Carry Forward*':quarterly_Policy.type ==
+                                                                                                    'encashment'?'Encashment *':'Lapse *' }}</span>
+                                                                                                    &nbsp;&nbsp;
+                                                                                                    <input type="radio" #quarterly_setPolicy="ngModel" name="quarterly_setPolicy{{i}}"
+                                                                                                      [value]="true" [(ngModel)]="quarterly_Policy.setPolicy"
+                                                                                                      style="margin-right: 1%;" disabled
+                                                                                                      (change)="setPolicyChild(quarterly_Policy)" required />
+                                                                                                      <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                                      <input type="radio" name="quarterly_setPolicy{{i}}" [value]="false"
+                                                                                                        (change)="setPolicyChild(quarterly_Policy)"
+                                                                                                        [(ngModel)]="quarterly_Policy.setPolicy" style="margin-right: 1%;"
+                                                                                                        disabled required />
+                                                                                                        <label for="false">No</label>
+                                                                                                        @if (!quarterly_Policy.disable && !quarterly_setPolicy.valid && addcomp.submitted) {
+                                                                                                          <div
+                                                                                                            class="invalid-tooltip">Field is required!
+                                                                                                          </div>
+                                                                                                        }
+                                                                                                      </div>
+                                                                                                      @if (quarterly_Policy.setPolicy) {
+                                                                                                        <div class="col-md-4 mb-2">
+                                                                                                          <span>Set {{ quarterly_Policy.type == 'carryForward'?'Carry Forward':quarterly_Policy.type ==
+                                                                                                          'encashment'?'Encashment':'Lapse' }} Limit *:</span>
+                                                                                                          &nbsp;&nbsp;
+                                                                                                          <input type="radio" #quarterly_category="ngModel" name="quarterly_category{{i}}"
+                                                                                                            value="allLeave" [(ngModel)]="quarterly_Policy.setPolicy_category"
+                                                                                                            style="margin-right: 1%;"
+                                                                                                            (change)="setRemainingObjDisable(i,quarterly_Policy.setPolicy_category,'quarterly')"
+                                                                                                            required disabled />
+                                                                                                            <label style="margin-right: 1%;" for="allLeave">All Leave</label>
+                                                                                                            <input type="radio" #quarterly_category="ngModel" name="quarterly_category{{i}}"
+                                                                                                              value="setLimit" style="margin-right: 1%;"
+                                                                                                              [(ngModel)]="quarterly_Policy.setPolicy_category"
+                                                                                                              (change)="setRemainingObjDisable(i,quarterly_Policy.setPolicy_category,'quarterly')"
+                                                                                                              required disabled/>
+                                                                                                              <label for="setLimit">Set Limit</label>
+                                                                                                              @if (!quarterly_category.valid && addcomp.submitted) {
+                                                                                                                <div class="invalid-tooltip">
+                                                                                                                  Category is required!
+                                                                                                                </div>
+                                                                                                              }
+                                                                                                            </div>
+                                                                                                          }
+                                                                                                          @if (quarterly_Policy.setPolicy_category == 'setLimit' && quarterly_Policy.setPolicy && ((quarterly_PolicyArray.length-1) > i)) {
+                                                                                                            <div class="col-md-4 mb-2"
+                                                                                                              >
+                                                                                                              <label class="form-group has-float-label">
+                                                                                                                <ng-select name="quarterly_limit{{i}}" #quarterly_limit="ngModel" ngModel
+                                                                                                                  [(ngModel)]="quarterly_Policy.limit" required style="margin-left: 8px;" disabled>
+                                                                                                                  @for (number of limitArray; track number) {
+                                                                                                                    <ng-option [value]="number">{{
+                                                                                                                    number }}</ng-option>
+                                                                                                                  }
+                                                                                                                </ng-select>
+                                                                                                                <span>Enter Limit *</span>
+                                                                                                                @if (!quarterly_limit.valid && addcomp.submitted) {
+                                                                                                                  <div
+                                                                                                                    class="invalid-tooltip">Limit is required!
+                                                                                                                  </div>
+                                                                                                                }
+                                                                                                              </label>
+                                                                                                            </div>
+                                                                                                          }
+                                                                                                        </div>
+                                                                                                      </div>
+                                                                                                    }
+                                                                                                  </div>
+                                                                                                }
+                                                                                                <!-- Half-Yearly  -->
+                                                                                                <div class="row">
+                                                                                                  <div class="col-md-6 mb-2">
+                                                                                                    <span><b>Set Half-Yearly Policy for Carry Forward,Encashment and Lapse *</b></span>
+                                                                                                    &nbsp;&nbsp;
+                                                                                                    <input type="radio" name="halfYearly_CF_ENC_LPS" [value]="true"
+                                                                                                      [(ngModel)]="selectedhalfYearly_CF_ENC_LPS" #halfYearly_CF_ENC_LPS="ngModel"
+                                                                                                      style="margin-right: 1%;" disabled
+                                                                                                      (change)="setPolicy(selectedhalfYearly_CF_ENC_LPS,'halfYearly')" required />
+                                                                                                      <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                                      <input type="radio" name="halfYearly_CF_ENC_LPS" [value]="false"
+                                                                                                        [(ngModel)]="selectedhalfYearly_CF_ENC_LPS" #halfYearly_CF_ENC_LPS="ngModel"
+                                                                                                        style="margin-right: 1%;" disabled
+                                                                                                        (change)="setPolicy(selectedhalfYearly_CF_ENC_LPS,'halfYearly')" required />
+                                                                                                        <label for="false">No</label>
+                                                                                                        @if (!halfYearly_CF_ENC_LPS.valid && addcomp.submitted) {
+                                                                                                          <div class="invalid-tooltip">
+                                                                                                            field is required!
+                                                                                                          </div>
+                                                                                                        }
+                                                                                                      </div>
+                                                                                                    </div>
+                                                                                                    @if (selectedhalfYearly_CF_ENC_LPS) {
+                                                                                                      <div>
+                                                                                                        @for (halfYearly_Policy of halfYearly_PolicyArray; track halfYearly_Policy; let i = $index) {
+                                                                                                          <div>
+                                                                                                            <div class="row ml-2">
+                                                                                                              <div class="col-md-4 mb-2">
+                                                                                                                <span>Set {{ halfYearly_Policy.type == 'carryForward'?'Carry Forward *':halfYearly_Policy.type ==
+                                                                                                                'encashment'?'Encashment *':'Lapse *' }}</span>
+                                                                                                                &nbsp;&nbsp;
+                                                                                                                <input type="radio" #halfYearly_setPolicy="ngModel" name="halfYearly_setPolicy{{i}}"
+                                                                                                                  [value]="true" [(ngModel)]="halfYearly_Policy.setPolicy"
+                                                                                                                  style="margin-right: 1%;" disabled
+                                                                                                                  (change)="setPolicyChild(halfYearly_Policy)" required />
+                                                                                                                  <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                                                  <input type="radio" name="halfYearly_setPolicy{{i}}" [value]="false"
+                                                                                                                    (change)="setPolicyChild(halfYearly_Policy)"
+                                                                                                                    [(ngModel)]="halfYearly_Policy.setPolicy" style="margin-right: 1%;"
+                                                                                                                    disabled required />
+                                                                                                                    <label for="false">No</label>
+                                                                                                                    @if (!halfYearly_Policy.disable && !halfYearly_setPolicy.valid && addcomp.submitted) {
+                                                                                                                      <div
+                                                                                                                        class="invalid-tooltip">Field is required!
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                  </div>
+                                                                                                                  @if (halfYearly_Policy.setPolicy) {
+                                                                                                                    <div class="col-md-4 mb-2">
+                                                                                                                      <span>Set {{ halfYearly_Policy.type == 'carryForward'?'Carry Forward':halfYearly_Policy.type ==
+                                                                                                                      'encashment'?'Encashment':'Lapse' }} Limit *:</span>
+                                                                                                                      &nbsp;&nbsp;
+                                                                                                                      <input type="radio" #halfYearly_category="ngModel" name="halfYearly_category{{i}}"
+                                                                                                                        value="allLeave" [(ngModel)]="halfYearly_Policy.setPolicy_category"
+                                                                                                                        style="margin-right: 1%;"
+                                                                                                                        (change)="setRemainingObjDisable(i,halfYearly_Policy.setPolicy_category,'halfYearly')"
+                                                                                                                        required disabled/>
+                                                                                                                        <label style="margin-right: 1%;" for="allLeave">All Leave</label>
+                                                                                                                        <input type="radio" #halfYearly_category="ngModel" name="halfYearly_category{{i}}"
+                                                                                                                          value="setLimit" style="margin-right: 1%;"
+                                                                                                                          [(ngModel)]="halfYearly_Policy.setPolicy_category"
+                                                                                                                          (change)="setRemainingObjDisable(i,halfYearly_Policy.setPolicy_category,'halfYearly')"
+                                                                                                                          required disabled/>
+                                                                                                                          <label for="setLimit">Set Limit</label>
+                                                                                                                          @if (!halfYearly_category.valid && addcomp.submitted) {
+                                                                                                                            <div
+                                                                                                                              class="invalid-tooltip">Category is required!
+                                                                                                                            </div>
+                                                                                                                          }
+                                                                                                                        </div>
+                                                                                                                      }
+                                                                                                                      @if (halfYearly_Policy.setPolicy_category == 'setLimit' && halfYearly_Policy.setPolicy && ((halfYearly_PolicyArray.length-1) > i)) {
+                                                                                                                        <div class="col-md-4 mb-2"
+                                                                                                                          >
+                                                                                                                          <label class="form-group has-float-label">
+                                                                                                                            <ng-select name="halfYearly_limit{{i}}" #halfYearly_limit="ngModel" ngModel
+                                                                                                                              [(ngModel)]="halfYearly_Policy.limit" required style="margin-left: 8px;" disabled>
+                                                                                                                              @for (number of limitArray; track number) {
+                                                                                                                                <ng-option [value]="number">{{
+                                                                                                                                number }}</ng-option>
+                                                                                                                              }
+                                                                                                                            </ng-select>
+                                                                                                                            <span>Enter Limit *</span>
+                                                                                                                            @if (!halfYearly_limit.valid && addcomp.submitted) {
+                                                                                                                              <div
+                                                                                                                                class="invalid-tooltip">Limit is required!
+                                                                                                                              </div>
+                                                                                                                            }
+                                                                                                                          </label>
+                                                                                                                        </div>
+                                                                                                                      }
+                                                                                                                    </div>
+                                                                                                                  </div>
+                                                                                                                }
+                                                                                                              </div>
+                                                                                                            }
+                                                                                                            <!-- Yealy  -->
+                                                                                                            <div class="row">
+                                                                                                              <div class="col-md-6 mb-2">
+                                                                                                                <span><b>Set Yearly Policy for Carry Forward,Encashment and Lapse *</b></span>
+                                                                                                                &nbsp;&nbsp;
+                                                                                                                <input type="radio" name="yearly_CF_ENC_LPS" [value]="true"
+                                                                                                                  [(ngModel)]="selectedyearly_CF_ENC_LPS" #yearly_CF_ENC_LPS="ngModel"
+                                                                                                                  style="margin-right: 1%;" disabled
+                                                                                                                  (change)="setPolicy(selectedyearly_CF_ENC_LPS,'yearly')" required />
+                                                                                                                  <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                                                  <input type="radio" name="yearly_CF_ENC_LPS" [value]="false"
+                                                                                                                    [(ngModel)]="selectedyearly_CF_ENC_LPS" #yearly_CF_ENC_LPS="ngModel"
+                                                                                                                    style="margin-right: 1%;" disabled
+                                                                                                                    (change)="setPolicy(selectedyearly_CF_ENC_LPS,'yearly')" required />
+                                                                                                                    <label for="false">No</label>
+                                                                                                                    @if (!yearly_CF_ENC_LPS.valid && addcomp.submitted) {
+                                                                                                                      <div class="invalid-tooltip">
+                                                                                                                        field is required!
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                  </div>
+                                                                                                                </div>
+                                                                                                                @if (selectedyearly_CF_ENC_LPS) {
+                                                                                                                  <div>
+                                                                                                                    @for (yearly_Policy of yearly_PolicyArray; track yearly_Policy; let i = $index) {
+                                                                                                                      <div>
+                                                                                                                        <div class="row ml-2">
+                                                                                                                          <div class="col-md-4 mb-2">
+                                                                                                                            <span>Set {{ yearly_Policy.type == 'carryForward'?'Carry Forward *':yearly_Policy.type ==
+                                                                                                                            'encashment'?'Encashment *':'Lapse *' }}</span>
+                                                                                                                            &nbsp;&nbsp;
+                                                                                                                            <input type="radio" #yearly_setPolicy="ngModel" name="yearly_setPolicy{{i}}"
+                                                                                                                              [value]="true" [(ngModel)]="yearly_Policy.setPolicy" style="margin-right: 1%;"
+                                                                                                                              disabled (change)="setPolicyChild(yearly_Policy)"
+                                                                                                                              required />
+                                                                                                                              <label for="true" style="margin-right: 1%;">Yes</label>
+                                                                                                                              <input type="radio" name="yearly_setPolicy{{i}}" [value]="false"
+                                                                                                                                (change)="setPolicyChild(yearly_Policy)" [(ngModel)]="yearly_Policy.setPolicy"
+                                                                                                                                style="margin-right: 1%;" disabled required />
+                                                                                                                                <label for="false">No</label>
+                                                                                                                                @if (!yearly_Policy.disable && !yearly_setPolicy.valid && addcomp.submitted) {
+                                                                                                                                  <div
+                                                                                                                                    class="invalid-tooltip">Field is required!
+                                                                                                                                  </div>
+                                                                                                                                }
+                                                                                                                              </div>
+                                                                                                                              @if (yearly_Policy.setPolicy) {
+                                                                                                                                <div class="col-md-4 mb-2">
+                                                                                                                                  <span>Set {{ yearly_Policy.type == 'carryForward'?'Carry Forward':yearly_Policy.type
+                                                                                                                                    ==
+                                                                                                                                  'encashment'?'Encashment':'Lapse' }} Limit *:</span>
+                                                                                                                                  &nbsp;&nbsp;
+                                                                                                                                  <input type="radio" #yearly_category="ngModel" name="yearly_category{{i}}"
+                                                                                                                                    value="allLeave" [(ngModel)]="yearly_Policy.setPolicy_category"
+                                                                                                                                    style="margin-right: 1%;"
+                                                                                                                                    (change)="setRemainingObjDisable(i,yearly_Policy.setPolicy_category,'yearly')"
+                                                                                                                                    required disabled/>
+                                                                                                                                    <label style="margin-right: 1%;" for="allLeave">All Leave</label>
+                                                                                                                                    <input type="radio" #yearly_category="ngModel" name="yearly_category{{i}}"
+                                                                                                                                      value="setLimit" style="margin-right: 1%;"
+                                                                                                                                      [(ngModel)]="yearly_Policy.setPolicy_category"
+                                                                                                                                      (change)="setRemainingObjDisable(i,yearly_Policy.setPolicy_category,'yearly')"
+                                                                                                                                      required disabled/>
+                                                                                                                                      <label for="setLimit">Set Limit</label>
+                                                                                                                                      @if (!yearly_category.valid && addcomp.submitted) {
+                                                                                                                                        <div class="invalid-tooltip">
+                                                                                                                                          Category is required!
+                                                                                                                                        </div>
+                                                                                                                                      }
+                                                                                                                                    </div>
+                                                                                                                                  }
+                                                                                                                                  @if (yearly_Policy.setPolicy_category == 'setLimit' && yearly_Policy.setPolicy && (yearly_PolicyArray.length-1) > i) {
+                                                                                                                                    <div class="col-md-4 mb-2"
+                                                                                                                                      >
+                                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                                        <ng-select name="yearly_limit{{i}}" #yearly_limit="ngModel" ngModel
+                                                                                                                                          [(ngModel)]="yearly_Policy.limit" required style="margin-left: 8px;" disabled>
+                                                                                                                                          @for (number of limitArray; track number) {
+                                                                                                                                            <ng-option [value]="number">{{
+                                                                                                                                            number }}</ng-option>
+                                                                                                                                          }
+                                                                                                                                        </ng-select>
+                                                                                                                                        <span>Enter Limit *</span>
+                                                                                                                                        @if (!yearly_limit.valid && addcomp.submitted) {
+                                                                                                                                          <div class="invalid-tooltip">
+                                                                                                                                          Limit is required!</div>
+                                                                                                                                        }
+                                                                                                                                      </label>
+                                                                                                                                    </div>
+                                                                                                                                  }
+                                                                                                                                </div>
+                                                                                                                              </div>
+                                                                                                                            }
+                                                                                                                          </div>
+                                                                                                                        }
+                                                                                                                        @if (toShow_ENC) {
+                                                                                                                          <div class="row">
+                                                                                                                            <div class="col-md-4">
+                                                                                                                              <span><b>Set For Encashment *</b></span>
+                                                                                                                              &nbsp;&nbsp;
+                                                                                                                              <input type="radio" name="amountType" value="fixAmount" [(ngModel)]="amountTypeData"
+                                                                                                                                #amountType="ngModel" style="margin-right: 1%;" disabled required />
+                                                                                                                                <label for="true" style="margin-right: 1%;">Fixed Amount</label>
+                                                                                                                                <input type="radio" name="amountType" value="payhead" [(ngModel)]="amountTypeData"
+                                                                                                                                  #amountType="ngModel" style="margin-right: 1%;" disabled required />
+                                                                                                                                  <label for="false">On Payhead</label>
+                                                                                                                                  @if (!amountType.valid && addcomp.submitted) {
+                                                                                                                                    <div class="invalid-tooltip">
+                                                                                                                                      Field is required!
+                                                                                                                                    </div>
+                                                                                                                                  }
+                                                                                                                                </div>
+                                                                                                                                @if (amountTypeData == 'fixAmount') {
+                                                                                                                                  <div class="col-md-4">
+                                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                                      <input class="form-control" type="number" [(ngModel)]="fixAmount_ENC"
+                                                                                                                                        (change)="fixAmount('Fix')" [min]="1" required ngModel #ENC_fixAmount="ngModel"
+                                                                                                                                        name="ENC_fixAmount" disabled/>
+                                                                                                                                        <span>Enter Fix Amount (Per Leave) *</span>
+                                                                                                                                        @if (!ENC_fixAmount.valid && addcomp.submitted) {
+                                                                                                                                          <div class="invalid-tooltip">Fix
+                                                                                                                                          Amount is required!</div>
+                                                                                                                                        }
+                                                                                                                                      </label>
+                                                                                                                                    </div>
+                                                                                                                                  }
+                                                                                                                                  @if (amountTypeData == 'payhead') {
+                                                                                                                                    <div class="col-md-4">
+                                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                                        <ng-select placeholder="Choose your option" ngModel [multiple]="true"
+                                                                                                                                          [closeOnSelect]="false" #payheadIds="ngModel" name="payheadIds"
+                                                                                                                                          [(ngModel)]="selectedPayhead" required [readonly]="true">
+                                                                                                                                          @for (payhead of Allpayhead; track payhead) {
+                                                                                                                                            <ng-option [value]="payhead.payheadMasterID">
+                                                                                                                                            {{payhead.payheadName }}</ng-option>
+                                                                                                                                          }
+                                                                                                                                        </ng-select>
+                                                                                                                                        <span> Select Payhead for Encashment *</span>
+                                                                                                                                        @if (!payheadIds.valid && addcomp.submitted) {
+                                                                                                                                          <div class="invalid-tooltip">Payhead for
+                                                                                                                                            Encashment is
+                                                                                                                                            required!
+                                                                                                                                          </div>
+                                                                                                                                        }
+                                                                                                                                      </label>
+                                                                                                                                    </div>
+                                                                                                                                  }
+                                                                                                                                  @if (amountTypeData == 'payhead') {
+                                                                                                                                    <div class="col-md-4">
+                                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                                        <input class="form-control" type="number" [(ngModel)]="ratioAmount"
+                                                                                                                                          (change)="fixAmount('Ratio')" required ngModel #ratio="ngModel" name="ratio" disabled />
+                                                                                                                                          <span>Enter Ratio *</span>
+                                                                                                                                          @if (!ratio.valid && addcomp.submitted) {
+                                                                                                                                            <div class="invalid-tooltip">Ratio is
+                                                                                                                                            required!</div>
+                                                                                                                                          }
+                                                                                                                                        </label>
+                                                                                                                                      </div>
+                                                                                                                                    }
+                                                                                                                                  </div>
+                                                                                                                                }
+                                                                                                                              </form>
+                                                                                                                            }
+
+                                                                                                                          </div>
+                                                                                                                        </div>
+                                                                                                                      </div>
+                                                                                                                    </div>

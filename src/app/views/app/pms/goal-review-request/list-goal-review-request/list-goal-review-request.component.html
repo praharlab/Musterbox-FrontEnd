@@ -1,0 +1,271 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" (changeOrderBy)="onChangeOrderBy($event)"
+  [showSearch]="false" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="body.limit" [itemOrder]="Order"
+  [itemOptionsOrders]="changeOrderBy" [itemOptionsPerPage]="itemOptionsPerPage"
+name="Goal Review Request"></app-list-page-header>
+
+
+@if ( permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #companyfilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" [(ngModel)]="body.company_id" required>
+                @for (company1 of comp; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && companyfilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel [(ngModel)]="body.branch_id"
+                #branchName="ngModel" name="branch" (change)="selectbranch($event)">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel [(ngModel)]="body.revieweeId"
+                #employee="ngModel" name="employee">
+                @for (user of empList; track user) {
+                  <ng-option [value]="user.userMasterID">
+                    {{ user.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            &nbsp;&nbsp;
+            <div class="float-right float-none-xs mt-2">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Export" ngModel #cid2="ngModel" name="cid2"
+                  [(ngModel)]="selectedValue" (ngModelChange)="onOptionSelect()">
+                  <ng-option value="csv">CSV</ng-option>
+                  <ng-option value="xlsx">XLSX</ng-option>
+                </ng-select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (rows && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="body.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Action" prop="isCompleted" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (!row.isCompleted && permissioncreate.length != 0 && (!row.employeeGoalReviewFeedbacks || row.employeeGoalReviewFeedbacks.length === 0 || row.employeeGoalReviewFeedbacks.targetAchieved == '0.00')) {
+              <div class="edit" style="z-index: 999999999; margin-left: 25px"
+                >
+                <a (click)="navigateToEditPage(row)">
+                  <span tooltip="Verify Performance Review" [class]="'glyph-icon simple-icon-note tool_tip'"
+                  style="padding-right: 10px; font-size: 18px"></span>
+                </a>
+              </div>
+            }
+            @if (row.isCompleted) {
+              <button class="btn btn-outline-success btn-xs">
+                Completed
+              </button>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="View" prop="isCompleted" [flexGrow]="1.2" [width]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button class="btn btn-outline-primary btn-xs" (click)="lgModal.show(); selectEmployeeGoal(row)">
+              View Goal Details
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Employee Code"
+          prop="employeeGoal.goalAssignedTo.employeeJoiningDetails[0]?.employeeCode" [sortable]="true"
+          [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.employeeGoal.goalAssignedTo.employeeJoiningDetails[0]?.employeeCode}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Employee Name" prop="employeeGoal.goalAssignedTo.displayName" [flexGrow]="1.2"
+        [width]="140"></ngx-datatable-column>
+        <ngx-datatable-column name="Employee Number" prop="employeeGoal.goalAssignedTo.userNumber" [flexGrow]="1.2"
+        [width]="140"></ngx-datatable-column>
+        <ngx-datatable-column name="Branch"
+          prop="employeeGoal.goalAssignedTo.employeeBranches[0]?.branchMaster?.branchName" [sortable]="true"
+          [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.employeeGoal.goalAssignedTo.employeeBranches[0]?.branchMaster?.branchName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Designation"
+          prop="employeeGoal.goalAssignedTo.employeeDepartments[0]?.department?.departmentName" [sortable]="true"
+          [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.employeeGoal.goalAssignedTo.employeeBranches[0]?.branchMaster?.branchName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Department"
+          prop="employeeGoal.goalAssignedTo.employeeDesignations[0]?.designation?.designationName"
+          [sortable]="true" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.employeeGoal.goalAssignedTo.employeeBranches[0]?.branchMaster?.branchName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Goal Name" prop="employeeGoal.goalMaster.title" [flexGrow]="1.2"
+        [width]="140"></ngx-datatable-column>
+        <ngx-datatable-column name="Goal Description " prop="employeeGoal.goalMaster.description" [flexGrow]="1.2"
+        [width]="140"></ngx-datatable-column>
+        <ngx-datatable-column name="Company Name" prop="employeeGoal.goalMaster.companyMaster.companyName"
+        [flexGrow]="1.2" [width]="140"></ngx-datatable-column>
+        <!--
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="180"
+          *ngIf="permissionedit.length != 0 || permissiondelete.length != 0">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="text-center">
+              <button class="btn btn-primary form-group btn-xs m-0" type="submit"
+                *ngIf="permissionedit.length != 0" (click)="navigate(row)">
+                Edit
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-danger form-group btn-xs m-0" type="button"
+                *ngIf="permissiondelete.length != 0" (click)="alertConfirmation(row)">
+                Delete
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column> -->
+        <ngx-datatable-column name="Created Date" prop="createdAt" [flexGrow]="1.2" [width]="160">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.createdAt | date: 'dd-MM-yyyy' }}
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="body.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Goal Name - {{ GoalName}}</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      @if (kpiData.length != 0) {
+        <div class="modal-body">
+          <div class="row" style="padding: 0 0 0 15px">
+            <div class="table-style mb-2;" style="width: -webkit-fill-available;">
+              <table style="width: -webkit-fill-available;">
+                <thead>
+                  <tr>
+                    <th class="name-col name-col-shadow">
+                      KRA
+                    </th>
+                    <th class="name-col name-col-shadow">KPI</th>
+                    <th class="name-col name-col-shadow">
+                      Weightage
+                    </th>
+                    <th class="name-col name-col-shadow">
+                      Target Given
+                    </th>
+                    <th class="name-col name-col-shadow">
+                      Target Achieved
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="text-black" style="font-weight: 600;">
+                  @for (item of kpiData; track item; let i = $index) {
+                    <tr class="student bottom-border bottom-border-radius"
+                      >
+                      <td class="name-col left-border">
+                        {{ item.kraTitle }}
+                      </td>
+                      <td class="name-col">
+                        {{ item.title }}
+                      </td>
+                      <td class="name-col">
+                        {{ item.weightage | number
+                        }}%
+                      </td>
+                      <td class="name-col">
+                        {{ item.targetGiven}}
+                      </td>
+                      <td class="name-col">
+                        {{ item.targetAchieved ? item.targetAchieved : ''}}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

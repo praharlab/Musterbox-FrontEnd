@@ -1,0 +1,36 @@
+<div [class]="class">
+  <div class="row">
+    <div class="col-md-3" cursor="none">
+      <div class="icon-row-item" style="width: inherit">
+        <div class="card" style="margin-bottom: 27px; cursor: default">
+          <div class="card-body text-center">
+            <i class="iconsminds-paper"></i>
+            <p class="card-text font-weight-semibold mb-0">Total Tickets</p>
+            <p class="lead text-center">{{ totalTickets }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    @for (item of statusCounts; track item) {
+      <div class="col-md-3" cursor="none">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card" style="margin-bottom: 27px; cursor: default">
+            <div class="card-body text-center">
+              @if (item.priority == 'High') {
+                <i class="iconsminds-paper text-danger"></i>
+              }
+              @if (item.priority == 'Medium') {
+                <i class="iconsminds-paper text-warning"></i>
+              }
+              @if (item.priority == 'Low') {
+                <i class="iconsminds-paper text-info"></i>
+              }
+              <p class="card-text font-weight-semibold mb-0">Priority&nbsp;{{ item.priority }}</p>
+              <p class="lead text-center">{{ item.count }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

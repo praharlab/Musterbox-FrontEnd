@@ -1,0 +1,249 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-4">Import Advance Payment</h4>
+    <form #addimportuser="ngForm" novalidate (ngSubmit)="validateData()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company" required
+              [(ngModel)]="filterData.companyMasterID" (change)="companyChange($event)">
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branchMasterID="ngModel"
+              name="branchMasterID" [(ngModel)]="filterData.branchMasterID">
+              @for (item of allbranch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="month" ngModel #month="ngModel" name="month" required />
+            <span>Month *</span>
+            @if (!month.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Month is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="file" ngModel #file="ngModel" (change)="onFileChange($event)"
+              accept=".xlsx, .xls" name="file" required />
+              <span>Import File *</span>
+              @if (file.valid) {
+                <p>{{ fileName }}</p>
+              }
+              @if (!file.valid && addimportuser.submitted) {
+                <div class="invalid-tooltip">
+                  File is required!
+                </div>
+              }
+            </label>
+          </div>
+          @if (filterData.companyMasterID) {
+            <div class="col-md-4 mb-3">
+              <button (click)="downloadDemoExcel()" type="button" class="btn btn-success btn-xs">
+                Download Excel
+              </button>
+            </div>
+          }
+        </div>
+        <div class="col-md-6">
+          @if (isValidated == false) {
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          }
+          @if (isValidated == true) {
+            <button class="btn btn-primary" type="button" (click)="clear()">
+              Clear
+            </button>
+          }
+          <span> &nbsp;&nbsp; </span>
+          <button class="btn btn-danger" type="button" (click)="prev()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              <span> &nbsp;&nbsp; </span>
+              @if (rows.length > 0 && isEdited == true) {
+                <button class="btn btn-primary" type="submit" (click)="reValidateData()"
+                  >
+                  Re-Validate
+                </button>
+              }
+              @if (rows.length > 0 && remarksCount == 0 && !isEdited) {
+                <button class="btn btn-primary" type="submit" (click)="saveData()"
+                  >
+                  Submit
+                </button>
+              }
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Actions</th>
+                  <th>Remarks</th>
+                  <th>Employee Details</th>
+                  <th>Advance Amount *</th>
+                  <th>Advance Date *</th>
+                  <th>Payment Mode *</th>
+                  <th>Reference No</th>
+                  <th>Reference Date *</th>
+                  <th>Description *</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of rows; track item; let i = $index) {
+                  <tr>
+                    @if (!item.isDeleted) {
+                      <td>
+                        <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                          Remove
+                        </button>
+                      </td>
+                      <td>
+                        <div style="width: 200px">
+                          {{ item.remarks }}
+                        </div>
+                      </td>
+                      <td>
+                        <div style="width: 250px">Name - {{ item.displayName }}@if (item.employeeCode && item.employeeCode != '' && item.employeeCode != null) {
+                          <span
+                            >({{
+                          item.employeeCode }})</span>
+                          }<br />Branch - {{ item.branch }}<br />Department
+                          -
+                          {{ item.department }}<br />Designation - {{ item.designation }}<br />Contact
+                          Number
+                          - {{ item.userNumber }}
+                        </div>
+                      </td>
+                      <td>
+                        <label class="form-group has-float-label" style="width: 250px">
+                          <input class="form-control" type="number" [required]="!item.isDeleted" ngModel
+                            #amount="ngModel" (change)="onadvanceDataChange($event);"
+                            name="amount{{ i }}" [(ngModel)]="item.amount" />
+                            @if (!amount.valid && tableForm.submitted) {
+                              <div class="invalid-tooltip">
+                                Amount is required!
+                              </div>
+                            }
+                          </label>
+                        </td>
+                        <td>
+                          <label class="form-group has-float-label" style="width: 250px">
+                            <input class="form-control" type="date" [required]="!item.isDeleted" ngModel
+                              #advanceDate="ngModel" (change)="onadvanceDataChange($event);"
+                              name="advanceDate{{ i }}" [(ngModel)]="item.advanceDate" />
+                              @if (!advanceDate.valid && tableForm.submitted) {
+                                <div class="invalid-tooltip">
+                                  Advance Date is required!
+                                </div>
+                              }
+                            </label>
+                          </td>
+                          <td>
+                            <label class="form-group has-float-label" style="width: 250px">
+                              <ng-select placeholder="Choose your option" ngModel #paymentmode="ngModel"
+                                (change)="onadvanceDataChange($event);" [(ngModel)]="item.paymentmode"
+                                name="paymentmode{{ i }}" [required]="!item.isDeleted" appendTo="body"
+                                [append]="'body'">
+                                <ng-option value="Cash">Cash</ng-option>
+                                <ng-option value="UPI">UPI</ng-option>
+                                <ng-option value="Cheque">Cheque</ng-option>
+                                <ng-option value="NetBanking">NetBanking</ng-option>
+                              </ng-select>
+                              @if (!paymentmode.valid && tableForm.submitted) {
+                                <div class="invalid-tooltip">
+                                  Payment Mode required!
+                                </div>
+                              }
+                            </label>
+                          </td>
+                          <td>
+                            <label class="form-group has-float-label" style="width: 250px">
+                              <input class="form-control" type="text" ngModel #referenceNO="ngModel"
+                                [required]="item.paymentmode != 'Cash' && !item.isDeleted"
+                                (change)="onadvanceDataChange($event);" name="referenceNO{{ i }}"
+                                [(ngModel)]="item.referenceNO" />
+                                @if (!referenceNO.valid && tableForm.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Refrence No. required!
+                                  </div>
+                                }
+                              </label>
+                            </td>
+                            <td>
+                              <label class="form-group has-float-label" style="width: 250px">
+                                <input class="form-control" type="date"
+                                  [required]="item.paymentmode != 'Cash'  && !item.isDeleted" ngModel
+                                  #referenceDate="ngModel" (change)="onadvanceDataChange($event);"
+                                  name="referenceDate{{ i }}" [(ngModel)]="item.referenceDate" />
+                                  @if (!referenceDate.valid && tableForm.submitted) {
+                                    <div
+                                      class="invalid-tooltip">
+                                      Reference Date is required!
+                                    </div>
+                                  }
+                                </label>
+                              </td>
+                              <td>
+                                <label class="form-group has-float-label" style="width: 250px">
+                                  <textarea class="form-control" ngModel #description="ngModel"
+                                    (change)="onadvanceDataChange($event);" [(ngModel)]="item.description"
+                                  name="description{{ i }}" [required]="!item.isDeleted"></textarea>
+                                  @if (!description.valid && tableForm.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Description is required!
+                                    </div>
+                                  }
+                                </label>
+                              </td>
+                            }
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </form>
+              </div>
+            </div>
+          }
+
+
+
+          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

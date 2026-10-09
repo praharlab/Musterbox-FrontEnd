@@ -1,0 +1,493 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  [itemsPerPage]="body1.limit" (itemsPerPageChange)="onLimitChange($event)" [itemOptionsPerPage]="itemOptionsPerPage"
+(addNewItem)="lgModal.show()" name="Extra Days"></app-list-page-header>
+<br />
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="downloadExcel()" (clearData)="clear()" (getCompany)="getCompany($event)">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate"
+          required />
+          <span>From Date *</span>
+          @if (!fromDate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              From Date is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="date" ngModel #toDate="ngModel" name="toDate" required />
+          <span>To Date *</span>
+          @if (!toDate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              To Date is required!
+            </div>
+          }
+        </label>
+      </div>
+    </app-common-filter>
+  }
+
+  @if (rows && rows.length > 0 && permissionview.length > 0 ) {
+    <div class="row">
+      <div class="col-12 data-table-rows">
+        <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+          [limit]="body1.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+          (page)="onChange($event)">
+          <ngx-datatable-column name="Cancel" prop="" [flexGrow]="1.2" [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (row.employeeincentiveID == null && permissionedit.length > 0 && row.authorizationStatus == '3') {
+                <button type="button" class="btn btn-danger btn-xs" (click)="lgModal2.show(); cancelPopup(row)">
+                  Cancel
+                </button>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Status" prop="authorizationStatus" [flexGrow]="1.2" [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.authorizationStatus == '0' ||
+                row.authorizationStatus == '1' ||
+                row.authorizationStatus == '2'
+                ) {
+                <button type="button" class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+              {{ ' ' }}
+              @if (row.authorizationStatus == '3') {
+                <button type="button" class="btn btn-outline-success btn-xs">
+                  Approved
+                </button>
+              }
+              {{ ' ' }}
+              @if (row.authorizationStatus == '4') {
+                <button type="button" class="btn btn-outline-danger btn-xs">
+                  Rejected
+                </button>
+              }
+              @if (row.authorizationStatus == '5') {
+                <button type="button" class="btn btn-outline-danger btn-xs">
+                  Cancelled
+                </button>
+              }
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Employee Code" [flexGrow]="1.2" [width]="150">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.userMaster.employeeJoiningDetails &&
+                row.userMaster.employeeJoiningDetails.length > 0
+                ) {
+                <div>
+                  {{ row.userMaster.employeeJoiningDetails[0].employeeCode }}
+                </div>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="User Name" prop="userMaster.displayName" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="User Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="Branch" [flexGrow]="1.2" [width]="180">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.userMaster.employeeBranches &&
+                row.userMaster.employeeBranches.length > 0 &&
+                row.userMaster.employeeBranches[0].branchMaster
+                ) {
+                <div>
+                  {{ row.userMaster.employeeBranches[0].branchMaster.branchName }}
+                </div>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Department" [flexGrow]="1.2" [width]="180">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.userMaster.employeeDepartments &&
+                row.userMaster.employeeDepartments.length > 0 &&
+                row.userMaster.employeeDepartments[0].department
+                ) {
+                <div>
+                  {{ row.userMaster.employeeDepartments[0].department.departmentName }}
+                </div>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Designation" [flexGrow]="1.2" [width]="180">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.userMaster.employeeDesignations &&
+                row.userMaster.employeeDesignations.length > 0 &&
+                row.userMaster.employeeDesignations[0].designation
+                ) {
+                <div>
+                  {{ row.userMaster.employeeDesignations[0].designation.designationName }}
+                </div>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <button type="button" class="btn btn-primary" (click)="lgModal1.show(); showdata(row)">
+                {{ 'Show Data' | translate }}
+              </button>
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Date" prop="date" [flexGrow]="1.2" [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (row.date != null) {
+                <div>
+                  {{ row.date | date : 'dd-MM-yyyy' }}
+                </div>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Remarks" prop="remarks" [flexGrow]="1.2"
+          [width]="100"></ngx-datatable-column>
+          <ngx-datatable-column name="Cancel Remarks" prop="cancelRemarks" [flexGrow]="1.2"
+          [width]="100"></ngx-datatable-column>
+          <ngx-datatable-column name="Days" prop="days" [flexGrow]="1.2"
+          [width]="100"></ngx-datatable-column>
+          <ngx-datatable-column name="Created By" prop="createdby" [flexGrow]="1.2" [width]="150">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (row.createByUser) {
+                <div>{{ row.createByUser.displayName }}</div>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <!-- <ngx-datatable-column name="Updated By" prop="updatedby" [flexGrow]="1.2" [width]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div *ngIf="row.createByUser">{{ row.createByUser.displayName }}</div>
+          </ng-template>
+        </ngx-datatable-column> -->
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="page.totalCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="body1.limit" [maxSize]="5"
+                  (pageChanged)="onPageChange($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Extra Days</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide(); clearLgmodalForm()"
+          aria-label="Close" #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcoff="ngForm" novalidate (ngSubmit)="onSubmit1()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel
+                  #company1="ngModel" name="company1" required>
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company1.valid && addcoff.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectbranch($event)" ngModel
+                  #branch="ngModel" name="branch" [(ngModel)]="finalbranch">
+                  @for (allbranch of allbranch; track allbranch) {
+                    <ng-option [value]="allbranch.branchMasterID">
+                      {{ allbranch.branchName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Branch</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select [items]="ownerList" [multiple]="false" bindLabel="name"
+                  groupBy="selectedAllGroup" required [selectableGroup]="true"
+                  [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="true"
+                  [(ngModel)]="selected" ngModel #userMasterID="ngModel" name="userMasterID">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$"
+                  let-index="index"></ng-template>
+
+                  <!-- <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" />{{item.name}}
+                </ng-template> -->
+              </ng-select>
+              <span>Select Employee *</span>
+            </label>
+            @if (!userMasterID.valid && addcoff.submitted) {
+              <div class="invalid-tooltip">
+                EMPLOYEE is required!
+              </div>
+            }
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="Date" ngModel #date="ngModel" required
+                name="date" />
+                <span>Date *</span>
+              </label>
+              @if (!date.valid && addcoff.submitted) {
+                <div class="invalid-tooltip">
+                  Date is required!
+                </div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #days="ngModel" name="days"
+                  [(ngModel)]="selectedDays" required>
+                  @for (day of daysOptions; track day) {
+                    <ng-option [value]="day">{{day}}</ng-option>
+                  }
+                  <!-- <ng-option [value]="1">1</ng-option>
+                  <ng-option [value]="1.5">1.5</ng-option>
+                  <ng-option [value]="2">2</ng-option> -->
+                </ng-select>
+                <span>Select Extra Days *</span>
+              </label>
+              @if (!days.valid && addcoff.submitted) {
+                <div class="invalid-tooltip">
+                  Days is required!
+                </div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input type="text" ngModel #remarks="ngModel" name="remarks" class="form-control">
+                <span>Remarks </span>
+              </label>
+              @if (!days.valid && addcoff.submitted) {
+                <div class="invalid-tooltip">
+                  Days is required!
+                </div>
+              }
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Show Data</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          @if (referencedata) {
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th>Date</th>
+                  <td>{{ referencedata?.date }}</td>
+                </tr>
+                <tr>
+                  <th>Created By</th>
+                  <td>{{ referencedata?.createdByUser }}</td>
+                </tr>
+                <tr>
+                  <th>Authorization Status</th>
+                  <td>
+                    @if (referencedata.authorizationStatus == 3) {
+                      <button class="btn btn-outline-success btn-xs"
+                        >
+                        Approved
+                      </button>
+                    }
+                    @if (referencedata.authorizationStatus == 4) {
+                      <button class="btn btn-outline-danger btn-xs"
+                        >
+                        Rejected
+                      </button>
+                    }
+                    @if (
+                      referencedata.authorizationStatus == 0 ||
+                      referencedata.authorizationStatus == 1 ||
+                      referencedata.authorizationStatus == 2
+                      ) {
+                      <button class="btn btn-outline-warning btn-xs">
+                        Pending
+                      </button>
+                    }
+                    @if (referencedata.authorizationStatus == 5) {
+                      <button type="button" class="btn btn-outline-danger btn-xs">
+                        Cancelled
+                      </button>
+                    }
+                  </td>
+                </tr>
+                <tr>
+                  <th>Person Name</th>
+                  <td>{{ referencedata?.displayName }}</td>
+                </tr>
+                <tr>
+                  <th>Authorization Criteria</th>
+                  <td>{{ referencedata?.AuthorizationCriteria }}</td>
+                </tr>
+                <tr>
+                  <th>Requested Extra Days</th>
+                  <td>{{ referencedata?.days }}</td>
+                </tr>
+                <tr>
+                  <th>Remarks</th>
+                  <td>{{ referencedata?.remarks }}</td>
+                </tr>
+                @if (referencedata.authorizationStatus == 5) {
+                  <tr>
+                    <th>Cancel Remarks</th>
+                    <td>{{ referencedata?.cancelRemarks }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          <!-- Add this table for authUserStatus -->
+          @if (referencedata?.authUserStatus?.length) {
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Display Name</th>
+                  <th>Status</th>
+                  <th>Updated At</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of referencedata.authUserStatus; track user) {
+                  <tr>
+                    <td>{{ user.displayName }}</td>
+                    <td>
+                      @if (user.authStatus == 1) {
+                        <button class="btn btn-outline-success btn-xs">
+                          Approved
+                        </button>
+                      }
+                      @if (user.authStatus == 0) {
+                        <button class="btn btn-outline-danger btn-xs">
+                          Rejected
+                        </button>
+                      }
+                      @if (user.authStatus == 2) {
+                        <button class="btn btn-outline-warning btn-xs">
+                          Pending
+                        </button>
+                      }
+                    </td>
+                    <td>
+                      @if (user.authStatus != 2) {
+                        <p class="mb0">Updated At :</p>
+                      }
+                      @if (user.authStatus != 2) {
+                        <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyyh:mm a'}}</p>
+                      }
+                    </td>
+                    <td>{{ user.remarks }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: true, keyboard: true }">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Cancel Extra Day Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <form #datefilter2="ngForm" novalidate (ngSubmit)="cancel()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input type="text" ngModel #cancelRemarks="ngModel" class="form-control" name="cancelRemarks">
+                  <span>Remarks</span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-primary form-group" type="submit">
+                  {{ 'Submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary form-group" type="button" (click)="clearCancel()">Clear</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

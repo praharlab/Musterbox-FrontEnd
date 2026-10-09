@@ -1,0 +1,43 @@
+::ng-deep {
+  .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+    display: table;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: 10px !important;
+    padding-bottom: 0px;
+    padding-left: 3px;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 7px;
+  }
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+.col-md-5 {
+  height: 10px;
+}
+::ng-deep {
+  .calendar {
+    z-index: 999 !important;
+  }
+  input[type='text'] {
+    width: 100%;
+    border-width: 1.5px;
+    border-color: rgba(0, 0, 0, 0.125);
+  }
+  .ngx-picker {
+    height: 36px;
+  }
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+
+.container {
+  border: 1px dashed #000;
+  margin-top: 6px;
+  height: 67px;
+}

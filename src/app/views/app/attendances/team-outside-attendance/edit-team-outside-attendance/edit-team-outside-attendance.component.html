@@ -1,0 +1,94 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit date wise attendance policy</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #user="ngModel"
+              name="user"
+              [(ngModel)]="datewiseAttendancePolicy.userMasterID"
+              [readonly]="true"
+              >
+              @for (users of copersonlist; track users) {
+                <ng-option [value]="users.userMasterID">
+                  {{ users.employee.displayName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select User *</span>
+            @if (!user.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                User is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="date"
+              required
+              ngModel
+              #fromDate="ngModel"
+              name="fromDate"
+              [(ngModel)]="datewiseAttendancePolicy.fromDate"
+              (change)="fromDateChange()"
+              />
+              <span>From Date *</span>
+              @if (!fromDate.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Date is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                required
+                ngModel
+                #ToDate="ngModel"
+                name="ToDate"
+                [(ngModel)]="datewiseAttendancePolicy.ToDate"
+                [min]="datewiseAttendancePolicy.fromDate"
+                />
+                <span>To Date *</span>
+                @if (!ToDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+            <button
+              class="btn btn-danger btn-shadow mt-4"
+              [routerLink]="adminRoot + '/attendances/Team-Outside-Attendance'"
+              style="margin-left: 2%"
+              >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

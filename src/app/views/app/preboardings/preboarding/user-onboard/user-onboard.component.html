@@ -1,0 +1,980 @@
+<style>
+  .password-toggle-icon {
+  position: absolute;
+  top: 47%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+  /* Adjust the color as needed */
+}
+</style>
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Employee Onboard</h5>
+
+    @if (preboardingData) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-2">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #prefix="ngModel" name="prefix">
+                <ng-option value="Mr.">Mr.</ng-option>
+                <ng-option value="Mrs.">Mrs.</ng-option>
+                <ng-option value="Ms.">Ms.</ng-option>
+              </ng-select>
+              <span>Select Prefix</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                [(ngModel)]="preboardingData.firstName"
+                required
+                ngModel
+                #firstNAme="ngModel"
+                name="firstNAme"
+                />
+                <span>First Name *</span>
+                @if (!firstNAme.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    First Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  [(ngModel)]="preboardingData.middleName"
+                  ngModel
+                  #middleNAme="ngModel"
+                  name="middleNAme"
+                  />
+                  <span>Middle Name</span>
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="text"
+                    [(ngModel)]="preboardingData.lastName"
+                    required
+                    ngModel
+                    #lastNAme="ngModel"
+                    name="lastNAme"
+                    />
+                    <span>Last Name *</span>
+                    @if (!lastNAme.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Last Name is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <span>Gender *</span>
+                  &nbsp;&nbsp;
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="male"
+                    ngModel
+                    #gender="ngModel"
+                    style="margin-right: 2%"
+                    required
+                    />
+                    <label for="true" style="margin-right: 2%">Male</label>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="female"
+                      ngModel
+                      #gender="ngModel"
+                      style="margin-right: 2%"
+                      required
+                      />
+                      <label for="false" style="margin-right: 2%">Female</label>
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="other"
+                        ngModel
+                        #gender="ngModel"
+                        style="margin-right: 2%"
+                        required
+                        />
+                        <label>Other</label>
+                        @if (!gender.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            gender is required!
+                          </div>
+                        }
+                      </div>
+                      <div class="col-md-2">
+                        <label class="form-group has-float-label">
+                          <ng-select
+                            placeholder="Choose your option"
+                            name="userNumberCountryMasterID"
+                            required
+                            ngModel
+                            #userNumberCountryMasterID="ngModel"
+                            [(ngModel)]="preboardingData.userNumberCountryMasterID"
+                            name="userNumberCountryMasterID"
+                            >
+                            @for (country of countryData; track country) {
+                              <ng-option [value]="country.countryMasterID">
+                                {{ country.countryName }} ({{ country.countryCode }})
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Country Code *</span>
+                          @if (!userNumberCountryMasterID.valid && addcomp.submitted) {
+                            <div
+                              class="invalid-tooltip"
+                              >
+                              Country Code is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            required
+                            ngModel
+                            #contactNumber="ngModel"
+                            name="contactNumber"
+                            [(ngModel)]="preboardingData.userNumber"
+                            />
+                            <span>Mobile Number *</span>
+                            @if (!isPihMobileNo) {
+                              <div class="pihMobile">
+                                @if (
+                                  addcomp.value.contactNumber &&
+                                  addcomp.value.contactNumber.toString().length !== 10 &&
+                                  addcomp.submitted
+                                  ) {
+                                  <div
+                                    class="invalid-tooltip"
+                                    >
+                                    Mobile Number should be of 10 digits!
+                                  </div>
+                                }
+                              </div>
+                            }
+                            @if (isPihMobileNo) {
+                              <div class="pihMobile">
+                                @if (
+                                  addcomp.value.contactNumber &&
+                                  (addcomp.value.contactNumber.toString().length < 8 ||
+                                  addcomp.value.contactNumber.toString().length > 14) &&
+                                  addcomp.submitted
+                                  ) {
+                                  <div
+                                    class="invalid-tooltip"
+                                    >
+                                    Mobile Number should be between 8 to 14 digits!
+                                  </div>
+                                }
+                              </div>
+                            }
+                            @if (!contactNumber.valid && addcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                Mobile Number is Required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-group has-float-label">
+                            <input
+                              class="form-control"
+                              type="{{ showPassword ? 'text' : 'password' }}"
+                              placeholder=""
+                              required
+                              ngModel
+                              #password="ngModel"
+                              name="password"
+                              />
+                              <span>Password *</span>
+                              @if (!password.valid && addcomp.submitted) {
+                                <div class="invalid-tooltip">
+                                  Password is required!
+                                </div>
+                              }
+                              <div class="password-toggle-icon" (click)="togglePasswordVisibility()">
+                                @if (showPassword == true) {
+                                  <!-- <span class="glyph-icon simple-icon-close"></span> -->
+                                  <img
+                                    src="../../../../../assets/eyeclosed.png"
+                                    alt=""
+                  style="
+                    position: absolute;
+                    top: 47%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                    width: 22px;
+                    color: #999;
+                  "
+                                    />
+                                  }
+                                  @if (showPassword == false) {
+                                    <img
+                                      src="../../../../../assets/eyeopen.png"
+                                      alt=""
+                  style="
+                    position: absolute;
+                    top: 47%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                    width: 22px;
+                    color: #999;
+                  "
+                                      />
+                                    }
+                                  </div>
+                                </label>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-group has-float-label">
+                                  <input
+                                    class="form-control"
+                                    type="email"
+                                    required
+                                    email
+                                    ngModel
+                                    [(ngModel)]="preboardingData.email"
+                                    #email="ngModel"
+                                    name="email"
+                                    />
+                                    <span>Email *</span>
+                                    @if (!email.valid && addcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Email is required!
+                                      </div>
+                                    }
+                                    @if (email?.errors?.email && addcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Email must be a valid address!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <div class="col-md-3">
+                                  <label class="form-group has-float-label">
+                                    <input
+                                      class="form-control"
+                                      type="officalEmail"
+                                      email
+                                      ngModel
+                                      #officalEmail="ngModel"
+                                      name="officalEmail"
+                                      />
+                                      <span>Official Email</span>
+                                      @if (officalEmail?.errors?.email && addcomp.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Offical Email must be a valid address!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <label class="form-group has-float-label">
+                                      <input
+                                        class="form-control"
+                                        type="number"
+                                        ngModel
+                                        #othernumber="ngModel"
+                                        [min]="isPihMobileNo ? 8 : 10"
+                                        [max]="isPihMobileNo ? 14 : 10"
+                                        name="othernumber"
+                                        />
+                                        <span>{{ othernumberLabel }}</span>
+                                        @if (!isPihMobileNo) {
+                                          <div class="pihMobile">
+                                            @if (
+                                              addcomp.value.othernumber &&
+                                              addcomp.value.othernumber.toString().length !== 10 &&
+                                              addcomp.submitted
+                                              ) {
+                                              <div
+                                                class="invalid-tooltip"
+                                                >
+                                                {{ othernumberLabel }} should be of 10 digits!
+                                              </div>
+                                            }
+                                          </div>
+                                        }
+                                        @if (isPihMobileNo) {
+                                          <div class="pihMobile">
+                                            @if (
+                                              addcomp.value.othernumber &&
+                                              (addcomp.value.othernumber.toString().length < 8 ||
+                                              addcomp.value.othernumber.toString().length > 14) &&
+                                              addcomp.submitted
+                                              ) {
+                                              <div
+                                                class="invalid-tooltip"
+                                                >
+                                                {{ othernumberLabel }} should be between 8 to 14 digits!
+                                              </div>
+                                            }
+                                          </div>
+                                        }
+                                        @if (!othernumber.valid && addcomp.submitted) {
+                                          <div class="invalid-tooltip">
+                                            {{ othernumberLabel }} is Required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-3">
+                                      <label class="form-group has-float-label">
+                                        <input
+                                          class="form-control"
+                                          type="number"
+                                          ngModel
+                                          #cugNumber="ngModel"
+                                          [min]="isPihMobileNo ? 8 : 10"
+                                          [max]="isPihMobileNo ? 14 : 10"
+                                          name="cugNumber"
+                                          />
+                                          <span>Cug Number</span>
+                                          @if (!isPihMobileNo) {
+                                            <div class="pihMobile">
+                                              @if (
+                                                addcomp.value.cugNumber &&
+                                                addcomp.value.cugNumber.toString().length !== 10 &&
+                                                addcomp.submitted
+                                                ) {
+                                                <div
+                                                  class="invalid-tooltip"
+                                                  >
+                                                  Cug Number should be of 10 digits!
+                                                </div>
+                                              }
+                                            </div>
+                                          }
+                                          @if (isPihMobileNo) {
+                                            <div class="pihMobile">
+                                              @if (
+                                                addcomp.value.cugNumber &&
+                                                (addcomp.value.cugNumber.toString().length < 8 ||
+                                                addcomp.value.cugNumber.toString().length > 14) &&
+                                                addcomp.submitted
+                                                ) {
+                                                <div
+                                                  class="invalid-tooltip"
+                                                  >
+                                                  Cug Number should be between 8 to 14 digits!
+                                                </div>
+                                              }
+                                            </div>
+                                          }
+                                          @if (!cugNumber.valid && addcomp.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Cug Number is Required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      @if (usertype != 2) {
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select
+                                              placeholder="Choose your option"
+                                              ngModel
+                                              #companyMasterID="ngModel"
+                                              (change)="getAllData($event)"
+                                              name="companyMasterID"
+                                              [(ngModel)]="selectedCompany"
+                                              required
+                                              >
+                                              @for (product of product; track product) {
+                                                <ng-option [value]="product.companyMasterID">
+                                                  {{ product.companyName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Select Company *</span>
+                                            @if (!companyMasterID.valid && addcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Company is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                      }
+                                    </div>
+                                    <div class="row">
+                                      @if (usertype != 2) {
+                                        <div class="col-md-6">
+                                          <label class="form-group has-float-label">
+                                            <ng-select
+                                              placeholder="Choose your option"
+                                              ngModel
+                                              #branchID="ngModel"
+                                              [(ngModel)]="selectedbranch"
+                                              name="branchID"
+                                              required
+                                              >
+                                              @for (item of allbranch; track item) {
+                                                <ng-option [value]="item.branchMasterID">
+                                                  {{ item.branchName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Select Branch *</span>
+                                            @if (!branchID.valid && addcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Branch is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                      }
+                                      @if (usertype != 2) {
+                                        <div class="col-md-6">
+                                          <label class="form-group has-float-label">
+                                            <input
+                                              class="form-control"
+                                              type="Date"
+                                              ngModel
+                                              #applicablebranchDate="ngModel"
+                                              [(ngModel)]="selectedbranchdate"
+                                              required
+                                              name="applicablebranchDate"
+                                              />
+                                              <span>Applicable Branch Date *</span>
+                                              @if (!applicablebranchDate.valid && addcomp.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  Applicable Date is required!
+                                                </div>
+                                              }
+                                            </label>
+                                          </div>
+                                        }
+                                        @if (usertype != 2) {
+                                          <div class="col-md-6">
+                                            <label class="form-group has-float-label">
+                                              <ng-select
+                                                placeholder="Choose your option"
+                                                ngModel
+                                                #departmentID="ngModel"
+                                                [(ngModel)]="selecteddepartment"
+                                                name="departmentID"
+                                                required
+                                                >
+                                                @for (item of alldepartment; track item) {
+                                                  <ng-option [value]="item.departmentId">
+                                                    {{ item.departmentName }}
+                                                  </ng-option>
+                                                }
+                                              </ng-select>
+                                              <span>Select Department *</span>
+                                              @if (!departmentID.valid && addcomp.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  Department is required!
+                                                </div>
+                                              }
+                                            </label>
+                                          </div>
+                                        }
+                                        @if (usertype != 2) {
+                                          <div class="col-md-6">
+                                            <label class="form-group has-float-label">
+                                              <input
+                                                class="form-control"
+                                                type="Date"
+                                                ngModel
+                                                #applicabledepDate="ngModel"
+                                                [(ngModel)]="selecteddepartmentdate"
+                                                required
+                                                name="applicabledepDate"
+                                                />
+                                                <span>Applicable Department Date *</span>
+                                                @if (!applicabledepDate.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Applicable Date is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                          @if (usertype != 2) {
+                                            <div class="col-md-6">
+                                              <label class="form-group has-float-label">
+                                                <ng-select
+                                                  placeholder="Choose your option"
+                                                  ngModel
+                                                  #designationID="ngModel"
+                                                  [(ngModel)]="selecteddesignation"
+                                                  name="designationID"
+                                                  required
+                                                  (change)="getDesignationWiseDocumentType()"
+                                                  >
+                                                  @for (item of alldesignation; track item) {
+                                                    <ng-option [value]="item.designationId">
+                                                      {{ item.designationName }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                                <span>Select Designation *</span>
+                                                @if (!designationID.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Designation is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                          @if (usertype != 2) {
+                                            <div class="col-md-6">
+                                              <label class="form-group has-float-label">
+                                                <input
+                                                  class="form-control"
+                                                  type="Date"
+                                                  ngModel
+                                                  #applicabledesDate="ngModel"
+                                                  [(ngModel)]="selecteddesignationdate"
+                                                  required
+                                                  name="applicabledesDate"
+                                                  />
+                                                  <span>Applicable Designation Date *</span>
+                                                  @if (!applicabledesDate.valid && addcomp.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      Applicable Date is required!
+                                                    </div>
+                                                  }
+                                                </label>
+                                              </div>
+                                            }
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-md-5">
+                                              <label class="form-group has-float-label">
+                                                <ng-select
+                                                  placeholder="Choose your option"
+                                                  ngModel
+                                                  #role="ngModel"
+                                                  [(ngModel)]="selectedRole"
+                                                  name="role"
+                                                  required
+                                                  >
+                                                  @for (item of allRoles; track item) {
+                                                    <ng-option [value]="item.roleMasterID">
+                                                      {{ item.roleName }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                                <span>Select Role *</span>
+                                                @if (!role.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Role is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          </div>
+                                          <hr />
+                                          <div class="row">
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <input
+                                                  class="form-control"
+                                                  type="date"
+                                                  ngModel
+                                                  #dob="ngModel"
+                                                  name="dob"
+                                                  [max]="currDate"
+                                                  />
+                                                  <span>Date Of Birth</span>
+                                                </label>
+                                              </div>
+                                              <div class="col-md-4">
+                                                <label class="form-group has-float-label">
+                                                  <input
+                                                    class="form-control"
+                                                    type="date"
+                                                    ngModel
+                                                    #joiningDate="ngModel"
+                                                    name="joiningDate"
+                                                    [(ngModel)]="joining_Date"
+                                                    required
+                                                    />
+                                                    <span>Joining Date *</span>
+                                                    @if (!joiningDate.valid && addcomp.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Joining Date is required!
+                                                      </div>
+                                                    }
+                                                  </label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                  <label>Employee Type *</label>
+                                                  &nbsp;&nbsp;
+                                                  <input
+                                                    type="radio"
+                                                    name="employeeType"
+                                                    ngModel
+                                                    #employeeType="ngModel"
+                                                    value="national"
+                                                    [(ngModel)]="employeeType1"
+                                                    (change)="getDesignationWiseDocumentType()"
+                                                    />
+                                                    &nbsp;
+                                                    <label for="html">National</label>
+                                                    &nbsp;&nbsp;
+                                                    <input
+                                                      type="radio"
+                                                      name="employeeType"
+                                                      ngModel
+                                                      #employeeType="ngModel"
+                                                      value="expat"
+                                                      [(ngModel)]="employeeType1"
+                                                      (change)="getDesignationWiseDocumentType()"
+                                                      />
+                                                      &nbsp;
+                                                      <label for="html">Expat</label>
+                                                      <span> &nbsp;&nbsp; </span>
+                                                      @if (!employeeType.valid && addcomp.submitted) {
+                                                        <div class="invalid-tooltip">
+                                                          Employee Type is required!
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                  </div>
+                                                  <div class="row">
+                                                    <div class="col-md-7">
+                                                      <label>Attendance From *</label>
+                                                      &nbsp;&nbsp;
+                                                      <input
+                                                        type="radio"
+                                                        name="attendanceFrom"
+                                                        ngModel
+                                                        #attendanceFrom="ngModel"
+                                                        (change)="onAttendanceChange($event)"
+                                                        [value]="attendanceFromENUM.MOBILE"
+                                                        [(ngModel)]="attendanceFrom1"
+                                                        />
+                                                        &nbsp;
+                                                        <label for="html">Mobile</label>
+                                                        &nbsp;&nbsp;
+                                                        <input
+                                                          type="radio"
+                                                          name="attendanceFrom"
+                                                          ngModel
+                                                          #attendanceFrom="ngModel"
+                                                          (change)="onAttendanceChange($event)"
+                                                          [value]="attendanceFromENUM.BIOMETRIC"
+                                                          [(ngModel)]="attendanceFrom1"
+                                                          />
+                                                          &nbsp;
+                                                          <label for="html">Biometric</label>
+                                                          &nbsp;&nbsp;
+                                                          <input
+                                                            type="radio"
+                                                            name="attendanceFrom"
+                                                            ngModel
+                                                            #attendanceFrom="ngModel"
+                                                            (change)="onAttendanceChange($event)"
+                                                            [value]="attendanceFromENUM.MOBILEANDBIOMETRIC"
+                                                            [(ngModel)]="attendanceFrom1"
+                                                            />
+                                                            &nbsp;
+                                                            <label for="html">Mobile & Biometric</label>
+                                                            @if (!attendanceFrom.valid && addcomp.submitted) {
+                                                              <div class="invalid-tooltip">
+                                                                Attendance From is required!
+                                                              </div>
+                                                            }
+                                                          </div>
+                                                          @if (
+                                                            attendanceFrom1 == attendanceFromENUM.BIOMETRIC ||
+                                                            attendanceFrom1 == attendanceFromENUM.MOBILEANDBIOMETRIC
+                                                            ) {
+                                                            <div
+                                                              class="col-md-2"
+                                                              >
+                                                              <label class="form-group has-float-label">
+                                                                <ng-select
+                                                                  placeholder="Choose your option"
+                                                                  ngModel
+                                                                  #serialno="ngModel"
+                                                                  [multiple]="true"
+                                                                  name="serialno"
+                                                                  [closeOnSelect]="false"
+                                                                  [(ngModel)]="selectedSerialNo"
+                                                                  >
+                                                                  @for (serialnumber of biometricserial; track serialnumber) {
+                                                                    <ng-option [value]="serialnumber">
+                                                                      {{ serialnumber }}
+                                                                    </ng-option>
+                                                                  }
+                                                                </ng-select>
+                                                                <span>Select Biometric Serial No</span>
+                                                              </label>
+                                                            </div>
+                                                          }
+                                                          @if (
+                                                            attendanceFrom1 == attendanceFromENUM.BIOMETRIC ||
+                                                            attendanceFrom1 == attendanceFromENUM.MOBILEANDBIOMETRIC
+                                                            ) {
+                                                            <div
+                                                              class="col-md-3"
+                                                              >
+                                                              <label class="form-group has-float-label">
+                                                                <input
+                                                                  class="form-control"
+                                                                  type="text"
+                                                                  ngModel
+                                                                  #biometricCode="ngModel"
+                                                                  name="biometricCode"
+                                                                  [(ngModel)]="selectedbiometricCode"
+                                                                  />
+                                                                  <span>Biometric Code</span>
+                                                                </label>
+                                                              </div>
+                                                            }
+                                                          </div>
+                                                          <hr />
+                                                          <div class="row">
+                                                            <div class="col-md-3">
+                                                              <label>Overtime Applicable *</label>
+                                                              &nbsp;&nbsp;
+                                                              <input type="radio" name="overtime" ngModel #overtime="ngModel" value="1" required />
+                                                              &nbsp;
+                                                              <label for="html">Yes</label>
+                                                              &nbsp;&nbsp;
+                                                              <input type="radio" name="overtime" ngModel #overtime="ngModel" value="0" required />
+                                                              &nbsp;
+                                                              <label for="html">No</label>
+                                                              <span> &nbsp;&nbsp; </span>
+                                                              @if (!overtime.valid && addcomp.submitted) {
+                                                                <div class="invalid-tooltip">
+                                                                  Overtime is required!
+                                                                </div>
+                                                              }
+                                                            </div>
+                                                          </div>
+                                                          @if (showMyContainer) {
+                                                            <div>
+                                                              <div class="row">
+                                                                <div class="col-md-12">
+                                                                  <h5>Upload Joining Document</h5>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                  <hr />
+                                                                </div>
+                                                              </div>
+                                                              @for (item of joiningDocumentData; track item; let i = $index) {
+                                                                <div class="row">
+                                                                  <div class="col-md-12">
+                                                                    <span>{{ item['joiningDocumentType.documentName'] }}</span>
+                                                                  </div>
+                                                                  <div class="col-md-12">
+                                                                    <br />
+                                                                  </div>
+                                                                  <div class="col-md-3">
+                                                                    <label class="form-group has-float-label">
+                                                                      @if (hasSingleAttachment(item)) {
+                                                                        <div>
+                                                                          <button
+                                                                            type="button"
+                                                                            class="btn btn-primary mr-2"
+                                                                            (click)="viewDoc(apiUrl + item.attachment[0])"
+                                                                            >
+                                                                            View
+                                                                          </button>
+                                                                          <button type="button" class="btn btn-danger" (click)="item.attachment = []">
+                                                                            Delete
+                                                                          </button>
+                                                                        </div>
+                                                                      }
+                                                                      @if (shouldShowInput(item)) {
+                                                                        <input
+                                                                          class="form-control"
+                                                                          type="file"
+                                                                          ngModel
+                                                                          [accept]="item['joiningDocumentType.documentFileType']"
+                                                                          #attachment="ngModel"
+                                                                          name="attachment{{ i }}"
+                                                                          (change)="onFileChange($event, i)"
+                                                                          required
+                                                                          />
+                                                                          <span>{{ item['joiningDocumentType.documentName'] }} *</span>
+                                                                          @if (!attachment.valid && addcomp.submitted && shouldShowInput(item)) {
+                                                                            <div
+                                                                              class="invalid-tooltip"
+                                                                              >
+                                                                              {{ item['joiningDocumentType.documentName'] }} is required!
+                                                                            </div>
+                                                                          }
+                                                                        }
+                                                                      </label>
+                                                                    </div>
+                                                                    @if (item['joiningDocumentType.hasFromDate']) {
+                                                                      <div class="col-md-3">
+                                                                        <label class="form-group has-float-label">
+                                                                          <input
+                                                                            class="form-control"
+                                                                            type="date"
+                                                                            ngModel
+                                                                            #hasFromDate="ngModel"
+                                                                            name="hasFromDate{{ i }}"
+                                                                            [(ngModel)]="item.fromDate"
+                                                                            [required]="item['joiningDocumentType.hasFromDate']"
+                                                                            />
+                                                                            <span>
+                                                                              {{ item['joiningDocumentType.documentName'] }} From Date
+                                                                              @if (item['joiningDocumentType.hasFromDate']) {
+                                                                                <span>*</span>
+                                                                              }
+                                                                            </span>
+                                                                            @if (
+                                                                              !hasFromDate.valid && addcomp.submitted && item['joiningDocumentType.hasFromDate']
+                                                                              ) {
+                                                                              <div
+                                                                                class="invalid-tooltip"
+                                                                                >
+                                                                                {{ item['joiningDocumentType.documentName'] }} From Date is required!
+                                                                              </div>
+                                                                            }
+                                                                          </label>
+                                                                        </div>
+                                                                      }
+                                                                      @if (item['joiningDocumentType.hasIssueDate']) {
+                                                                        <div class="col-md-3">
+                                                                          <label class="form-group has-float-label">
+                                                                            <input
+                                                                              class="form-control"
+                                                                              type="date"
+                                                                              ngModel
+                                                                              #hasIssueDate="ngModel"
+                                                                              name="hasIssueDate{{ i }}"
+                                                                              [(ngModel)]="item.issueDate"
+                                                                              [required]="item['joiningDocumentType.hasIssueDate']"
+                                                                              />
+                                                                              <span>
+                                                                                {{ item['joiningDocumentType.documentName'] }} Issue Date
+                                                                                @if (item['joiningDocumentType.hasIssueDate']) {
+                                                                                  <span>*</span>
+                                                                                }
+                                                                              </span>
+                                                                              @if (
+                                                                                !hasIssueDate.valid &&
+                                                                                addcomp.submitted &&
+                                                                                item['joiningDocumentType.hasIssueDate']
+                                                                                ) {
+                                                                                <div
+                                                                                  class="invalid-tooltip"
+                                                                                  >
+                                                                                  {{ item['joiningDocumentType.documentName'] }} Issue Date is required!
+                                                                                </div>
+                                                                              }
+                                                                            </label>
+                                                                          </div>
+                                                                        }
+                                                                        @if (item['joiningDocumentType.hasExpiryDate']) {
+                                                                          <div class="col-md-3">
+                                                                            <label class="form-group has-float-label">
+                                                                              <input
+                                                                                class="form-control"
+                                                                                type="date"
+                                                                                ngModel
+                                                                                #hasExpiryDate="ngModel"
+                                                                                name="hasExpiryDate{{ i }}"
+                                                                                [(ngModel)]="item.expiryDate"
+                                                                                [required]="item['joiningDocumentType.hasExpiryDate']"
+                                                                                />
+                                                                                <span>
+                                                                                  {{ item['joiningDocumentType.documentName'] }} Expiry Date
+                                                                                  @if (item['joiningDocumentType.hasExpiryDate']) {
+                                                                                    <span>*</span>
+                                                                                  }
+                                                                                </span>
+                                                                                @if (
+                                                                                  !hasExpiryDate.valid &&
+                                                                                  addcomp.submitted &&
+                                                                                  item['joiningDocumentType.hasExpiryDate']
+                                                                                  ) {
+                                                                                  <div
+                                                                                    class="invalid-tooltip"
+                                                                                    >
+                                                                                    {{ item['joiningDocumentType.documentName'] }} Expiry Date is required!
+                                                                                  </div>
+                                                                                }
+                                                                              </label>
+                                                                            </div>
+                                                                          }
+                                                                          @if (item['joiningDocumentType.hasIdentificationNumber']) {
+                                                                            <div class="col-md-3">
+                                                                              <label class="form-group has-float-label">
+                                                                                <input
+                                                                                  class="form-control"
+                                                                                  type="text"
+                                                                                  ngModel
+                                                                                  #hasIdentificationNumber="ngModel"
+                                                                                  name="hasIdentificationNumber{{ i }}"
+                                                                                  [(ngModel)]="item.identificationNumber"
+                                                                                  [required]="item['joiningDocumentType.hasIdentificationNumber']"
+                                                                                  />
+                                                                                  <span>
+                                                                                    {{ item['joiningDocumentType.documentName'] }} Identification Number
+                                                                                    @if (item['joiningDocumentType.hasIdentificationNumber']) {
+                                                                                      <span>*</span>
+                                                                                    }
+                                                                                  </span>
+                                                                                  @if (
+                                                                                    !hasIdentificationNumber.valid &&
+                                                                                    addcomp.submitted &&
+                                                                                    item['joiningDocumentType.hasIdentificationNumber']
+                                                                                    ) {
+                                                                                    <div
+                                                                                      class="invalid-tooltip"
+                                                                                      >
+                                                                                      {{ item['joiningDocumentType.documentName'] }} Identification Number is required!
+                                                                                    </div>
+                                                                                  }
+                                                                                </label>
+                                                                              </div>
+                                                                            }
+                                                                          </div>
+                                                                        }
+                                                                      </div>
+                                                                    }
+                                                                    <div class="col-md-12">
+                                                                      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                                                                      <button
+                                                                        class="btn btn-danger btn-shadow mt-4"
+                                                                        [routerLink]="adminRoot + '/preboardings/hr_preboarding'"
+                                                                        style="margin-left: 2%"
+                                                                        >
+                                                                        Cancel
+                                                                      </button>
+                                                                    </div>
+                                                                  </form>
+                                                                }
+                                                              </div>
+                                                            </div>
+
+                                                            <simple-notifications
+                                                              [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                                                            ></simple-notifications>

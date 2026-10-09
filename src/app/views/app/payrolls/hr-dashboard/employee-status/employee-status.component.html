@@ -1,0 +1,141 @@
+@if (defaultValue2) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <!-- <h5 class="card-title">EMPLOYEE STATUS</h5> -->
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">EMPLOYEE STATUS</h5>
+        <button class="btn btn-primary btn-shadow btn-sm" (click)="navigateToEmployeeData()">
+          View
+        </button>
+      </div>
+      &nbsp;&nbsp;
+      &nbsp;&nbsp;
+      <!-- <form #datefilter2="ngForm" novalidate (change)="getDashboardEmp($event)">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              [(ngModel)]="defaultValue2.cName"
+              ngModel
+              #cid22="ngModel"
+              name="cid22"
+              (change)="getDashboardEmp($event)"
+              >
+              <ng-option *ngFor="let data of company" [value]="data.companyMasterID">
+                {{ data.companyName }}
+              </ng-option>
+            </ng-select>
+            <span>Select Company</span>
+          </label>
+        </div>
+      </div>
+    </form> -->
+    <div class="row">
+      <div class="col-md-3" cursor="none">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card" style="margin-bottom: 27px; cursor: default">
+            <div class="card-body text-center iconsminds-business-man iconsminds icon">
+              <p class="card-text font-weight-semibold mb-0">Total Employee</p>
+              @if (rows2.length != 0) {
+                <p class="lead text-center">
+                  {{ rows2[0].total_employee }}
+                </p>
+              }
+              @if (rows2.length == 0) {
+                <p class="lead text-center">{{ ' ' }}</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3" cursor="none">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card" style="margin-bottom: 27px; cursor: default">
+            <div class="card-body text-center iconsminds icon">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                  class="bi bi-person-check" viewBox="0 0 16 16">
+                  <path
+                    d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                    <path
+                      d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                    </svg>
+                  </span>
+                  <p class="card-text font-weight-semibold mb-0">Total Active</p>
+                  @if (rows2.length != 0) {
+                    <p class="lead text-center">{{ rows2[0].total_active }}</p>
+                  }
+                  @if (rows2.length == 0) {
+                    <p class="lead text-center">{{ ' ' }}</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3" cursor="none">
+            <div class="icon-row-item" style="width: inherit">
+              <div class="card" style="margin-bottom: 27px; cursor: default">
+                <div class="card-body text-center iconsminds icon">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                      class="bi bi-person-slash" viewBox="0 0 16 16">
+                      <path
+                        d="M13.879 10.414a2.501 2.501 0 0 0-3.465 3.465l3.465-3.465Zm.707.707-3.465 3.465a2.501 2.501 0 0 0 3.465-3.465Zm-4.56-1.096a3.5 3.5 0 1 1 4.949 4.95 3.5 3.5 0 0 1-4.95-4.95ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                      </svg>
+                    </span>
+                    <p class="card-text font-weight-semibold mb-0">Total Deactive</p>
+                    @if (rows2.length != 0) {
+                      <p class="lead text-center">
+                        {{ rows2[0].total_deactive }}
+                      </p>
+                    }
+                    @if (rows2.length == 0) {
+                      <p class="lead text-center">{{ ' ' }}</p>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3" cursor="none">
+              <div class="icon-row-item" style="width: inherit">
+                <div class="card" style="margin-bottom: 27px; cursor: default">
+                  <div class="card-body text-center iconsminds icon">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                        class="bi bi-person-x" viewBox="0 0 16 16">
+                        <path
+                          d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                          <path
+                            d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708Z" />
+                          </svg>
+                        </span>
+                        <p class="card-text font-weight-semibold mb-0">Total Left Employee</p>
+                        @if (rows2.length != 0) {
+                          <p class="lead text-center">
+                            {{ rows2[0].total_left_employee }}
+                          </p>
+                        }
+                        @if (rows2.length == 0) {
+                          <p class="lead text-center">{{ ' ' }}</p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              @if (this.showloader == 'true') {
+                <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              }
+            </div>
+          </div>
+        }

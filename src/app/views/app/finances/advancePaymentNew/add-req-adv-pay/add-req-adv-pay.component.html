@@ -1,0 +1,50 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Request for Advance Payment</h5>
+
+    <form #addreqadvancepay="ngForm" novalidate (ngSubmit)="(onSubmit)">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" required ngModel #advanceAmount="ngModel" name="advanceAmount" />
+            <span>Advance Amount *</span>
+            @if (!advanceAmount.valid && addreqadvancepay.submitted) {
+              <div class="invalid-tooltip">
+                Advance Amount is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <textarea class="form-control" type="text" required ngModel #Description="ngModel"
+            name="Description"></textarea>
+            <span>Description*</span>
+            @if (!Description.valid && addreqadvancepay.submitted) {
+              <div class="invalid-tooltip">
+                Description is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <br />
+
+      <button class="btn btn-primary mr-2" type="submit" [disabled]="isdisabled" (click)="onSubmit()">
+        {{ 'submit' | translate }}
+      </button>
+      <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/finances/advancePaymentNew'"
+        style="margin-left: 2%">
+        Cancel
+      </button>
+
+    </form>
+  </div>
+</div>
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

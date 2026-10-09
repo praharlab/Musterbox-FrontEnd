@@ -1,0 +1,43 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Org Authorizaion Master</h5>
+
+    <form #addOrgAuthTypemaster="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #orgAuthorizationType="ngModel"
+              name="orgAuthorizationType"
+              />
+              <span>Org Authorizaion Master *</span>
+              @if (!orgAuthorizationType.valid && addOrgAuthTypemaster.submitted) {
+                <div
+                  class="invalid-tooltip"
+                  >
+                  Org Authorizaion Master is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/superadminmenus/orgAuthorizationType'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

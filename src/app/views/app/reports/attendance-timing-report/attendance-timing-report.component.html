@@ -1,0 +1,269 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Attendance Timing Report" [showOrderBy]="false" [showSearch]="false"
+  [showDisplayMode]="false" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              (change)="selectcompany($event)" [(ngModel)]="company_id" required>
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName"
+              groupBy="selectedAllGroup" (ngModelChange)="selectbranch()" [(ngModel)]="selectedBranch"
+              [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="branchMasterID"
+              [closeOnSelect]="false" ngModel #branch="ngModel" name="branch">
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                  [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alldepartment" [multiple]="true" bindLabel="departmentName"
+                groupBy="selectedAllGroup" (ngModelChange)="selectdepartment()"
+                [(ngModel)]="selectedDepartment" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                bindValue="departmentId" [closeOnSelect]="false" ngModel #department="ngModel"
+                name="department">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Department</span>
+              </label>
+            </div>
+
+            <!-- select designation -->
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="alldesignation" [multiple]="true" bindLabel="designationName"
+                  groupBy="selectedAllGroup" (ngModelChange)="selectdesig()" [(ngModel)]="selecteddesig"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="designationId"
+                  [closeOnSelect]="false" ngModel #designation="ngModel" name="designation">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{standalone: true}" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Designation</span>
+                </label>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="allDivision" [multiple]="true" bindLabel="divisionName"
+                    groupBy="selectedAllGroup" (ngModelChange)="selectdivision()" [(ngModel)]="selectedDivision"
+                    [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="id"
+                    [closeOnSelect]="false" ngModel #division="ngModel" name="division">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Division</span>
+                  </label>
+                </div>
+
+                <!-- select working area -->
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="allWorkingArea" [multiple]="true" bindLabel="workingAreaName"
+                      groupBy="selectedAllGroup" (ngModelChange)="selectWorkingArea()"
+                      [(ngModel)]="selectedWorkingArea" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                      bindValue="id" [closeOnSelect]="false" ngModel #workingArea="ngModel" name="workingArea">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Working Area</span>
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label>Employee Type *</label>
+                    &nbsp;&nbsp;
+                    <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="national" [required]="!selectedEmployeeType"
+                      [(ngModel)]="selectedEmployeeType" (ngModelChange)="selectEmployeeType()" />
+                      &nbsp;
+                      <label for="html">National</label>
+                      &nbsp;&nbsp;
+                      <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="expat" [required]="!selectedEmployeeType"
+                        [(ngModel)]="selectedEmployeeType" (ngModelChange)="selectEmployeeType()" />
+                        &nbsp;
+                        <label for="html">Expat</label>
+                        <span> &nbsp;&nbsp; </span>
+                        @if (!employeeType.valid && datefilter.submitted) {
+                          <div class="invalid-tooltip">
+                            Employee Type is required!
+                          </div>
+                        }
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select [items]="alluser" [multiple]="true" bindLabel="displayName"
+                            groupBy="selectedAllGroup" required [selectableGroup]="true"
+                            [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false" ngModel
+                            #user="ngModel" name="user" [(ngModel)]="selectedUser">
+                            <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectall"
+                                [ngModelOptions]="{standalone: true}" />
+                                Select All
+                              </ng-template>
+                            </ng-select>
+                            <span>Select User *</span>
+                            @if (!user.valid && datefilter.submitted) {
+                              <div class="invalid-tooltip">
+                                User is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+
+                        <ng-container>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate" [required]="'national' === selectedEmployeeType" />
+                              <span>From Date *</span>
+                              @if (!fromdate.valid && datefilter.submitted) {
+                                <div class="invalid-tooltip">
+                                  From Date is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" [required]="'national' === selectedEmployeeType" />
+                              <span>To Date *</span>
+                              @if (!todate.valid && datefilter.submitted) {
+                                <div class="invalid-tooltip">
+                                  To Date is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                        </ng-container>
+
+
+                        <div class="col-md-12">
+                          <button class="btn btn-primary form-group" type="submit">
+                            {{ 'forms.submit' | translate }}
+                          </button>
+                          &nbsp;&nbsp;
+                          <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+                            Clear
+                          </button>
+                          @if (rows && rows.length != 0) {
+                            <button class="btn btn-success form-group ml-2" type="button" (click)="download()"
+                              >
+                              Download CSV
+                            </button>
+                          }
+                          <!-- <button
+                          class="btn btn-success form-group ml-2"
+                          (click)="convert()"
+                          *ngIf="rows  && rows.length != 0"
+                          >
+                          Download PDF
+                        </button> -->
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!-- <h3 style="text-align: center" *ngIf="rows  && rows.length==0">No Data Found</h3> -->
+              @if (rows) {
+                <div class="row">
+                  @if (rows && rows.length != 0) {
+                    <div class="col-12 mb-4 data-table-rows">
+                      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+                        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+                        (page)="onChange($event)">
+                        <ngx-datatable-column name="Sr.No" prop="srlNo" [flexGrow]="1.2" [width]="100" value="1">
+                          <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                            {{ filterData.limit * (filterData.page - 1) + rowIndex + 1 }}
+                          </ng-template>
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="End Pay Date" prop="endPayDate" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Employee Code" prop="employeeCode" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Employee Name" prop="displayName" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Employee Type" prop="employeeType" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Working Hours (standard  Hours Should be)" prop="workingHrs" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Hours Clocked" prop="hrsClocked" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Reg Hours Payable" prop="regHrsPayable" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Overtime1-hr (Normal Day and WeekOff)" prop="ot1" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        <ngx-datatable-column name="Overtime2 (Public Holiday)" prop="ot2" [flexGrow]="1.2"
+                        [width]="150"></ngx-datatable-column>
+                        @if (true) {
+                          <ngx-datatable-footer>
+                            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                              <div class="w-100 d-flex justify-content-center">
+                                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                                [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-footer>
+                        }
+                      </ngx-datatable>
+                    </div>
+                  }
+                </div>
+              }
+
+              <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+                <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+                <i class="simple-icon-arrow-left"></i>
+              </ng-template>
+              <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+                <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+                <i class="simple-icon-arrow-right"></i>
+              </ng-template>
+              <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+                <i class="simple-icon-arrow-right"></i>
+              </ng-template>
+              <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+                <i class="simple-icon-arrow-left"></i>
+              </ng-template>

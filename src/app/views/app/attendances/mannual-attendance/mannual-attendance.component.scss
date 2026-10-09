@@ -1,0 +1,107 @@
+body {
+  line-height: 1.6;
+  margin: 2em;
+  min-width: 990px;
+}
+td,
+th {
+  white-space: nowrap;
+  overflow: hidden;
+}
+th {
+  background-color: #134e4a;
+  color: #fff;
+  padding: 0.5em 1em;
+  border: 1px solid white;
+}
+
+td {
+  border-top: 1px solid #eee;
+  padding: 0.5em 1em;
+  text-align: center;
+}
+
+input {
+  cursor: pointer;
+}
+
+/* Column types */
+.missed-col {
+  background-color: #f00;
+}
+
+.missed-col {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+.missed-col1 {
+  background-color: #f00;
+}
+
+.missed-col1 {
+  background-color: lightgreen;
+  color: green;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-col2 {
+  background-color: #f00;
+}
+
+.missed-col2 {
+  background-color: lightyellow;
+  color: black;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-cols {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  width: 100%;
+}
+.missed-cols1 {
+  background-color: #f00;
+}
+
+.missed-cols1 {
+  background-color: lightgreen;
+  color: green;
+  text-align: center;
+  width: 100%;
+}
+
+.missed-cols2 {
+  background-color: #f00;
+}
+
+.missed-cols2 {
+  background-color: lightyellow;
+  color: black;
+  text-align: center;
+  width: 100%;
+}
+
+.name-col {
+  text-align: left;
+  width: 20% ;
+  padding: 17px;
+}
+
+
+
+.table-style {
+  overflow-x: auto;
+  margin-top: 10px;
+  font-size: 12px !important;
+}

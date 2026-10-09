@@ -1,0 +1,126 @@
+.price-top-part {
+  text-align: center;
+}
+
+.card .card-body {
+  justify-content: center;
+}
+
+.card {
+  height: 100% !important;
+}
+
+@media only screen and (min-width: 1200px) {
+  .col-md-3 {
+    flex: 0 0 16.66666666666667% !important;
+  }
+  .card .card-body {
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .col-md-3 {
+    flex: 0 0 20% !important;
+  }
+  .card .card-body {
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+@media only screen and (max-width: 922px) {
+  .col-md-3 {
+    flex: 0 0 25% !important;
+    margin-bottom: 5% !important;
+  }
+
+  .card .card-body {
+    padding: 0;
+    justify-content: center;
+  }
+
+  .card-body {
+    padding: 0;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .col-md-3 {
+    flex: 0 0 25% !important;
+    margin-bottom: 5% !important;
+  }
+
+  .card .card-body {
+    padding: 0;
+    justify-content: center;
+  }
+
+  .card-body {
+    padding: 0;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .col-md-3 {
+    flex: 0 0 33% !important;
+    margin-bottom: 5% !important;
+  }
+
+  .card .card-body {
+    padding: 0;
+    justify-content: center;
+  }
+
+  .card-body {
+    padding: 0;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .card {
+    height: 100% !important;
+  }
+
+  .col-md-3 {
+    flex: 0 0 50% !important;
+    margin-bottom: 5% !important;
+  }
+
+  .card .card-body {
+    padding: 0;
+  }
+
+  .card-body {
+    padding: 0;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+}

@@ -1,0 +1,745 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-2">
+        <h5 class="mb-4">Joining Details </h5>
+      </div>
+
+      <div class="col-md-10" style=" text-align: right;">
+        @if (isFNF) {
+          <button type="button" class="btn btn-outline-danger btn-xs">
+            FNF
+          </button>
+        }
+      </div>
+    </div>
+
+
+    <br />
+    @if (joiningdata) {
+      <form #joiningfrm="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          @if (employeeCodeType == 'manual' || employeeCodeType == null) {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #employeeCode="ngModel"
+                  [(ngModel)]="joiningdata.employeeCode" name="employeeCode" />
+                  <span>EmployeeCode</span>
+                </label>
+              </div>
+            }
+            @if (employeeCodeType != 'manual' && employeeCodeType != null) {
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #employeeCode="ngModel"
+                    [(ngModel)]="joiningdata.employeeCode" name="employeeCode" readonly />
+                    <span>EmployeeCode</span>
+                  </label>
+                </div>
+              }
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel #dob="ngModel" name="dob"
+                    [(ngModel)]="joiningdata.dob" (change)="changeDate()" [max]="todaydate" />
+                    <span>Date Of Birthh</span>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #joiningDate="ngModel"
+                      [ngModel]="joiningdata.joiningDate | date: 'yyyy-MM-dd'" name="joiningDate" required />
+                      <span>JoiningDate *</span>
+                      @if (!joiningDate.valid && joiningfrm.submitted) {
+                        <div class="invalid-tooltip">
+                          Joining Date Is Required !
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-3">
+                    <label>Employee Type *</label>
+                    &nbsp;&nbsp;
+                    <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="national"
+                      [(ngModel)]="employeeType1" />
+                      &nbsp;
+                      <label for="html">National</label>
+                      &nbsp;&nbsp;
+                      <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="expat"
+                        [(ngModel)]="employeeType1" />
+                        &nbsp;
+                        <label for="html">Expat</label>
+                        <span> &nbsp;&nbsp; </span>
+                        @if (!employeeType.valid && joiningfrm.submitted) {
+                          <div class="invalid-tooltip">
+                            Employee Type is required!
+                          </div>
+                        }
+                      </div>
+                      <!-- <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #nationality="ngModel"
+                          [(ngModel)]="joiningdata.nationality" name="nationality">
+                          <ng-option value="indian">Indian</ng-option>
+                          <ng-option value="nepali">Nepali</ng-option>
+                        </ng-select>
+                        <span>Nationality</span>
+                      </label>
+                    </div> -->
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #nationality="ngModel"
+                          [(ngModel)]="joiningdata.nationality" name="nationality">
+                          @for (nation of nationalityList; track nation; let i = $index) {
+                            <ng-option [value]="nation.name">
+                              {{nation.name}}
+                            </ng-option>
+                          }
+                        </ng-select>
+                        <span>Nationality</span>
+                      </label>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" #bloodgroup="ngModel" name="bloodgroup" ngModel
+                          [(ngModel)]="joiningdata.bloodgroup">
+                          <ng-option value="A+">A+</ng-option>
+                          <ng-option value="A-">A-</ng-option>
+                          <ng-option value="B+">B+</ng-option>
+                          <ng-option value="B-">B-</ng-option>
+                          <ng-option value="O+">O+</ng-option>
+                          <ng-option value="O-">O-</ng-option>
+                          <ng-option value="AB+">AB+</ng-option>
+                          <ng-option value="AB-">AB-</ng-option>
+                        </ng-select>
+                        <span>Blood Group</span>
+                      </label>
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" ngModel #adharCard="ngModel" [(ngModel)]="joiningdata.adharCard"
+                          name="adharCard" (blur)="validateadharNumber($event.target.value)" />
+                          <span>{{aadharCardNumber}}</span>
+                          @if (adharNumberError||(adharNumberError && joiningfrm.submitted)) {
+                            <div class="invalid-tooltip">
+                              Please enter valid Aadhar No!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #adharName="ngModel" [ngModel]="userName" name="adharName"
+                            (keydown)="preventNumber($event)" />
+                            <span>{{nameOnAadhar}}</span>
+                          </label>
+                        </div>
+                        @if (joiningdata.adharPhoto) {
+                          <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-primary btn-xs" style="margin-bottom: 5%"
+                            (click)="view(joiningdata.adharPhoto)">{{viewAadhar}}</button>
+                          </div>
+                        }
+                      </div>
+                      @if (showPanCard) {
+                        <div class="row">
+                          <div class="col-md-12">
+                            <hr />
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" ngModel #pancard="ngModel" [(ngModel)]="joiningdata.pancard"
+                                name="pancard" (blur)="validatePanCardNumber($event.target.value)" />
+                                <span>Pan Card No</span>
+                                @if (panCardError||(panCardError && joiningfrm.submitted)) {
+                                  <div class="invalid-tooltip">
+                                    Please enter valid Pan No!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            @if (joiningdata.panPhoto) {
+                              <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-primary btn-xs" style="margin-bottom: 5%"
+                                (click)="view(joiningdata.panPhoto)">{{ 'View Pan' | translate }}</button>
+                              </div>
+                            }
+                          </div>
+                        }
+                        <hr />
+                        <div class="row">
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" ngModel #pfNumber="ngModel" [(ngModel)]="joiningdata.pfNumber"
+                                name="pfNumber" (blur)="validatePFNumber($event.target.value)" />
+                                <span>{{pf_Number}}</span>
+                                @if (pfNumberError || (pfNumberError && joiningfrm.submitted)) {
+                                  <div class="invalid-tooltip">
+                                    {{pf_Number}} is Invalid
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-3">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="date" ngModel #pfjoiningDate="ngModel"
+                                  [ngModel]="joiningdata.pfjoiningDate | date: 'yyyy-MM-dd'" name="pfjoiningDate" />
+                                  <span>{{pfJoiningDate}}</span>
+                                </label>
+                              </div>
+                              @if (showpfbankMasterID) {
+                                <div class="col-md-3">
+                                  <label class="form-group has-float-label">
+                                    <ng-select placeholder="Choose your option" ngModel #pfbankMasterID="ngModel"
+                                      [(ngModel)]="joiningdata.pfbankMasterID" name="pfbankMasterID">
+                                      @for (bankdata of bankdata; track bankdata; let i = $index) {
+                                        <ng-option [value]="bankdata.bankMasterID">
+                                          {{ bankdata.bankName }}
+                                        </ng-option>
+                                      }
+                                    </ng-select>
+                                    <span>{{pfBank}}</span>
+                                  </label>
+                                </div>
+                              }
+                              @if (showpfbankIFSC) {
+                                <div class="col-md-3">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="text" ngModel #pfbankIFSC="ngModel" name="pfbankIFSC"
+                                      [(ngModel)]="joiningdata.pfbankIFSC" (blur)="validateIfscCode1($event.target.value)" />
+                                      <span>{{pfBankIFSCCode}}</span>
+                                      @if (ifscError1 || (ifscError1 && joiningfrm.submitted)) {
+                                        <div class="invalid-tooltip">
+                                          {{pfBankIFSCCode}} is Invalid
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                }
+                              </div>
+                              <div class="row">
+                                @if (showpfbankAccountNo) {
+                                  <div class="col-md-3">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" ngModel #pfbankAccountNo="ngModel" name="pfbankAccountNo"
+                                        [(ngModel)]="joiningdata.pfbankAccountNo" />
+                                        <span>{{pfBankAccountNumber}}</span>
+                                      </label>
+                                    </div>
+                                  }
+                                  @if (showUanNumber) {
+                                    <div class="col-md-3">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="number" ngModel #uanNumber="ngModel" [(ngModel)]="joiningdata.uanNumber"
+                                          name="uanNumber" (blur)="validateUAN($event.target.value)" />
+                                          <span>UAN Number</span>
+                                          @if (UANNumberError || (UANNumberError && joiningfrm.submitted)) {
+                                            <div class="invalid-tooltip">
+                                              UAN Number is Invalid
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                  </div>
+                                  <hr />
+                                  <div class="row">
+                                    <div class="col-md-3">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="number" ngModel #esicNumber="ngModel" [(ngModel)]="joiningdata.esicNumber"
+                                          name="esicNumber" />
+                                          <span>{{esic_Number}}</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-3">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="date" ngModel #esicjoiningDate="ngModel"
+                                            [ngModel]="joiningdata.esicjoiningDate | date: 'yyyy-MM-dd'" name="esicjoiningDate" />
+                                            <span>{{esicJoiningDate}}</span>
+                                          </label>
+                                        </div>
+                                        @if (showesicEndMonth) {
+                                          <div class="col-md-3">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="month" ngModel #esicEndMonth="ngModel" [ngModel]="esicEndMonthData"
+                                                name="esicEndMonth" min="{{ final_date }}" />
+                                                <span>{{esicEnd_Month}}</span>
+                                              </label>
+                                            </div>
+                                          }
+                                        </div>
+                                        <hr />
+                                        <div class="row">
+                                          @if (!showBankBranch) {
+                                            <div class="col-md-3">
+                                              <label class="form-group has-float-label">
+                                                <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel"
+                                                  [(ngModel)]="joiningdata.bankMasterID" name="bankMasterID" required>
+                                                  @for (bankdata of bankdata; track bankdata; let i = $index) {
+                                                    <ng-option [value]="bankdata.bankMasterID">
+                                                      {{ bankdata.bankName }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                                <span>Select Bank*</span>
+                                                @if (!bankMasterID.valid && joiningfrm.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Selection is required Bank Master!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                          @if (showBankBranch) {
+                                            <div class="col-md-3">
+                                              <label class="form-group has-float-label">
+                                                <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel"
+                                                  [(ngModel)]="joiningdata.bankMasterID" name="bankMasterID" required
+                                                  (change)="onChangeBankBranchData($event)">
+                                                  @for (bankdata of bankdata; track bankdata; let i = $index) {
+                                                    <ng-option [value]="bankdata.bankMasterID">
+                                                      {{ bankdata.bankName }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                                <span>Select Bank*</span>
+                                                @if (!bankMasterID.valid && joiningfrm.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Selection is required Bank Master!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                          @if (showBankBranch) {
+                                            <div class="col-md-3">
+                                              <label class="form-group has-float-label">
+                                                <ng-select placeholder="Choose your option" ngModel #bankBranchID="ngModel"
+                                                  [(ngModel)]="joiningdata.bankBranchID" name="bankBranchID" (change)="onBankBranchChange($event)">
+                                                  @for (bankBranch of allBankBranch; track bankBranch; let i = $index) {
+                                                    <ng-option [value]="+bankBranch.bankBranchID">
+                                                      {{ bankBranch.bankBranchName }} ( {{ bankBranch.bankBranchCode }} )
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                                <span>Select Bank Branch</span>
+                                              </label>
+                                            </div>
+                                          }
+                                          <div class="col-md-3">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="text" ngModel #bankIFSC="ngModel" name="bankIFSC"
+                                                [(ngModel)]="joiningdata.bankIFSC" />
+                                                <span>{{bankIfscCodeLabel}}</span>
+                                                @if (ifscError || (ifscError && joiningfrm.submitted)) {
+                                                  <div class="invalid-tooltip">
+                                                    {{bankIfscCodeLabel}} is Invalid
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                            <div class="col-md-3">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="text" ngModel #bankAccountNo="ngModel" name="bankAccountNo"
+                                                  [(ngModel)]="joiningdata.bankAccountNo" />
+                                                  <span>Bank Account No</span>
+                                                </label>
+                                              </div>
+                                              <div class="col-md-3">
+                                                <label class="form-group has-float-label">
+                                                  <input class="form-control" type="text" ngModel #nameAsBank="ngModel" name="nameAsBank"
+                                                    [(ngModel)]="joiningdata.nameAsBank" />
+                                                    <span>Name (As On Bank)</span>
+                                                  </label>
+                                                </div>
+                                              </div>
+                                              <hr />
+                                              <div class="row">
+                                                <div class="col-md-7">
+                                                  <label>Attendance From *</label>
+                                                  &nbsp;&nbsp;
+                                                  <input type="radio" name="attendanceFrom" ngModel #attendanceFrom="ngModel"
+                                                    (change)="onAttendanceChange($event)" [value]="attendanceFromENUM.MOBILE" [(ngModel)]="attendanceFrom1" />
+                                                    &nbsp;
+                                                    <label for="html">Mobile</label>
+                                                    &nbsp;&nbsp;
+                                                    <input type="radio" name="attendanceFrom" ngModel #attendanceFrom="ngModel"
+                                                      (change)="onAttendanceChange($event)" [value]="attendanceFromENUM.BIOMETRIC"
+                                                      [(ngModel)]="attendanceFrom1" />
+                                                      &nbsp;
+                                                      <label for="html">Biometric</label>
+                                                      &nbsp;&nbsp;
+                                                      <input type="radio" name="attendanceFrom" ngModel #attendanceFrom="ngModel"
+                                                        (change)="onAttendanceChange($event)" [value]="attendanceFromENUM.MOBILEANDBIOMETRIC"
+                                                        [(ngModel)]="attendanceFrom1" />
+                                                        &nbsp;
+                                                        <label for="html">Mobile & Biometric</label>
+                                                        @if (!attendanceFrom.valid && joiningfrm.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Attendance From is required!
+                                                          </div>
+                                                        }
+                                                        <span> &nbsp; </span>
+                                                        <label for="html"></label>
+                                                      </div>
+                                                      @if (attendanceFrom1 == attendanceFromENUM.BIOMETRIC || attendanceFrom1 == attendanceFromENUM.MOBILEANDBIOMETRIC) {
+                                                        <div class="col-md-3"
+                                                          >
+                                                          <label class="form-group has-float-label">
+                                                            <ng-select placeholder="Choose your option" ngModel #serialno="ngModel" [multiple]="true" name="serialno"
+                                                              [closeOnSelect]="false" [(ngModel)]="selectedSerialNo">
+                                                              @for (serialnumber of biometricserial; track serialnumber) {
+                                                                <ng-option [value]="serialnumber">
+                                                                  {{ serialnumber }}
+                                                                </ng-option>
+                                                              }
+                                                            </ng-select>
+                                                            <span>Select Biometric Serial No</span>
+                                                          </label>
+                                                        </div>
+                                                      }
+                                                      @if (attendanceFrom1 == attendanceFromENUM.BIOMETRIC || attendanceFrom1 == attendanceFromENUM.MOBILEANDBIOMETRIC) {
+                                                        <div class="col-md-2"
+                                                          >
+                                                          <label class="form-group has-float-label">
+                                                            <input class="form-control" type="text" ngModel #biometricCode="ngModel" name="biometricCode"
+                                                              [(ngModel)]="selectedbiometricCode" />
+                                                              <span>Biometric Code</span>
+                                                            </label>
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      <hr />
+                                                      <div class="row">
+                                                        <div class="col-md-6">
+                                                          <label>{{salaryCalculation_Act}} *</label>
+                                                          &nbsp;
+                                                          <input type="radio" name="salaryCalculationAct" ngModel #salaryCalculationAct="ngModel"
+                                                            [(ngModel)]="joiningdata.salaryCalculationAct" value="S" required />
+                                                            &nbsp;
+                                                            <label for="html">{{shopActLabel}}</label>
+                                                            &nbsp;
+                                                            <input type="radio" name="salaryCalculationAct" ngModel #salaryCalculationAct="ngModel"
+                                                              [(ngModel)]="joiningdata.salaryCalculationAct" value="F" required />
+                                                              &nbsp;
+                                                              <label for="html">{{factoryAct}}</label>
+                                                              &nbsp;
+                                                              <input type="radio" name="salaryCalculationAct" ngModel #salaryCalculationAct="ngModel"
+                                                                [(ngModel)]="joiningdata.salaryCalculationAct" value="W" required />
+                                                                &nbsp;
+                                                                <label for="html">On Working Days</label>
+                                                                <br />
+                                                                <br />
+                                                                @if (!salaryCalculationAct.valid && joiningfrm.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    {{salaryCalculation_Act}} is required!
+                                                                  </div>
+                                                                }
+                                                              </div>
+                                                              <div class="col-md-6">
+                                                                <label style="margin-bottom: 0rem">Salary Type *</label>
+                                                                &nbsp;&nbsp;
+                                                                <input style="margin-bottom: 0rem" type="radio" name="salarytype" ngModel #salarytype="ngModel"
+                                                                  [(ngModel)]="joiningdata.salarytype" value="M" required />
+                                                                  &nbsp;
+                                                                  <label style="margin-bottom: 0rem" for="html">Manager</label>
+                                                                  &nbsp;&nbsp;
+                                                                  <input style="margin-bottom: 0rem" type="radio" name="salarytype" ngModel #salarytype="ngModel"
+                                                                    [(ngModel)]="joiningdata.salarytype" value="S" required />
+                                                                    &nbsp;
+                                                                    <label style="margin-bottom: 0rem" for="html">Staff</label>
+                                                                    &nbsp;&nbsp;
+                                                                    <input style="margin-bottom: 0rem" type="radio" name="salarytype" ngModel #salarytype="ngModel"
+                                                                      [(ngModel)]="joiningdata.salarytype" value="W" required />
+                                                                      &nbsp;
+                                                                      <label style="margin-bottom: 0rem" for="html">Wages</label>
+                                                                      @if (!salarytype.valid && joiningfrm.submitted) {
+                                                                        <div class="invalid-tooltip">
+                                                                          Salary Type is required!
+                                                                        </div>
+                                                                      }
+                                                                      <br>
+                                                                        <label>
+                                                                          (This is only for report purpose)
+                                                                          <br />
+                                                                          <br />
+                                                                        </label>
+                                                                        <br />
+                                                                      </div>
+                                                                      @if (showPayrollFrequencyData) {
+                                                                        <div class="col-md-4">
+                                                                          <label class="form-group has-float-label">
+                                                                            <ng-select [items]="payrollFrequencyType" ngModel #payrollFrequency="ngModel" required
+                                                                              name="payrollFrequency" [(ngModel)]="payroll_Frequency">
+                                                                            </ng-select>
+                                                                            <span>Payroll Frequency *</span>
+                                                                            @if (!payrollFrequency.valid && joiningfrm.submitted) {
+                                                                              <div class="invalid-tooltip">
+                                                                                Payroll Frequency Is Required !
+                                                                              </div>
+                                                                            }
+                                                                          </label>
+                                                                        </div>
+                                                                      }
+                                                                      <div class="col-md-4">
+                                                                        <label>Overtime Applicable *</label>
+                                                                        &nbsp;&nbsp;
+                                                                        <input type="radio" name="overtime" ngModel #overtime="ngModel" [(ngModel)]="values" value="1" required />
+                                                                        &nbsp;
+                                                                        <label for="html">Yes</label>
+                                                                        &nbsp;&nbsp;
+                                                                        <input type="radio" name="overtime" ngModel #overtime="ngModel" [(ngModel)]="values" value="0" required />
+                                                                        &nbsp;
+                                                                        <label for="html">No</label>
+                                                                        <span> &nbsp;&nbsp; </span>
+                                                                        @if (!overtime.valid && joiningfrm.submitted) {
+                                                                          <div class="invalid-tooltip">
+                                                                            Overtime is required!
+                                                                          </div>
+                                                                        }
+                                                                      </div>
+                                                                      <div class="col-md-4">
+                                                                        <label>Enable Full Month Presence *</label>
+                                                                        &nbsp;&nbsp;
+                                                                        <input type="radio" name="fullPresence" ngModel #fullPresence="ngModel" [(ngModel)]="fullMonthPresence"
+                                                                          value="1" required />
+                                                                          &nbsp;
+                                                                          <label for="html">Yes</label>
+                                                                          &nbsp;&nbsp;
+                                                                          <input type="radio" name="fullPresence" ngModel #fullPresence="ngModel" [(ngModel)]="fullMonthPresence"
+                                                                            value="0" required />
+                                                                            &nbsp;
+                                                                            <label for="html">No</label>
+                                                                            @if (!fullPresence.valid && joiningfrm.submitted) {
+                                                                              <div class="invalid-tooltip">
+                                                                                Enable Full Month Presence is required!
+                                                                              </div>
+                                                                            }
+                                                                          </div>
+                                                                        </div>
+                                                                        <hr />
+                                                                        <div class="row">
+                                                                          <div class="col-md-3">
+                                                                            <label class="form-group has-float-label">
+                                                                              <input class="form-control" type="number" ngModel #retirementAge="ngModel" name="retirementAge"
+                                                                                [(ngModel)]="joiningdata.retirementAge" (input)="changeDate()" />
+                                                                                <span>Retirement Age</span>
+                                                                              </label>
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                              <label class="form-group has-float-label">
+                                                                                <input class="form-control" type="date" ngModel #retirementDate="ngModel" name="retirementDate"
+                                                                                  [ngModel]="joiningdata.retirementDate | date: 'yyyy-MM-dd'" readonly />
+                                                                                  <span>Retirement Date</span>
+                                                                                </label>
+                                                                              </div>
+                                                                              <div class="col-md-3">
+                                                                                <label class="form-group has-float-label">
+                                                                                  <input class="form-control" type="number" required ngModel #noticeperiod="ngModel" name="noticeperiod"
+                                                                                    [(ngModel)]="joiningdata.noticePeriod" />
+                                                                                    <span>Notice Period(In Days) *</span>
+                                                                                  </label>
+                                                                                  @if (!noticeperiod.valid && joiningfrm.submitted) {
+                                                                                    <div class="invalid-tooltip">
+                                                                                      Notice Period is required!
+                                                                                    </div>
+                                                                                  }
+                                                                                </div>
+                                                                              </div>
+                                                                              <hr />
+                                                                              <div class="row">
+                                                                                <div class="col-md-3">
+                                                                                  <label class="form-group has-float-label">
+                                                                                    <ng-select [items]="employmentTypes" ngModel #employment="ngModel" required name="employment"
+                                                                                      (change)="changeEmp($event)" [(ngModel)]="joiningdata.employment">
+                                                                                    </ng-select>
+                                                                                    <span>Employment Type *</span>
+                                                                                    @if (!employment.valid && joiningfrm.submitted) {
+                                                                                      <div class="invalid-tooltip">
+                                                                                        Employement Is Required !
+                                                                                      </div>
+                                                                                    }
+                                                                                  </label>
+                                                                                </div>
+                                                                                @if (joiningdata.employment == 'Contract') {
+                                                                                  <div class="col-md-3">
+                                                                                    <label class="form-group has-float-label">
+                                                                                      <ng-select placeholder="Choose your option" ngModel #contractorId="ngModel"
+                                                                                        [(ngModel)]="joiningdata.contractorId" name="contractorId" required>
+                                                                                        @for (contractor of contractorData; track contractor; let i = $index) {
+                                                                                          <ng-option [value]="contractor.contractorId">
+                                                                                            {{ contractor.contractorName }}
+                                                                                          </ng-option>
+                                                                                        }
+                                                                                      </ng-select>
+                                                                                      <span>Select Contractor *</span>
+                                                                                      @if (!contractorId.valid && joiningfrm.submitted) {
+                                                                                        <div class="invalid-tooltip">
+                                                                                          Contractor is Required !
+                                                                                        </div>
+                                                                                      }
+                                                                                    </label>
+                                                                                  </div>
+                                                                                }
+                                                                                <div class="col-md-3">
+                                                                                  <label class="form-group has-float-label">
+                                                                                    <input class="form-control" type="date" required ngModel #appliDate="ngModel" name="appliDate"
+                                                                                      [(ngModel)]="joiningdata.applicableDate" />
+                                                                                      <span>Employment Applicable Date *</span>
+                                                                                      @if (!appliDate.valid && joiningfrm.submitted) {
+                                                                                        <div class="invalid-tooltip">
+                                                                                          Applicable date Is Required !
+                                                                                        </div>
+                                                                                      }
+                                                                                    </label>
+                                                                                  </div>
+                                                                                  @if (!isendDateRequired) {
+                                                                                    <div class="col-md-3">
+                                                                                      <label class="form-group has-float-label">
+                                                                                        <input class="form-control" type="date" ngModel #endDate="ngModel" name="endDate"
+                                                                                          [(ngModel)]="joiningdata.endDate" />
+                                                                                          <span>Employment End Date</span>
+                                                                                        </label>
+                                                                                      </div>
+                                                                                    }
+                                                                                    @if (isendDateRequired) {
+                                                                                      <div class="col-md-3">
+                                                                                        <label class="form-group has-float-label">
+                                                                                          <input class="form-control" type="date" required ngModel #endDate="ngModel" name="endDate"
+                                                                                            [(ngModel)]="joiningdata.endDate" />
+                                                                                            <span>Employment End Date *</span>
+                                                                                            @if (!endDate.valid && joiningfrm.submitted) {
+                                                                                              <div class="invalid-tooltip">
+                                                                                                End date Is Required !
+                                                                                              </div>
+                                                                                            }
+                                                                                          </label>
+                                                                                        </div>
+                                                                                      }
+                                                                                      <br>
+                                                                                        <div class="col-md-6 d-flex">
+                                                                                          <label class="form-group has-float-label"><b>Employee Skill Category * : </b></label>
+                                                                                          &nbsp;&nbsp;
+                                                                                          <fieldset [disabled]="disabledFlag"> <!-- Disable all inputs inside -->
+                                                                                            <input type="radio" name="category" [(ngModel)]="skillCategory" value="skilled" required />
+                                                                                            &nbsp;
+                                                                                            <label for="skilled">Skilled</label>
+                                                                                            &nbsp;&nbsp;
+                                                                                            <input type="radio" name="category" [(ngModel)]="skillCategory" value="semiskilled" required />
+                                                                                            &nbsp;
+                                                                                            <label for="semiskilled">SemiSkilled</label>
+                                                                                            &nbsp;&nbsp;
+                                                                                            <input type="radio" name="category" [(ngModel)]="skillCategory" value="unskilled" required />
+                                                                                            &nbsp;
+                                                                                            <label for="unskilled">UnSkilled</label>
+                                                                                          </fieldset>
+                                                                                          @if (!skillCategory && !disabledFlag && joiningfrm.submitted) {
+                                                                                            <div class="invalid-tooltip">
+                                                                                              Employee Skill Category Is Required!
+                                                                                            </div>
+                                                                                          }
+                                                                                        </div>
+                                                                                        <div class="col-md-3">
+                                                                                          <label class="form-group has-float-label">
+                                                                                            <input class="form-control" type="text" ngModel #currentCategory="ngModel" name="currentCategory"
+                                                                                              [(ngModel)]="currentSkillCategory" readonly />
+                                                                                              <span>Current Skill Category</span>
+                                                                                            </label>
+                                                                                          </div>
+                                                                                        </div>
+                                                                                        <hr />
+                                                                                        <div class="row">
+                                                                                          <div class="col-md-3">
+                                                                                            <label class="form-group has-float-label">
+                                                                                              <input class="form-control" type="date" ngModel #leavingDate="ngModel" name="leavingDate"
+                                                                                                [(ngModel)]="joiningdata.leavingDate" [disabled]="isFNF" />
+                                                                                                <span>Relieving Date</span>
+                                                                                              </label>
+                                                                                            </div>
+                                                                                          </div>
+                                                                                          <br />
+                                                                                          <br />
+                                                                                          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                                                                                        </form>
+                                                                                      }
+                                                                                    </div>
+                                                                                  </div>
+
+                                                                                  <hr />
+
+                                                                                  <div class="card mb-4">
+                                                                                    <div class="card-body">
+                                                                                      <h5 class="mb-4">Employment</h5>
+                                                                                      <div class="col-md-12" style="margin-bottom: 20px">
+                                                                                        <table border="1" class="col-md-6">
+                                                                                          <tr>
+                                                                                            <th style="text-align: center">Employment Type</th>
+                                                                                            <th style="text-align: center">Start Date</th>
+                                                                                            <th style="text-align: center">End Date</th>
+                                                                                            <th style="text-align: center">Action</th>
+                                                                                          </tr>
+                                                                                          @for (value of rows; track value; let i = $index) {
+                                                                                            <tr>
+                                                                                              <td style="text-align: center">{{ value.employeement }}</td>
+                                                                                              <td style="text-align: center">
+                                                                                                {{ value.applicableDate | date: 'dd-MM-yyyy' }}
+                                                                                              </td>
+                                                                                              <td style="text-align: center">
+                                                                                                {{ value.endDate | date: 'dd-MM-yyyy' }}
+                                                                                              </td>
+                                                                                              <td style="text-align: center">
+                                                                                                <a (click)="alertConfirmation(value.employeeEmployeementId)">
+                                                                                                  <span [class]="'glyph-icon simple-icon-trash tool_tip'"></span>
+                                                                                                  {{ ' ' }}
+                                                                                                </a>
+                                                                                              </td>
+                                                                                            </tr>
+                                                                                          }
+                                                                                        </table>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                  </div>
+
+                                                                                  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                                                                                    [config]="{backdrop: 'static', keyboard: false}">
+                                                                                    <div class="modal-dialog modal-lg">
+                                                                                      <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                          <h4 class="modal-title pull-left">AdharCard Photo</h4>
+                                                                                          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+                                                                                            <span aria-hidden="true" class="visually-hidden">&times;</span>
+                                                                                          </button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                          @if (joiningdata) {
+                                                                                            <div style="text-align: center">
+                                                                                              <img src="{{ apiURL }}uploads/user/document/{{ joiningdata.adharPhoto }}" height="350px" width="350px" />
+                                                                                            </div>
+                                                                                          }
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                  </div>
+
+                                                                                  <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                                                                                    [config]="{backdrop: 'static', keyboard: false}">
+                                                                                    <div class="modal-dialog modal-lg">
+                                                                                      <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                          <h4 class="modal-title pull-left">PanCard Photo</h4>
+                                                                                          <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+                                                                                            <span aria-hidden="true" class="visually-hidden">&times;</span>
+                                                                                          </button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                          @if (joiningdata) {
+                                                                                            <div style="text-align: center">
+                                                                                              <img src="{{ apiURL }}uploads/user/document/{{ joiningdata.panPhoto }}" height="350px" width="350px" />
+                                                                                            </div>
+                                                                                          }
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                  </div>

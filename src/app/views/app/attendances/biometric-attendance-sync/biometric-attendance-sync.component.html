@@ -1,0 +1,224 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Biometric Attendance"></app-heading>
+    <app-breadcrumb title="Biometric Attendance"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+@if (permissionsync.length > 0) {
+  <form #biometric="ngForm" novalidate>
+    <div class="col-md-12">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="col-md-5" style="text-align: center">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #company="ngModel"
+                name="company"
+                required
+                [(ngModel)]="company_id"
+                >
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && biometric.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="container">
+                  <h4 style="text-align: center; padding: 28px">
+                    <b>Biometric Attendance Sync</b>
+                  </h4>
+                  <div style="text-align: center; padding-bottom: 15px; font-size: 14px">
+                    <button type="submit" class="btn btn-success" (click)="sync()">
+                      Sync Your Attendance
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="container">
+                  <h4 style="text-align: center; padding: 28px">
+                    <b>Biometric Attendance Validator</b>
+                  </h4>
+                  <div style="text-align: center; padding-bottom: 15px; font-size: 14px">
+                    <button class="btn btn-success" type="submit" (click)="validate()">
+                      Validate Your Attendance
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+}
+
+<br />
+<br />
+
+@if (permissionsync.length > 0) {
+  <form #excelbiometric="ngForm" novalidate>
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="container">
+                <h4 style="text-align: center; padding: 28px">
+                  <b>Biometric Attendance Excel</b>
+                </h4>
+                <div style="text-align: center; padding-bottom: 15px; font-size: 14px">
+                  <button type="submit" class="btn btn-success" (click)="lgModal.show()">
+                    Upload Attendance Excel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="container">
+                <h4 style="text-align: center; padding: 28px">
+                  <b>Download Demo Attendance Excel</b>
+                </h4>
+                <div style="text-align: center; padding-bottom: 15px; font-size: 14px">
+                  <button class="btn btn-primary" (click)="demo()">Download</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+}
+
+<div
+  bsModal
+  #lgModal="bs-modal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}"
+
+  >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Upload Attendance Excel</h4>
+        <button
+          type="button"
+          class="btn-close close pull-right"
+          (click)="lgModal.hide()"
+          aria-label="Close"
+          #closeModal
+          >
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #importattendance="ngForm" novalidate (ngSubmit)="onSelectFile()">
+          <div class="row">
+            <div class="col-md-6" style="text-align: center">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #company="ngModel"
+                  name="company"
+                  [ngModel]="company1"
+                  required
+                  >
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && importattendance.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="month"
+                  required
+                  ngModel
+                  #YearMM="ngModel"
+                  name="YearMM"
+                  [ngModel]="month"
+                  required
+                  />
+                  <span>YearMonth *</span>
+                  @if (!YearMM.valid && importattendance.submitted) {
+                    <div class="invalid-tooltip">
+                      YearMonth is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="file"
+                    ngModel
+                    #file="ngModel"
+                    (change)="onSelectFiles($event)"
+                    name="file"
+                    [ngModel]="file1"
+                    required
+                    />
+                    <span>Import File *</span>
+                  </label>
+                  @if (!file.valid && importattendance.submitted) {
+                    <div class="invalid-tooltip">
+                      File is required!
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <button class="btn btn-primary" type="submit" [disabled]="disable">
+                {{ 'forms.submit' | translate }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

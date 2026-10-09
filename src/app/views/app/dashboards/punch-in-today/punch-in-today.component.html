@@ -1,0 +1,154 @@
+<!-- <style>
+.icon {
+font-size: 50px;
+line-height: 80px;
+color: var(--m-primary);
+}
+
+.iconsminds::before {
+font-family: iconsminds;
+font-style: normal;
+font-weight: 400;
+speak: none;
+display: inline-block;
+text-decoration: inherit;
+width: 1em;
+margin-right: 0.2em;
+text-align: center;
+font-variant: normal;
+text-transform: none;
+line-height: 1em;
+margin-left: 0.2em;
+-webkit-font-smoothing: antialiased;
+}
+</style>
+<div class="card">
+  <div class="card-body">
+    <form #dateFilter="ngForm" novalidate (change)="getPunchInCount()">
+      <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+          <h5 class="card-title mb-0">Today PunchIn Count</h5>
+        </div>
+        <div class="col-md-6">
+          <div class="float-right">
+            <input class="btn btn-outline-primary btn-xs float-right" type="date" ngModel
+              [(ngModel)]="currentDate" #monthYear="ngModel" name="monthYear" max="{{ maxDate }}"
+              (change)="getPunchInCount()" />
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+
+      <div style="color: var(--m-primary); left: 50%;" class="la-ball-spin-clockwise" *ngIf="loaderstatus">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      <div class="col-md-3 mb-4"> <!-- Add mb-4 class here for bottom margin -->
+        <!-- <div class="card" style="cursor: default">
+        <div class="card-body text-center iconsminds icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+            class="bi bi-building" viewBox="0 0 16 16">
+            <path
+              d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1Zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3V1Z" />
+          </svg>
+          <p class="card-text font-weight-semibold mb-0">Today PunchIn</p>
+          <p class="lead text-center">{{ punchInCount }}</p> <!-- Ensure correct binding here -->
+        <!-- </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div> -->
+
+
+
+
+
+<style>
+  .icon {
+  font-size: 50px;
+  line-height: 80px;
+  color: var(--m-primary);
+}
+
+.iconsminds::before {
+font-family: iconsminds;
+font-style: normal;
+font-weight: 400;
+/* speak: none; */
+display: inline-block;
+text-decoration: inherit;
+width: 1em;
+margin-right: 0.2em;
+text-align: center;
+font-variant: normal;
+text-transform: none;
+line-height: 1em;
+margin-left: 0.2em;
+-webkit-font-smoothing: antialiased;
+}
+</style>
+
+<div class="card">
+  <div class="card-body">
+    <form #dateFilter="ngForm" novalidate (change)="getPunchInCount()">
+      <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+          <h5 class="card-title mb-0">Today PunchIn Count</h5>
+        </div>
+        <div class="col-md-6">
+          <div class="float-right">
+            <input class="btn btn-outline-primary btn-xs float-right" type="date" ngModel
+              [(ngModel)]="currentDate" #monthYear="ngModel" name="monthYear" max="{{ maxDate }}"
+              (change)="getPunchInCount()" />
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+
+      @if (loaderstatus) {
+        <div style="color: var(--m-primary); left: 50%;" class="la-ball-spin-clockwise">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+
+      <div class="col-md-3" cursor="none">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card" style="margin-bottom: 27px; cursor: default">
+            <a routerLink="{{ adminRoot }}/superadminmenus/companyall_punchin">
+              <div class="card-body text-center iconsminds icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                  class="bi bi-building" viewBox="0 0 16 16">
+                  <path
+                    d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" />
+                  <path
+                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1Zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3V1Z" />
+                </svg>
+                <p class="card-text font-weight-semibold mb-0">Today PunchIn</p>
+                <p class="lead text-center">{{ punchInCount }}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

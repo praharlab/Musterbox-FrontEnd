@@ -1,0 +1,840 @@
+<style>
+  th,
+  td {
+  border: 1px solid black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-family: 'iconsminds';
+  padding-left: 3px;
+  padding-right: 3px;
+}
+</style>
+<br />
+<br />
+<br />
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (visible) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+        <div class="row">
+          @if (!imgshow1) {
+            <span>
+              @if (employeeJoining.userMaster.firstName && employeeJoining.userMaster.lastName) {
+                <app-profile-pic
+                  [Style]="'height: 90px; width: 90px;border-radius : 0.75rem'"
+                  [Class]="'img-thumbnail card-img social-profile-img c-pointer'"
+                  [firstName]="employeeJoining.userMaster.firstName"
+                [lastName]="employeeJoining.userMaster.lastName"></app-profile-pic>
+              }
+            </span>
+          }
+          @if (imgshow1) {
+            <span>
+              <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ employeeJoining.userMaster.photo }}"
+                (click)="fileInput.click()" class="img-thumbnail card-img social-profile-img c-pointer"
+                style="height: 90px; width: 90px" />
+              </span>
+            }
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <b>Employee Name:</b>
+                {{ employeeJoining.userMaster.displayName }}
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <b>Employee Number:</b>
+                {{ employeeJoining.userMaster.userNumber }}
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <b>Joining Date:</b>
+                {{ employeeJoining.joiningDate }}
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <b>Gender:</b>
+                {{ employeeJoining.userMaster.gender }}
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <b>Email:</b>
+                {{ employeeJoining.userMaster.email }}
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <b>Date of Birth:</b>
+                {{ employeeJoining.userMaster.dob }}
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" required ngModel #resigantionReasonID="ngModel"
+                  name="resigantionReasonID">
+                  @for (item of allReasonData; track item) {
+                    <ng-option [value]="item.resigantionReasonID">
+                      {{ item.reason }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Reason *</span>
+                @if (!resigantionReasonID.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Reason is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" ngModel #noticeperiod="ngModel"
+                  [(ngModel)]="employeeJoining.noticePeriod" disabled name="noticeperiod" />
+                  <span>Notice Period *</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" required ngModel #lwd="ngModel" disabled [(ngModel)]="lwddate"
+                    name="lwd" />
+                    <span>Last Working Date *</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" required ngModel #prelwd="ngModel" name="prelwd" />
+                    <span>Add Preferred Last Working Date *</span>
+                    @if (!prelwd.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Preferred Last Working Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="file" name="attachment" ngModel #attachment="ngModel"
+                      (change)="onSelectFile($event)" />
+                      <span>Add Attachment</span>
+                    </label>
+                  </div>
+                  <div class="col-md-12 text-danger" style="font-size: 14px; padding: 2%">
+                    <div>
+                      Note* :- 1) To access the options menu for the body toolbar, simply right-click with
+                      your mouse. eg. font-size
+                    </div>
+                    <div>
+                      <span style="visibility: hidden">Note* :-</span>
+                      2) To insert a page break, simply use the [PageBreak] tag.
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-group has-float-label">
+                      <quill-editor (contextmenu)="onToolbarRightClick($event)" [placeholder]="''" ngModel
+                        #employeeComment="ngModel" name="employeeComment" required>
+                        <div quill-editor-toolbar>
+                          <span class="ql-formats">
+                            <button class="ql-bold" [title]="'Bold'"></button>
+                            <button class="ql-italic" [title]="'Italic'"></button>
+                            <button class="ql-underline" [title]="'Underline'"></button>
+                            <button class="ql-strike" [title]="'Strike'"></button>
+                            <button class="ql-image" [title]="'Image'"></button>
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-link"></button>
+                            <button class="ql-video"></button>
+                          </span>
+                          <span class="ql-formats">
+                            <select class="ql-align" [title]="'Aligment'">
+                              <option selected=""></option>
+                              <option value="center"></option>
+                              <option value="right"></option>
+                              <option value="justify"></option>
+                            </select>
+                            <select class="ql-size" [title]="'Size'">
+                              <option value="8px">8px</option>
+                              <option value="10px">10px</option>
+                              <option selected="" value="12px">12px</option>
+                              <option value="14px">14px</option>
+                              <option value="16px">16px</option>
+                              <option value="18px">18px</option>
+                              <option value="20px">20px</option>
+                              <option value="22px">22px</option>
+                              <option value="24px">24px</option>
+                              <option value="26px">26px</option>
+                              <option value="28px">28px</option>
+                              <option value="30px">30px</option>
+                              <option value="32px">32px</option>
+                              <option value="34px">34px</option>
+                              <option value="36px">36px</option>
+                              <option value="38px">38px</option>
+                              <option value="40px">40px</option>
+                              <option value="42px">42px</option>
+                              <option value="44px">44px</option>
+                              <option value="46px">46px</option>
+                              <option value="48px">48px</option>
+                              <option value="50px">50px</option>
+                            </select>
+                            <select class="ql-header" [title]="'Header'">
+                              <option value="1">Heading 1</option>
+                              <option value="2">Heading 2</option>
+                              <option value="3">Heading 3</option>
+                              <option value="4">Heading 4</option>
+                              <option value="5">Heading 5</option>
+                              <option value="6">Heading 6</option>
+                            </select>
+                            <select class="ql-color" [title]="'Color'">
+                              <option value="rgb(0, 0, 0)"></option>
+                              <option value="rgb(230, 0, 0)"></option>
+                              <option value="rgb(255, 153, 0)"></option>
+                              <option value="rgb(255, 255, 0)"></option>
+                              <option value="rgb(0, 138, 0)"></option>
+                              <option value="rgb(0, 102, 204)"></option>
+                              <option value="rgb(153, 51, 255)"></option>
+                              <option value="rgb(255, 255, 255)"></option>
+                              <option value="rgb(250, 204, 204)"></option>
+                              <option value="rgb(255, 235, 204)"></option>
+                              <option value="rgb(204, 224, 245)"></option>
+                              <option value="rgb(235, 214, 255)"></option>
+                              <option value="rgb(187, 187, 187)"></option>
+                              <option value="rgb(102, 185, 102)"></option>
+                              <option value="rgb(192,192,192)"></option>
+                              <option value="rgb(128,128,128)"></option>
+                              <option value="rgb(128,0,0)"></option>
+                              <option value="rgb(128,128,0)"></option>
+                              <option value="rgb(0,128,0)"></option>
+                              <option value="rgb(128,0,128)"></option>
+                              <option value="rgb(0,128,128)"></option>
+                              <option value="rgb(0,0,128)"></option>
+                            </select>
+                            <select class="ql-font" [title]="'Font'">
+                              <option selected="">Sans Serif</option>
+                              <option value="inconsolata">Inconsolata</option>
+                              <option value="roboto">Roboto</option>
+                              <option value="mirza">Mirza</option>
+                              <option value="arial">Arial</option>
+                              <option value="calibri">Calibri</option>
+                            </select>
+                          </span>
+                        </div>
+                      </quill-editor>
+                      <span>Employee Comment *</span>
+                      @if (!employeeComment.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Employee Comment are required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    @if (permissioncreate.length != 0) {
+                      <button class="btn btn-primary form-group" type="submit">
+                        {{ 'Submit' | translate }}
+                      </button>
+                    }
+                    <span> &nbsp;&nbsp; </span>
+                    <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+                  </div>
+                </div>
+              </form>
+            }
+            @if (!visible) {
+              <h3 style="text-align: center">--- Data not Found ---</h3>
+            }
+            <br />
+            <br />
+
+            @if (resignationApplications && resignationApplications.length > 0) {
+              <div class="scrollStyleTable">
+                <table border="1" class="Table" width="100%">
+                  <tr>
+                    <th colspan="10" style="text-align: center; background-color: lightgray">
+                      Resignation Applications
+                    </th>
+                  </tr>
+                  <tr>
+                    <!-- <th style="text-align: center" class="tableTh">Employee Code</th>
+                    <th style="text-align: center" class="tableTh">Name</th> -->
+                    <th style="text-align: center" class="tableTh">Reason</th>
+                    <th style="text-align: center" class="tableTh">Applied Date</th>
+                    <th style="text-align: center" class="tableTh">Last Working Day</th>
+                    <th style="text-align: center" class="tableTh">Preferred LWD</th>
+                    <th style="text-align: center" class="tableTh">Relieving Date</th>
+                    <th style="text-align: center" class="tableTh">Show Data</th>
+                    <th style="text-align: center" class="tableTh">Status</th>
+                    <th style="text-align: center" class="tableTh">Attachment</th>
+                    <th style="text-align: center" class="tableTh">Task</th>
+                    <th style="text-align: center" class="tableTh">Action</th>
+                  </tr>
+                  @for (application of resignationApplications; track application; let i = $index) {
+                    <tr>
+                      <!-- <td style="text-align: center" class="tableTd">
+                      {{ application.employee.employeeJoiningDetails[0]?.employeeCode }}
+                    </td>
+                    <td style="text-align: center" class="tableTd">{{ application.employee.displayName }}</td> -->
+                    <td style="text-align: center" class="tableTd">
+                      {{ application?.resigantionReason?.reason || '' }}
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      {{ $safeNavigationMigration(application?.appliedDate) | date : 'dd-MM-yyyy' }}
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      {{ $safeNavigationMigration(application?.lastworkingdate) | date : 'dd-MM-yyyy' }}
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      {{ $safeNavigationMigration(application?.preferredLWDate) | date : 'dd-MM-yyyy' }}
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      {{ $safeNavigationMigration(application?.relievingDate) | date : 'dd-MM-yyyy' }}
+                      @if (
+                        i === 0 &&
+                        (application.authorizationstatus == 0 ||
+                        application.authorizationstatus == 1 ||
+                        application.authorizationstatus == 2 ||
+                        application.authorizationstatus == 3)
+                        ) {
+                        <span tooltip="Edit Relieving Date" class="icon-class" style="padding-left: 5px"
+                          (click)="lgModal4.show(); editData(application.resignationID)">
+                          <i class="simple-icon-pencil"></i>
+                        </span>
+                      }
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      <button type="button" class="btn btn-outline-primary btn-xs"
+                        (click)="lgModal.show(); showData(application.resignationID)">
+                        {{ 'View' | translate }}
+                      </button>
+                    </td>
+                    <td style="text-align: center; font-weight: 600" class="tableTd">
+                      {{
+                      application.authorizationstatus === 3
+                      ? 'Accepted'
+                      : application.authorizationstatus === 4
+                      ? 'Rejected'
+                      : application.authorizationstatus === 5
+                      ? 'Cancel'
+                      : 'Pending'
+                      }}
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      @if (application.attachment && application.attachment!='') {
+                        <button type="button" class="btn btn-primary btn-xs" (click)="viewDocument(application.attachment)"
+                          >
+                          {{ 'View' | translate }}
+                        </button>
+                      }
+                    </td>
+                    <td style="text-align: center">
+                      @if (application.hasResignTask == true) {
+                        <a
+                          (click)="lgModal2.show(); showResignationTask(application.resignationID)">
+                          <span [class]="'glyph-icon simple-icon-eye tool_tip'" style="padding-right: 10px; font-size: 18px"></span>
+                          {{ ' ' }}
+                        </a>
+                      }
+                    </td>
+                    <td style="text-align: center" class="tableTd">
+                      @if (
+                        (application.authorizationstatus == 0 ||
+                        application.authorizationstatus == 1 ||
+                        application.authorizationstatus == 2) &&
+                        showEditBtn(application.resignationAuthorizations)
+                        ) {
+                        <button type="button" class="btn btn-primary btn-xs"
+                          (click)="lgModal1.show(); editData(application.resignationID)">
+                          {{ 'Edit' | translate }}
+                        </button>
+                      }
+                      <span> &nbsp; </span>
+                      @if (
+                        application.authorizationstatus == 0 ||
+                        application.authorizationstatus == 1 ||
+                        application.authorizationstatus == 2 ||
+                        application.authorizationstatus == 3
+                        ) {
+                        <button type="button" class="btn btn-danger btn-xs" (click)="alertConfirmation(application.resignationID)">
+                          {{ 'Cancel' | translate }}
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </table>
+              <br />
+              <br />
+            </div>
+          }
+        </div>
+      </div>
+
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+      <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+        [config]="{ backdrop: 'static', keyboard: false }">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Show Data</h4>
+              <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="table-responsive">
+                @if (referenceData) {
+                  <table class="table table-striped">
+                    <tbody>
+                      <tr>
+                        <th>Employee Name</th>
+                        <td>{{ referenceData?.displayName }} ({{ referenceData?.employeeCode }})</td>
+                      </tr>
+                      <tr>
+                        <th>Company</th>
+                        <td>{{ referenceData?.companyName }}</td>
+                      </tr>
+                      <tr>
+                        <th>Branch</th>
+                        <td>{{ referenceData?.branchName }}</td>
+                      </tr>
+                      <tr>
+                        <th>Department</th>
+                        <td>{{ referenceData?.departmentName }}</td>
+                      </tr>
+                      <tr>
+                        <th>Designation</th>
+                        <td>{{ referenceData?.designationName }}</td>
+                      </tr>
+                      <tr>
+                        <th>Employee Comment</th>
+                        <td id="employeeComment"></td>
+                      </tr>
+                      <tr>
+                        <th>Reason</th>
+                        <td>{{ referenceData?.reason || '' }}</td>
+                      </tr>
+                      <tr>
+                        <th>Applied Date</th>
+                        <td>{{ $safeNavigationMigration(referenceData?.appliedDate) | date : 'dd-MM-yyyy' }}</td>
+                      </tr>
+                      <tr>
+                        <th>Last Working Date</th>
+                        <td>{{ $safeNavigationMigration(referenceData?.lastworkingdate) | date : 'dd-MM-yyyy' }}</td>
+                      </tr>
+                      <tr>
+                        <th>Preferred Last Working Date</th>
+                        <td>{{ $safeNavigationMigration(referenceData?.preferredLWDate) | date : 'dd-MM-yyyy' }}</td>
+                      </tr>
+                      <tr>
+                        <th>Relieving Date</th>
+                        <td>{{ $safeNavigationMigration(referenceData?.relievingDate) | date : 'dd-MM-yyyy' }}</td>
+                      </tr>
+                      <tr>
+                        <th>Authorization Status</th>
+                        <td>
+                          @if (referenceData.authorizationstatus == 3) {
+                            <button class="btn btn-outline-success btn-xs">
+                              Accepted
+                            </button>
+                          }
+                          @if (referenceData.authorizationstatus == 4) {
+                            <button class="btn btn-outline-danger btn-xs">
+                              Rejected
+                            </button>
+                          }
+                          @if (
+                            referenceData.authorizationstatus == 0 ||
+                            referenceData.authorizationstatus == 1 ||
+                            referenceData.authorizationStatus == 2
+                            ) {
+                            <button class="btn btn-outline-warning btn-xs">
+                              Pending
+                            </button>
+                          }
+                          @if (referenceData.authorizationstatus == 5) {
+                            <button class="btn btn-outline-danger btn-xs">
+                              Cancel
+                            </button>
+                          }
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Authorization Criteria</th>
+                        <td>{{ referenceData?.AuthorizationCriteria }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                }
+
+                <!-- Add this table for authUserStatus -->
+                @if (referenceData?.authUserStatus?.length) {
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (user of referenceData.authUserStatus; track user) {
+                        <tr>
+                          <td>{{ user.displayName }}</td>
+                          <td>
+                            @if (user.authstatus == 1) {
+                              <button class="btn btn-outline-success btn-xs">
+                                Accepted
+                              </button>
+                            }
+                            @if (user.authstatus == 0) {
+                              <button class="btn btn-outline-danger btn-xs">
+                                Rejected
+                              </button>
+                            }
+                            @if (user.authstatus == 2) {
+                              <button class="btn btn-outline-warning btn-xs">
+                                Pending
+                              </button>
+                            }
+                          </td>
+                          <td>{{ user.remarks }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+        [config]="{ backdrop: 'static', keyboard: false }">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Edit Resignation</h4>
+              <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card mb-4">
+                <div class="card-body">
+                  <form #editResignation="ngForm" novalidate (ngSubmit)="updateResignation()">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" required ngModel #resigantionReasonID="ngModel"
+                            name="resigantionReasonID" [(ngModel)]="userResignation.resigantionReasonID">
+                            @for (item of allReasonData; track item) {
+                              <ng-option [value]="item.resigantionReasonID">
+                                {{ item.reason }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Reason *</span>
+                          @if (!resigantionReasonID.valid && editResignation.submitted) {
+                            <div class="invalid-tooltip">
+                              Reason is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" required [(ngModel)]="userResignation.noticeperiod"
+                            #noticeperiod="ngModel" name="noticeperiod" disabled />
+                            <span>Notice Period (Days) *</span>
+                          </label>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="date" [(ngModel)]="userResignation.lastworkingdate" #lwd="ngModel"
+                              name="lwd" disabled />
+                              <span>Last Working Date (LWD) *</span>
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" required [(ngModel)]="userResignation.preferredLWDate"
+                                #prelwd="ngModel" [min]="userResignation.appliedDate" name="prelwd" />
+                                <span>Preferred Last Working Date (LWD) *</span>
+                                @if (!prelwd.valid && editResignation.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Preferred Last Working Date is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="file" name="attachment" #attachment="ngModel" ngModel
+                                  (change)="onSelectFile($event)" />
+                                  <span>Attachment</span>
+                                </label>
+                              </div>
+                              <div class="col-md-4">
+                                @if (userResignation.attachment && userResignation.attachment!='') {
+                                  <button type="button" class="btn btn-primary btn-xs"
+                                    (click)="viewDocument(userResignation.attachment)"
+                                    >
+                                    {{ 'View' | translate }}
+                                  </button>
+                                }
+                              </div>
+
+                              <div class="col-md-12 text-danger" style="font-size: 14px; padding: 2%">
+                                <div>
+                                  Note* :- 1) To access the options menu for the body toolbar, simply right-click
+                                  with your mouse. eg. font-size
+                                </div>
+                                <div>
+                                  <span style="visibility: hidden">Note* :-</span>
+                                  2) To insert a page break, simply use the [PageBreak] tag.
+                                </div>
+                              </div>
+
+                              <div class="col-md-12">
+                                <label class="form-group has-float-label">
+                                  <quill-editor (contextmenu)="onToolbarRightClick($event)" [placeholder]="''" ngModel
+                                    #employeeComment="ngModel" name="employeeComment" required
+                                    [(ngModel)]="userResignation.employeeComment">
+                                    <div quill-editor-toolbar>
+                                      <span class="ql-formats">
+                                        <button class="ql-bold" [title]="'Bold'"></button>
+                                        <button class="ql-italic" [title]="'Italic'"></button>
+                                        <button class="ql-underline" [title]="'Underline'"></button>
+                                        <button class="ql-strike" [title]="'Strike'"></button>
+                                        <button class="ql-image" [title]="'Image'"></button>
+                                        <button class="ql-list" value="ordered"></button>
+                                        <button class="ql-list" value="bullet"></button>
+                                        <button class="ql-link"></button>
+                                        <button class="ql-video"></button>
+                                      </span>
+
+                                      <span class="ql-formats">
+                                        <select class="ql-align" [title]="'Aligment'">
+                                          <option selected=""></option>
+                                          <option value="center"></option>
+                                          <option value="right"></option>
+                                          <option value="justify"></option>
+                                        </select>
+                                        <select class="ql-size" [title]="'Size'">
+                                          <option value="8px">8px</option>
+                                          <option value="10px">10px</option>
+                                          <option selected="" value="12px">12px</option>
+                                          <option value="14px">14px</option>
+                                          <option value="16px">16px</option>
+                                          <option value="18px">18px</option>
+                                          <option value="20px">20px</option>
+                                          <option value="22px">22px</option>
+                                          <option value="24px">24px</option>
+                                          <option value="26px">26px</option>
+                                          <option value="28px">28px</option>
+                                          <option value="30px">30px</option>
+                                          <option value="32px">32px</option>
+                                          <option value="34px">34px</option>
+                                          <option value="36px">36px</option>
+                                          <option value="38px">38px</option>
+                                          <option value="40px">40px</option>
+                                          <option value="42px">42px</option>
+                                          <option value="44px">44px</option>
+                                          <option value="46px">46px</option>
+                                          <option value="48px">48px</option>
+                                          <option value="50px">50px</option>
+                                        </select>
+                                        <select class="ql-header" [title]="'Header'">
+                                          <option value="1">Heading 1</option>
+                                          <option value="2">Heading 2</option>
+                                          <option value="3">Heading 3</option>
+                                          <option value="4">Heading 4</option>
+                                          <option value="5">Heading 5</option>
+                                          <option value="6">Heading 6</option>
+                                        </select>
+                                        <select class="ql-color" [title]="'Color'">
+                                          <option value="rgb(0, 0, 0)"></option>
+                                          <option value="rgb(230, 0, 0)"></option>
+                                          <option value="rgb(255, 153, 0)"></option>
+                                          <option value="rgb(255, 255, 0)"></option>
+                                          <option value="rgb(0, 138, 0)"></option>
+                                          <option value="rgb(0, 102, 204)"></option>
+                                          <option value="rgb(153, 51, 255)"></option>
+                                          <option value="rgb(255, 255, 255)"></option>
+                                          <option value="rgb(250, 204, 204)"></option>
+                                          <option value="rgb(255, 235, 204)"></option>
+                                          <option value="rgb(204, 224, 245)"></option>
+                                          <option value="rgb(235, 214, 255)"></option>
+                                          <option value="rgb(187, 187, 187)"></option>
+                                          <option value="rgb(102, 185, 102)"></option>
+                                          <option value="rgb(192,192,192)"></option>
+                                          <option value="rgb(128,128,128)"></option>
+                                          <option value="rgb(128,0,0)"></option>
+                                          <option value="rgb(128,128,0)"></option>
+                                          <option value="rgb(0,128,0)"></option>
+                                          <option value="rgb(128,0,128)"></option>
+                                          <option value="rgb(0,128,128)"></option>
+                                          <option value="rgb(0,0,128)"></option>
+                                        </select>
+                                        <select class="ql-font" [title]="'Font'">
+                                          <option selected="">Sans Serif</option>
+                                          <option value="inconsolata">Inconsolata</option>
+                                          <option value="roboto">Roboto</option>
+                                          <option value="mirza">Mirza</option>
+                                          <option value="arial">Arial</option>
+                                          <option value="calibri">Calibri</option>
+                                        </select>
+                                      </span>
+                                    </div>
+                                  </quill-editor>
+                                  <span>Employee Comment *</span>
+                                  @if (!employeeComment.valid && editResignation.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Employee Comment is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+
+                              <div class="col-md-12">
+                                <button class="btn btn-primary mt-4" type="submit">
+                                  {{ 'forms.submit' | translate }}
+                                </button>
+                                <button class="btn btn-danger mt-4" [routerLink]="adminRoot + '/offboardings/userresignation'"
+                                  style="margin-left: 2%">
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                [config]="{ backdrop: 'static', keyboard: false }">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title pull-left">Clearance & Exit Process</h4>
+                      <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true" class="visually-hidden">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      @if (resignationTaskData && resignationTaskData.length > 0) {
+                        <div class="scrollStyleTable">
+                          <table border="1" class="Table" width="100%">
+                            <tr>
+                              <th colspan="10" style="text-align: center; background-color: lightgray">
+                                Clearance Data
+                              </th>
+                            </tr>
+                            <tr>
+                              <th colspan="10" style="text-align: center">
+                                Assign Date -
+                                {{ resignationTaskData[0].createdAt | date : 'dd-MM-yyyy HH:mm:ss a' }}
+                              </th>
+                            </tr>
+                            <tr>
+                              <th style="text-align: center" class="tableTh">Assign To</th>
+                              <th style="text-align: center" class="tableTh">Description</th>
+                              <th style="text-align: center" class="tableTh">Applicable</th>
+                              <th style="text-align: center" class="tableTh">Recovered</th>
+                              <th style="text-align: center" class="tableTh">Amount</th>
+                              <th style="text-align: center" class="tableTh">Status</th>
+                              <th style="text-align: center" class="tableTh">Remarks</th>
+                              <th style="text-align: center" class="tableTh">Task Complete Date</th>
+                            </tr>
+                            @for (task of resignationTaskData; track task) {
+                              <tr>
+                                <td style="text-align: center" class="tableTd">
+                                  {{ task.userMaster.displayName }}
+                                </td>
+                                <td style="text-align: center" class="tableTd">
+                                  {{ task.resignTask.description }}
+                                </td>
+                                <td style="text-align: center" class="tableTd">{{ task.isApplicable }}</td>
+                                <td style="text-align: center" class="tableTd">
+                                  {{ task.isRecovered ? task.isRecovered : '' }}
+                                </td>
+                                <td style="text-align: center" class="tableTd">
+                                  {{ task.amount ? task.amount : 0 }}
+                                </td>
+                                <td style="text-align: center" class="tableTd">
+                                  @if (task.status == 0 || task.status == 2) {
+                                    <button type="button"
+                                      class="btn btn-outline-warning btn-xs">
+                                      {{ 'Pending' | translate }}
+                                    </button>
+                                  }
+                                  @if (task.status == 1 || task.status == 3) {
+                                    <button type="button"
+                                      class="btn btn-outline-success btn-xs">
+                                      {{ 'Complete' | translate }}
+                                    </button>
+                                  }
+                                </td>
+                                <td style="text-align: center" class="tableTd">{{ task.remarks }}</td>
+                                <td style="text-align: center" class="tableTd">
+                                  @if (task.updatedAt !== task.createdAt) {
+                                    {{ task.updatedAt | date : 'dd-MM-yyyy HH:mm:ss a' }}
+                                  }
+                                </td>
+                              </tr>
+                            }
+                          </table>
+                          <br />
+                          <br />
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div bsModal #lgModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                [config]="{ backdrop: 'static', keyboard: false }">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title pull-left">Update Relieving Date</h4>
+                      <button type="button" class="btn-close close pull-right" (click)="lgModal4.hide()" aria-label="Close">
+                        <span aria-hidden="true" class="visually-hidden">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form #updateRelData="ngForm" novalidate (ngSubmit)="updateRelievingDate()">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" required [(ngModel)]="userResignation.relievingDate"
+                                #relievingDate1="ngModel" name="relievingDate1" />
+                                <span>Relieving Date*</span>
+                                @if (!relievingDate1.valid && updateRelData.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Relieving Date Date is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+
+                            <div class="col-md-12">
+                              <button class="btn btn-primary mt-4" type="submit">
+                                {{ 'forms.submit' | translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>

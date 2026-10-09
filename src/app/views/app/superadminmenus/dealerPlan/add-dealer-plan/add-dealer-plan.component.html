@@ -1,0 +1,122 @@
+<style>
+  .password-toggle-icon {
+  position: absolute;
+  top: 47%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+}
+</style>
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Dealer Plan</h5>
+
+    <form #addsubadmin="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #planName="ngModel" name="planName" />
+            <span>Plan Name *</span>
+            @if (!planName.valid && addsubadmin.submitted) {
+              <div class="invalid-tooltip">
+                DealerPlan Name is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #Description="ngModel"
+              name="Description" />
+              <span>Description *</span>
+              @if (!Description.valid && addsubadmin.submitted) {
+                <div class="invalid-tooltip">
+                  Description Name is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" required ngModel #numberOfEmployee="ngModel"
+                name="numberOfEmployee" />
+                <span>Number Of Employee *</span>
+                @if (!numberOfEmployee.valid && addsubadmin.submitted) {
+                  <div class="invalid-tooltip">
+                    Number Of Employee Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #numberOfCompany="ngModel"
+                  name="numberOfCompany" />
+                  <span>Number Of Company *</span>
+                  @if (!numberOfCompany.valid && addsubadmin.submitted) {
+                    <div class="invalid-tooltip">
+                      Number Of Company Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+
+              <div class="col-md-12 my-1">
+                <button type="button" class="btn btn-xs btn-success" (click)="addvalue()">ADD FEATURES</button>
+              </div>
+              <br />
+
+              @for (value of values; track value; let i = $index) {
+                <div [ngClass]="{ 'd-none': value.isDeleted === true, 'col-md-12 my-2': true }"
+                  >
+                  <div class="row">
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" required type="text" [(ngModel)]="value.featuresName"
+                          #featuresName="ngModel" name="featuresName{{ i }}" [required]="!value.isDeleted" />
+                          <span>Features *</span>
+                          @if (!featuresName.valid && addsubadmin.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              Features is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-1">
+                        @if (value.isDeleted == false && i >= 1) {
+                          <button class="btn btn-danger btn-xs" type="button" (click)="removevalue(i)"
+                            style="margin-left: 3%; margin-top: 3%;cursor: pointer;"
+                            >
+                            Remove
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+
+
+                <div class="col-md-12">
+                  <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                  <button class="btn btn-danger btn-shadow mt-4"
+                    [routerLink]="adminRoot + '/superadminmenus/dealerplan'" style="margin-left: 2%">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

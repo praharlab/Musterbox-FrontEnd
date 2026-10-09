@@ -1,0 +1,1138 @@
+<title>Musterbox HRMS Handover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap">
+<style>
+:root{
+  --ground:#f6f8f7; --surface:#ffffff; --surface-2:#eef3f1; --surface-3:#e3ebe8;
+  --ink:#121d1b; --ink-2:#384a47; --muted:#647873; --faint:#8b9c98;
+  --line:#dbe5e2; --line-strong:#b9c9c5;
+  --accent:#0f766e; --accent-deep:#064e4a; --accent-soft:#d7eeea; --accent-ink:#0b5c56;
+  --warn:#9a5b06; --warn-soft:#fbead2; --danger:#a6221b; --danger-soft:#fbe3e1;
+  --ok:#136b3a; --ok-soft:#dcf0e3;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0b1211; --surface:#111a19; --surface-2:#16211f; --surface-3:#1d2a28;
+    --ink:#e7efec; --ink-2:#c2d2ce; --muted:#8fa5a0; --faint:#6b807c;
+    --line:#233230; --line-strong:#334643;
+    --accent:#5eead4; --accent-deep:#99f6e4; --accent-soft:#12312e; --accent-ink:#7fe7d6;
+    --warn:#e9b872; --warn-soft:#332616; --danger:#f0918a; --danger-soft:#331a18;
+    --ok:#7bd6a0; --ok-soft:#14301f;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0b1211; --surface:#111a19; --surface-2:#16211f; --surface-3:#1d2a28;
+  --ink:#e7efec; --ink-2:#c2d2ce; --muted:#8fa5a0; --faint:#6b807c;
+  --line:#233230; --line-strong:#334643;
+  --accent:#5eead4; --accent-deep:#99f6e4; --accent-soft:#12312e; --accent-ink:#7fe7d6;
+  --warn:#e9b872; --warn-soft:#332616; --danger:#f0918a; --danger-soft:#331a18;
+  --ok:#7bd6a0; --ok-soft:#14301f;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink); text-decoration:none; border-bottom:1px solid var(--line-strong)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+
+/* ---------- shell ---------- */
+.shell{display:grid; grid-template-columns:232px minmax(0,1fr); gap:0; max-width:1240px; margin:0 auto}
+.sidenav{
+  position:sticky; top:env(safe-area-inset-top,0px); align-self:start;
+  max-height:100vh; overflow-y:auto; padding:28px 18px 40px 20px;
+  border-right:1px solid var(--line);
+}
+.brandmark{display:flex; align-items:center; gap:9px; margin-bottom:22px}
+.brandmark .dot{width:22px;height:22px;border-radius:5px;background:var(--accent);flex:0 0 auto;
+  display:grid;place-items:center;color:var(--surface);font:600 11px/1 var(--cond);letter-spacing:.02em}
+:root[data-theme="dark"] .brandmark .dot,
+html:not([data-theme="light"]) .brandmark .dot{color:#07201e}
+.brandmark b{font:600 14px/1.2 var(--cond); letter-spacing:.01em}
+.brandmark span{display:block;font-size:11px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
+.sidenav ol{list-style:none;margin:0;padding:0;counter-reset:nv}
+.sidenav li{counter-increment:nv}
+.sidenav a{
+  display:grid; grid-template-columns:22px 1fr; gap:6px; align-items:baseline;
+  padding:5px 0; border:0; color:var(--ink-2); font-size:13.5px;
+}
+.sidenav a::before{content:counter(nv,decimal-leading-zero); font:500 10.5px/1.6 var(--mono); color:var(--faint)}
+.sidenav a:hover{color:var(--accent-ink)}
+.sidenav a.on{color:var(--accent-ink); font-weight:500}
+.sidenav a.on::before{color:var(--accent)}
+.navfoot{margin-top:24px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
+.navfoot code{font:500 11.5px/1.5 var(--mono)}
+
+main{padding:0 clamp(16px,3.4vw,44px) 96px; min-width:0}
+
+/* ---------- masthead ---------- */
+.mast{padding-block:44px 30px; border-bottom:1px solid var(--line); margin-bottom:38px}
+.eyebrow{font:600 11px/1 var(--cond); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink)}
+h1{font:700 clamp(30px,5vw,46px)/1.06 var(--cond); letter-spacing:-.018em; margin:12px 0 0; text-wrap:balance}
+.dek{font-size:17px; color:var(--ink-2); max-width:60ch; margin:14px 0 0}
+.facts{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px}
+.fact{border:1px solid var(--line); background:var(--surface); border-radius:var(--r); padding:8px 12px; min-width:104px}
+.fact b{display:block; font:600 18px/1.1 var(--mono); font-variant-numeric:tabular-nums; color:var(--accent-ink)}
+.fact span{font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--faint)}
+
+/* ---------- sections ---------- */
+section{padding-block:10px 46px; scroll-margin-top:24px}
+h2{font:600 clamp(22px,3vw,29px)/1.15 var(--cond); letter-spacing:-.012em; margin:34px 0 6px; text-wrap:balance}
+h2 .num{font:500 12px/1 var(--mono); color:var(--accent); vertical-align:6px; margin-right:9px}
+h3{font:600 17px/1.3 var(--cond); letter-spacing:.005em; margin:30px 0 8px; color:var(--ink)}
+h4{font:600 13px/1.4 var(--cond); letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin:22px 0 8px}
+p{margin:0 0 14px; max-width:68ch}
+ul,ol{max-width:68ch; padding-left:20px; margin:0 0 14px}
+li{margin-bottom:5px}
+.lede{font-size:16.5px; color:var(--ink-2); max-width:62ch}
+code{font:500 .875em/1.5 var(--mono); background:var(--surface-2); padding:1px 5px; border-radius:4px; overflow-wrap:anywhere}
+pre{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; overflow-x:auto; margin:0 0 16px}
+pre code{background:none; padding:0; font-size:12.5px; line-height:1.66; display:block; white-space:pre}
+.tok-c{color:var(--faint); font-style:italic}
+.tok-k{color:var(--accent-ink); font-weight:600}
+.tok-s{color:var(--ok)}
+
+/* ---------- figures ---------- */
+figure{margin:24px 0 26px}
+.fig-wrap{border:1px solid var(--line); background:var(--surface); border-radius:var(--r); padding:16px; overflow-x:auto}
+.fig-wrap svg{display:block; width:100%; height:auto; min-width:520px; max-width:100%}
+figcaption{font-size:12.5px; color:var(--muted); margin-top:9px; max-width:68ch}
+figcaption b{color:var(--ink-2); font-weight:600}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); margin:0 0 18px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:520px; font-size:13.5px}
+th,td{text-align:left; padding:9px 13px; border-bottom:1px solid var(--line); vertical-align:top}
+thead th{background:var(--surface-2); font:600 11px/1.4 var(--cond); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:12px}
+.ut{font:600 13px/1 var(--mono); color:var(--accent-ink); text-align:center; font-variant-numeric:tabular-nums}
+
+/* ---------- pills / callouts ---------- */
+.pill{display:inline-block; font:600 10.5px/1.6 var(--cond); letter-spacing:.07em; text-transform:uppercase;
+  padding:1px 7px; border-radius:20px; background:var(--surface-3); color:var(--ink-2); white-space:nowrap}
+.pill.a{background:var(--accent-soft); color:var(--accent-ink)}
+.pill.w{background:var(--warn-soft); color:var(--warn)}
+.pill.d{background:var(--danger-soft); color:var(--danger)}
+.pill.o{background:var(--ok-soft); color:var(--ok)}
+.note{border-left:3px solid var(--accent); background:var(--surface); padding:12px 16px; border-radius:0 var(--r) var(--r) 0; margin:0 0 18px; max-width:68ch}
+.note.warn{border-left-color:var(--warn)}
+.note.stop{border-left-color:var(--danger)}
+.note p:last-child{margin-bottom:0}
+.note strong{font-weight:600}
+
+/* ---------- layer stack ---------- */
+.layers{display:grid; gap:10px; margin:22px 0 24px; max-width:76ch}
+.layer{border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--surface); border-radius:0 var(--r) var(--r) 0; padding:13px 16px}
+.layer:nth-child(2){border-left-color:var(--warn)}
+.layer:nth-child(3){border-left-color:var(--ok)}
+.layer h5{margin:0 0 3px; font:600 12px/1.3 var(--cond); letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+.layer b{display:block; font:600 16px/1.3 var(--cond); margin-bottom:3px}
+.layer p{margin:0; font-size:13.5px; color:var(--ink-2)}
+
+/* ---------- module grid ---------- */
+.mods{display:grid; grid-template-columns:repeat(auto-fill,minmax(212px,1fr)); gap:1px; background:var(--line);
+  border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin:0 0 20px}
+.mod{background:var(--surface); padding:12px 14px}
+.mod b{display:block; font:600 13.5px/1.3 var(--cond)}
+.mod code{display:block; background:none; padding:0; font-size:11.5px; color:var(--accent-ink); margin:2px 0 5px}
+.mod span{font-size:12.5px; color:var(--muted); line-height:1.5; display:block}
+
+/* ---------- steps ---------- */
+.steps{counter-reset:st; list-style:none; padding:0; max-width:72ch}
+.steps>li{counter-increment:st; position:relative; padding-left:38px; margin-bottom:16px}
+.steps>li::before{content:counter(st); position:absolute; left:0; top:1px; width:25px; height:25px; border-radius:5px;
+  background:var(--accent-soft); color:var(--accent-ink); font:600 12px/25px var(--mono); text-align:center}
+.steps>li b{display:block; font:600 14.5px/1.4 var(--cond)}
+.steps>li p{margin:2px 0 0; font-size:13.5px; color:var(--ink-2)}
+
+/* ---------- gotchas ---------- */
+.gotcha{border:1px solid var(--line); background:var(--surface); border-radius:var(--r); padding:14px 16px; margin-bottom:10px; max-width:72ch}
+.gotcha h4{margin:0 0 5px; text-transform:none; letter-spacing:0; font-size:14.5px; color:var(--ink)}
+.gotcha p{margin:0 0 8px; font-size:13.5px; color:var(--ink-2)}
+.gotcha p:last-child{margin-bottom:0}
+
+footer{border-top:1px solid var(--line); padding-block:22px 10px; color:var(--faint); font-size:12.5px}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .sidenav{position:static; max-height:none; border-right:0; border-bottom:1px solid var(--line);
+    padding:18px clamp(16px,3.4vw,44px)}
+  .sidenav ol{display:flex; flex-wrap:wrap; gap:4px 14px}
+  .sidenav a{padding:3px 0}
+  .navfoot{display:none}
+  .mast{padding-block:30px 24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="shell">
+<nav class="sidenav" aria-label="Contents">
+  <div class="brandmark">
+    <div class="dot">M</div>
+    <div><b>Musterbox</b><span>Handover</span></div>
+  </div>
+  <ol>
+    <li><a href="#overview">The product</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#roles">Roles &amp; access</a></li>
+    <li><a href="#screens">Screen archetypes</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#api">Backend API</a></li>
+    <li><a href="#recipe">Adding a screen</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+  </ol>
+  <div class="navfoot">
+    Full written pack in <code>docs/</code><br>
+    Branch <code>local</code> · Sep 2026
+  </div>
+</nav>
+
+<main>
+<header class="mast">
+  <div class="eyebrow">Frontend &amp; backend knowledge transfer</div>
+  <h1>Musterbox HRMS</h1>
+  <p class="dek">A multi-tenant HR, payroll and workforce platform for Indian businesses. This is the orientation map: how the Angular client is put together, how the five user types differ, and what every screen has in common.</p>
+  <div class="facts">
+    <div class="fact"><b>Angular&nbsp;10</b><span>Framework</span></div>
+    <div class="fact"><b>30</b><span>Feature modules</span></div>
+    <div class="fact"><b>~600</b><span>Screens</span></div>
+    <div class="fact"><b>~2,000</b><span>API endpoints</span></div>
+    <div class="fact"><b>5</b><span>User types</span></div>
+    <div class="fact"><b>3</b><span>Access layers</span></div>
+  </div>
+</header>
+
+<section id="overview">
+  <h2><span class="num">01</span>The product</h2>
+  <p class="lede">One login covers the whole employee lifecycle. The product is broad rather than deep — roughly six hundred screens spanning hiring, attendance, payroll, statutory reporting and exit.</p>
+
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 150" role="img" aria-label="Employee lifecycle from hire to exit with the modules covering each stage">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker></defs>
+        <line x1="60" y1="36" x2="820" y2="36" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#ar)"/>
+        <g font-family="var(--cond)" font-size="14" font-weight="600" fill="var(--accent-ink)" text-anchor="middle">
+          <circle cx="70" cy="36" r="5" fill="var(--accent)"/><text x="70" y="22">Hire</text>
+          <circle cx="245" cy="36" r="5" fill="var(--accent)"/><text x="245" y="22">Onboard</text>
+          <circle cx="420" cy="36" r="5" fill="var(--accent)"/><text x="420" y="22">Work</text>
+          <circle cx="595" cy="36" r="5" fill="var(--accent)"/><text x="595" y="22">Pay</text>
+          <circle cx="770" cy="36" r="5" fill="var(--accent)"/><text x="770" y="22">Exit</text>
+        </g>
+        <g font-family="var(--sans)" font-size="11.5" fill="var(--muted)" text-anchor="middle">
+          <text x="70" y="62">Job posting</text><text x="70" y="79">Applications</text><text x="70" y="96">Pre-boarding</text><text x="70" y="113">Offer letter</text>
+          <text x="245" y="62">Employee master</text><text x="245" y="79">Documents</text><text x="245" y="96">Policies</text><text x="245" y="113">Assets · ID card</text>
+          <text x="420" y="62">Attendance · Leave</text><text x="420" y="79">Tasks · Visits</text><text x="420" y="96">Overtime · Gate pass</text><text x="420" y="113">PMS · Skillsets</text>
+          <text x="595" y="62">Salary · Payslip</text><text x="595" y="79">Bonus · Incentive</text><text x="595" y="96">Expenses · Loans</text><text x="595" y="113">Income tax · Form 16</text>
+          <text x="770" y="62">Resignation</text><text x="770" y="79">Exit tasks</text><text x="770" y="96">F&amp;F settlement</text><text x="770" y="113">Exit letters</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>The five lifecycle stages and the modules that serve each. Statutory reporting (PF, ESIC, PT, LWF, labour-law registers) runs across all of them.</figcaption>
+  </figure>
+
+  <h3>Tenancy</h3>
+  <p>One deployment serves many companies. A company may own child companies, and every list request carries a <code>companyMasterID</code> — that field is the tenant boundary.</p>
+
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 330" role="img" aria-label="Tenancy hierarchy from super admin down through companies to employees">
+        <g font-family="var(--cond)" font-size="13" font-weight="600" text-anchor="middle">
+          <rect x="360" y="8" width="160" height="38" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="440" y="26" fill="var(--accent-ink)">Super Admin</text>
+          <text x="440" y="39" fill="var(--accent-ink)" font-family="var(--mono)" font-size="10" font-weight="500">usertype 2</text>
+
+          <rect x="190" y="82" width="150" height="38" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="265" y="100" fill="var(--ink)">Sub Admin</text>
+          <text x="265" y="113" fill="var(--muted)" font-family="var(--mono)" font-size="10" font-weight="500">usertype 3</text>
+
+          <rect x="540" y="82" width="150" height="38" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="615" y="100" fill="var(--ink)">Dealer</text>
+          <text x="615" y="113" fill="var(--muted)" font-family="var(--mono)" font-size="10" font-weight="500">usertype 4</text>
+
+          <rect x="345" y="156" width="190" height="42" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="440" y="174" fill="var(--accent-ink)">Company · the tenant</text>
+          <text x="440" y="189" fill="var(--accent-ink)" font-family="var(--mono)" font-size="10" font-weight="500">companyMasterID</text>
+
+          <rect x="150" y="232" width="130" height="32" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="215" y="252" fill="var(--ink-2)">Child company</text>
+          <rect x="375" y="232" width="130" height="32" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="440" y="252" fill="var(--ink-2)">Child company</text>
+          <rect x="600" y="232" width="130" height="32" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="665" y="252" fill="var(--ink-2)">Child company</text>
+
+          <rect x="300" y="288" width="280" height="34" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="440" y="303" fill="var(--ink)">Branch · Dept · Division · Designation</text>
+          <text x="440" y="316" fill="var(--muted)" font-size="11" font-weight="500">then employees — usertype 0 and 1</text>
+        </g>
+        <g stroke="var(--line-strong)" stroke-width="1.3" fill="none">
+          <path d="M440 46 V64 H265 V82"/><path d="M440 46 V64 H615 V82"/><path d="M440 64 V156"/>
+          <path d="M265 120 V138 H440 V156"/><path d="M615 120 V138 H440"/>
+          <path d="M440 198 V214 H215 V232"/><path d="M440 198 V214 H665 V232"/><path d="M440 214 V232"/>
+          <path d="M440 264 V288"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Platform staff sit above the tenant line; <b>companyMasterID</b> sits on it. Everything below is company-scoped data.</figcaption>
+  </figure>
+
+  <h3>Who uses it</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Persona</th><th style="text-align:center">usertype</th><th>Their job</th><th>Where they live</th></tr></thead>
+    <tbody>
+      <tr><td><b>Employee</b></td><td class="ut">0</td><td>Punch in, apply for leave, file expenses, read payslips</td><td>Full menu, heavily filtered</td></tr>
+      <tr><td><b>Company Admin (HR)</b></td><td class="ut">1</td><td>Run payroll, approve requests, configure company masters</td><td>Full menu, filtered by role</td></tr>
+      <tr><td><b>Super Admin</b></td><td class="ut">2</td><td>Create companies and plans, own the global masters</td><td><code>/app/superadminmenus</code></td></tr>
+      <tr><td><b>Sub Admin</b></td><td class="ut">3</td><td>Support an assigned subset of companies</td><td><code>/app/masters/company_master</code></td></tr>
+      <tr><td><b>Dealer</b></td><td class="ut">4</td><td>Reseller who onboards their own client companies</td><td><code>/app/masters/company_master</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>All five are created through the same <code>companycontact/v1</code> endpoints. The <code>admin</code> field in the payload is the only thing that separates them.</p>
+
+  <h3>Other names you'll see in the code</h3>
+  <p>Musterbox is the product name going forward. The codebase predates it and still carries earlier and per-customer names — none of them are different products.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Name</th><th>Where it appears</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><b>Tankhwapatra</b></td><td>The <code>tankhwaPatraNameLabel</code> variable, upload paths like <code>uploads/tankhwaFace/</code>, backend routes like <code>tankhwapatraDatabaseList/</code></td><td>The product's previous name — <i>tankhwa</i> = wages, <i>patra</i> = document</td></tr>
+      <tr><td><b>aptavetan.com</b></td><td><code>environment.prod.ts</code> — <code>chatUrl</code>, <code>biometricApiUrl</code>, <code>appUrl</code>–<code>appUrl3</code>, <code>appLoginUrl</code></td><td><span class="pill d">Live infrastructure</span> A deployed domain, not branding. Renaming it in code needs a DNS and backend change</td></tr>
+      <tr><td><b>vien-angular</b></td><td><code>environment.ts</code> / <code>environment.prod.ts</code> — the <code>firebase</code> block (<code>vien-angular-login</code>)</td><td>The Vien admin template this project was scaffolded from. The project name is now <code>musterbox</code>; the Firebase ids still point at the template author's demo project</td></tr>
+      <tr><td><b>SN</b> · Pacific International Hospital · Mars Consultancy · Harsha Engineering</td><td><code>constants/labelUtils.ts</code></td><td><span class="pill a">White-label</span> Customer brands. <code>tankhwaPatraNameLabel</code> is the brand slot, swapped per deployment</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <p>The product is <strong>white-labelled</strong> — the customer-facing name is data, not a constant. Musterbox is the house brand that sits behind those labels.</p>
+  </div>
+</section>
+
+<section id="architecture">
+  <h2><span class="num">02</span>Architecture</h2>
+  <p class="lede">An Angular 10 single-page app with hash routing, talking to a separate Node REST service. All HTTP goes through one method on one service; all URLs come from one catalogue.</p>
+
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 400" role="img" aria-label="System architecture: browser SPA calling the REST API, socket service and biometric service">
+        <rect x="14" y="14" width="500" height="372" rx="8" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+        <text x="32" y="38" font-family="var(--cond)" font-size="12" font-weight="700" letter-spacing="1.4" fill="var(--muted)">BROWSER · ANGULAR 10 SPA</text>
+
+        <rect x="34" y="54" width="214" height="70" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="48" y="74" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--ink)">views/user</text>
+        <text x="48" y="92" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">login · forgot · otp · register</text>
+        <text x="48" y="108" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">pre-boarding · apply job</text>
+        <text x="48" y="120" font-family="var(--mono)" font-size="10" fill="var(--faint)">LoginGuard</text>
+
+        <rect x="278" y="54" width="214" height="70" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="292" y="74" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--ink)">views/app</text>
+        <text x="292" y="92" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">30 lazy feature modules</text>
+        <text x="292" y="108" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">inside the layout shell</text>
+        <text x="292" y="120" font-family="var(--mono)" font-size="10" fill="var(--faint)">AuthGuard</text>
+
+        <rect x="34" y="144" width="458" height="58" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="48" y="164" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--accent-ink)">ApiService.callApi()</text>
+        <text x="48" y="182" font-family="var(--sans)" font-size="11.5" fill="var(--accent-ink)">Bearer token · spinner · blob downloads · 403 → session-timeout modal</text>
+        <text x="48" y="196" font-family="var(--mono)" font-size="10" fill="var(--accent-ink)">ConstantService — ~2,000 endpoint constants</text>
+
+        <rect x="34" y="222" width="145" height="62" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="46" y="241" font-family="var(--cond)" font-size="12" font-weight="600" fill="var(--ink)">Guards</text>
+        <text x="46" y="257" font-family="var(--sans)" font-size="11" fill="var(--muted)">AuthGuard</text>
+        <text x="46" y="272" font-family="var(--sans)" font-size="11" fill="var(--muted)">LoginGuard</text>
+
+        <rect x="191" y="222" width="145" height="62" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="203" y="241" font-family="var(--cond)" font-size="12" font-weight="600" fill="var(--ink)">Layout shell</text>
+        <text x="203" y="257" font-family="var(--sans)" font-size="11" fill="var(--muted)">topnav · sidebar</text>
+        <text x="203" y="272" font-family="var(--sans)" font-size="11" fill="var(--muted)">footer · chat widget</text>
+
+        <rect x="348" y="222" width="144" height="62" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="360" y="241" font-family="var(--cond)" font-size="12" font-weight="600" fill="var(--ink)">localStorage</text>
+        <text x="360" y="257" font-family="var(--mono)" font-size="10" fill="var(--muted)">token · id · usertype</text>
+        <text x="360" y="272" font-family="var(--mono)" font-size="10" fill="var(--muted)">company_id · childcompany</text>
+
+        <rect x="34" y="304" width="458" height="62" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="48" y="323" font-family="var(--cond)" font-size="12" font-weight="600" fill="var(--ink)">Menu construction</text>
+        <text x="48" y="340" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">menu.ts / headerItems.ts → filtered by finalcheckpermission</text>
+        <text x="48" y="356" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">usertype 2 / 3 / 4 bypass the filter entirely</text>
+
+        <g stroke="var(--line-strong)" stroke-width="1.3" fill="none">
+          <path d="M141 124 V144"/><path d="M385 124 V144"/>
+        </g>
+
+        <rect x="556" y="66" width="308" height="66" rx="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="572" y="88" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--ink)">REST API</text>
+        <text x="572" y="106" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">apiUrl · :3210</text>
+        <text x="572" y="122" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">resource/v1/action · JWT · JSON</text>
+
+        <rect x="556" y="152" width="308" height="60" rx="6" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="572" y="174" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--ink)">Chat &amp; notifications</text>
+        <text x="572" y="192" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">chatUrl · socket.io</text>
+        <text x="572" y="206" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">ChatService · ticket chat · badges</text>
+
+        <rect x="556" y="232" width="308" height="60" rx="6" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="572" y="254" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--ink)">Biometric service</text>
+        <text x="572" y="272" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">biometricApiUrl · :3510</text>
+        <text x="572" y="286" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">device sync · punch import</text>
+
+        <rect x="556" y="312" width="308" height="54" rx="6" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="572" y="334" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--ink)">Static uploads</text>
+        <text x="572" y="352" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">apiUrl + uploads/…</text>
+
+        <g stroke="var(--accent)" stroke-width="1.5" fill="none">
+          <path d="M492 173 H556 V99"/>
+        </g>
+        <g stroke="var(--line-strong)" stroke-width="1.3" fill="none">
+          <path d="M514 182 H556"/><path d="M514 253 H556"/><path d="M514 339 H556"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Every HTTP call funnels through <b>ApiService.callApi()</b>. That is where the token is attached, the spinner is driven, and a <code>403</code> anywhere triggers the global session-timeout modal.</figcaption>
+  </figure>
+
+  <h3>Routing, in three layers</h3>
+  <pre><code><span class="tok-c">// 1 · root — app.routing.ts</span>
+RouterModule.forRoot(routes, { useHash: <span class="tok-k">true</span> })   <span class="tok-c">// all URLs carry a #</span>
+
+<span class="tok-c">// 2 · views.routing.ts — THREE tables, chosen at module import time</span>
+<span class="tok-k">let</span> routes = [ <span class="tok-c">/* A · with AuthGuard */</span> ];
+<span class="tok-k">if</span> (localStorage.getItem(<span class="tok-s">'token'</span>))  routes = [ <span class="tok-c">/* B */</span> ];
+<span class="tok-k">if</span> (!environment.isAuthGuardActive) routes = [ <span class="tok-c">/* C · NO AuthGuard */</span> ];
+
+<span class="tok-c">// 3 · feature routes — one lazy module per menu item</span>
+/#/app/masters      → MastersModule      → vendor_master → VendorMasterModule
+/#/app/attendances  → AttendancesModule  → …</code></pre>
+
+  <div class="note warn">
+    <p><strong>isAuthGuardActive is <code>false</code> in production</strong>, so table C wins and <code>AuthGuard</code> is never attached in prod builds. The tables are also evaluated once, at import — logging in or out does not re-evaluate them, which is why several flows call <code>window.location.reload()</code>.</p>
+  </div>
+
+  <h3>Response envelope</h3>
+  <p>The HTTP status is almost always 200. The status that matters lives in the body, so components branch on <code>res.status</code>, never on HTTP codes.</p>
+  <pre><code>{ <span class="tok-s">"status"</span>: 200, <span class="tok-s">"message"</span>: <span class="tok-s">"Data fetched successfully"</span>, <span class="tok-s">"data"</span>: [ … ] }</code></pre>
+  <div class="tw"><table>
+    <thead><tr><th>Body status</th><th>Meaning</th><th>What the app does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill o">200</span></td><td>Success</td><td><code>res.data</code> consumed</td></tr>
+      <tr><td><span class="pill w">400</span></td><td>Validation or business error</td><td><code>res.message</code> as an error toast</td></tr>
+      <tr><td><span class="pill d">403</span></td><td>Token invalid or expired</td><td>Session-timeout modal → clear storage → <code>appLoginUrl</code></td></tr>
+      <tr><td><span class="pill d">500</span></td><td>Server error</td><td>Generic error toast</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Where things live</h3>
+  <pre><code>src/app/
+├── shared/       auth.guard · login.guard · auth.service · auth.roles
+├── services/     ApiService · ConstantService · ~15 helpers
+├── constants/    menu.ts · headerItems.ts · CommonFilterFields.ts
+├── containers/   layout/ (topnav, sidebar, footer, chat) · pages/ · dashboards/
+├── components/   charts · cards · carousel · state-button
+└── views/
+    ├── views.routing.ts   <span class="tok-c">← the three route tables</span>
+    ├── user/              <span class="tok-c">public: login, pre-boarding, apply job</span>
+    └── app/               <span class="tok-c">the product: 30 lazy modules</span></code></pre>
+</section>
+
+<section id="roles">
+  <h2><span class="num">03</span>Roles &amp; access</h2>
+  <p class="lede">This is the part newcomers get wrong. There are three independent access-control layers, with different data, different screens and different APIs.</p>
+
+  <div class="layers">
+    <div class="layer">
+      <h5>Layer 1</h5><b>User type</b>
+      <p>One number, <code>0</code>–<code>4</code>, in <code>localStorage.usertype</code>. Decides which menu tree is built and where you land after login.</p>
+    </div>
+    <div class="layer">
+      <h5>Layer 2</h5><b>Role &amp; permission</b>
+      <p>A form × operation matrix. Decides which menu items exist and which Add / Edit / View / Delete buttons render. Applies to user types 0 and 1 only.</p>
+    </div>
+    <div class="layer">
+      <h5>Layer 3</h5><b>Authorization</b>
+      <p>Approval routing. Decides whose leave, expense, overtime and gate-pass requests land in your inbox. Unrelated to Layer 2.</p>
+    </div>
+  </div>
+
+  <h3>What each user type sees</h3>
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 400" role="img" aria-label="Sidebar contents compared across the five user types">
+        <g font-family="var(--cond)" font-size="12.5" font-weight="700" letter-spacing=".06em" fill="var(--muted)">
+          <text x="14" y="18">SUPER ADMIN · 2</text>
+          <text x="196" y="18">SUB ADMIN · 3</text>
+          <text x="352" y="18">DEALER · 4</text>
+          <text x="508" y="18">EMPLOYEE · 0  /  HR · 1</text>
+        </g>
+
+        <rect x="14" y="28" width="160" height="196" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+        <g font-family="var(--sans)" font-size="11.5" fill="var(--ink-2)">
+          <text x="28" y="48">Dashboard</text><text x="28" y="68">Admin Menu ▸</text>
+          <text x="40" y="86" fill="var(--muted)">Company · Type</text>
+          <text x="40" y="102" fill="var(--muted)">Subscription plan</text>
+          <text x="40" y="118" fill="var(--muted)">Bank · PT master</text>
+          <text x="40" y="134" fill="var(--muted)">Mail · Letter templates</text>
+          <text x="40" y="150" fill="var(--muted)">Form · Operation</text>
+          <text x="40" y="166" fill="var(--muted)">Super / Sub admin</text>
+          <text x="40" y="182" fill="var(--muted)">Tax slabs · Form 16</text>
+          <text x="40" y="198" fill="var(--muted)">Modules · App version</text>
+          <text x="40" y="214" fill="var(--faint)">… 45 masters</text>
+        </g>
+
+        <rect x="196" y="28" width="140" height="80" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+        <g font-family="var(--sans)" font-size="11.5" fill="var(--ink-2)">
+          <text x="210" y="48">Dashboard</text><text x="210" y="68">Company</text>
+        </g>
+        <text x="210" y="92" font-family="var(--sans)" font-size="10.5" fill="var(--faint)">hard-coded menu,</text>
+        <text x="210" y="104" font-family="var(--sans)" font-size="10.5" fill="var(--faint)">no permission filter</text>
+
+        <rect x="352" y="28" width="140" height="80" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+        <text x="366" y="48" font-family="var(--sans)" font-size="11.5" fill="var(--ink-2)">Company</text>
+        <text x="366" y="72" font-family="var(--sans)" font-size="10.5" fill="var(--faint)">backend scopes the</text>
+        <text x="366" y="84" font-family="var(--sans)" font-size="10.5" fill="var(--faint)">data, not the UI</text>
+
+        <rect x="508" y="28" width="358" height="356" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <g font-family="var(--sans)" font-size="11.5" fill="var(--accent-ink)">
+          <text x="524" y="48">Home</text><text x="524" y="68">Me</text><text x="524" y="88">Task</text>
+          <text x="524" y="108">Master</text><text x="524" y="128">Visit</text><text x="524" y="148">My Team</text>
+          <text x="524" y="168">My Finances</text><text x="524" y="188">Org</text><text x="524" y="208">Attendance</text>
+          <text x="524" y="228">Asset</text><text x="524" y="248">Payroll</text><text x="524" y="268">Overtime</text>
+          <text x="700" y="48">Pre-Boarding</text><text x="700" y="68">Off-Boarding</text><text x="700" y="88">Report</text>
+          <text x="700" y="108">Govt. Report</text><text x="700" y="128">Gate Pass</text><text x="700" y="148">Skillsets</text>
+          <text x="700" y="168">Help Desk</text><text x="700" y="188">CheckList</text><text x="700" y="208">PMS</text>
+          <text x="700" y="228">Utility</text><text x="700" y="248">MoodTracker</text><text x="700" y="268">Income Tax</text>
+        </g>
+        <line x1="524" y1="290" x2="850" y2="290" stroke="var(--accent)" stroke-dasharray="3 3"/>
+        <text x="524" y="312" font-family="var(--cond)" font-size="13" font-weight="600" fill="var(--accent-ink)">every item filtered by</text>
+        <text x="524" y="330" font-family="var(--mono)" font-size="11.5" fill="var(--accent-ink)">POST auth/v1/finalcheckpermission</text>
+        <text x="524" y="352" font-family="var(--sans)" font-size="11.5" fill="var(--accent-ink)">Kept only when menu.ts <tspan font-family="var(--mono)" font-size="11">menu:</tspan> equals the</text>
+        <text x="524" y="368" font-family="var(--sans)" font-size="11.5" fill="var(--accent-ink)">backend <tspan font-family="var(--mono)" font-size="11">formName</tspan> exactly.</text>
+      </svg>
+    </div>
+    <figcaption>Types 2, 3 and 4 get a short hard-coded menu with no filtering. Types 0 and 1 share one large menu that the permission response prunes.</figcaption>
+  </figure>
+
+  <h3>How a permission reaches a button</h3>
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 250" role="img" aria-label="Permission data flowing from Form Master through Role Master to the rendered button">
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker></defs>
+        <g font-family="var(--cond)" font-size="12.5" font-weight="600" text-anchor="middle">
+          <rect x="16" y="30" width="150" height="56" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="91" y="52" fill="var(--ink)">Form Master</text>
+          <text x="91" y="70" font-family="var(--mono)" font-size="10" font-weight="500" fill="var(--muted)">formName</text>
+
+          <rect x="16" y="112" width="150" height="56" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="91" y="134" fill="var(--ink)">Operation Master</text>
+          <text x="91" y="152" font-family="var(--mono)" font-size="10" font-weight="500" fill="var(--muted)">Create Edit View Delete</text>
+
+          <rect x="216" y="70" width="150" height="58" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="291" y="92" fill="var(--ink)">Role Master</text>
+          <text x="291" y="110" font-size="11" font-weight="500" fill="var(--muted)">Org → Roles</text>
+
+          <rect x="416" y="70" width="150" height="58" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="491" y="92" fill="var(--ink)">Assign Role</text>
+          <text x="491" y="110" font-size="11" font-weight="500" fill="var(--muted)">role → user</text>
+
+          <rect x="616" y="62" width="248" height="74" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="740" y="84" fill="var(--accent-ink)">auth/v1/finalcheckpermission</text>
+          <text x="740" y="104" font-family="var(--mono)" font-size="10" font-weight="500" fill="var(--accent-ink)">{ formName, formMasterID,</text>
+          <text x="740" y="120" font-family="var(--mono)" font-size="10" font-weight="500" fill="var(--accent-ink)">operationName }</text>
+
+          <rect x="416" y="176" width="200" height="56" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="516" y="198" fill="var(--ink)">Sidebar menu filter</text>
+          <text x="516" y="216" font-size="11" font-weight="500" fill="var(--muted)">menu.menu === formName</text>
+
+          <rect x="664" y="176" width="0" height="0"/>
+          <rect x="648" y="176" width="216" height="56" rx="5" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="756" y="198" fill="var(--ink)">Button visibility</text>
+          <text x="756" y="216" font-family="var(--mono)" font-size="10" font-weight="500" fill="var(--muted)">*ngIf="permissioncreate.length"</text>
+        </g>
+        <g stroke="var(--accent)" stroke-width="1.4" fill="none" marker-end="url(#ar2)">
+          <path d="M166 58 H190 V99 H216"/><path d="M166 140 H190 V99"/>
+          <path d="M366 99 H416"/><path d="M566 99 H616"/>
+          <path d="M740 136 V156 H516 V176"/><path d="M740 136 V156 H756 V176"/>
+        </g>
+      </svg>
+    </div>
+    <figcaption>One endpoint feeds both consumers. The sidebar prunes the menu; each screen re-calls it to decide which buttons to render.</figcaption>
+  </figure>
+
+  <div class="note stop">
+    <p><strong>The <code>menu:</code> key is a magic string.</strong> <code>IMenuItem.menu</code> must exactly equal the backend's <code>formName</code>. There is no compile-time check and no runtime warning — a mismatch just makes the menu item vanish for permissioned users while it still shows for admins. This is the single most common “my new screen doesn't appear” cause.</p>
+  </div>
+
+  <div class="note warn">
+    <p><strong>A failed permission call looks like full access.</strong> The sidebar's error handler deliberately keeps the unfiltered menu so the user isn't stranded with no navigation. “I can see everything” can mean the permission API is down, not that the user is an admin.</p>
+  </div>
+
+  <h3>Layer 3 — approval chains</h3>
+  <p>Authorization is configured separately, under <b>Org → Authorization</b>. It maps a request type and an employee slice (branch, department, designation) to an approver, and supports multi-level sign-off.</p>
+
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 200" role="img" aria-label="A leave request moving through two approval levels">
+        <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
+          <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--danger)"/></marker></defs>
+        <g font-family="var(--cond)" font-size="12.5" font-weight="600" text-anchor="middle">
+          <rect x="16" y="52" width="150" height="52" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="91" y="74" fill="var(--ink)">Employee applies</text>
+          <text x="91" y="92" font-size="11" font-weight="500" fill="var(--muted)">leave · expense · OT</text>
+
+          <rect x="216" y="52" width="160" height="52" rx="5" fill="var(--surface)" stroke="var(--accent)"/>
+          <text x="296" y="74" fill="var(--accent-ink)">Level 1 approver</text>
+          <text x="296" y="92" font-size="11" font-weight="500" fill="var(--muted)">from Authorization</text>
+
+          <rect x="426" y="52" width="160" height="52" rx="5" fill="var(--surface)" stroke="var(--accent)"/>
+          <text x="506" y="74" fill="var(--accent-ink)">Level 2 approver</text>
+          <text x="506" y="92" font-size="11" font-weight="500" fill="var(--muted)">optional</text>
+
+          <rect x="636" y="52" width="150" height="52" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="711" y="82" fill="var(--accent-ink)">Approved</text>
+
+          <rect x="326" y="146" width="150" height="40" rx="5" fill="var(--danger-soft)" stroke="var(--danger)"/>
+          <text x="401" y="171" fill="var(--danger)">Rejected</text>
+        </g>
+        <g stroke="var(--line-strong)" stroke-width="1.4" fill="none" marker-end="url(#ar3)">
+          <path d="M166 78 H216"/><path d="M376 78 H426"/><path d="M586 78 H636"/>
+        </g>
+        <g stroke="var(--danger)" stroke-width="1.3" stroke-dasharray="4 3" fill="none" marker-end="url(#ar4)">
+          <path d="M296 104 V130 H401 V146"/><path d="M506 104 V130 H401"/>
+        </g>
+        <text x="866" y="126" font-family="var(--sans)" font-size="11" fill="var(--muted)" text-anchor="end">Queue surfaces in the Request Inbox and the top-nav badge</text>
+      </svg>
+    </div>
+    <figcaption>Accept/reject modals are shared components (<code>attendance-common/</code>, <code>finance-common/</code>) so the same dialog appears in the inbox, the module screen and the dashboard widget.</figcaption>
+  </figure>
+
+  <h3>Quick reference</h3>
+  <div class="tw"><table>
+    <thead><tr><th>I want to…</th><th>Go to</th></tr></thead>
+    <tbody>
+      <tr><td>Create a platform admin</td><td>Super Admin → Super Admin / Sub Admin / Dealer</td></tr>
+      <tr><td>Create a company user or HR</td><td>Masters → Company Contact <span class="pill">Is Admin = company admin</span></td></tr>
+      <tr><td>Define what a job function can see</td><td>Org → Roles</td></tr>
+      <tr><td>Give a user that job function</td><td>Org → Assign Role</td></tr>
+      <tr><td>Check what a user actually has</td><td>Org → Permission View</td></tr>
+      <tr><td>Register a new screen for permissioning</td><td>Super Admin → Form (Form Master)</td></tr>
+      <tr><td>Define who approves what</td><td>Org → Authorization</td></tr>
+      <tr><td>See pending approvals</td><td>Request Inbox — <code>/app/reuqestInbox</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="screens">
+  <h2><span class="num">04</span>Screen archetypes</h2>
+  <p class="lede">Six hundred screens, four shapes. Learn these and you can predict how any screen in the product behaves before you open it.</p>
+
+  <h3>Login</h3>
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 400" role="img" aria-label="Wireframe of the split-screen login page">
+        <rect x="1" y="1" width="878" height="398" rx="7" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <path d="M8 1 H404 V399 H8 A7 7 0 0 1 1 392 V8 A7 7 0 0 1 8 1 Z" fill="var(--accent-deep)"/>
+        <circle cx="202" cy="430" r="230" fill="var(--accent)" opacity=".16"/>
+        <g opacity=".5" stroke="#5eead4" stroke-width=".7" fill="none">
+          <path d="M40 60 L140 30 L250 70 L360 40"/><path d="M40 110 L150 90 L260 130 L370 100"/>
+        </g>
+        <rect x="132" y="86" width="140" height="92" rx="8" fill="none" stroke="#5eead4" stroke-width="1.4" opacity=".85"/>
+        <g stroke="#5eead4" stroke-width="1.4" opacity=".7" fill="none">
+          <path d="M152 156 L182 122 L206 142 L232 106 L252 124"/>
+        </g>
+        <text x="202" y="172" font-family="var(--sans)" font-size="10" fill="#99f6e4" text-anchor="middle" opacity=".8">login-hero.svg</text>
+        <text x="202" y="216" font-family="var(--cond)" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">Smart Payroll</text>
+        <text x="202" y="242" font-family="var(--cond)" font-size="23" font-weight="700" fill="#ffffff" text-anchor="middle">Management</text>
+        <text x="202" y="272" font-family="var(--sans)" font-size="12" fill="#a7e8de" text-anchor="middle">subline copy</text>
+        <text x="202" y="378" font-family="var(--mono)" font-size="10" fill="#7fd3c6" text-anchor="middle">.login-left-panel · flex 0 0 46%</text>
+
+        <text x="452" y="96" font-family="var(--cond)" font-size="21" font-weight="700" fill="var(--ink)">Welcome back</text>
+        <text x="452" y="118" font-family="var(--sans)" font-size="12.5" fill="var(--muted)">Sign in to your account to continue</text>
+
+        <text x="452" y="156" font-family="var(--cond)" font-size="11" font-weight="600" letter-spacing=".06em" fill="var(--muted)">EMAIL  /  MOBILE  /  EMP CODE</text>
+        <rect x="452" y="164" width="372" height="38" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+        <text x="466" y="188" font-family="var(--sans)" font-size="12.5" fill="var(--faint)">Enter Email</text>
+        <text x="836" y="188" font-family="var(--mono)" font-size="9.5" fill="var(--faint)" text-anchor="end">LoginPageLabel</text>
+
+        <text x="452" y="228" font-family="var(--cond)" font-size="11" font-weight="600" letter-spacing=".06em" fill="var(--muted)">PASSWORD</text>
+        <rect x="452" y="236" width="372" height="38" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+        <text x="466" y="260" font-family="var(--sans)" font-size="12.5" fill="var(--faint)">Enter password</text>
+        <circle cx="800" cy="255" r="9" fill="none" stroke="var(--line-strong)"/>
+        <circle cx="800" cy="255" r="3" fill="var(--muted)"/>
+        <text x="824" y="296" font-family="var(--sans)" font-size="12" fill="var(--accent-ink)" text-anchor="end">Forgot password?</text>
+
+        <rect x="452" y="312" width="372" height="42" rx="5" fill="var(--accent)"/>
+        <text x="638" y="339" font-family="var(--cond)" font-size="13.5" font-weight="700" letter-spacing=".1em" fill="#ffffff" text-anchor="middle">LOGIN</text>
+        <text x="638" y="374" font-family="var(--mono)" font-size="9.5" fill="var(--faint)" text-anchor="middle">&lt;app-state-button&gt; renders its own spinner</text>
+      </svg>
+    </div>
+    <figcaption>The username label is dynamic — <code>LoginPageLabel</code> from <code>constants/labelUtils.ts</code> — so the field reads Email, Mobile or Employee Code per deployment. On success the app writes six <code>localStorage</code> keys and redirects by user type.</figcaption>
+  </figure>
+
+  <h3>The application shell</h3>
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 420" role="img" aria-label="Wireframe of the authenticated application shell with top nav, sidebar, content area and chat widget">
+        <rect x="1" y="1" width="878" height="418" rx="7" fill="var(--surface)" stroke="var(--line-strong)"/>
+
+        <rect x="1" y="1" width="878" height="46" rx="7" fill="var(--surface-2)"/>
+        <rect x="1" y="40" width="878" height="7" fill="var(--surface-2)"/>
+        <line x1="1" y1="47" x2="879" y2="47" stroke="var(--line-strong)"/>
+        <rect x="18" y="16" width="16" height="14" rx="2" fill="var(--muted)"/>
+        <rect x="48" y="14" width="74" height="18" rx="3" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="85" y="27" font-family="var(--cond)" font-size="10" font-weight="600" fill="var(--accent-ink)" text-anchor="middle">tenant logo</text>
+        <rect x="140" y="14" width="190" height="19" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="156" y="28" font-family="var(--sans)" font-size="11" fill="var(--faint)">Search…</text>
+        <g fill="var(--muted)">
+          <circle cx="612" cy="24" r="7" fill="none" stroke="var(--muted)" stroke-width="1.3"/>
+          <circle cx="652" cy="24" r="7" fill="none" stroke="var(--muted)" stroke-width="1.3"/>
+          <rect x="685" y="17" width="14" height="14" rx="2" fill="none" stroke="var(--muted)" stroke-width="1.3"/>
+        </g>
+        <circle cx="659" cy="18" r="6" fill="var(--danger)"/>
+        <text x="659" y="21" font-family="var(--mono)" font-size="7.5" fill="#fff" text-anchor="middle" font-weight="600">4</text>
+        <circle cx="742" cy="24" r="10" fill="var(--surface-3)"/>
+        <text x="762" y="28" font-family="var(--sans)" font-size="11.5" fill="var(--ink-2)">Priya ▾</text>
+        <text x="866" y="60" font-family="var(--mono)" font-size="9.5" fill="var(--faint)" text-anchor="end">app-topnav</text>
+
+        <rect x="1" y="47" width="116" height="372" fill="var(--surface-2)"/>
+        <line x1="117" y1="47" x2="117" y2="419" stroke="var(--line-strong)"/>
+        <g font-family="var(--sans)" font-size="11.5" fill="var(--ink-2)">
+          <rect x="8" y="58" width="102" height="22" rx="4" fill="var(--accent-soft)"/>
+          <text x="20" y="73" fill="var(--accent-ink)" font-weight="600">Home</text>
+          <text x="20" y="99">Me</text><text x="20" y="123">Task</text><text x="20" y="147">Master</text>
+          <text x="20" y="171">Visit</text><text x="20" y="195">My Team</text><text x="20" y="219">My Finances</text>
+          <text x="20" y="243">Org</text><text x="20" y="267">Attendance</text><text x="20" y="291">Asset</text>
+          <text x="20" y="315">Payroll</text><text x="20" y="339">Overtime</text>
+          <text x="20" y="363" fill="var(--faint)">⋮</text>
+        </g>
+        <text x="58" y="400" font-family="var(--mono)" font-size="9" fill="var(--faint)" text-anchor="middle">app-sidebar</text>
+        <text x="58" y="412" font-family="var(--mono)" font-size="8" fill="var(--faint)" text-anchor="middle">permission-filtered</text>
+
+        <text x="140" y="78" font-family="var(--cond)" font-size="17" font-weight="700" fill="var(--ink)">Company</text>
+        <rect x="716" y="62" width="106" height="26" rx="4" fill="var(--accent)"/>
+        <text x="769" y="79" font-family="var(--cond)" font-size="11" font-weight="700" letter-spacing=".06em" fill="#fff" text-anchor="middle">+ ADD NEW</text>
+        <text x="866" y="79" font-family="var(--mono)" font-size="8.5" fill="var(--faint)" text-anchor="end">*ngIf</text>
+        <text x="140" y="98" font-family="var(--sans)" font-size="11" fill="var(--faint)">Home › Master › Company</text>
+        <line x1="140" y1="110" x2="822" y2="110" stroke="var(--line)"/>
+
+        <rect x="140" y="124" width="682" height="238" rx="5" fill="var(--surface-2)" stroke="var(--line)" stroke-dasharray="4 3"/>
+        <text x="481" y="238" font-family="var(--mono)" font-size="13" fill="var(--muted)" text-anchor="middle">&lt;router-outlet&gt;</text>
+        <text x="481" y="260" font-family="var(--sans)" font-size="11.5" fill="var(--faint)" text-anchor="middle">the feature screen</text>
+
+        <rect x="764" y="316" width="46" height="34" rx="6" fill="var(--accent)" opacity=".92"/>
+        <text x="787" y="338" font-size="15" text-anchor="middle" fill="#fff">✻</text>
+        <text x="787" y="362" font-family="var(--mono)" font-size="8" fill="var(--faint)" text-anchor="middle">chat</text>
+
+        <line x1="117" y1="380" x2="879" y2="380" stroke="var(--line)"/>
+        <text x="140" y="398" font-family="var(--sans)" font-size="10.5" fill="var(--faint)">© Musterbox</text>
+        <text x="822" y="398" font-family="var(--mono)" font-size="9" fill="var(--faint)" text-anchor="end">app-footer</text>
+      </svg>
+    </div>
+    <figcaption><code>SidebarService.containerClassnames</code> — a space-separated class string on <code>#app-container</code> — encodes the entire responsive menu state. If the sidebar misbehaves, that string is where to look.</figcaption>
+  </figure>
+
+  <h3>The list screen</h3>
+  <p>Every master follows this shape. The reference implementation is <code>masters/company_master/list-company-master</code>.</p>
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 410" role="img" aria-label="Wireframe of a standard list screen with filter card, data table and pagination">
+        <rect x="1" y="1" width="878" height="408" rx="7" fill="var(--surface)" stroke="var(--line-strong)"/>
+
+        <text x="22" y="34" font-family="var(--cond)" font-size="18" font-weight="700" fill="var(--ink)">Company</text>
+        <text x="22" y="52" font-family="var(--sans)" font-size="11" fill="var(--faint)">Home › Master › Company</text>
+        <rect x="740" y="18" width="118" height="28" rx="4" fill="var(--accent)"/>
+        <text x="799" y="36" font-family="var(--cond)" font-size="11" font-weight="700" letter-spacing=".06em" fill="#fff" text-anchor="middle">+ ADD NEW</text>
+        <text x="799" y="60" font-family="var(--mono)" font-size="8.5" fill="var(--faint)" text-anchor="middle">[showadd]="permissioncreate"</text>
+
+        <rect x="22" y="72" width="836" height="82" rx="5" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="38" y="92" font-family="var(--cond)" font-size="10" font-weight="600" letter-spacing=".06em" fill="var(--muted)">SELECT FIELDS TO SHOW</text>
+        <rect x="38" y="98" width="300" height="30" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <rect x="46" y="105" width="88" height="16" rx="8" fill="var(--accent-soft)"/>
+        <text x="90" y="117" font-family="var(--sans)" font-size="9.5" fill="var(--accent-ink)" text-anchor="middle">CompanyName ×</text>
+        <rect x="140" y="105" width="62" height="16" rx="8" fill="var(--accent-soft)"/>
+        <text x="171" y="117" font-family="var(--sans)" font-size="9.5" fill="var(--accent-ink)" text-anchor="middle">Email ×</text>
+        <text x="212" y="117" font-family="var(--sans)" font-size="10" fill="var(--faint)">…</text>
+        <text x="38" y="145" font-family="var(--mono)" font-size="9" fill="var(--faint)">tabledata[] / selected[]</text>
+
+        <text x="358" y="92" font-family="var(--cond)" font-size="10" font-weight="600" letter-spacing=".06em" fill="var(--muted)">FROM</text>
+        <rect x="358" y="98" width="118" height="30" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="370" y="118" font-family="var(--sans)" font-size="11" fill="var(--faint)">dd / mm / yyyy</text>
+        <text x="492" y="92" font-family="var(--cond)" font-size="10" font-weight="600" letter-spacing=".06em" fill="var(--muted)">TO</text>
+        <rect x="492" y="98" width="118" height="30" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="504" y="118" font-family="var(--sans)" font-size="11" fill="var(--faint)">dd / mm / yyyy</text>
+        <rect x="630" y="98" width="70" height="30" rx="4" fill="var(--accent)"/>
+        <text x="665" y="118" font-family="var(--cond)" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">Submit</text>
+        <rect x="708" y="98" width="62" height="30" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="739" y="118" font-family="var(--cond)" font-size="11" font-weight="600" fill="var(--ink-2)" text-anchor="middle">Clear</text>
+        <rect x="778" y="98" width="66" height="30" rx="4" fill="var(--surface)" stroke="var(--accent)"/>
+        <text x="811" y="118" font-family="var(--cond)" font-size="11" font-weight="600" fill="var(--accent-ink)" text-anchor="middle">Export</text>
+
+        <rect x="22" y="172" width="836" height="30" fill="var(--surface-3)"/>
+        <g font-family="var(--cond)" font-size="10.5" font-weight="700" letter-spacing=".06em" fill="var(--muted)">
+          <text x="38" y="192">LOGO</text><text x="110" y="192">COMPANY NAME</text><text x="290" y="192">COMPANY EMAIL</text>
+          <text x="470" y="192">CITY</text><text x="580" y="192">STATUS</text><text x="720" y="192">ACTIONS</text>
+        </g>
+        <g font-family="var(--sans)" font-size="12" fill="var(--ink-2)">
+          <rect x="34" y="212" width="20" height="20" rx="3" fill="var(--surface-3)"/>
+          <text x="110" y="227">ACME Ltd</text><text x="290" y="227">hr@acme.com</text><text x="470" y="227">Pune</text>
+          <rect x="576" y="214" width="56" height="18" rx="9" fill="var(--ok-soft)"/>
+          <text x="604" y="227" font-size="10" font-weight="600" fill="var(--ok)" text-anchor="middle">Active</text>
+          <text x="720" y="227" font-size="13" fill="var(--muted)">👁   ✎   🗑   👥</text>
+          <line x1="22" y1="242" x2="858" y2="242" stroke="var(--line)"/>
+
+          <rect x="34" y="252" width="20" height="20" rx="3" fill="var(--surface-3)"/>
+          <text x="110" y="267">Globex Pvt Ltd</text><text x="290" y="267">hr@globex.in</text><text x="470" y="267">Mumbai</text>
+          <rect x="576" y="254" width="56" height="18" rx="9" fill="var(--ok-soft)"/>
+          <text x="604" y="267" font-size="10" font-weight="600" fill="var(--ok)" text-anchor="middle">Active</text>
+          <text x="720" y="267" font-size="13" fill="var(--muted)">👁   ✎   🗑   👥</text>
+          <line x1="22" y1="282" x2="858" y2="282" stroke="var(--line)"/>
+
+          <rect x="34" y="292" width="20" height="20" rx="3" fill="var(--surface-3)"/>
+          <text x="110" y="307">Initech Systems</text><text x="290" y="307">hr@initech.co</text><text x="470" y="307">Nashik</text>
+          <rect x="576" y="294" width="62" height="18" rx="9" fill="var(--danger-soft)"/>
+          <text x="607" y="307" font-size="10" font-weight="600" fill="var(--danger)" text-anchor="middle">Inactive</text>
+          <text x="720" y="307" font-size="13" fill="var(--muted)">👁   ✎   🗑   👥</text>
+          <line x1="22" y1="322" x2="858" y2="322" stroke="var(--line)"/>
+        </g>
+
+        <text x="38" y="352" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">Show</text>
+        <rect x="76" y="338" width="54" height="22" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="103" y="353" font-family="var(--mono)" font-size="11" fill="var(--ink-2)" text-anchor="middle">10 ▾</text>
+        <text x="140" y="352" font-family="var(--sans)" font-size="11.5" fill="var(--muted)">per page</text>
+        <text x="38" y="378" font-family="var(--mono)" font-size="9" fill="var(--faint)">ItemOptionsPerPageArray = [5, 10, 20, 50, 100, 200]</text>
+
+        <g font-family="var(--mono)" font-size="11" fill="var(--ink-2)">
+          <text x="660" y="353">◀</text>
+          <rect x="678" y="338" width="22" height="22" rx="4" fill="var(--accent)"/>
+          <text x="689" y="353" fill="#fff" text-anchor="middle">1</text>
+          <text x="716" y="353" text-anchor="middle">2</text><text x="744" y="353" text-anchor="middle">3</text>
+          <text x="772" y="353" text-anchor="middle">4</text><text x="800" y="353" text-anchor="middle">5</text>
+          <text x="828" y="353">▶</text>
+        </g>
+        <text x="858" y="378" font-family="var(--mono)" font-size="9" fill="var(--faint)" text-anchor="end">server-side paging · page + limit in the body</text>
+      </svg>
+    </div>
+    <figcaption>Column chooser, date range, server-side paging, status pill, sweetalert delete confirm, Excel/CSV/PDF export, and filter persistence via <code>FormValueStorageService</code> — all repeat verbatim across modules.</figcaption>
+  </figure>
+
+  <h3>The add / edit screen</h3>
+  <figure>
+    <div class="fig-wrap">
+      <svg viewBox="0 0 880 340" role="img" aria-label="Wireframe of a standard add or edit form">
+        <rect x="1" y="1" width="878" height="338" rx="7" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="22" y="34" font-family="var(--cond)" font-size="18" font-weight="700" fill="var(--ink)">Add Company</text>
+        <text x="22" y="52" font-family="var(--sans)" font-size="11" fill="var(--faint)">Home › Master › Company › Add</text>
+
+        <rect x="22" y="68" width="836" height="212" rx="5" fill="var(--surface-2)" stroke="var(--line)"/>
+        <g font-family="var(--cond)" font-size="10" font-weight="600" letter-spacing=".06em" fill="var(--muted)">
+          <text x="40" y="92">COMPANY NAME *</text><text x="320" y="92">COMPANY EMAIL *</text><text x="600" y="92">PAN NUMBER</text>
+          <text x="40" y="150">COUNTRY *</text><text x="320" y="150">STATE *</text><text x="600" y="150">CITY *</text>
+          <text x="40" y="208">COMPANY LOGO</text>
+        </g>
+        <g fill="var(--surface)" stroke="var(--line-strong)">
+          <rect x="40" y="98" width="252" height="30" rx="4"/><rect x="320" y="98" width="252" height="30" rx="4"/><rect x="600" y="98" width="240" height="30" rx="4"/>
+          <rect x="40" y="156" width="252" height="30" rx="4"/><rect x="320" y="156" width="252" height="30" rx="4"/><rect x="600" y="156" width="240" height="30" rx="4"/>
+        </g>
+        <g font-family="var(--sans)" font-size="11" fill="var(--faint)">
+          <text x="280" y="176" text-anchor="end">▾</text><text x="560" y="176" text-anchor="end">▾</text><text x="828" y="176" text-anchor="end">▾</text>
+        </g>
+        <text x="166" y="200" font-family="var(--mono)" font-size="9" fill="var(--faint)" text-anchor="middle">cascading: country → state → city</text>
+        <rect x="40" y="214" width="110" height="26" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="95" y="231" font-family="var(--sans)" font-size="11" fill="var(--ink-2)" text-anchor="middle">Choose file</text>
+        <rect x="162" y="208" width="42" height="38" rx="4" fill="var(--surface-3)"/>
+        <text x="183" y="232" font-family="var(--sans)" font-size="9" fill="var(--faint)" text-anchor="middle">preview</text>
+
+        <line x1="40" y1="256" x2="840" y2="256" stroke="var(--warn)" stroke-dasharray="4 3"/>
+        <rect x="40" y="248" width="196" height="16" rx="8" fill="var(--warn-soft)"/>
+        <text x="138" y="260" font-family="var(--mono)" font-size="9.5" fill="var(--warn)" text-anchor="middle">*ngIf="usertype == 2 || usertype == 3"</text>
+
+        <rect x="654" y="296" width="92" height="30" rx="4" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="700" y="316" font-family="var(--cond)" font-size="12" font-weight="600" fill="var(--ink-2)" text-anchor="middle">Cancel</text>
+        <rect x="758" y="296" width="100" height="30" rx="4" fill="var(--accent)"/>
+        <text x="808" y="316" font-family="var(--cond)" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Submit</text>
+        <text x="22" y="316" font-family="var(--mono)" font-size="9.5" fill="var(--faint)">template-driven: &lt;form #addform="ngForm"&gt; + ngModel — no reactive forms anywhere</text>
+      </svg>
+    </div>
+    <figcaption>Every create payload carries audit fields — <code>createBy</code> from <code>localStorage.id</code> and <code>createByIp</code> from <code>IpAddressService</code> — plus <code>companyMasterID</code>. Role-conditional fields are plain <code>*ngIf</code> on <code>usertype</code>.</figcaption>
+  </figure>
+
+  <h3>Also worth knowing</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Screen</th><th>What makes it different</th></tr></thead>
+    <tbody>
+      <tr><td>Employee Master</td><td>~50 sub-screens behind a tabbed profile — address, education, family, documents, salary, policies, reports-to, letters</td></tr>
+      <tr><td>Company Structure</td><td>Org chart rendered with <code>@dabeng/ng-orgchart</code></td></tr>
+      <tr><td>Attendance Calendar</td><td>FullCalendar month grid with per-day status colouring</td></tr>
+      <tr><td>PMS goals</td><td>Syncfusion Kanban board</td></tr>
+      <tr><td>Letter / Mail templates</td><td>Quill rich-text editor with insertable merge fields from Letter Fields / Mail Fields</td></tr>
+      <tr><td>Tracking &amp; Visits</td><td>Google Maps with route playback via <code>travel-marker</code></td></tr>
+      <tr><td>Pre-boarding form</td><td>Public, generated from Customize Field config — signature pad, image and PDF field types</td></tr>
+      <tr><td>Payslip / Form 16</td><td>PDF generation with pdfmake and jsPDF, preview via ng2-pdf-viewer, bulk e-mail</td></tr>
+      <tr><td>Reports</td><td>~65 of them, all driven by the shared <code>&lt;app-common-filter&gt;</code> bar</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="modules">
+  <h2><span class="num">05</span>Modules</h2>
+  <p class="lede">Thirty lazy-loaded feature modules under <code>src/app/views/app/</code>, each mounted at <code>/#/app/&lt;route&gt;</code>.</p>
+
+  <h4>Platform &amp; configuration</h4>
+  <div class="mods">
+    <div class="mod"><b>Super Admin Menu</b><code>/superadminmenus</code><span>45+ global masters: companies, subscription plans, banks, PT, templates, tax slabs, Form Master, Operation Master, modules, dealers</span></div>
+    <div class="mod"><b>Master</b><code>/masters</code><span>~90 company-scoped masters — org structure, employee master, time and pay policies, finance heads, bulk-add tools</span></div>
+    <div class="mod"><b>Org</b><code>/orgs</code><span>Roles, Assign Role, Permission View, Authorization, policy documents, anonymous feedback, location tracking</span></div>
+    <div class="mod"><b>Utility</b><code>/utilitys</code><span>Offer, appointment, joining, increment, experience, termination and discrepancy letters; mail templates, auto-mail, audit logs, ERP integration</span></div>
+  </div>
+
+  <h4>Time &amp; attendance</h4>
+  <div class="mods">
+    <div class="mod"><b>Attendance</b><code>/attendances</code><span>Punch data, manual entry, corrections, calendar, leave application and balance, comp-off, outdoor duty, shift roster, biometric sync</span></div>
+    <div class="mod"><b>Overtime</b><code>/overtimes</code><span>OT entry, request, calculation, daily and consolidated reports</span></div>
+    <div class="mod"><b>Gate Pass</b><code>/gatepasses</code><span>Visitor gate pass master, entry and dashboard</span></div>
+    <div class="mod"><b>Employee Gate Pass</b><code>/employeegatepasses</code><span>My gate pass, request, authorization</span></div>
+    <div class="mod"><b>Visit</b><code>/visits</code><span>Field visits, tours, next-visit schedule, call follow-up, vehicle usage</span></div>
+  </div>
+
+  <h4>Payroll &amp; finance</h4>
+  <div class="mods">
+    <div class="mod"><b>Payroll</b><code>/payrolls</code><span>Salary structure, payslip generation and mailing, bonus, incentive, leave encashment, HR dashboard, F&amp;F, ID cards, announcements</span></div>
+    <div class="mod"><b>My Finances</b><code>/finances</code><span>Expenses, advances, loans, deposits, penalties, office expense, ERP sync</span></div>
+    <div class="mod"><b>Income Tax</b><code>/incometax</code><span>Declarations, investments, tax regime, monthly TDS, TDS sections and limits</span></div>
+    <div class="mod"><b>Form 16</b><code>/form16s</code><span>Form 16 master, tax challans, TDS slab, reports</span></div>
+  </div>
+
+  <h4>Talent lifecycle</h4>
+  <div class="mods">
+    <div class="mod"><b>Pre-Boarding</b><code>/preboardings</code><span>Job posting, applications, pre-boarding form with customizable fields</span></div>
+    <div class="mod"><b>Off-Boarding</b><code>/offboardings</code><span>Resignation, exit tasks, resignation list</span></div>
+    <div class="mod"><b>PMS</b><code>/pms</code><span>KRA, KPI, goals, goal review, performance review, review forms, PMS policy</span></div>
+    <div class="mod"><b>Skillsets</b><code>/skillsets</code><span>Skillset master and forms, monthly and field forms, reports</span></div>
+    <div class="mod"><b>My Team</b><code>/myteam</code><span>Team master, company structure org chart, user tracking</span></div>
+  </div>
+
+  <h4>Day to day</h4>
+  <div class="mods">
+    <div class="mod"><b>Dashboards</b><code>/dashboards</code><span>analytics (employee landing), default (platform landing), punch-in today</span></div>
+    <div class="mod"><b>Task</b><code>/tasks</code><span>Task master, my tasks, daily task, stages, team reporting, dashboard, four analytics charts</span></div>
+    <div class="mod"><b>Help Desk</b><code>/tickets</code><span>Tickets, categories, live ticket chat, dashboard</span></div>
+    <div class="mod"><b>CheckList</b><code>/checklists</code><span>Checklist master, questions, admin and user views</span></div>
+    <div class="mod"><b>MoodTracker</b><code>/moodTrackers</code><span>Sentiment capture, dashboard and reports</span></div>
+    <div class="mod"><b>Asset</b><code>/assets</code><span>Asset master, assign to employee, my assets</span></div>
+    <div class="mod"><b>Request Inbox</b><code>/reuqestInbox</code><span>Consolidated approval queue — note the route spelling</span></div>
+  </div>
+
+  <h4>Reporting</h4>
+  <div class="mods">
+    <div class="mod"><b>Report</b><code>/reports</code><span>~65 operational reports — attendance, leave, payroll, statutory, finance, tracking</span></div>
+    <div class="mod"><b>Govt. Report</b><code>/govtreports</code><span>Statutory registers and forms — Form 1–29, A–D, ER-01, muster roll, LWF</span></div>
+  </div>
+</section>
+
+<section id="api">
+  <h2><span class="num">06</span>Backend API</h2>
+  <p class="lede">The backend is a separate repository. What follows is the contract as this frontend consumes it — derived from <code>ConstantService</code> and <code>ApiService</code>.</p>
+
+  <h3>URL convention</h3>
+  <pre><code>&lt;baseUrl&gt;&lt;resource&gt;/v&lt;n&gt;/&lt;action&gt;[/&lt;id&gt;]
+
+POST   companymaster/v1/add
+POST   companymaster/v1/getalldata        <span class="tok-c">← POST is used for reads: filters go in the body</span>
+GET    companymaster/v1/getbyid/42
+POST   companymaster/v1/updatebyid
+POST   companymaster/v1/deletebyid
+POST   companymaster/v1/statuschange      <span class="tok-c">← 'statuschanges' also exists, per resource</span>
+GET    companymaster/v2/getalldata        <span class="tok-c">← v1/v2/v3 coexist; check the constant</span></code></pre>
+
+  <div class="note">
+    <p><strong>Never hard-code a URL in a component.</strong> Add a constant to <code>ConstantService</code> and reference it. Naming there is inconsistent by era — older resources use <code>getalldata</code>, newer ones <code>listRoleMaster</code> — so read the constant rather than guessing.</p>
+  </div>
+
+  <h3>Authentication</h3>
+  <pre><code>POST {apiUrl}auth/v1/login
+→ { status: 200, data: {
+      token, usermasterid, companyMasterID,
+      admin,           <span class="tok-c">// the user type, 0–4</span>
+      childcompany, resetpassword, permission } }
+
+<span class="tok-c">// every subsequent request</span>
+Authorization: Bearer &lt;token&gt;      <span class="tok-c">// attached by ApiService.headerInit()</span></code></pre>
+  <p>The JWT payload is nested: <code>jwtDecode(token).token.userType</code>. There is no refresh-token flow — an expired token produces <code>status: 403</code>, which triggers the session-timeout modal.</p>
+
+  <h3>List request shape</h3>
+  <pre><code>{
+  page: 1, limit: 10,
+  startdate: <span class="tok-s">''</span>, enddate: <span class="tok-s">''</span>, searchQuery: <span class="tok-s">''</span>,
+  companyMasterID: localStorage.getItem(<span class="tok-s">'company_id'</span>)   <span class="tok-c">// ← the tenant boundary</span>
+}</code></pre>
+
+  <h3>Bulk-import pipeline</h3>
+  <p>Masters that accept Excel upload expose a five-step family. Demo templates are also checked into <code>src/assets/*.xlsx</code>.</p>
+  <pre><code>generateDemoExcel → <span class="tok-c">(user fills it)</span> → validateExcel → revalidate&lt;Entity&gt; → addValidate&lt;Entity&gt; → uploadexcel</code></pre>
+
+  <h3>Key endpoints</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Endpoint</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>auth/v1/login</code></td><td>Sign in; returns token and user type</td></tr>
+      <tr><td><code>auth/v1/finalcheckpermission</code></td><td><b>The permission matrix.</b> Drives the whole menu and every button</td></tr>
+      <tr><td><code>auth/v1/dashboard1</code></td><td>Employee dashboard payload</td></tr>
+      <tr><td><code>auth/v1/user-pages</code></td><td>Global search index for the top-nav search</td></tr>
+      <tr><td><code>roleMaster/v1/*</code></td><td>Role CRUD, <code>AssignRoleMaster</code>, <code>listUserPermission</code></td></tr>
+      <tr><td><code>formmaster/v1/*</code></td><td>The screen catalogue that permissions match on</td></tr>
+      <tr><td><code>companymaster/v1/*</code></td><td>Tenants, company tree, sub-admin scoping, subscription analytics</td></tr>
+      <tr><td><code>companycontact/v1/*</code></td><td>All user records — the <code>admin</code> field sets the user type</td></tr>
+      <tr><td><code>leaveauthorizationRequest/v1/*</code></td><td>Leave approvals, <code>countpending</code> for the inbox badge</td></tr>
+      <tr><td><code>authorizationRequest/v1/*</code></td><td>Expense and overtime approvals</td></tr>
+      <tr><td><code>attendanceTransaction/v1/*</code></td><td>Punch and attendance records</td></tr>
+      <tr><td><code>salaryTrans/v1/*</code></td><td>Salary transactions</td></tr>
+      <tr><td><code>report/v1/*</code></td><td>65+ report actions</td></tr>
+    </tbody>
+  </table></div>
+  <p>Roughly 245 distinct resource groups are referenced in all. The full inventory, grouped by domain, is in <code>docs/07-backend-api.md</code>.</p>
+</section>
+
+<section id="recipe">
+  <h2><span class="num">07</span>Adding a screen</h2>
+  <p class="lede">The eight steps, in order. The full worked example — a fictional Vendor Master, with complete component code — is in <code>docs/08-adding-a-screen.md</code>.</p>
+
+  <ol class="steps">
+    <li><b>Register the form in the backend catalogue</b>
+      <p>Super Admin → Form Master, with <code>formName = "VendorMaster"</code> and the operations you plan to gate on. Not optional — skip it and the menu item never renders for a normal user.</p></li>
+    <li><b>Add the endpoints to <code>ConstantService</code></b>
+      <p>Under a new <code>// vendormaster</code> comment header, following the existing naming.</p></li>
+    <li><b>Create the folder</b>
+      <p><code>views/app/masters/vendor_master/</code> with <code>list-</code>, <code>add-</code>, <code>edit-</code> components plus a module and routing module. Mirror a neighbouring master exactly.</p></li>
+    <li><b>Write the feature routing module</b>
+      <p><code>''</code> → list, <code>add_vendor</code> → add, <code>edit_vendor</code> → edit.</p></li>
+    <li><b>Write the feature module</b>
+      <p>Copy the import list from a neighbour: NgxDatatable, NgSelect, PagesContainers, Pagination, Modal, SimpleNotifications, NgxUiLoader, Translate.</p></li>
+    <li><b>Lazy-load it from the parent</b>
+      <p>Add a <code>loadChildren</code> entry to <code>masters.routing.ts</code>.</p></li>
+    <li><b>Add both menu entries</b>
+      <p><code>constants/menu.ts</code> <em>and</em> <code>constants/headerItems.ts</code>. The <code>menu:</code> key must exactly equal the backend <code>formName</code>.</p></li>
+    <li><b>Implement list, then add/edit</b>
+      <p>List: ngx-datatable + <code>checkpermission()</code> + server-side paging. Form: template-driven <code>ngForm</code> + audit fields + <code>companyMasterID</code>.</p></li>
+  </ol>
+
+  <h3>Before you raise the PR</h3>
+  <div class="tw"><table>
+    <thead><tr><th style="width:52%">Check</th><th>Why it bites</th></tr></thead>
+    <tbody>
+      <tr><td><code>menu:</code> exactly equals the backend <code>formName</code></td><td>Silent — the item vanishes for permissioned users only</td></tr>
+      <tr><td>Entry added to <b>both</b> <code>menu.ts</code> and <code>headerItems.ts</code></td><td>Missing in one layout mode</td></tr>
+      <tr><td>Endpoints in <code>ConstantService</code>, none inlined</td><td>Undiscoverable when the API changes</td></tr>
+      <tr><td><code>checkpermission()</code> present, with the 2/3/4 short-circuit</td><td>Admins get no buttons at all</td></tr>
+      <tr><td>Buttons gated with <code>*ngIf="permissionX.length"</code></td><td>Users click things they can't do</td></tr>
+      <tr><td><code>companyMasterID</code> in every list and create payload</td><td>Cross-tenant data leak</td></tr>
+      <tr><td>Audit fields on create and update</td><td>Backend rejects, or the audit trail is blank</td></tr>
+      <tr><td><code>res.status == 200</code> checked, not the HTTP status</td><td>Errors silently treated as success</td></tr>
+      <tr><td>Spinner stopped on <b>every</b> branch, errors included</td><td>The page stays locked behind the loader</td></tr>
+      <tr><td>Tested as usertype 0/1 <b>with restricted permissions</b></td><td>“Works for me” — you tested as an admin</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="gotchas">
+  <h2><span class="num">08</span>Gotchas</h2>
+  <p class="lede">The traps that each cost a new developer about a day.</p>
+
+  <div class="gotcha">
+    <h4><span class="pill d">Routing</span>&nbsp; Three route tables, chosen at import time</h4>
+    <p><code>views.routing.ts</code> declares <code>let routes</code> then reassigns it twice, based on whether a token exists and on <code>isAuthGuardActive</code>. Evaluated once, when the module is first imported — logging in or out does not re-evaluate it. In production <code>isAuthGuardActive</code> is <code>false</code>, so the unguarded table always wins.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill d">Security</span>&nbsp; AuthGuard barely guards</h4>
+    <p><code>canActivateChild</code> only checks that a <code>token</code> string exists in <code>localStorage</code>; the role check is commented out. Real enforcement is the backend returning 403. Treat the frontend as presentation-layer gating, never as a security boundary.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill w">Build</span>&nbsp; <code>npm run build:stage</code> is broken</h4>
+    <p>It calls <code>ng build --configuration=staging</code>, but <code>angular.json</code> has no <code>staging</code> configuration and there is no <code>environment.staging.ts</code>. Add both, or use <code>build:prod</code>.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill w">Build</span>&nbsp; The Node flags are mandatory</h4>
+    <p>Without <code>--openssl-legacy-provider</code> the build dies with <code>ERR_OSSL_EVP_UNSUPPORTED</code>; without <code>--max_old_space_size=8096</code> it runs out of heap. Both are already in the npm scripts — don't call <code>ng</code> directly.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill a">Menus</span>&nbsp; The <code>menu:</code> key is an unchecked magic string</h4>
+    <p>It must equal the backend <code>formName</code> exactly. No compile-time check, no warning. The item simply disappears for permissioned users while still showing for admins.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill a">Permissions</span>&nbsp; A failed permission call looks like full access</h4>
+    <p>The sidebar keeps the unfiltered menu when <code>finalcheckpermission</code> errors, so the user isn't stranded. Seeing everything can mean the API is down.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill">Legacy</span>&nbsp; Template leftovers that mislead</h4>
+    <p>The project started from the <b>Vien</b> Angular admin template, and several artefacts survive unused:</p>
+    <ul>
+      <li><code>shared/auth.roles.ts</code> — <code>enum UserRole { Editor, Admin }</code> is <b>not</b> the real role model; the real one is the numeric <code>usertype</code> 0–4</li>
+      <li><code>shared/auth.service.ts</code> — Firebase auth; real auth is the backend JWT</li>
+      <li><code>environment.firebase</code> — points at the template author's demo project</li>
+      <li><code>data/api.service.ts</code>, <code>data/charts.ts</code> — template demo data, unrelated to <code>services/api.service.ts</code></li>
+      <li><code>ApiService.callApi</code> <b>static</b> overload and <code>ChatService.getMsg()</code> both throw <code>Method not implemented.</code></li>
+    </ul>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill">Naming</span>&nbsp; Spelling you must not casually “fix”</h4>
+    <p>These are load-bearing — grep before renaming: route <code>reuqestInbox</code>, constants <code>UPDATEOMPANYDATA</code> and <code>DELETEOMPANYDATA</code>, backend path <code>citymaster/v1/getbgetCityBystateIdyid/</code>, resources <code>erpIngegration</code> and <code>resigantionReason</code>, folder <code>asignassettoemp</code>, and both <code>statuschange</code> and <code>statuschanges</code>.</p>
+  </div>
+
+  <div class="gotcha">
+    <h4><span class="pill">Repo</span>&nbsp; The working tree is not clean</h4>
+    <p>Branch <code>local</code> carries a large set of modified files and some deletions — notably <code>src/app/company-structure/*</code> is deleted while <code>AppModule</code> still declares <code>CompanyStructureComponent</code>. Run <code>git status</code> before assuming a file is missing. Two lockfiles are also committed; pick one package manager and stay with it.</p>
+  </div>
+
+  <h3>Where to look when…</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Symptom</th><th>Start here</th></tr></thead>
+    <tbody>
+      <tr><td>A menu item is missing</td><td><code>menu.ts</code> · <code>headerItems.ts</code> · Form Master · the <code>finalcheckpermission</code> response</td></tr>
+      <tr><td>A button is missing</td><td>That screen's <code>checkpermission()</code> and its <code>*ngIf="permissionX.length"</code></td></tr>
+      <tr><td>Everyone gets logged out</td><td>Something returned <code>status: 403</code> → <code>callSessionTimeOutComponent</code></td></tr>
+      <tr><td>A route 404s to <code>/error</code></td><td><code>views.routing.ts</code> — which of the three tables is active?</td></tr>
+      <tr><td>An API call 404s</td><td><code>ConstantService</code> — check the version and any trailing slash</td></tr>
+      <tr><td>Data from the wrong tenant</td><td><code>companyMasterID</code> in the body; <code>childcompany</code> in <code>localStorage</code></td></tr>
+      <tr><td>A list loses its filters</td><td><code>FormValueStorageService</code> and the <code>protectedRoutes</code> array in that component</td></tr>
+      <tr><td>The sidebar renders oddly</td><td><code>SidebarService.containerClassnames</code> and the environment breakpoints</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>
+  Musterbox HRMS handover · generated from branch <code>local</code>, September 2026.
+  The full written pack — getting started, module catalogue, the complete API inventory and the worked screen recipe — lives in <code>docs/</code> alongside the code.
+</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidenav a'));
+  var secs  = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function mark(){
+    var best = 0;
+    for (var i = 0; i < secs.length; i++){
+      if (secs[i] && secs[i].getBoundingClientRect().top <= 120) best = i;
+    }
+    links.forEach(function(a, i){ a.classList.toggle('on', i === best); });
+  }
+  mark();
+  var tick = false;
+  window.addEventListener('scroll', function(){
+    if (tick) return;
+    tick = true;
+    requestAnimationFrame(function(){ mark(); tick = false; });
+  }, { passive: true });
+})();
+</script>

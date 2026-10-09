@@ -1,0 +1,61 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit" (addNewItem)="showAddNewModal()"
+name="Manage Leave Balance" [showadd]="permissioncreate.length > 0"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (clearData)="clearData()" (clear)="clearData()" (init)="init($event)"
+    (export)="export()">
+  </app-common-filter>
+}
+
+@if (rows && permissionview.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limut" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)" (addNewItem)="showAddNewModal()" [showadd]="permissioncreate">
+        <ngx-datatable-column [flexGrow]="1.2" [width]="100" name="View" prop="userMasterID">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button class="btn btn-primary" (click)="viewData(row.userMasterID)">View</button>
+          </ng-template>
+        </ngx-datatable-column>
+        @for (col of columns; track col) {
+          <ngx-datatable-column [flexGrow]="1.2" [width]="180" [name]="col" [prop]="col">
+          </ngx-datatable-column>
+        }
+        @if (rows.length > 0) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="page.totalCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="page.totalCount" [boundaryLinks]="true"
+                  [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate"
+                  [itemsPerPage]="filterData.limit" [maxSize]="5" [(ngModel)]="currentPage" (pageChanged)="onPageChange($event)"
+                [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

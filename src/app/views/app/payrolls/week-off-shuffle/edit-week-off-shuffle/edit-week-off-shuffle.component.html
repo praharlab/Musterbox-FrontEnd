@@ -1,0 +1,67 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Weekoff Shuffle</h5>
+
+    @if (getdata) {
+      <form #addPayment="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #userMasterID="ngModel" name="userMasterID"
+                [(ngModel)]="getdata.userMaster.displayName" disabled />
+                <span>User Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #weekoffshuffled="ngModel"
+                  name="weekoffshuffled" [(ngModel)]="getdata.weekoffShuffled" required />
+                  <span>Week Off Shuffle*</span>
+                  @if (!weekoffshuffled.valid && addPayment.submitted) {
+                    <div class="invalid-tooltip">
+                      Week Off Shuffle is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel #shuffled="ngModel" name="shuffled"
+                    [(ngModel)]="getdata.shuffled" required />
+                    <span>Shuffled*</span>
+                    @if (!shuffled.valid && addPayment.submitted) {
+                      <div class="invalid-tooltip">
+                        Shuffled is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" ngModel #remarks="ngModel" name="remarks"
+                    [(ngModel)]="getdata.remarks" required></textarea>
+                    <span>Remarks *</span>
+                    @if (!remarks.valid && addPayment.submitted) {
+                      <div class="invalid-tooltip">
+                        Remarks is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-12">
+                  <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                  <button class="btn btn-danger btn-shadow mt-4"
+                    [routerLink]="adminRoot + '/payrolls/weekoff_shuffle'" style="margin-left: 2%">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

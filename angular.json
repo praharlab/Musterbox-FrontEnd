@@ -1,0 +1,269 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "musterbox": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/musterbox",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/assets"
+            ],
+            "styles": [
+              "src/assets/css/vendor/bootstrap.min.css",
+              "src/assets/css/vendor/bootstrap.rtl.only.min.css",
+              "src/assets/fonts/iconsmind-s/css/iconsminds.css",
+              "src/assets/fonts/simple-line-icons/css/simple-line-icons.css",
+              "./node_modules/@glidejs/glide/dist/css/glide.core.min.css",
+              "./node_modules/quill/dist/quill.snow.css",
+              "./node_modules/quill/dist/quill.bubble.css",
+              "./node_modules/@ng-select/ng-select/themes/default.theme.css",
+              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "./node_modules/ngx-lightbox/lightbox.css",
+              "./node_modules/sweetalert2/src/sweetalert2.scss",
+              {
+                "input": "src/assets/css/sass/themes/vien.light.tealslate.scss",
+                "bundleName": "light.tealslate",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.tealslate.scss",
+                "bundleName": "dark.tealslate",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.blueyale.scss",
+                "bundleName": "light.blueyale",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.bluenavy.scss",
+                "bundleName": "light.bluenavy",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.blueolympic.scss",
+                "bundleName": "light.blueolympic",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.greenmoss.scss",
+                "bundleName": "light.greenmoss",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.greenlime.scss",
+                "bundleName": "light.greenlime",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.yellowgranola.scss",
+                "bundleName": "light.yellowgranola",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.greysteel.scss",
+                "bundleName": "light.greysteel",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.orangecarrot.scss",
+                "bundleName": "light.orangecarrot",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.purplemonster.scss",
+                "bundleName": "light.purplemonster",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.light.redruby.scss",
+                "bundleName": "light.redruby",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.blueyale.scss",
+                "bundleName": "dark.blueyale",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.bluenavy.scss",
+                "bundleName": "dark.bluenavy",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.blueolympic.scss",
+                "bundleName": "dark.blueolympic",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.greenmoss.scss",
+                "bundleName": "dark.greenmoss",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.greenlime.scss",
+                "bundleName": "dark.greenlime",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.yellowgranola.scss",
+                "bundleName": "dark.yellowgranola",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.greysteel.scss",
+                "bundleName": "dark.greysteel",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.orangecarrot.scss",
+                "bundleName": "dark.orangecarrot",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.purplemonster.scss",
+                "bundleName": "dark.purplemonster",
+                "inject": false
+              },
+              {
+                "input": "src/assets/css/sass/themes/vien.dark.redruby.scss",
+                "bundleName": "dark.redruby",
+                "inject": false
+              }
+            ],
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "20mb",
+                  "maximumError": "20mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "musterbox:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "musterbox:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "musterbox:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/assets"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false,
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
+  },
+  "schematics": {
+    "@angular-eslint/schematics:application": {
+      "setParserOptionsProject": true
+    },
+    "@angular-eslint/schematics:library": {
+      "setParserOptionsProject": true
+    },
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
+  }
+}

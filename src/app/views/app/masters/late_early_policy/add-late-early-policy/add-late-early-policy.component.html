@@ -1,0 +1,1880 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Late-Come Early-Go Policy</h5>
+
+    <form #addlateearlypolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              [(ngModel)]="PolicyData.companyMasterID" required>
+              @for (company of allCompanyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && addlateearlypolicy.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #lateEarlyPolicyName="ngModel"
+              name="lateEarlyPolicyName" />
+              <span>Policy Name *</span>
+              @if (!lateEarlyPolicyName.valid && addlateearlypolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Policy Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #policytype="ngModel" name="policytype"
+                (change)="setPolicyType($event)" [(ngModel)]="PolicyData.lateEarlyPolicyType" required>
+                <ng-option [value]="combinedLabelName">LateCome EarlyGo - Combined</ng-option>
+                <ng-option [value]="seperatedLabelName">LateCome EarlyGo - Seperated</ng-option>
+                <ng-option [value]="noLcEgPolicyLabelName">No LateCome EarlyGo Policy</ng-option>
+              </ng-select>
+              <span>Policy Type *</span>
+              @if (!policytype.valid && addlateearlypolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Policy Type is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          @if (PolicyData.lateEarlyPolicyType == seperatedLabelName) {
+            <div class="col-md-1" style="margin-left: 2%">
+              <input class="form-check-input" type="checkbox" ngModel name="latecoming" #latecoming="ngModel"
+                [(ngModel)]="onlylatecoming" (change)="setonlyLatecoming($event.target.checked)" />
+                <label class="form-check-label" for="inlineCheckbox32">Late Come</label>
+                <br />
+                <br />
+              </div>
+            }
+
+            @if (PolicyData.lateEarlyPolicyType == seperatedLabelName) {
+              <div class="col-md-1" style="margin-left: 2%">
+                <input class="form-check-input" type="checkbox" ngModel name="earlygoing" #earlygoing="ngModel"
+                  [(ngModel)]="onlyearlygoing" (change)="setonlyEarlygoing($event.target.checked)" />
+                  <label class="form-check-label" for="inlineCheckbox3">Early Go</label>
+                  <br />
+                  <br />
+                </div>
+              }
+            </div>
+
+            @if (PolicyData.lateEarlyPolicyType == combinedLabelName) {
+              <div class="row">
+                <div class="col-md-12">
+                  <hr />
+                  <h4><b>Late Come Early Go - Combined :</b></h4>
+                  <br />
+                </div>
+                <br />
+                <!-- Grace Time (For Late Coming) -->
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" required ngModel #graceInCombined="ngModel" name="graceInCombined"
+                      [(ngModel)]="PolicyData.graceInTime" />
+                      <span>Grace Time (For Late Coming) *</span>
+                      @if (!graceInCombined.valid && addlateearlypolicy.submitted) {
+                        <div class="invalid-tooltip">
+                          Grace Time (For Late Coming) is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <!-- Grace Time (For Early Go) -->
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" required ngModel #earlygraceCombined="ngModel"
+                        name="earlygraceCombined" [(ngModel)]="PolicyData.earlyGraceTime" />
+                        <span>Grace Time (For Early Go) *</span>
+                        @if (!earlygraceCombined.valid && addlateearlypolicy.submitted) {
+                          <div class="invalid-tooltip">
+                            Grace Time (For Early Go) is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <!-- Deduction category -->
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #combineddeductioncategory="ngModel"
+                          name="combineddeductioncategory" (change)="changecombined()"
+                          [(ngModel)]="PolicyData.combineddeductioncategory" required>
+                          <ng-option [value]="countwiseLabelName">Count Wise</ng-option>
+                          <ng-option [value]="slotwiseLabelName">Slot Wise</ng-option>
+                          <ng-option [value]="minutewiseLabelName">Minute Wise</ng-option>
+                        </ng-select>
+                        <span>Deduction category *</span>
+                        @if (!combineddeductioncategory.valid && addlateearlypolicy.submitted) {
+                          <div class="invalid-tooltip">
+                            Deduction category is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <!-- No of allowed -->
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" required ngModel #combinednoof="ngModel" name="combinednoof"
+                          [(ngModel)]="PolicyData.combinednoof" />
+                          @if (PolicyData.combineddeductioncategory == countwiseLabelName) {
+                            <span>
+                              No of count allowed *
+                            </span>
+                          }
+                          @if (PolicyData.combineddeductioncategory == slotwiseLabelName) {
+                            <span>
+                              No of slot allowed *
+                            </span>
+                          }
+                          @if (PolicyData.combineddeductioncategory == minutewiseLabelName) {
+                            <span>
+                              No of minutes allowed *
+                            </span>
+                          }
+                          @if (!PolicyData.combineddeductioncategory) {
+                            <span>No of allowed *</span>
+                          }
+                          @if (!combinednoof.valid && addlateearlypolicy.submitted) {
+                            <div class="invalid-tooltip">
+                              This field is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <!-- Deduction From -->
+                      @if (
+                        PolicyData.combineddeductioncategory &&
+                        [minutewiseLabelName,countwiseLabelName].includes(PolicyData.combineddeductioncategory)
+                        ) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel #combineddeductionfrom="ngModel"
+                              name="combineddeductionfrom" (change)="changecombined()" [(ngModel)]="PolicyData.combineddeductionfrom"
+                              required>
+                              <ng-option [value]="salaryLabelName">Salary</ng-option>
+                              <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                            </ng-select>
+                            <span>Deduction from *</span>
+                            @if (!combineddeductionfrom.valid && addlateearlypolicy.submitted) {
+                              <div class="invalid-tooltip">
+                                Deduction from is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      <!-- Deduction cycle -->
+                      @if (
+                        PolicyData.combineddeductioncategory &&
+                        PolicyData.combineddeductioncategory != countwiseLabelName
+                        ) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel #combineddeductioncycle="ngModel"
+                              name="combineddeductioncycle" (change)="changecombined()" [(ngModel)]="PolicyData.combineddeductioncycle"
+                              required>
+                              @if (
+                                PolicyData.combineddeductioncategory &&
+                                PolicyData.combineddeductioncategory != minutewiseLabelName
+                                ) {
+                                <ng-option [value]="daywiseLabelName">
+                                  Day Wise
+                                </ng-option>
+                              }
+                              <ng-option [value]="monthwiseLabelName">Month Wise</ng-option>
+                            </ng-select>
+                            <span>Deduction cycle *</span>
+                            @if (!combineddeductioncycle.valid && addlateearlypolicy.submitted) {
+                              <div class="invalid-tooltip">
+                                Deduction cycle is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      <!-- Max Late Coming Minute allowed -->
+                      @if (
+                        PolicyData.combineddeductioncategory &&
+                        PolicyData.combineddeductioncategory != minutewiseLabelName
+                        ) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="number" required ngModel #combinedmaxminute="ngModel"
+                              name="combinedmaxminute" [(ngModel)]="PolicyData.combinedmaxminute" />
+                              <span>Max (Late Coming or Early Going) Minutes allowed *</span>
+                              @if (!combinedmaxminute.valid && addlateearlypolicy.submitted) {
+                                <div class="invalid-tooltip">
+                                  Max Minute allowed is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                        }
+                        <!-- Deduction Type -->
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" #combineddeductiontype="ngModel" name="combineddeductiontype"
+                              (change)="selectDeductionType($event, combinedLabelName)" [(ngModel)]="PolicyData.combineddeductiontype"
+                              required>
+                              @if (
+                                (PolicyData.combineddeductioncategory == minutewiseLabelName && PolicyData.combineddeductionfrom == salaryLabelName) ||
+                                PolicyData.combineddeductioncategory == slotwiseLabelName
+                                ) {
+                                <ng-option [value]="fixAmountLabel">
+                                  Fixed Amount
+                                </ng-option>
+                              }
+                              @if (PolicyData.combineddeductioncategory == minutewiseLabelName && PolicyData.combineddeductionfrom == salaryLabelName) {
+                                <ng-option [value]="perminuteLabelName"
+                                  >
+                                  Per Minute
+                                </ng-option>
+                              }
+                              @if (PolicyData.combineddeductioncategory == slotwiseLabelName) {
+                                <ng-option [value]="percentLabelName">
+                                  Percentage
+                                </ng-option>
+                              }
+                              @if (
+                                PolicyData.combineddeductioncategory == countwiseLabelName &&
+                                PolicyData.combineddeductionfrom == salaryLabelName
+                                ) {
+                                <ng-option [value]="fixAmountLabel">
+                                  Fixed Amount
+                                </ng-option>
+                              }
+                              @if (
+                                PolicyData.combineddeductioncategory == countwiseLabelName &&
+                                PolicyData.combineddeductionfrom == salaryLabelName
+                                ) {
+                                <ng-option [value]="percentLabelName">
+                                  Percentage
+                                </ng-option>
+                              }
+                              @if (
+                                PolicyData.combineddeductioncategory == countwiseLabelName &&
+                                PolicyData.combineddeductionfrom == attendanceLabelName
+                                ) {
+                                <ng-option [value]="minLabelName">
+                                  Minute
+                                </ng-option>
+                              }
+                              @if (
+                                (PolicyData.combineddeductioncategory == countwiseLabelName || PolicyData.combineddeductioncategory == minutewiseLabelName) &&
+                                PolicyData.combineddeductionfrom == attendanceLabelName
+                                ) {
+                                <ng-option [value]="dayLabelName">
+                                  Day
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <span>Deduction Type *</span>
+                            @if (!combineddeductiontype.valid && addlateearlypolicy.submitted) {
+                              <div class="invalid-tooltip">
+                                Deduction Type is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <!-- combined deduction type -->
+                        @if (
+                          PolicyData.combineddeductiontype &&
+                          PolicyData.combineddeductiontype != dayLabelName
+                          ) {
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="number" required ngModel #combinedvalue="ngModel" name="combinedvalue"
+                                [(ngModel)]="PolicyData.combinedvalue" />
+                                @if (PolicyData.combineddeductiontype == fixAmountLabel) {
+                                  <span>
+                                    {{PolicyData.combineddeductioncategory == minutewiseLabelName?'Amount (Per Minute) *':'Amount *'}}
+                                  </span>
+                                }
+                                @if (PolicyData.combineddeductiontype == percentLabelName) {
+                                  <span>
+                                    Percentage *
+                                  </span>
+                                }
+                                @if (PolicyData.combineddeductiontype == minLabelName) {
+                                  <span>
+                                    Minute *
+                                  </span>
+                                }
+                                @if (PolicyData.combineddeductiontype == perminuteLabelName) {
+                                  <span>
+                                    Gross Divide by Minutes *
+                                  </span>
+                                }
+                                @if (!PolicyData.combineddeductiontype) {
+                                  <span>Value *</span>
+                                }
+                                @if (!combinedvalue.valid && addlateearlypolicy.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Combined Deduction Value is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          }
+                          @if (
+                            PolicyData.combineddeductiontype &&
+                            PolicyData.combineddeductiontype == dayLabelName
+                            ) {
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #combinedvalue="ngModel" name="combinedvalue"
+                                  [(ngModel)]="PolicyData.combinedvalue" required>
+                                  <ng-option value="0.5">0.5</ng-option>
+                                  @if (PolicyData.combineddeductioncategory != minutewiseLabelName) {
+                                    <ng-option value="1">1</ng-option>
+                                  }
+                                </ng-select>
+                                <span>Day *</span>
+                                @if (!combinedvalue.valid && addlateearlypolicy.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Day is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          }
+                          @if (
+                            ((PolicyData.combineddeductioncategory == slotwiseLabelName &&
+                            PolicyData.combineddeductioncycle != monthwiseLabelName) ||
+                            PolicyData.combineddeductioncategory == countwiseLabelName)
+                            ) {
+                            <div class="col-md-3" style="margin-left: 2%">
+                              <input class="form-check-input" type="checkbox" ngModel name="combinedRecurring" #combinedRecurring="ngModel"
+                                [(ngModel)]="PolicyData.combinedRecurring"
+                                (change)="setRecurring($event.target.checked, combinedLabelName)" />
+                                <label class="form-check-label" for="forCombinedRecurring"><b>Set Recurring</b></label>
+                              </div>
+                            }
+                            @if (PolicyData.combineddeductioncategory == countwiseLabelName) {
+                              <div class="col-md-12">
+                                <button class="btn btn-primary btn-lg btn-shadow mt-4" type="button" (click)="addCombineSlab()"
+                                [disabled]="PolicyData.combinedSlab1 && PolicyData.combinedSlab2">Add Slab</button>
+                                <br />
+                                <br />
+                              </div>
+                            }
+                            @if (
+                              PolicyData.combinedSlab1 &&
+                              PolicyData.combineddeductioncategory == countwiseLabelName
+                              ) {
+                              <div class="col-md-12">
+                                <hr />
+                                <h4><b>Combined Slab - 1 :</b></h4>
+                              </div>
+                              <div class="col-md-12 mb-4">
+                                <button type="button" class="btn btn-danger btn-xs" (click)="removeCombineSlabRow(1)">
+                                  Remove Combined Slab - 1
+                                </button>
+                                <br>
+                                </div>
+                                <!-- Deduction From -->
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <ng-select placeholder="Choose your option" ngModel #combineddeductionfrom1="ngModel"
+                                      name="combineddeductionfrom1" (change)="changecombined1()"
+                                      [(ngModel)]="PolicyData.combineddeductionfrom1" required>
+                                      <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                      <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                    </ng-select>
+                                    <span>Deduction from *</span>
+                                    @if (!combineddeductionfrom1.valid && addlateearlypolicy.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Deduction from is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <!-- Max Late Coming Minute allowed -->
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="number" required ngModel #combinedmaxminute1="ngModel"
+                                      name="combinedmaxminute1" [(ngModel)]="PolicyData.combinedmaxminute1" />
+                                      <span>Max (Late Coming or Early Going) Minutes allowed *</span>
+                                      @if (!combinedmaxminute1.valid && addlateearlypolicy.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Max Minute allowed is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <!-- Deduction Type -->
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <ng-select placeholder="Choose your option" #combineddeductiontype1="ngModel"
+                                        name="combineddeductiontype1" (change)="selectDeductionType1($event, combinedLabelName)"
+                                        [(ngModel)]="PolicyData.combineddeductiontype1" required>
+                                        @if (
+                                          PolicyData.combineddeductionfrom1 == salaryLabelName
+                                          ) {
+                                          <ng-option [value]="fixAmountLabel">
+                                            Fixed Amount
+                                          </ng-option>
+                                        }
+                                        @if (
+                                          PolicyData.combineddeductionfrom1 == salaryLabelName
+                                          ) {
+                                          <ng-option [value]="percentLabelName">
+                                            Percentage
+                                          </ng-option>
+                                        }
+                                        @if (
+                                          PolicyData.combineddeductionfrom1 == attendanceLabelName
+                                          ) {
+                                          <ng-option [value]="minLabelName">
+                                            Minute
+                                          </ng-option>
+                                        }
+                                        @if (
+                                          PolicyData.combineddeductionfrom1 == attendanceLabelName
+                                          ) {
+                                          <ng-option [value]="dayLabelName">
+                                            Day
+                                          </ng-option>
+                                        }
+                                      </ng-select>
+                                      <span>Deduction Type *</span>
+                                      @if (!combineddeductiontype1.valid && addlateearlypolicy.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Deduction Type is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <!-- combined deduction type -->
+                                  @if (
+                                    PolicyData.combineddeductiontype1 &&
+                                    PolicyData.combineddeductiontype1 != dayLabelName
+                                    ) {
+                                    <div class="col-md-4">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="number" required ngModel #combinedvalue1="ngModel" name="combinedvalue1"
+                                          [(ngModel)]="PolicyData.combinedvalue1" />
+                                          @if (PolicyData.combineddeductiontype1 == fixAmountLabel) {
+                                            <span>
+                                              Amount *
+                                            </span>
+                                          }
+                                          @if (PolicyData.combineddeductiontype1 == percentLabelName) {
+                                            <span>
+                                              Percentage *
+                                            </span>
+                                          }
+                                          @if (PolicyData.combineddeductiontype1 == minLabelName) {
+                                            <span>
+                                              Minute *
+                                            </span>
+                                          }
+                                          @if (PolicyData.combineddeductiontype1 == perminuteLabelName) {
+                                            <span>
+                                              Gross Divide by Minutes *
+                                            </span>
+                                          }
+                                          @if (!PolicyData.combineddeductiontype1) {
+                                            <span>Value *</span>
+                                          }
+                                          @if (!combinedvalue1.valid && addlateearlypolicy.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Combined Deduction Value is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                    @if (
+                                      PolicyData.combineddeductiontype1 &&
+                                      PolicyData.combineddeductiontype1 == dayLabelName
+                                      ) {
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select placeholder="Choose your option" ngModel #combinedvalue1="ngModel" name="combinedvalue1"
+                                            [(ngModel)]="PolicyData.combinedvalue1" required>
+                                            <ng-option value="0.5">0.5</ng-option>
+                                            <ng-option value="1">1</ng-option>
+                                          </ng-select>
+                                          <span>Day *</span>
+                                          @if (!combinedvalue1.valid && addlateearlypolicy.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Day is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                  }
+                                  @if (
+                                    PolicyData.combinedSlab2 &&
+                                    PolicyData.combineddeductioncategory == countwiseLabelName
+                                    ) {
+                                    <div class="col-md-12">
+                                      <hr />
+                                      <h4><b>Combined Slab - 2 :</b></h4>
+                                    </div>
+                                    <div class="col-md-12 mb-4">
+                                      <button type="button" class="btn btn-danger btn-xs" (click)="removeCombineSlabRow(2)">
+                                        Remove Combined Slab - 2
+                                      </button>
+                                      <br>
+                                      </div>
+                                      <!-- Deduction From -->
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select placeholder="Choose your option" ngModel #combineddeductionfrom2="ngModel"
+                                            name="combineddeductionfrom2" (change)="changecombined2()"
+                                            [(ngModel)]="PolicyData.combineddeductionfrom2" required>
+                                            <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                            <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                          </ng-select>
+                                          <span>Deduction from *</span>
+                                          @if (!combineddeductionfrom2.valid && addlateearlypolicy.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Deduction from is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                      <!-- Max Late Coming Minute allowed -->
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="number" required ngModel #combinedmaxminute2="ngModel"
+                                            name="combinedmaxminute2" [(ngModel)]="PolicyData.combinedmaxminute2" />
+                                            <span>Max (Late Coming or Early Going) Minutes allowed *</span>
+                                            @if (!combinedmaxminute2.valid && addlateearlypolicy.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Max Minute allowed is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                        <!-- Deduction Type -->
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select placeholder="Choose your option" #combineddeductiontype2="ngModel"
+                                              name="combineddeductiontype2" (change)="selectDeductionType2($event, combinedLabelName)"
+                                              [(ngModel)]="PolicyData.combineddeductiontype2" required>
+                                              @if (
+                                                PolicyData.combineddeductionfrom2 == salaryLabelName
+                                                ) {
+                                                <ng-option [value]="fixAmountLabel">
+                                                  Fixed Amount
+                                                </ng-option>
+                                              }
+                                              @if (
+                                                PolicyData.combineddeductionfrom2 == salaryLabelName
+                                                ) {
+                                                <ng-option [value]="percentLabelName">
+                                                  Percentage
+                                                </ng-option>
+                                              }
+                                              @if (
+                                                PolicyData.combineddeductionfrom2 == attendanceLabelName
+                                                ) {
+                                                <ng-option [value]="minLabelName">
+                                                  Minute
+                                                </ng-option>
+                                              }
+                                              @if (
+                                                PolicyData.combineddeductionfrom2 == attendanceLabelName
+                                                ) {
+                                                <ng-option [value]="dayLabelName">
+                                                  Day
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Deduction Type *</span>
+                                            @if (!combineddeductiontype2.valid && addlateearlypolicy.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Deduction Type is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                        <!-- combined deduction type -->
+                                        @if (
+                                          PolicyData.combineddeductiontype2 &&
+                                          PolicyData.combineddeductiontype2 != dayLabelName
+                                          ) {
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="number" required ngModel #combinedvalue2="ngModel" name="combinedvalue2"
+                                                [(ngModel)]="PolicyData.combinedvalue2" />
+                                                @if (PolicyData.combineddeductiontype2 == fixAmountLabel) {
+                                                  <span>
+                                                    Amount *
+                                                  </span>
+                                                }
+                                                @if (PolicyData.combineddeductiontype2 == percentLabelName) {
+                                                  <span>
+                                                    Percentage *
+                                                  </span>
+                                                }
+                                                @if (PolicyData.combineddeductiontype2 == minLabelName) {
+                                                  <span>
+                                                    Minute *
+                                                  </span>
+                                                }
+                                                @if (PolicyData.combineddeductiontype2 == perminuteLabelName) {
+                                                  <span>
+                                                    Gross Divide by Minutes *
+                                                  </span>
+                                                }
+                                                @if (!PolicyData.combineddeductiontype2) {
+                                                  <span>Value *</span>
+                                                }
+                                                @if (!combinedvalue2.valid && addlateearlypolicy.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Combined Deduction Value is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                          @if (
+                                            PolicyData.combineddeductiontype2 &&
+                                            PolicyData.combineddeductiontype2 == dayLabelName
+                                            ) {
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <ng-select placeholder="Choose your option" ngModel #combinedvalue2="ngModel" name="combinedvalue2"
+                                                  [(ngModel)]="PolicyData.combinedvalue2" required>
+                                                  <ng-option value="0.5">0.5</ng-option>
+                                                  <ng-option value="1">1</ng-option>
+                                                </ng-select>
+                                                <span>Day *</span>
+                                                @if (!combinedvalue2.valid && addlateearlypolicy.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Day is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                        }
+                                      </div>
+                                    }
+
+                                    @if (PolicyData.lateEarlyPolicyType == seperatedLabelName && onlylatecoming) {
+                                      <div class="row">
+                                        <div class="col-md-12">
+                                          <hr />
+                                          <h4><b>Late Come:</b></h4>
+                                          <br />
+                                        </div>
+                                        <br />
+                                        <ng-container>
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="number" required ngModel #graceInTime="ngModel" name="graceInTime"
+                                                [(ngModel)]="PolicyData.graceInTime" />
+                                                <span>Grace Time (For Late Coming) *</span>
+                                                @if (!graceInTime.valid && addlateearlypolicy.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Grace Time (For Late Coming) is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <ng-select placeholder="Choose your option" ngModel #deductioncategorylate="ngModel"
+                                                  name="deductioncategorylate" (change)="changeSeperateLateCome()"
+                                                  [(ngModel)]="PolicyData.latedeductioncategory" required>
+                                                  <ng-option [value]="countwiseLabelName">Count Wise</ng-option>
+                                                  <ng-option [value]="slotwiseLabelName">Slot Wise</ng-option>
+                                                  <ng-option [value]="minutewiseLabelName">Minute Wise</ng-option>
+                                                </ng-select>
+                                                <span>Deduction category *</span>
+                                                @if (!deductioncategorylate.valid && addlateearlypolicy.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Deduction category is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="number" required ngModel #latenoof="ngModel"
+                                                  [(ngModel)]="PolicyData.latenoof" name="latenoof" />
+                                                  @if (PolicyData.latedeductioncategory == countwiseLabelName) {
+                                                    <span>
+                                                      No of count allowed *
+                                                    </span>
+                                                  }
+                                                  @if (PolicyData.latedeductioncategory == slotwiseLabelName) {
+                                                    <span>
+                                                      No of slot allowed *
+                                                    </span>
+                                                  }
+                                                  @if (PolicyData.latedeductioncategory == minutewiseLabelName) {
+                                                    <span>
+                                                      No of minutes allowed *
+                                                    </span>
+                                                  }
+                                                  @if (!PolicyData.latedeductioncategory) {
+                                                    <span>No of allowed *</span>
+                                                  }
+                                                  @if (!latenoof.valid && addlateearlypolicy.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      This field is required!
+                                                    </div>
+                                                  }
+                                                </label>
+                                              </div>
+                                              <!-- Deduction From -->
+                                              @if (
+                                                PolicyData.latedeductioncategory &&
+                                                [minutewiseLabelName,countwiseLabelName].includes(PolicyData.latedeductioncategory)
+                                                ) {
+                                                <div class="col-md-4">
+                                                  <label class="form-group has-float-label">
+                                                    <ng-select placeholder="Choose your option" ngModel #latedeductionfrom="ngModel" name="latedeductionfrom"
+                                                      [(ngModel)]="PolicyData.latedeductionfrom" (change)="changeSeperateLateCome()" required>
+                                                      <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                                      <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                                    </ng-select>
+                                                    <span>Deduction from *</span>
+                                                    @if (!latedeductionfrom.valid && addlateearlypolicy.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Deduction from is required!
+                                                      </div>
+                                                    }
+                                                  </label>
+                                                </div>
+                                              }
+                                              <!-- Deduction cycle -->
+                                              @if (
+                                                PolicyData.latedeductioncategory &&
+                                                PolicyData.latedeductioncategory != countwiseLabelName
+                                                ) {
+                                                <div class="col-md-4">
+                                                  <label class="form-group has-float-label">
+                                                    <ng-select placeholder="Choose your option" ngModel #latedeductioncycle="ngModel"
+                                                      name="latedeductioncycle" (change)="changeSeperateLateCome()"
+                                                      [(ngModel)]="PolicyData.latedeductioncycle" required>
+                                                      @if (
+                                                        PolicyData.latedeductioncategory &&
+                                                        PolicyData.latedeductioncategory != minutewiseLabelName
+                                                        ) {
+                                                        <ng-option [value]="daywiseLabelName">
+                                                          Day Wise
+                                                        </ng-option>
+                                                      }
+                                                      <ng-option [value]="monthwiseLabelName">Month Wise</ng-option>
+                                                    </ng-select>
+                                                    <span>Deduction cycle *</span>
+                                                    @if (!latedeductioncycle.valid && addlateearlypolicy.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Deduction cycle is required!
+                                                      </div>
+                                                    }
+                                                  </label>
+                                                </div>
+                                              }
+                                              @if (
+                                                PolicyData.latedeductioncategory &&
+                                                PolicyData.latedeductioncategory != minutewiseLabelName
+                                                ) {
+                                                <div class="col-md-4">
+                                                  <label class="form-group has-float-label">
+                                                    <input class="form-control" type="number" required ngModel #latemaxminute="ngModel" name="latemaxminute"
+                                                      [(ngModel)]="PolicyData.latemaxminute" />
+                                                      <span>Max Late Coming Minutes allowed *</span>
+                                                      @if (!latemaxminute.valid && addlateearlypolicy.submitted) {
+                                                        <div class="invalid-tooltip">
+                                                          Max Minute allowed is required!
+                                                        </div>
+                                                      }
+                                                    </label>
+                                                  </div>
+                                                }
+                                                <!-- Deduction Type -->
+                                                <div class="col-md-4">
+                                                  <label class="form-group has-float-label">
+                                                    <ng-select placeholder="Choose your option" ngModel #latedeductiontype="ngModel" name="latedeductiontype"
+                                                      (change)="selectDeductionType($event, lateTypeName)" [(ngModel)]="PolicyData.latedeductiontype"
+                                                      required>
+                                                      @if (
+                                                        (PolicyData.latedeductioncategory == minutewiseLabelName && PolicyData.latedeductionfrom == salaryLabelName) ||
+                                                        PolicyData.latedeductioncategory == slotwiseLabelName
+                                                        ) {
+                                                        <ng-option [value]="fixAmountLabel">
+                                                          Fixed Amount
+                                                        </ng-option>
+                                                      }
+                                                      @if (PolicyData.latedeductioncategory == minutewiseLabelName && PolicyData.latedeductionfrom == salaryLabelName) {
+                                                        <ng-option [value]="perminuteLabelName"
+                                                          >
+                                                          Per Minute
+                                                        </ng-option>
+                                                      }
+                                                      @if (PolicyData.latedeductioncategory == slotwiseLabelName) {
+                                                        <ng-option [value]="percentLabelName">
+                                                          Percentage
+                                                        </ng-option>
+                                                      }
+                                                      @if (
+                                                        PolicyData.latedeductioncategory == countwiseLabelName &&
+                                                        PolicyData.latedeductionfrom == salaryLabelName
+                                                        ) {
+                                                        <ng-option [value]="fixAmountLabel">
+                                                          Fixed Amount
+                                                        </ng-option>
+                                                      }
+                                                      @if (
+                                                        PolicyData.latedeductioncategory == countwiseLabelName &&
+                                                        PolicyData.latedeductionfrom == salaryLabelName
+                                                        ) {
+                                                        <ng-option [value]="percentLabelName">
+                                                          Percentage
+                                                        </ng-option>
+                                                      }
+                                                      @if (
+                                                        PolicyData.latedeductioncategory == countwiseLabelName &&
+                                                        PolicyData.latedeductionfrom == attendanceLabelName
+                                                        ) {
+                                                        <ng-option [value]="minLabelName">
+                                                          Minute
+                                                        </ng-option>
+                                                      }
+                                                      @if (
+                                                        ( PolicyData.latedeductioncategory == countwiseLabelName || PolicyData.latedeductioncategory == minutewiseLabelName) &&
+                                                        PolicyData.latedeductionfrom == attendanceLabelName
+                                                        ) {
+                                                        <ng-option [value]="dayLabelName">
+                                                          Day
+                                                        </ng-option>
+                                                      }
+                                                    </ng-select>
+                                                    <span>Deduction Type *</span>
+                                                    @if (!latedeductiontype.valid && addlateearlypolicy.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Deduction Type is required!
+                                                      </div>
+                                                    }
+                                                  </label>
+                                                </div>
+                                                @if (
+                                                  PolicyData.latedeductiontype &&
+                                                  PolicyData.latedeductiontype != dayLabelName
+                                                  ) {
+                                                  <div class="col-md-4">
+                                                    <label class="form-group has-float-label">
+                                                      <input class="form-control" type="number" [(ngModel)]="PolicyData.latevalue" required ngModel
+                                                        #lateValue="ngModel" name="lateValue" />
+                                                        @if (PolicyData.latedeductiontype == fixAmountLabel) {
+                                                          <span>
+                                                            {{PolicyData.latedeductioncategory == minutewiseLabelName?'Amount (Per Minute) *':'Amount *'}}
+                                                          </span>
+                                                        }
+                                                        @if (PolicyData.latedeductiontype == percentLabelName) {
+                                                          <span>
+                                                            Percentage *
+                                                          </span>
+                                                        }
+                                                        @if (PolicyData.latedeductiontype == minLabelName) {
+                                                          <span>
+                                                            Minute *
+                                                          </span>
+                                                        }
+                                                        @if (PolicyData.latedeductiontype == perminuteLabelName) {
+                                                          <span>
+                                                            Gross Divide by Minutes *
+                                                          </span>
+                                                        }
+                                                        @if (!PolicyData.latedeductiontype) {
+                                                          <span>Value *</span>
+                                                        }
+                                                        @if (!lateValue.valid && addlateearlypolicy.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Value is required!
+                                                          </div>
+                                                        }
+                                                      </label>
+                                                    </div>
+                                                  }
+                                                  @if (
+                                                    PolicyData.latedeductiontype &&
+                                                    PolicyData.latedeductiontype == dayLabelName
+                                                    ) {
+                                                    <div class="col-md-4">
+                                                      <label class="form-group has-float-label">
+                                                        <ng-select placeholder="Choose your option" [(ngModel)]="PolicyData.latevalue" ngModel
+                                                          #lateValue="ngModel" name="lateValue" required>
+                                                          <ng-option value="0.5">0.5</ng-option>
+                                                          @if (PolicyData.latedeductioncategory != minutewiseLabelName) {
+                                                            <ng-option value="1">1</ng-option>
+                                                          }
+                                                        </ng-select>
+                                                        <span>Day *</span>
+                                                        @if (!lateValue.valid && addlateearlypolicy.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Day is required!
+                                                          </div>
+                                                        }
+                                                      </label>
+                                                    </div>
+                                                  }
+                                                  @if (
+                                                    ((PolicyData.latedeductioncategory == slotwiseLabelName &&
+                                                    PolicyData.latedeductioncycle != monthwiseLabelName) ||
+                                                    PolicyData.latedeductioncategory == countwiseLabelName)
+                                                    ) {
+                                                    <div class="col-md-12" style="margin-left: 2%">
+                                                      <input class="form-check-input" type="checkbox" ngModel name="lateRecurring" #lateRecurring="ngModel"
+                                                        [(ngModel)]="PolicyData.lateRecurring" (change)="setRecurring($event.target.checked, lateTypeName)" />
+                                                        <label class="form-check-label" for="forlateRecurring">
+                                                          <b><b>Set Recurring</b></b>
+                                                        </label>
+                                                        <br />
+                                                        <br />
+                                                      </div>
+                                                    }
+                                                    @if (PolicyData.latedeductioncategory == countwiseLabelName) {
+                                                      <div class="col-md-12">
+                                                        <button class="btn btn-primary btn-lg btn-shadow mt-4" type="button" (click)="addLateComeSlab()"
+                                                        [disabled]="PolicyData.lateComeSlab1 && PolicyData.lateComeSlab2">Add Slab</button>
+                                                        <br />
+                                                        <br />
+                                                      </div>
+                                                    }
+                                                  </ng-container>
+                                                  @if (
+                                                    PolicyData.lateComeSlab1 &&
+                                                    PolicyData.latedeductioncategory == countwiseLabelName
+                                                    ) {
+                                                    <div class="col-md-12">
+                                                      <hr />
+                                                      <h4><b>Late Come Slab - 1 :</b></h4>
+                                                    </div>
+                                                    <div class="col-md-12 mb-4">
+                                                      <button type="button" class="btn btn-danger btn-xs" (click)="removeLateComeSlabRow(1)">
+                                                        Remove Late Come Slab - 1
+                                                      </button>
+                                                    </div>
+                                                    <!-- Deduction From -->
+                                                    <div class="col-md-4">
+                                                      <label class="form-group has-float-label">
+                                                        <ng-select placeholder="Choose your option" ngModel #latedeductionfrom1="ngModel"
+                                                          name="latedeductionfrom1" (change)="changeSeperateLateCome1()"
+                                                          [(ngModel)]="PolicyData.latedeductionfrom1" required>
+                                                          <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                                          <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                                        </ng-select>
+                                                        <span>Deduction from *</span>
+                                                        @if (!latedeductionfrom1.valid && addlateearlypolicy.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Deduction from is required!
+                                                          </div>
+                                                        }
+                                                      </label>
+                                                    </div>
+                                                    <!-- Max Late Coming Minute allowed -->
+                                                    <div class="col-md-4">
+                                                      <label class="form-group has-float-label">
+                                                        <input class="form-control" type="number" required ngModel #latemaxminute1="ngModel" name="latemaxminute1"
+                                                          [(ngModel)]="PolicyData.latemaxminute1" />
+                                                          <span>Max Late Coming Minutes allowed *</span>
+                                                          @if (!latemaxminute1.valid && addlateearlypolicy.submitted) {
+                                                            <div class="invalid-tooltip">
+                                                              Max Minute allowed is required!
+                                                            </div>
+                                                          }
+                                                        </label>
+                                                      </div>
+                                                      <!-- Deduction Type -->
+                                                      <div class="col-md-4">
+                                                        <label class="form-group has-float-label">
+                                                          <ng-select placeholder="Choose your option" #latedeductiontype1="ngModel" name="latedeductiontype1"
+                                                            (change)="selectDeductionType1($event, lateTypeName)" [(ngModel)]="PolicyData.latedeductiontype1"
+                                                            required>
+                                                            @if (
+                                                              PolicyData.latedeductionfrom1 == salaryLabelName
+                                                              ) {
+                                                              <ng-option [value]="fixAmountLabel">
+                                                                Fixed Amount
+                                                              </ng-option>
+                                                            }
+                                                            @if (
+                                                              PolicyData.latedeductionfrom1 == salaryLabelName
+                                                              ) {
+                                                              <ng-option [value]="percentLabelName">
+                                                                Percentage
+                                                              </ng-option>
+                                                            }
+                                                            @if (
+                                                              PolicyData.latedeductionfrom1 == attendanceLabelName
+                                                              ) {
+                                                              <ng-option [value]="minLabelName">
+                                                                Minute
+                                                              </ng-option>
+                                                            }
+                                                            @if (
+                                                              PolicyData.latedeductionfrom1 == attendanceLabelName
+                                                              ) {
+                                                              <ng-option [value]="dayLabelName">
+                                                                Day
+                                                              </ng-option>
+                                                            }
+                                                          </ng-select>
+                                                          <span>Deduction Type *</span>
+                                                          @if (!latedeductiontype1.valid && addlateearlypolicy.submitted) {
+                                                            <div class="invalid-tooltip">
+                                                              Deduction Type is required!
+                                                            </div>
+                                                          }
+                                                        </label>
+                                                      </div>
+                                                      <!-- combined deduction type -->
+                                                      @if (
+                                                        PolicyData.latedeductiontype1 &&
+                                                        PolicyData.latedeductiontype1 != dayLabelName
+                                                        ) {
+                                                        <div class="col-md-4">
+                                                          <label class="form-group has-float-label">
+                                                            <input class="form-control" type="number" required ngModel #latevalue1="ngModel" name="latevalue1"
+                                                              [(ngModel)]="PolicyData.latevalue1" />
+                                                              @if (PolicyData.latedeductiontype1 == fixAmountLabel) {
+                                                                <span>
+                                                                  Amount *
+                                                                </span>
+                                                              }
+                                                              @if (PolicyData.latedeductiontype1 == percentLabelName) {
+                                                                <span>
+                                                                  Percentage *
+                                                                </span>
+                                                              }
+                                                              @if (PolicyData.latedeductiontype1 == minLabelName) {
+                                                                <span>
+                                                                  Minute *
+                                                                </span>
+                                                              }
+                                                              @if (PolicyData.latedeductiontype1 == perminuteLabelName) {
+                                                                <span>
+                                                                  Gross Divide by Minutes *
+                                                                </span>
+                                                              }
+                                                              @if (!PolicyData.latedeductiontype1) {
+                                                                <span>Value *</span>
+                                                              }
+                                                              @if (!latevalue1.valid && addlateearlypolicy.submitted) {
+                                                                <div class="invalid-tooltip">
+                                                                  Combined Deduction Value is required!
+                                                                </div>
+                                                              }
+                                                            </label>
+                                                          </div>
+                                                        }
+                                                        @if (
+                                                          PolicyData.latedeductiontype1 &&
+                                                          PolicyData.latedeductiontype1 == dayLabelName
+                                                          ) {
+                                                          <div class="col-md-4">
+                                                            <label class="form-group has-float-label">
+                                                              <ng-select placeholder="Choose your option" ngModel #latevalue1="ngModel" name="latevalue1"
+                                                                [(ngModel)]="PolicyData.latevalue1" required>
+                                                                <ng-option value="0.5">0.5</ng-option>
+                                                                <ng-option value="1">1</ng-option>
+                                                              </ng-select>
+                                                              <span>Day *</span>
+                                                              @if (!latevalue1.valid && addlateearlypolicy.submitted) {
+                                                                <div class="invalid-tooltip">
+                                                                  Day is required!
+                                                                </div>
+                                                              }
+                                                            </label>
+                                                          </div>
+                                                        }
+                                                      }
+                                                      @if (
+                                                        PolicyData.lateComeSlab2 &&
+                                                        PolicyData.latedeductioncategory == countwiseLabelName
+                                                        ) {
+                                                        <div class="col-md-12">
+                                                          <hr />
+                                                          <h4><b>Late Come Slab - 2 :</b></h4>
+                                                        </div>
+                                                        <div class="col-md-12 mb-4">
+                                                          <button type="button" class="btn btn-danger btn-xs" (click)="removeLateComeSlabRow(2)">
+                                                            Remove Late Come Slab - 2
+                                                          </button>
+                                                          <br>
+                                                          </div>
+                                                          <!-- Deduction From -->
+                                                          <div class="col-md-4">
+                                                            <label class="form-group has-float-label">
+                                                              <ng-select placeholder="Choose your option" ngModel #latedeductionfrom2="ngModel"
+                                                                name="latedeductionfrom2" (change)="changeSeperateLateCome2()"
+                                                                [(ngModel)]="PolicyData.latedeductionfrom2" required>
+                                                                <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                                                <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                                              </ng-select>
+                                                              <span>Deduction from *</span>
+                                                              @if (!latedeductionfrom2.valid && addlateearlypolicy.submitted) {
+                                                                <div class="invalid-tooltip">
+                                                                  Deduction from is required!
+                                                                </div>
+                                                              }
+                                                            </label>
+                                                          </div>
+                                                          <!-- Max Late Coming Minute allowed -->
+                                                          <div class="col-md-4">
+                                                            <label class="form-group has-float-label">
+                                                              <input class="form-control" type="number" required ngModel #latemaxminute2="ngModel" name="latemaxminute2"
+                                                                [(ngModel)]="PolicyData.latemaxminute2" />
+                                                                <span>Max Late Coming Minutes allowed *</span>
+                                                                @if (!latemaxminute2.valid && addlateearlypolicy.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    Max Minute allowed is required!
+                                                                  </div>
+                                                                }
+                                                              </label>
+                                                            </div>
+                                                            <!-- Deduction Type -->
+                                                            <div class="col-md-4">
+                                                              <label class="form-group has-float-label">
+                                                                <ng-select placeholder="Choose your option" #latedeductiontype2="ngModel" name="latedeductiontype2"
+                                                                  (change)="selectDeductionType2($event, lateTypeName)" [(ngModel)]="PolicyData.latedeductiontype2"
+                                                                  required>
+                                                                  @if (
+                                                                    PolicyData.latedeductionfrom2 == salaryLabelName
+                                                                    ) {
+                                                                    <ng-option [value]="fixAmountLabel">
+                                                                      Fixed Amount
+                                                                    </ng-option>
+                                                                  }
+                                                                  @if (
+                                                                    PolicyData.latedeductionfrom2 == salaryLabelName
+                                                                    ) {
+                                                                    <ng-option [value]="percentLabelName">
+                                                                      Percentage
+                                                                    </ng-option>
+                                                                  }
+                                                                  @if (
+                                                                    PolicyData.latedeductionfrom2 == attendanceLabelName
+                                                                    ) {
+                                                                    <ng-option [value]="minLabelName">
+                                                                      Minute
+                                                                    </ng-option>
+                                                                  }
+                                                                  @if (
+                                                                    PolicyData.latedeductionfrom2 == attendanceLabelName
+                                                                    ) {
+                                                                    <ng-option [value]="dayLabelName">
+                                                                      Day
+                                                                    </ng-option>
+                                                                  }
+                                                                </ng-select>
+                                                                <span>Deduction Type *</span>
+                                                                @if (!latedeductiontype2.valid && addlateearlypolicy.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    Deduction Type is required!
+                                                                  </div>
+                                                                }
+                                                              </label>
+                                                            </div>
+                                                            <!-- combined deduction type -->
+                                                            @if (
+                                                              PolicyData.latedeductiontype2 &&
+                                                              PolicyData.latedeductiontype2 != dayLabelName
+                                                              ) {
+                                                              <div class="col-md-4">
+                                                                <label class="form-group has-float-label">
+                                                                  <input class="form-control" type="number" required ngModel #latevalue2="ngModel" name="latevalue2"
+                                                                    [(ngModel)]="PolicyData.latevalue2" />
+                                                                    @if (PolicyData.latedeductiontype2 == fixAmountLabel) {
+                                                                      <span>
+                                                                        Amount *
+                                                                      </span>
+                                                                    }
+                                                                    @if (PolicyData.latedeductiontype2 == percentLabelName) {
+                                                                      <span>
+                                                                        Percentage *
+                                                                      </span>
+                                                                    }
+                                                                    @if (PolicyData.latedeductiontype2 == minLabelName) {
+                                                                      <span>
+                                                                        Minute *
+                                                                      </span>
+                                                                    }
+                                                                    @if (PolicyData.latedeductiontype2 == perminuteLabelName) {
+                                                                      <span>
+                                                                        Gross Divide by Minutes *
+                                                                      </span>
+                                                                    }
+                                                                    @if (!PolicyData.latedeductiontype2) {
+                                                                      <span>Value *</span>
+                                                                    }
+                                                                    @if (!latevalue2.valid && addlateearlypolicy.submitted) {
+                                                                      <div class="invalid-tooltip">
+                                                                        Combined Deduction Value is required!
+                                                                      </div>
+                                                                    }
+                                                                  </label>
+                                                                </div>
+                                                              }
+                                                              @if (
+                                                                PolicyData.latedeductiontype2 &&
+                                                                PolicyData.latedeductiontype2 == dayLabelName
+                                                                ) {
+                                                                <div class="col-md-4">
+                                                                  <label class="form-group has-float-label">
+                                                                    <ng-select placeholder="Choose your option" ngModel #latevalue2="ngModel" name="latevalue2"
+                                                                      [(ngModel)]="PolicyData.latevalue2" required>
+                                                                      <ng-option value="0.5">0.5</ng-option>
+                                                                      <ng-option value="1">1</ng-option>
+                                                                    </ng-select>
+                                                                    <span>Day *</span>
+                                                                    @if (!latevalue2.valid && addlateearlypolicy.submitted) {
+                                                                      <div class="invalid-tooltip">
+                                                                        Day is required!
+                                                                      </div>
+                                                                    }
+                                                                  </label>
+                                                                </div>
+                                                              }
+                                                            }
+                                                          </div>
+                                                        }
+
+                                                        @if (PolicyData.lateEarlyPolicyType == seperatedLabelName && onlyearlygoing) {
+                                                          <div class="row">
+                                                            <div class="col-md-12">
+                                                              <hr />
+                                                              <h4><b>Early Go:</b></h4>
+                                                              <br />
+                                                            </div>
+                                                            <br />
+                                                            <!-- Grace Time (For Early Go) -->
+                                                            <div class="col-md-4">
+                                                              <label class="form-group has-float-label">
+                                                                <input class="form-control" type="number" required ngModel #earlygrace="ngModel" name="earlygrace"
+                                                                  [(ngModel)]="PolicyData.earlyGraceTime" />
+                                                                  <span>Grace Time (For Early Go) *</span>
+                                                                  @if (!earlygrace.valid && addlateearlypolicy.submitted) {
+                                                                    <div class="invalid-tooltip">
+                                                                      Grace Time (For Early Go) is required!
+                                                                    </div>
+                                                                  }
+                                                                </label>
+                                                              </div>
+                                                              <div class="col-md-4">
+                                                                <label class="form-group has-float-label">
+                                                                  <ng-select placeholder="Choose your option" ngModel #deductioncategoryearly="ngModel"
+                                                                    name="deductioncategoryearly" [(ngModel)]="PolicyData.earlydeductioncategory"
+                                                                    (change)="changeSeperateEarlyGo()" required>
+                                                                    <ng-option [value]="countwiseLabelName">Count Wise</ng-option>
+                                                                    <ng-option [value]="slotwiseLabelName">Slot Wise</ng-option>
+                                                                    <ng-option [value]="minutewiseLabelName">Minute Wise</ng-option>
+                                                                  </ng-select>
+                                                                  <span>Deduction category *</span>
+                                                                  @if (!deductioncategoryearly.valid && addlateearlypolicy.submitted) {
+                                                                    <div class="invalid-tooltip">
+                                                                      Deduction category is required!
+                                                                    </div>
+                                                                  }
+                                                                </label>
+                                                              </div>
+                                                              <div class="col-md-4">
+                                                                <label class="form-group has-float-label">
+                                                                  <input class="form-control" type="number" required ngModel #earlycountNo="ngModel"
+                                                                    [(ngModel)]="PolicyData.earlynoof" name="earlycountNo" />
+                                                                    @if (PolicyData.earlydeductioncategory == countwiseLabelName) {
+                                                                      <span>
+                                                                        No of count allowed *
+                                                                      </span>
+                                                                    }
+                                                                    @if (PolicyData.earlydeductioncategory == slotwiseLabelName) {
+                                                                      <span>
+                                                                        No of slot allowed *
+                                                                      </span>
+                                                                    }
+                                                                    @if (PolicyData.earlydeductioncategory == minutewiseLabelName) {
+                                                                      <span>
+                                                                        No of minutes allowed *
+                                                                      </span>
+                                                                    }
+                                                                    @if (!PolicyData.earlydeductioncategory) {
+                                                                      <span>No of allowed *</span>
+                                                                    }
+                                                                    @if (!earlycountNo.valid && addlateearlypolicy.submitted) {
+                                                                      <div class="invalid-tooltip">
+                                                                        This field is required!
+                                                                      </div>
+                                                                    }
+                                                                  </label>
+                                                                </div>
+                                                                @if (
+                                                                  PolicyData.earlydeductioncategory &&
+                                                                  [minutewiseLabelName,countwiseLabelName].includes(PolicyData.earlydeductioncategory)
+                                                                  ) {
+                                                                  <div class="col-md-4">
+                                                                    <label class="form-group has-float-label">
+                                                                      <ng-select placeholder="Choose your option" ngModel #earlydeductionfrom="ngModel" name="earlydeductionfrom"
+                                                                        (change)="changeSeperateEarlyGo()" [(ngModel)]="PolicyData.earlydeductionfrom" required>
+                                                                        <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                                                        <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                                                      </ng-select>
+                                                                      <span>Deduction from *</span>
+                                                                      @if (!earlydeductionfrom.valid && addlateearlypolicy.submitted) {
+                                                                        <div class="invalid-tooltip">
+                                                                          Deduction from is required!
+                                                                        </div>
+                                                                      }
+                                                                    </label>
+                                                                  </div>
+                                                                }
+                                                                @if (
+                                                                  PolicyData.earlydeductioncategory &&
+                                                                  PolicyData.earlydeductioncategory != countwiseLabelName
+                                                                  ) {
+                                                                  <div class="col-md-4">
+                                                                    <label class="form-group has-float-label">
+                                                                      <ng-select placeholder="Choose your option" ngModel #earlydeductioncycle="ngModel"
+                                                                        [(ngModel)]="PolicyData.earlydeductioncycle" name="earlydeductioncycle" (change)="changeSeperateEarlyGo()"
+                                                                        required>
+                                                                        @if (
+                                                                          PolicyData.earlydeductioncategory &&
+                                                                          PolicyData.earlydeductioncategory != minutewiseLabelName
+                                                                          ) {
+                                                                          <ng-option [value]="daywiseLabelName">
+                                                                            Day Wise
+                                                                          </ng-option>
+                                                                        }
+                                                                        <ng-option [value]="monthwiseLabelName">Month Wise</ng-option>
+                                                                      </ng-select>
+                                                                      <span>Deduction cycle *</span>
+                                                                      @if (!earlydeductioncycle.valid && addlateearlypolicy.submitted) {
+                                                                        <div class="invalid-tooltip">
+                                                                          Deduction cycle is required!
+                                                                        </div>
+                                                                      }
+                                                                    </label>
+                                                                  </div>
+                                                                }
+                                                                @if (
+                                                                  PolicyData.earlydeductioncategory &&
+                                                                  PolicyData.earlydeductioncategory != minutewiseLabelName
+                                                                  ) {
+                                                                  <div class="col-md-4">
+                                                                    <label class="form-group has-float-label">
+                                                                      <input class="form-control" type="number" required ngModel [(ngModel)]="PolicyData.earlymaxminute"
+                                                                        #earlymaxminute="ngModel" name="earlymaxminute" />
+                                                                        <span>Max Early Going Minutes allowed *</span>
+                                                                        @if (!earlymaxminute.valid && addlateearlypolicy.submitted) {
+                                                                          <div class="invalid-tooltip">
+                                                                            Max Minute allowed is required!
+                                                                          </div>
+                                                                        }
+                                                                      </label>
+                                                                    </div>
+                                                                  }
+                                                                  <div class="col-md-4">
+                                                                    <label class="form-group has-float-label">
+                                                                      <ng-select placeholder="Choose your option" ngModel #deductiontypeearly="ngModel" name="deductiontypeearly"
+                                                                        (change)="selectDeductionType($event, earlyTypeName)" [(ngModel)]="PolicyData.earlydeductiontype"
+                                                                        required>
+                                                                        @if (
+                                                                          (PolicyData.earlydeductioncategory == minutewiseLabelName  && PolicyData.earlydeductionfrom == salaryLabelName) ||
+                                                                          PolicyData.earlydeductioncategory == slotwiseLabelName
+                                                                          ) {
+                                                                          <ng-option [value]="fixAmountLabel">
+                                                                            Fixed Amount
+                                                                          </ng-option>
+                                                                        }
+                                                                        @if (PolicyData.earlydeductioncategory == minutewiseLabelName && PolicyData.earlydeductionfrom == salaryLabelName) {
+                                                                          <ng-option [value]="perminuteLabelName"
+                                                                            >
+                                                                            Per Minute
+                                                                          </ng-option>
+                                                                        }
+                                                                        @if (PolicyData.earlydeductioncategory == slotwiseLabelName) {
+                                                                          <ng-option [value]="percentLabelName">
+                                                                            Percentage
+                                                                          </ng-option>
+                                                                        }
+                                                                        @if (
+                                                                          PolicyData.earlydeductioncategory == countwiseLabelName &&
+                                                                          PolicyData.earlydeductionfrom == salaryLabelName
+                                                                          ) {
+                                                                          <ng-option [value]="fixAmountLabel">
+                                                                            Fixed Amount
+                                                                          </ng-option>
+                                                                        }
+                                                                        @if (
+                                                                          PolicyData.earlydeductioncategory == countwiseLabelName &&
+                                                                          PolicyData.earlydeductionfrom == salaryLabelName
+                                                                          ) {
+                                                                          <ng-option [value]="percentLabelName">
+                                                                            Percentage
+                                                                          </ng-option>
+                                                                        }
+                                                                        @if (
+                                                                          PolicyData.earlydeductioncategory == countwiseLabelName &&
+                                                                          PolicyData.earlydeductionfrom == attendanceLabelName
+                                                                          ) {
+                                                                          <ng-option [value]="minLabelName">
+                                                                            Minute
+                                                                          </ng-option>
+                                                                        }
+                                                                        @if (
+                                                                          (PolicyData.earlydeductioncategory == countwiseLabelName || PolicyData.earlydeductioncategory == minutewiseLabelName)&&
+                                                                          PolicyData.earlydeductionfrom == attendanceLabelName
+                                                                          ) {
+                                                                          <ng-option [value]="dayLabelName">
+                                                                            Day
+                                                                          </ng-option>
+                                                                        }
+                                                                      </ng-select>
+                                                                      <span>Deduction Type *</span>
+                                                                      @if (!deductiontypeearly.valid && addlateearlypolicy.submitted) {
+                                                                        <div class="invalid-tooltip">
+                                                                          Deduction Type is required!
+                                                                        </div>
+                                                                      }
+                                                                    </label>
+                                                                  </div>
+                                                                  @if (
+                                                                    PolicyData.earlydeductiontype &&
+                                                                    PolicyData.earlydeductiontype != dayLabelName
+                                                                    ) {
+                                                                    <div class="col-md-4">
+                                                                      <label class="form-group has-float-label">
+                                                                        <input class="form-control" type="number" [(ngModel)]="PolicyData.earlyvalue" required ngModel
+                                                                          #earlyValue="ngModel" name="earlyValue" />
+                                                                          @if (PolicyData.earlydeductiontype == fixAmountLabel) {
+                                                                            <span>
+                                                                              {{PolicyData.earlydeductioncategory == minutewiseLabelName?'Amount (Per Minute) *':'Amount *'}}
+                                                                            </span>
+                                                                          }
+                                                                          @if (PolicyData.earlydeductiontype == percentLabelName) {
+                                                                            <span>
+                                                                              Percentage *
+                                                                            </span>
+                                                                          }
+                                                                          @if (PolicyData.earlydeductiontype == minLabelName) {
+                                                                            <span>
+                                                                              Minute *
+                                                                            </span>
+                                                                          }
+                                                                          @if (PolicyData.earlydeductiontype == perminuteLabelName) {
+                                                                            <span>
+                                                                              Gross Divide by Minutes *
+                                                                            </span>
+                                                                          }
+                                                                          @if (!PolicyData.earlydeductiontype) {
+                                                                            <span>Value *</span>
+                                                                          }
+                                                                          @if (!earlyValue.valid && addlateearlypolicy.submitted) {
+                                                                            <div class="invalid-tooltip">
+                                                                              Value is required!
+                                                                            </div>
+                                                                          }
+                                                                        </label>
+                                                                      </div>
+                                                                    }
+                                                                    @if (
+                                                                      PolicyData.earlydeductiontype &&
+                                                                      PolicyData.earlydeductiontype == dayLabelName
+                                                                      ) {
+                                                                      <div class="col-md-4">
+                                                                        <label class="form-group has-float-label">
+                                                                          <ng-select placeholder="Choose your option" [(ngModel)]="PolicyData.earlyvalue" ngModel
+                                                                            #earlyValue="ngModel" name="earlyValue" required>
+                                                                            <ng-option value="0.5">0.5</ng-option>
+                                                                            @if (PolicyData.earlydeductioncategory != minutewiseLabelName) {
+                                                                              <ng-option value="1">1</ng-option>
+                                                                            }
+                                                                          </ng-select>
+                                                                          <span>Day *</span>
+                                                                          @if (!earlyValue.valid && addlateearlypolicy.submitted) {
+                                                                            <div class="invalid-tooltip">
+                                                                              Day is required!
+                                                                            </div>
+                                                                          }
+                                                                        </label>
+                                                                      </div>
+                                                                    }
+                                                                    @if (
+                                                                      ((PolicyData.earlydeductioncategory == slotwiseLabelName &&
+                                                                      PolicyData.earlydeductioncycle != monthwiseLabelName) ||
+                                                                      PolicyData.earlydeductioncategory == countwiseLabelName)
+                                                                      ) {
+                                                                      <div class="col-md-12" style="margin-left: 2%">
+                                                                        <input class="form-check-input" type="checkbox" ngModel name="earlyRecurring" #earlyRecurring="ngModel"
+                                                                          [(ngModel)]="PolicyData.earlyRecurring" (change)="setRecurring($event.target.checked, earlyTypeName)" />
+                                                                          <label class="form-check-label" for="checkearlyRecurring">
+                                                                            <b><b>Set Recurring</b></b>
+                                                                          </label>
+                                                                          <br />
+                                                                          <br />
+                                                                        </div>
+                                                                      }
+                                                                      @if (PolicyData.earlydeductioncategory == countwiseLabelName) {
+                                                                        <div class="col-md-12">
+                                                                          <button class="btn btn-primary btn-lg btn-shadow mt-4" type="button" (click)="addEarlyGoSlab()"
+                                                                          [disabled]="PolicyData.earlyGoSlab1 && PolicyData.earlyGoSlab2">Add Slab</button>
+                                                                          <br />
+                                                                          <br />
+                                                                        </div>
+                                                                      }
+                                                                      @if (
+                                                                        PolicyData.earlyGoSlab1 &&
+                                                                        PolicyData.earlydeductioncategory == countwiseLabelName
+                                                                        ) {
+                                                                        <div class="col-md-12">
+                                                                          <hr />
+                                                                          <h4><b>Early Go Slab - 1 :</b></h4>
+                                                                        </div>
+                                                                        <div class="col-md-12 mb-4">
+                                                                          <button type="button" class="btn btn-danger btn-xs" (click)="removeEarlyGoSlabRow(1)">
+                                                                            Remove Early Go Slab - 1
+                                                                          </button>
+                                                                        </div>
+                                                                        <!-- Deduction From -->
+                                                                        <div class="col-md-4">
+                                                                          <label class="form-group has-float-label">
+                                                                            <ng-select placeholder="Choose your option" ngModel #earlydeductionfrom1="ngModel"
+                                                                              name="earlydeductionfrom1" (change)="changeSeperateEarlyGo1()"
+                                                                              [(ngModel)]="PolicyData.earlydeductionfrom1" required>
+                                                                              <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                                                              <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                                                            </ng-select>
+                                                                            <span>Deduction from *</span>
+                                                                            @if (!earlydeductionfrom1.valid && addlateearlypolicy.submitted) {
+                                                                              <div class="invalid-tooltip">
+                                                                                Deduction from is required!
+                                                                              </div>
+                                                                            }
+                                                                          </label>
+                                                                        </div>
+                                                                        <!-- Max Late Coming Minute allowed -->
+                                                                        <div class="col-md-4">
+                                                                          <label class="form-group has-float-label">
+                                                                            <input class="form-control" type="number" required ngModel #earlymaxminute1="ngModel"
+                                                                              name="earlymaxminute1" [(ngModel)]="PolicyData.earlymaxminute1" />
+                                                                              <span>Max Early Going Minutes allowed *</span>
+                                                                              @if (!earlymaxminute1.valid && addlateearlypolicy.submitted) {
+                                                                                <div class="invalid-tooltip">
+                                                                                  Max Minute allowed is required!
+                                                                                </div>
+                                                                              }
+                                                                            </label>
+                                                                          </div>
+                                                                          <!-- Deduction Type -->
+                                                                          <div class="col-md-4">
+                                                                            <label class="form-group has-float-label">
+                                                                              <ng-select placeholder="Choose your option" #earlydeductiontype1="ngModel" name="earlydeductiontype1"
+                                                                                (change)="selectDeductionType1($event, earlyTypeName)" [(ngModel)]="PolicyData.earlydeductiontype1"
+                                                                                required>
+                                                                                @if (
+                                                                                  PolicyData.earlydeductionfrom1 == salaryLabelName
+                                                                                  ) {
+                                                                                  <ng-option [value]="fixAmountLabel">
+                                                                                    Fixed Amount
+                                                                                  </ng-option>
+                                                                                }
+                                                                                @if (
+                                                                                  PolicyData.earlydeductionfrom1 == salaryLabelName
+                                                                                  ) {
+                                                                                  <ng-option [value]="percentLabelName">
+                                                                                    Percentage
+                                                                                  </ng-option>
+                                                                                }
+                                                                                @if (
+                                                                                  PolicyData.earlydeductionfrom1 == attendanceLabelName
+                                                                                  ) {
+                                                                                  <ng-option [value]="minLabelName">
+                                                                                    Minute
+                                                                                  </ng-option>
+                                                                                }
+                                                                                @if (
+                                                                                  PolicyData.earlydeductionfrom1 == attendanceLabelName
+                                                                                  ) {
+                                                                                  <ng-option [value]="dayLabelName">
+                                                                                    Day
+                                                                                  </ng-option>
+                                                                                }
+                                                                              </ng-select>
+                                                                              <span>Deduction Type *</span>
+                                                                              @if (!earlydeductiontype1.valid && addlateearlypolicy.submitted) {
+                                                                                <div class="invalid-tooltip">
+                                                                                  Deduction Type is required!
+                                                                                </div>
+                                                                              }
+                                                                            </label>
+                                                                          </div>
+                                                                          <!-- combined deduction type -->
+                                                                          @if (
+                                                                            PolicyData.earlydeductiontype1 &&
+                                                                            PolicyData.earlydeductiontype1 != dayLabelName
+                                                                            ) {
+                                                                            <div class="col-md-4">
+                                                                              <label class="form-group has-float-label">
+                                                                                <input class="form-control" type="number" required ngModel #earlyvalue1="ngModel" name="earlyvalue1"
+                                                                                  [(ngModel)]="PolicyData.earlyvalue1" />
+                                                                                  @if (PolicyData.earlydeductiontype1 == fixAmountLabel) {
+                                                                                    <span>
+                                                                                      Amount *
+                                                                                    </span>
+                                                                                  }
+                                                                                  @if (PolicyData.earlydeductiontype1 == percentLabelName) {
+                                                                                    <span>
+                                                                                      Percentage *
+                                                                                    </span>
+                                                                                  }
+                                                                                  @if (PolicyData.earlydeductiontype1 == minLabelName) {
+                                                                                    <span>
+                                                                                      Minute *
+                                                                                    </span>
+                                                                                  }
+                                                                                  @if (PolicyData.earlydeductiontype1 == perminuteLabelName) {
+                                                                                    <span>
+                                                                                      Gross Divide by Minutes *
+                                                                                    </span>
+                                                                                  }
+                                                                                  @if (!PolicyData.earlydeductiontype1) {
+                                                                                    <span>Value *</span>
+                                                                                  }
+                                                                                  @if (!earlyvalue1.valid && addlateearlypolicy.submitted) {
+                                                                                    <div class="invalid-tooltip">
+                                                                                      Combined Deduction Value is required!
+                                                                                    </div>
+                                                                                  }
+                                                                                </label>
+                                                                              </div>
+                                                                            }
+                                                                            @if (
+                                                                              PolicyData.earlydeductiontype1 &&
+                                                                              PolicyData.earlydeductiontype1 == dayLabelName
+                                                                              ) {
+                                                                              <div class="col-md-4">
+                                                                                <label class="form-group has-float-label">
+                                                                                  <ng-select placeholder="Choose your option" ngModel #earlyvalue1="ngModel" name="earlyvalue1"
+                                                                                    [(ngModel)]="PolicyData.earlyvalue1" required>
+                                                                                    <ng-option value="0.5">0.5</ng-option>
+                                                                                    <ng-option value="1">1</ng-option>
+                                                                                  </ng-select>
+                                                                                  <span>Day *</span>
+                                                                                  @if (!earlyvalue1.valid && addlateearlypolicy.submitted) {
+                                                                                    <div class="invalid-tooltip">
+                                                                                      Day is required!
+                                                                                    </div>
+                                                                                  }
+                                                                                </label>
+                                                                              </div>
+                                                                            }
+                                                                          }
+                                                                          @if (
+                                                                            PolicyData.earlyGoSlab2 &&
+                                                                            PolicyData.earlydeductioncategory == countwiseLabelName
+                                                                            ) {
+                                                                            <div class="col-md-12">
+                                                                              <hr />
+                                                                              <h4><b>Early Go Slab - 2 :</b></h4>
+                                                                            </div>
+                                                                            <div class="col-md-12 mb-4">
+                                                                              <button type="button" class="btn btn-danger btn-xs" (click)="removeEarlyGoSlabRow(2)">
+                                                                                Remove Early Go Slab - 2
+                                                                              </button>
+                                                                            </div>
+                                                                            <!-- Deduction From -->
+                                                                            <div class="col-md-4">
+                                                                              <label class="form-group has-float-label">
+                                                                                <ng-select placeholder="Choose your option" ngModel #earlydeductionfrom2="ngModel"
+                                                                                  name="earlydeductionfrom2" (change)="changeSeperateEarlyGo2()"
+                                                                                  [(ngModel)]="PolicyData.earlydeductionfrom2" required>
+                                                                                  <ng-option [value]="salaryLabelName">Salary</ng-option>
+                                                                                  <ng-option [value]="attendanceLabelName">Attendance</ng-option>
+                                                                                </ng-select>
+                                                                                <span>Deduction from *</span>
+                                                                                @if (!earlydeductionfrom2.valid && addlateearlypolicy.submitted) {
+                                                                                  <div class="invalid-tooltip">
+                                                                                    Deduction from is required!
+                                                                                  </div>
+                                                                                }
+                                                                              </label>
+                                                                            </div>
+                                                                            <!-- Max Late Coming Minute allowed -->
+                                                                            <div class="col-md-4">
+                                                                              <label class="form-group has-float-label">
+                                                                                <input class="form-control" type="number" required ngModel #earlymaxminute2="ngModel"
+                                                                                  name="earlymaxminute2" [(ngModel)]="PolicyData.earlymaxminute2" />
+                                                                                  <span>Max Early Going Minutes allowed *</span>
+                                                                                  @if (!earlymaxminute2.valid && addlateearlypolicy.submitted) {
+                                                                                    <div class="invalid-tooltip">
+                                                                                      Max Minute allowed is required!
+                                                                                    </div>
+                                                                                  }
+                                                                                </label>
+                                                                              </div>
+                                                                              <!-- Deduction Type -->
+                                                                              <div class="col-md-4">
+                                                                                <label class="form-group has-float-label">
+                                                                                  <ng-select placeholder="Choose your option" #earlydeductiontype2="ngModel" name="earlydeductiontype2"
+                                                                                    (change)="selectDeductionType2($event, earlyTypeName)" [(ngModel)]="PolicyData.earlydeductiontype2"
+                                                                                    required>
+                                                                                    @if (
+                                                                                      PolicyData.earlydeductionfrom2 == salaryLabelName
+                                                                                      ) {
+                                                                                      <ng-option [value]="fixAmountLabel">
+                                                                                        Fixed Amount
+                                                                                      </ng-option>
+                                                                                    }
+                                                                                    @if (
+                                                                                      PolicyData.earlydeductionfrom2 == salaryLabelName
+                                                                                      ) {
+                                                                                      <ng-option [value]="percentLabelName">
+                                                                                        Percentage
+                                                                                      </ng-option>
+                                                                                    }
+                                                                                    @if (
+                                                                                      PolicyData.earlydeductionfrom2 == attendanceLabelName
+                                                                                      ) {
+                                                                                      <ng-option [value]="minLabelName">
+                                                                                        Minute
+                                                                                      </ng-option>
+                                                                                    }
+                                                                                    @if (
+                                                                                      PolicyData.earlydeductionfrom2 == attendanceLabelName
+                                                                                      ) {
+                                                                                      <ng-option [value]="dayLabelName">
+                                                                                        Day
+                                                                                      </ng-option>
+                                                                                    }
+                                                                                  </ng-select>
+                                                                                  <span>Deduction Type *</span>
+                                                                                  @if (!earlydeductiontype2.valid && addlateearlypolicy.submitted) {
+                                                                                    <div class="invalid-tooltip">
+                                                                                      Deduction Type is required!
+                                                                                    </div>
+                                                                                  }
+                                                                                </label>
+                                                                              </div>
+                                                                              <!-- combined deduction type -->
+                                                                              @if (
+                                                                                PolicyData.earlydeductiontype2 &&
+                                                                                PolicyData.earlydeductiontype2 != dayLabelName
+                                                                                ) {
+                                                                                <div class="col-md-4">
+                                                                                  <label class="form-group has-float-label">
+                                                                                    <input class="form-control" type="number" required ngModel #earlyvalue2="ngModel" name="earlyvalue2"
+                                                                                      [(ngModel)]="PolicyData.earlyvalue2" />
+                                                                                      @if (PolicyData.earlydeductiontype2 == fixAmountLabel) {
+                                                                                        <span>
+                                                                                          Amount *
+                                                                                        </span>
+                                                                                      }
+                                                                                      @if (PolicyData.earlydeductiontype2 == percentLabelName) {
+                                                                                        <span>
+                                                                                          Percentage *
+                                                                                        </span>
+                                                                                      }
+                                                                                      @if (PolicyData.earlydeductiontype2 == minLabelName) {
+                                                                                        <span>
+                                                                                          Minute *
+                                                                                        </span>
+                                                                                      }
+                                                                                      @if (PolicyData.earlydeductiontype2 == perminuteLabelName) {
+                                                                                        <span>
+                                                                                          Gross Divide by Minutes *
+                                                                                        </span>
+                                                                                      }
+                                                                                      @if (!PolicyData.earlydeductiontype2) {
+                                                                                        <span>Value *</span>
+                                                                                      }
+                                                                                      @if (!earlyvalue2.valid && addlateearlypolicy.submitted) {
+                                                                                        <div class="invalid-tooltip">
+                                                                                          Combined Deduction Value is required!
+                                                                                        </div>
+                                                                                      }
+                                                                                    </label>
+                                                                                  </div>
+                                                                                }
+                                                                                @if (
+                                                                                  PolicyData.earlydeductiontype2 &&
+                                                                                  PolicyData.earlydeductiontype2 == dayLabelName
+                                                                                  ) {
+                                                                                  <div class="col-md-4">
+                                                                                    <label class="form-group has-float-label">
+                                                                                      <ng-select placeholder="Choose your option" ngModel #earlyvalue2="ngModel" name="earlyvalue2"
+                                                                                        [(ngModel)]="PolicyData.earlyvalue2" required>
+                                                                                        <ng-option value="0.5">0.5</ng-option>
+                                                                                        <ng-option value="1">1</ng-option>
+                                                                                      </ng-select>
+                                                                                      <span>Day *</span>
+                                                                                      @if (!earlyvalue2.valid && addlateearlypolicy.submitted) {
+                                                                                        <div class="invalid-tooltip">
+                                                                                          Day is required!
+                                                                                        </div>
+                                                                                      }
+                                                                                    </label>
+                                                                                  </div>
+                                                                                }
+                                                                              }
+                                                                            </div>
+                                                                          }
+
+                                                                          @if (PolicyData.lateEarlyPolicyType == combinedLabelName || onlylatecoming || onlyearlygoing) {
+                                                                            <div class="row">
+                                                                              <div class="col-md-12" style="margin-left: 2%">
+                                                                                <input class="form-check-input" type="checkbox" ngModel name="onWorkingHours" #onWorkingHours="ngModel"
+                                                                                  [(ngModel)]="PolicyData.onWorkingHours" />
+                                                                                  <label class="form-check-label" for="checkworkinghours">
+                                                                                    <b><b>Not Applicable If Total Working Hours Are Completed</b></b>
+                                                                                  </label>
+                                                                                  <br />
+                                                                                  <br />
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                  <div><b> In Case Of Day/Minute Wise Attendnace Penalties* : </b></div>
+                                                                                  <br />
+                                                                                  <input type="radio" name="deductFrom" value="attendance" ngModel #deductFrom="ngModel"
+                                                                                    [(ngModel)]="PolicyData.deductFrom" style="margin-right: 1%" required />
+                                                                                    <label for="true" style="margin-right: 1%">
+                                                                                      <b>Deduct from present days/minutes</b>
+                                                                                    </label>
+                                                                                    <br />
+                                                                                    <input type="radio" name="deductFrom" value="salary" ngModel #deductFrom="ngModel"
+                                                                                      [(ngModel)]="PolicyData.deductFrom" style="margin-right: 1%" required />
+                                                                                      <label for="false" style="margin-right: 1%">
+                                                                                        <b>Deduct from salary</b>
+                                                                                      </label>
+                                                                                      @if (!deductFrom.valid && addlateearlypolicy.submitted) {
+                                                                                        <div class="invalid-tooltip">
+                                                                                          Deduct From is required!
+                                                                                        </div>
+                                                                                      }
+                                                                                    </div>
+                                                                                  </div>
+                                                                                }
+
+                                                                                <button class="btn btn-primary btn-lg btn-shadow mt-4" type="submit">Submit</button>
+                                                                                <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/lateComeEarlyGo'"
+                                                                                  style="margin-left: 2%">
+                                                                                  Cancel
+                                                                                </button>
+                                                                              </form>
+                                                                            </div>
+                                                                          </div>
+
+                                                                          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

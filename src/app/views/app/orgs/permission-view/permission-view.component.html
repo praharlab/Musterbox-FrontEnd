@@ -1,0 +1,39 @@
+@for (formdatas of myData; track trackByFormId(i, formdatas); let i = $index) {
+  <div>
+    <div class="form-check">
+      <input class="form-check-input" id="aCheck{{ i }}" type="checkbox" name="parent"
+        [checked]="formdatas.parentid === formdatas.formMasterID"
+        (change)="emitParentForm(formdatas, $event.target.checked)"
+        [disabled]="formdatas.parentFormMasterID ? true : myAction === 'view'" />
+        <label class="form-check-label" for="aCheck{{ i }}">
+          {{ formdatas.formName }}
+        </label>
+      </div>
+      @for (child of formdatas.parentFormMasterID; track child; let j = $index) {
+        <div style="margin-left: 4%">
+          <div class="form-check">
+            <input class="form-check-input" id="bCheck{{ i }}_{{ j }}" type="checkbox" name="child"
+              [checked]="child.parentid === child.formMasterID" (change)="emitChildForm(child, $event.target.checked)"
+              [disabled]="child ? true : myAction === 'view'" />
+              <label class="form-check-label" for="bCheck{{ i }}_{{ j }}">
+                {{ child.formName }}
+              </label>
+            </div>
+            <div style="margin-left: 4%">
+              @for (operation of child.operation; track operation; let k = $index) {
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" id="cCheck{{ i }}_{{ j }}_{{ k }}" type="checkbox" name="operation"
+                    [checked]="operation.operationselected === operation.operationID"
+                    (change)="emitOperation(formdatas, child, operation, $event.target.checked)"
+                    [disabled]="myAction === 'view'" />
+                    <label class="form-check-label" for="cCheck{{ i }}_{{ j }}_{{ k }}">
+                      {{ operation.operationName }}
+                    </label>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          <hr />
+        </div>
+      }

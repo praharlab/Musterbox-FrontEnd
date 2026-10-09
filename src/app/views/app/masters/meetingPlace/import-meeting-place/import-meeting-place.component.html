@@ -1,0 +1,176 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-4">Import Meeting Place</h4>
+    <form #addimportuser="ngForm" novalidate (ngSubmit)="validateData()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              required
+              [(ngModel)]="filterData.companyMasterID"
+              (change)="companyChange($event)"
+              >
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="file"
+              ngModel
+              #file="ngModel"
+              (change)="onFileChange($event)"
+              accept=".xlsx, .xls"
+              name="file"
+              required
+              />
+              <span>Import File *</span>
+              @if (file.valid) {
+                <p>{{ fileName }}</p>
+              }
+            </label>
+
+            @if (!file.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                File is required!
+              </div>
+            }
+          </div>
+          <div class="col-md-4">
+            <button (click)="downloadDemoExcel()" type="button" class="btn btn-success btn-xs">
+              Download Demo Excel
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          @if (isValidated == false) {
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          }
+          @if (isValidated == true) {
+            <button class="btn btn-primary" type="button" (click)="clear()">
+              Clear
+            </button>
+          }
+          <span> &nbsp;&nbsp; </span>
+          <button class="btn btn-danger" type="button" (click)="prev()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              <span> &nbsp;&nbsp; </span>
+              @if (rows.length > 0 && isEdited == true) {
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  (click)="reValidateData()"
+                  >
+                  Re-Validate
+                </button>
+              }
+              @if (rows.length > 0 && isEdited == false) {
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  (click)="saveData()"
+                  >
+                  Submit
+                </button>
+              }
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Actions</th>
+                  <th>Remarks</th>
+                  <th>Meeting Place Name *</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of rows; track item; let i = $index) {
+                  <tr>
+                    <td>
+                      <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                        Remove
+                      </button>
+                    </td>
+                    <td>
+                      <div style="width: 250px">
+                        {{ item.remarks }}
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="meetingPlaceName{{ i }}"
+                        [(ngModel)]="item.meetingPlaceName"
+                        #meetingPlaceName="ngModel"
+                        style="width: 250px"
+                        class="form-control"
+                        (change)="onMeetingPlaceNameChange($event)"
+                        pattern=".*\S.*"
+                        required
+                        />
+                        @if (meetingPlaceName.errors?.pattern && tableForm.submitted) {
+                          <div
+                            class="invalid-tooltip1"
+                            >
+                            Meeting Place Name is required!
+                          </div>
+                        }
+                        @if (meetingPlaceName.errors?.required && tableForm.submitted) {
+                          <div
+                            class="invalid-tooltip1"
+                            >
+                            Meeting Place Name is required!
+                          </div>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <button type="button" class="btn btn-success btn-xs" (click)="addRow()">Add Row</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

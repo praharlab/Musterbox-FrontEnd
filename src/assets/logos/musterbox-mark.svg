@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128"
+     role="img" aria-label="MusterBox">
+  <defs>
+    <linearGradient id="mbTile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="mbSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- the box -->
+  <rect width="128" height="128" rx="30" fill="url(#mbTile)"/>
+  <rect width="128" height="64" rx="30" fill="url(#mbSheen)"/>
+
+  <!-- the muster: two figures whose stems and joined arms form an M -->
+  <path d="M40 92V58l24 24 24-24v34"
+        fill="none" stroke="#ffffff" stroke-width="12"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="40" cy="38" r="9.5" fill="#5eead4"/>
+  <circle cx="88" cy="38" r="9.5" fill="#5eead4"/>
+</svg>

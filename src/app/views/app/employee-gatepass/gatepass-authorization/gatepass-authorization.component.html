@@ -1,0 +1,662 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Employee Gate Pass Authorization" [showOrderBy]="false" [showDisplayMode]="false"
+  [showSearch]="false" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit1()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                (change)="selectbranch($event)">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alluser" [multiple]="true" bindLabel="userName" groupBy="selectedAllGroup"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                ngModel #name="ngModel" name="name" [(ngModel)]="selected1">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectall" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select User</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" />
+              <span>From Date</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" />
+              <span>To Date</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'Search' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+@if (rows && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Employee Code" [flexGrow]="1.2" [width]="200">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ getEmployeeCode($safeNavigationMigration(row?.employeeGatepass?.employee)) }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Employee Name" [flexGrow]="1.2" [width]="200">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <b> {{ row.employeeGatepass?.employee?.displayName }}</b>
+            <br>
+              {{ getDesignationName($safeNavigationMigration(row?.employeeGatepass?.employee)) }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="UserNumber" prop="employeeGatepass.employee.userNumber" [flexGrow]="1.2"
+          [width]="120"></ngx-datatable-column>
+          <ngx-datatable-column name="Branch" [flexGrow]="1.2" [width]="200">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ getBranchName($safeNavigationMigration(row?.employeeGatepass?.employee)) }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Department" [flexGrow]="1.2" [width]="200">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ getDepartmentName($safeNavigationMigration(row?.employeeGatepass?.employee)) }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Date" prop="employeeGatepass.date" [flexGrow]="1.2"
+          [width]="100"></ngx-datatable-column>
+          <ngx-datatable-column name="From Time" prop="employeeGatepass.fromTime" [flexGrow]="1.2" [width]="120">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ convertTo12HourFormat(row.employeeGatepass.fromTime) }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="To Time" prop="employeeGatepass.toTime" [flexGrow]="1.2" [width]="120">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ convertTo12HourFormat(row.employeeGatepass.toTime) }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Purpose For" prop="employeeGatepass.purposeFor" [flexGrow]="1.2"
+          [width]="100"></ngx-datatable-column>
+          <ngx-datatable-column name="Description" prop="employeeGatepass.description" [flexGrow]="1.2"
+          [width]="200"></ngx-datatable-column>
+          <ngx-datatable-column name="GatePass Status" prop="employeeGatepass.authorizationStatus" [flexGrow]="1.2"
+            [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.employeeGatepass.authorizationStatus == '0' ||
+                row.employeeGatepass.authorizationStatus == '1' ||
+                row.employeeGatepass.authorizationStatus == '2'
+                ) {
+                <button type="button" class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+              {{ ' ' }}
+              @if (row.employeeGatepass.authorizationStatus == '3') {
+                <button type="button" class="btn btn-outline-success btn-xs"
+                  >
+                  Approved
+                </button>
+              }
+              {{ ' ' }}
+              @if (row.employeeGatepass.authorizationStatus == '4') {
+                <button type="button" class="btn btn-outline-danger btn-xs"
+                  >
+                  Rejected
+                </button>
+              }
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <button type="button" class="btn btn-primary" (click)="lgModal.show(); showdata(row)">
+                {{ 'Show Data' | translate }}
+              </button>
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name=" Approving Status" prop="authstatus" [flexGrow]="1.2" [width]="220">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (
+                row.authstatus == '2' &&
+                row.employeeGatepass.authorizationStatus != 3 &&
+                row.employeeGatepass.authorizationStatus != 4
+                ) {
+                <div>
+                  <button type="button" class="btn btn-success" (click)="lgModal1.show(); showdata(row)">
+                    {{ 'Approve' | translate }}
+                  </button>
+                  {{ ' ' }}
+                  <button type="button" class="btn btn-danger" (click)="lgModal2.show(); showdata(row)">
+                    {{ 'Reject' | translate }}
+                  </button>
+                  {{ ' ' }}
+                </div>
+              }
+              @if (row.authstatus == '1') {
+                <button type="button" class="btn btn-outline-success btn-xs">
+                  {{ 'Approved' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (row.authstatus == '0') {
+                <button type="button" class="btn btn-outline-danger btn-xs">
+                  {{ 'Rejected' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          @if (true) {
+            <ngx-datatable-footer>
+              <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                <div class="w-100 d-flex justify-content-center">
+                  <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                    [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                    (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                  [customPreviousTemplate]="prevTemplate"></pagination>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
+          }
+        </ngx-datatable>
+      </div>
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+
+
+  <!-- list show data modal -->
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Show Data</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (referencedata) {
+            <div class="row">
+              <div class="col-md-6">
+                <span style="font-size: 14px;"><b>Employee Name:
+                </b>{{referencedata.displayName}} ({{referencedata.userNumber}})
+              </span>
+            </div>
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Applied On: </b>
+            {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Employee Code: </b>{{
+            referencedata.employeeCode }}
+          </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+    </span>
+  </div>
+  @if (referencedata.division != null) {
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+    </span>
+  </div>
+}
+@if (referencedata.workingArea != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+<div>
+  @if (referencedata) {
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Date</th>
+          <td>{{ referencedata?.date }}</td>
+          <th>Description</th>
+          <td>{{ referencedata?.description }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>From Time</th>
+          <td>{{ convertTo12HourFormat($safeNavigationMigration(referencedata?.fromTime)) }}</td>
+          <th>To Time</th>
+          <td>{{ convertTo12HourFormat($safeNavigationMigration(referencedata?.toTime)) }}</td>
+        </tr>
+        <tr>
+        </tr>
+      </tbody>
+    </table>
+  }
+  <div class="row">
+    <div class="col-md-12">
+      <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ referencedata?.AuthorizationCriteria }}
+    </span>
+  </div>
+</div>
+<br>
+
+  @if (referencedata?.authUserStatus?.length) {
+    <table class="table table-striped">
+      <tbody>
+        @for (user of referencedata.authUserStatus; track user) {
+          <tr>
+            <td>
+              @if (user.authstatus == 1) {
+                <button class="btn btn-outline-success btn-xs">
+                  Approved
+                </button>
+              }
+              @if (user.authstatus == 0) {
+                <button class="btn btn-outline-danger btn-xs">
+                  Rejected
+                </button>
+              }
+              @if (user.authstatus == 2) {
+                <button class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+            </td>
+            <td>{{ user.displayName }}</td>
+            <td>
+              @if (user.authstatus != 2) {
+                <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+              }
+            </td>
+            <td>{{ user.remarks }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- accept request modal -->
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Approve Auth Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (referencedata) {
+          <div class="row">
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Employee Name:
+              </b>{{referencedata.displayName}} ({{referencedata.userNumber}})
+            </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Applied On: </b>
+          {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Employee Code: </b>{{
+          referencedata.employeeCode }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+    </span>
+  </div>
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+  </span>
+</div>
+@if (referencedata.division != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+  </span>
+</div>
+}
+@if (referencedata.workingArea != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+<div>
+  @if (referencedata) {
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Date</th>
+          <td>{{ referencedata?.date }}</td>
+          <th>Description</th>
+          <td>{{ referencedata?.description }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>From Time</th>
+          <td>{{ convertTo12HourFormat($safeNavigationMigration(referencedata?.fromTime)) }}</td>
+          <th>To Time</th>
+          <td>{{ convertTo12HourFormat($safeNavigationMigration(referencedata?.toTime)) }}</td>
+        </tr>
+        <tr>
+        </tr>
+      </tbody>
+    </table>
+  }
+  <div class="row">
+    <div class="col-md-12">
+      <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ referencedata?.AuthorizationCriteria }}
+    </span>
+  </div>
+</div>
+<br>
+
+  @if (referencedata?.authUserStatus?.length) {
+    <table class="table table-striped">
+      <tbody>
+        @for (user of referencedata.authUserStatus; track user) {
+          <tr>
+            <td>
+              @if (user.authstatus == 1) {
+                <button class="btn btn-outline-success btn-xs">
+                  Approved
+                </button>
+              }
+              @if (user.authstatus == 0) {
+                <button class="btn btn-outline-danger btn-xs">
+                  Rejected
+                </button>
+              }
+              @if (user.authstatus == 2) {
+                <button class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+            </td>
+            <td>{{ user.displayName }}</td>
+            <td>
+              @if (user.authstatus != 2) {
+                <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+              }
+            </td>
+            <td>{{ user.remarks }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+</div>
+<br>
+  <br>
+
+    <div class="row">
+      <div class="col-md-12">
+        <hr>
+        </div>
+      </div>
+      <br>
+        <br>
+          <form #accept="ngForm" novalidate (ngSubmit)="acceptGatePass()">
+            <div class="row">
+              <div class="col-md-12">
+                <label class="form-group has-float-label">
+                  <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+                  <span>Remarks</span>
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-success" type="submit">
+              Approve
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- reject modal -->
+
+  <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Reject Auth Request</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+            #closeModal1>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (referencedata) {
+            <div class="row">
+              <div class="col-md-6">
+                <span style="font-size: 14px;"><b>Employee Name:
+                </b>{{referencedata.displayName}} ({{referencedata.userNumber}})
+              </span>
+            </div>
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Applied On: </b>
+            {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Employee Code: </b>{{
+            referencedata.employeeCode }}
+          </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+    </span>
+  </div>
+  @if (referencedata.division != null) {
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+    </span>
+  </div>
+}
+@if (referencedata.workingArea != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+<div>
+  @if (referencedata) {
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Date</th>
+          <td>{{ referencedata?.date }}</td>
+          <th>Description</th>
+          <td>{{ referencedata?.description }}</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+          <th>From Time</th>
+          <td>{{ convertTo12HourFormat($safeNavigationMigration(referencedata?.fromTime)) }}</td>
+          <th>To Time</th>
+          <td>{{ convertTo12HourFormat($safeNavigationMigration(referencedata?.toTime)) }}</td>
+        </tr>
+        <tr>
+        </tr>
+      </tbody>
+    </table>
+  }
+  <div class="row">
+    <div class="col-md-12">
+      <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ referencedata?.AuthorizationCriteria }}
+    </span>
+  </div>
+</div>
+<br>
+
+  @if (referencedata?.authUserStatus?.length) {
+    <table class="table table-striped">
+      <tbody>
+        @for (user of referencedata.authUserStatus; track user) {
+          <tr>
+            <td>
+              @if (user.authstatus == 1) {
+                <button class="btn btn-outline-success btn-xs">
+                  Approved
+                </button>
+              }
+              @if (user.authstatus == 0) {
+                <button class="btn btn-outline-danger btn-xs">
+                  Rejected
+                </button>
+              }
+              @if (user.authstatus == 2) {
+                <button class="btn btn-outline-warning btn-xs">
+                  Pending
+                </button>
+              }
+            </td>
+            <td>{{ user.displayName }}</td>
+            <td>
+              @if (user.authstatus != 2) {
+                <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+              }
+            </td>
+            <td>{{ user.remarks }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+</div>
+<br>
+  <br>
+
+    <div class="row">
+      <div class="col-md-12">
+        <hr>
+        </div>
+      </div>
+      <br>
+        <br>
+          <form #reject="ngForm" novalidate (ngSubmit)="rejectGatePass()">
+            <div class="row">
+              <div class="col-md-12">
+                <label class="form-group has-float-label">
+                  <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+                  <span>Remarks</span>
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-danger" type="submit">
+              Reject
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

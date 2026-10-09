@@ -1,0 +1,114 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Project</h5>
+
+    @if (projectData) {
+      <form #adddesignation="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          @if (company.length > 0) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                  name="companyMasterID" [(ngModel)]="projectData.companyMasterID" required disabled>
+                  @for (company of company; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+              </label>
+            </div>
+          }
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectBranch($event)" ngModel
+                #branch="ngModel" name="branch" [(ngModel)]="projectData.branchMasterID">
+                @for (branch of allbranch; track branch) {
+                  <ng-option [value]="branch.branchMasterID">
+                    {{ branch.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Branch</span>
+            </label>
+          </div>
+          @if (projectData.branchMasterID && projectData.branchMasterID != '' && projectData.branchMasterID != null && allbranch.length > 0) {
+            <div class="col-md-6"
+              >
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #site="ngModel"
+                  [(ngModel)]="projectData.siteID" name="site" [required]="projectData.branchMasterID">
+                  @for (sites of allSites; track sites) {
+                    <ng-option [value]="sites.siteID">
+                      {{ sites.siteName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Sites *</span>
+              </label>
+              @if (!site.valid && projectData.branchMasterID && adddesignation.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Site is required!
+                </div>
+              }
+            </div>
+          }
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #projectName="ngModel"
+                [(ngModel)]="projectData.projectName" [(ngModel)]="projectData.projectName"
+                name="projectName" />
+                <span>Project Name*</span>
+                @if (!projectName.valid && adddesignation.submitted) {
+                  <div class="invalid-tooltip">
+                    Project Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #display_id="ngModel"
+                  [(ngModel)]="projectData.display_id" name="display_id" />
+                  <span>Project Code *</span>
+                  @if (!display_id.valid && adddesignation.submitted) {
+                    <div class="invalid-tooltip">
+                      Project Code is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" type="text" ngModel #projectDescription="ngModel"
+                  [(ngModel)]="projectData.projectDescription" name="projectDescription"></textarea>
+                  <span>Project Description</span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #short_name="ngModel" name="short_name"
+                    [(ngModel)]="projectData.short_name" />
+                    <span>Project Short Name</span>
+                  </label>
+                </div>
+              </div>
+              <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                [isDisabled]="buttonDisabled" click="onLoginClick()">
+                {{ 'forms.submit' | translate }}
+              </app-state-button>
+              <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/project'"
+                style="margin-left: 2%">
+                Cancel
+              </button>
+            </form>
+          }
+        </div>
+      </div>
+
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

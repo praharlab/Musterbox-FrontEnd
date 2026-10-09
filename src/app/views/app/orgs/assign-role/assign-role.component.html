@@ -1,0 +1,314 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name="User Permission"
+  [showSearch]="false"
+  [showOrderBy]="false"
+  [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage"
+  (itemsPerPageChange)="onLimitChange($event)"
+  [showDisplayMode]="false"
+  [showassignRole]="permissionCreate"
+  (addNewItem)="lgModal.show()"
+></app-list-page-header>
+
+<br />
+
+@if (permissionView.length > 0) {
+  <app-common-filter
+    #commonFilter
+    [hideFilters]="hideFilters"
+    [showButtons]="showButtons"
+    (onSubmit)="onSubmit1($event)"
+    (onClear)="clear()"
+    (clearData)="clear()"
+    (getCompany)="getCompany($event)"
+    (initData)="initData($event)"
+  ></app-common-filter>
+}
+
+<br />
+
+@if (rows.length != 0 && permissionView.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable
+        [scrollbarH]="scrollBarHorizontal"
+        [rowHeight]="50"
+        [rows]="rows"
+        [footerHeight]="100"
+        [columnMode]="'force'"
+        [limit]="filterData.limit"
+        [externalPaging]="true"
+        [count]="page.totalCount"
+        [offset]="page.offset"
+        (page)="onChange($event)"
+        >
+        <ngx-datatable-column
+          name="User Name"
+          prop="displayName"
+          [flexGrow]="1.2"
+          [width]="80"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="User Number"
+          prop="userNumber"
+          [flexGrow]="1.2"
+          [width]="80"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="Role"
+          prop="roleName"
+          [flexGrow]="1.2"
+          [width]="80"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="Assigned By"
+          prop="assignedBy"
+          [flexGrow]="1.2"
+          [width]="80"
+        ></ngx-datatable-column>
+        <ngx-datatable-column name="Permission" [flexGrow]="1.2" [width]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.roleMasterID) {
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="lgModal1.show(); view(row.roleMasterID)"
+                >
+                Permission
+              </button>
+            }
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template
+              ngx-datatable-footer-template
+              let-rowCount="rowCount"
+              let-pageSize="pageSize"
+              let-selectedCount="selectedCount"
+              let-curPage="curPage"
+              let-offset="offset"
+              let-limit="limit"
+              >
+              <div class="w-100 d-flex justify-content-center">
+                <pagination
+                  [totalItems]="rowCount"
+                  [boundaryLinks]="true"
+                  [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate"
+                  [itemsPerPage]="filterData.limit"
+                  [maxSize]="5"
+                  (pageChanged)="table.onFooterPage($event)"
+                  [customNextTemplate]="nextTemplate"
+                  [customPreviousTemplate]="prevTemplate"
+                ></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div
+  bsModal
+  #lgModal="bs-modal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }"
+  >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Assign Role</h4>
+        <button
+          type="button"
+          class="btn-close close pull-right"
+          (click)="lgModal.hide(); addcomp2.resetForm()"
+          aria-label="Close"
+          #closeModal
+          >
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  (change)="selectcompany($event, 0)"
+                  ngModel
+                  #company="ngModel"
+                  name="company"
+                  required
+                  >
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && addcomp2.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  (change)="selectbranch($event, 0)"
+                  ngModel
+                  #branch="ngModel"
+                  name="branch"
+                  [(ngModel)]="finalbranch"
+                  >
+                  @for (allbranch of allbranch; track allbranch) {
+                    <ng-option [value]="allbranch.branchMasterID">
+                      {{ allbranch.branchName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Branch</span>
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  [items]="ownerList"
+                  [multiple]="true"
+                  bindLabel="displayName"
+                  groupBy="selectedAllGroup"
+                  [(ngModel)]="selected"
+                  [selectableGroup]="true"
+                  [selectableGroupAsModel]="false"
+                  bindValue="userMasterID"
+                  [closeOnSelect]="false"
+                  #userMasterID="ngModel"
+                  name="userMasterID"
+                  required
+                  >
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input
+                      id="item-{{ index }}"
+                      type="checkbox"
+                      [ngModel]="item$.selected"
+                      required
+                      name="abc"
+                      />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select User *</span>
+                  @if (!userMasterID.valid && addcomp2.submitted) {
+                    <div class="invalid-tooltip">
+                      User is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #role="ngModel"
+                    name="role"
+                    required
+                    [(ngModel)]="selectedRole"
+                    >
+                    @for (role of allRoles; track role) {
+                      <ng-option [value]="role.roleMasterID">
+                        {{ role.roleName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Role *</span>
+                  @if (!role.valid && addcomp2.submitted) {
+                    <div class="invalid-tooltip">
+                      Role is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    bsModal
+    #lgModal1="bs-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="dialog-sizes-name1"
+    [config]="{ backdrop: 'static', keyboard: false }"
+    >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Permissions</h4>
+          <button
+            type="button"
+            class="btn-close close pull-right"
+            (click)="lgModal1.hide()"
+            aria-label="Close"
+            >
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (showMyContainer) {
+            <div>
+              <app-permission-view
+                [formdata]="formdata"
+                [action]="'view'"
+                (parentform)="parentform($event.form, $event.checked)"
+                (childform)="childform($event.child, $event.checked)"
+                (operations)="operations($event.parent, $event.child, $event.operation, $event.checked)"
+              ></app-permission-view>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

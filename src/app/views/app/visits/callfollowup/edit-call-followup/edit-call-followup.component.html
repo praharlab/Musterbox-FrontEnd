@@ -1,0 +1,134 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Call Follow Up</h5>
+
+    @if (callfollowupdata) {
+      <form #editcallfollowup="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #customerCompanyID="ngModel"
+                name="customerCompanyID"
+                required
+                [(ngModel)]="callfollowupdata.customerCompanyID"
+                >
+                @for (allcustomers of allcustomer; track allcustomers) {
+                  <ng-option [value]="allcustomers.customerID">
+                    {{ allcustomers.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Customer Company*</span>
+              @if (!customerCompanyID.valid && editcallfollowup.submitted) {
+                <div
+                  class="invalid-tooltip"
+                  >
+                  Customer Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #contactPersonName="ngModel"
+                name="contactPersonName"
+                [(ngModel)]="callfollowupdata.contactPersonName"
+                />
+                <span>Contact Person Name *</span>
+                @if (!contactPersonName.valid && editcallfollowup.submitted) {
+                  <div
+                    class="invalid-tooltip"
+                    >
+                    Contact Person Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #contactPersonNumber="ngModel"
+                  name="contactPersonNumber"
+                  [(ngModel)]="callfollowupdata.contactPersonNumber"
+                  />
+                  <span>Contact Person Number *</span>
+                  @if (!contactPersonNumber.valid && editcallfollowup.submitted) {
+                    <div
+                      class="invalid-tooltip"
+                      >
+                      Contact Person Number is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="datetime-local"
+                    required
+                    ngModel
+                    #callDateTime="ngModel"
+                    name="callDateTime"
+                    [(ngModel)]="datetime"
+                    />
+                    <span>Call Date And Time *</span>
+                    @if (!callDateTime.valid && editcallfollowup.submitted) {
+                      <div class="invalid-tooltip">
+                        Call Date And Time is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      required
+                      ngModel
+                      #estimatedTime="ngModel"
+                      name="estimatedTime"
+                      [(ngModel)]="callfollowupdata.estimatedTime"
+                      />
+                      <span>Estimated Time *</span>
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <textarea
+                        class="form-control"
+                        required
+                        ngModel
+                        #remarks="ngModel"
+                        name="remarks"
+                        [(ngModel)]="callfollowupdata.remarks"
+                      ></textarea>
+                      <span>Remarks *</span>
+                    </label>
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+              </form>
+            }
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

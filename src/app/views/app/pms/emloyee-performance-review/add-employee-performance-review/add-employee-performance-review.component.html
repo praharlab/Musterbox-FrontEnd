@@ -1,0 +1,210 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Set Performance Review </h5>
+
+    @if (comp) {
+      <form #addEmployeePerformanceReview="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="company_id" #companyMasterID="ngModel"
+                name="companyMasterID" required (change)="selectcompany($event)">
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addEmployeePerformanceReview.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="performanceReview_Id"
+                #performanceReviewId="ngModel" name="performanceReviewId" ngModel required>
+                @for (performaceReview of performaceReviewFData; track performaceReview) {
+                  <ng-option
+                    [value]="performaceReview.id">
+                    {{ performaceReview.title }} ( From {{performaceReview.startDate | date:
+                    'dd-MM-yyyy'}} To {{performaceReview.endDate | date:
+                    'dd-MM-yyyy' }} )
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Performance Review*</span>
+              @if (!performanceReviewId.valid && addEmployeePerformanceReview.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Performance Review is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <button class="button btn btn-primary btn-xs mt-2" type="button" (click)="addMoreUsers()"
+            style=" color: white;">Add</button>
+          </div>
+        </div>
+        <div class="row">
+          @for (value of values; track value; let i = $index) {
+            <div [ngClass]="{'d-none': value.isDeleted === true,'col-md-12 my-2': true}"
+              style="margin-top: 10px;">
+              <div class="row" style="background-color: #f5f5f5;  padding: 20px; border-radius: 15px;">
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #userBranch="ngModel"
+                      name="userBranch{{i}}" (change)="selectRevieweeBranch($event,i)">
+                      @for (item of allRevieweeBranch; track item) {
+                        <ng-option [value]="item.branchMasterID">
+                          {{ item.branchName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Reviewee Branch</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #reviewersBranch="ngModel"
+                      name="reviewersBranch{{i}}" (change)="selectReviewersBranch($event,i)">
+                      @for (item of allReviewersBranch; track item) {
+                        <ng-option [value]="item.branchMasterID">
+                          {{ item.branchName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Reviewers Branch</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" ngModel #notes="ngModel" [(ngModel)]="value.notes"
+                    name="notes{{i}}"></textarea>
+                    <span>Notes </span>
+                  </label>
+                </div>
+                @if (!value.RevieweeBranchFilter) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="employee" [multiple]="true" bindLabel="displayName"
+                        groupBy="selectedAllGroup" [(ngModel)]=" value.selectedUsers"
+                        (change)="onEmployeeCompany($event,i)" [selectableGroup]="true"
+                        [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                        ngModel #user="ngModel" name="user{{i}}" [required]="!value.isDeleted">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Reviewee *</span>
+                      @if (!user.valid && addEmployeePerformanceReview.submitted &&  !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          Reviewee is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (value.RevieweeBranchFilter) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="value.branchRevieeUser" [multiple]="true" bindLabel="displayName"
+                        groupBy="selectedAllGroup" [(ngModel)]=" value.selectedUsers"
+                        (change)="onEmployeeRevieweeBranch($event,i)" [selectableGroup]="true"
+                        [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                        ngModel #user="ngModel" name="user{{i}}" [required]="!value.isDeleted">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Reviewee *</span>
+                      @if (!user.valid && addEmployeePerformanceReview.submitted &&  !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          Reviewee is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (!value.ReviewersBranchFilter) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="reviewrs" [multiple]="true" bindLabel="displayName"
+                        groupBy="selectedAllGroup" [(ngModel)]=" value.selectedReviewrs"
+                        (change)="onEmployeeCompany($event,i)" [selectableGroup]="true"
+                        [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                        ngModel #reviewr="ngModel" name="reviewr{{i}}" [required]="!value.isDeleted">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Reviewers *</span>
+                      @if (!reviewr.valid && addEmployeePerformanceReview.submitted &&  !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          Reviewers is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (value.ReviewersBranchFilter) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="value.branchreviewrsUser" [multiple]="true" bindLabel="displayName"
+                        groupBy="selectedAllGroup" [(ngModel)]="value.selectedReviewrs"
+                        (change)="onEmployeeReviewersBranch($event,i)" [selectableGroup]="true"
+                        [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                        ngModel #reviewr="ngModel" name="reviewr{{i}}" [required]="!value.isDeleted">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Reviewers *</span>
+                      @if (!reviewr.valid && addEmployeePerformanceReview.submitted &&  !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          Reviewers is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                <div class="col-md-4">
+                  @if (i != 0) {
+                    <button class="button btn btn-danger btn-xs mt-2" type="button" (click)="removevalue(i)"
+                    style=" color: white;">Remove</button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <button class="btn btn-primary  btn-shadow mt-4" type="submit" (click)="onSubmit()">
+          Submit
+        </button>
+        &nbsp;
+        <button class="btn btn-danger  btn-shadow mt-4" type="button"
+          [routerLink]="adminRoot + '/pms/setPerformanceReview'">
+          Cancel
+        </button>
+      </form>
+    }
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

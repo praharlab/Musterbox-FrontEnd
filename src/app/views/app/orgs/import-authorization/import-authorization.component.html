@@ -1,0 +1,641 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-4">Import Authorization</h4>
+    <form #addimportuser="ngForm" novalidate (ngSubmit)="validateData()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company" required
+              [(ngModel)]="filterData.companyMasterID" (change)="companyChange($event)">
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branchMasterID="ngModel" name="branchMasterID"
+              [(ngModel)]="filterData.branchMasterID">
+              @for (item of allbranch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" [(ngModel)]="filterData.authorizationMasterID" required
+              [(ngModel)]="filterData.authorizationMasterID" #authorizationMasterID="ngModel"
+              name="authorizationMasterID" (change)="authChange($event)">
+              @for (auth of authdata; track auth) {
+                <ng-option [value]="auth.authorizationMasterID">
+                  {{ auth.authorizationMasterName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Authorization *</span>
+            @if (!authorizationMasterID.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Authorization is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="file" ngModel #file="ngModel" (change)="onFileChange($event)"
+              accept=".xlsx, .xls" name="file" required />
+              <span>Import File *</span>
+              @if (file.valid) {
+                <p>{{ fileName }}</p>
+              }
+              @if (!file.valid && addimportuser.submitted) {
+                <div class="invalid-tooltip">
+                  File is required!
+                </div>
+              }
+            </label>
+          </div>
+          @if (filterData.companyMasterID && filterData.authorizationMasterID != null) {
+            <div class="col-md-4 mb-3">
+              <button (click)="downloadDemoExcel()" type="button" class="btn btn-success btn-xs">
+                Download Excel
+              </button>
+            </div>
+          }
+        </div>
+        <div class="col-md-6">
+          @if (isValidated == false) {
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          }
+          @if (isValidated == true) {
+            <button class="btn btn-primary" type="button" (click)="clear()">
+              Clear
+            </button>
+          }
+          <span> &nbsp;&nbsp; </span>
+          <button class="btn btn-danger" type="button" (click)="prev()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              <!-- &nbsp;&nbsp;
+              <button class="btn btn-primary" type="submit" (click)="reValidateData()"
+                *ngIf="rows.length > 0 && isEdited == true">
+                Re-Validate
+              </button> -->
+              @if (rows.length > 0 && remarksCount == 0) {
+                <button class="btn btn-primary" type="submit" (click)="saveData()"
+                  >
+                  Submit
+                </button>
+              }
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <!-- <th>Actions</th> -->
+                  <th>Remarks</th>
+                  <th>Employee Details</th>
+                  <!-- Expense -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 2
+                    ) {
+                    <th>
+                      Expense
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 2
+                    ) {
+                    <th>
+                      Authorization Criteria(Expense)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 2
+                    ) {
+                    <th>
+                      Authorized User(Expense)
+                    </th>
+                  }
+                  <!-- Leave -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 1
+                    ) {
+                    <th>
+                      Leave
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 1
+                    ) {
+                    <th>
+                      Authorization Criteria(Leave)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 1
+                    ) {
+                    <th>
+                      Authorized User(Leave)
+                    </th>
+                  }
+                  <!-- Overtime -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 3
+                    ) {
+                    <th>
+                      Overtime
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 3
+                    ) {
+                    <th>
+                      Authorization Criteria(Overtime)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 3
+                    ) {
+                    <th>
+                      Authorized User(Overtime)
+                    </th>
+                  }
+                  <!-- Resignation -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 5
+                    ) {
+                    <th>
+                      Resignation
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 5
+                    ) {
+                    <th>
+                      Authorization Criteria(Resignation)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 5
+                    ) {
+                    <th>
+                      Authorized User(Resignation)
+                    </th>
+                  }
+                  <!-- Gatepass -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 6
+                    ) {
+                    <th>
+                      Gatepass
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 6
+                    ) {
+                    <th>
+                      Authorization Criteria(Gatepass)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 6
+                    ) {
+                    <th>
+                      Authorized User(Gatepass)
+                    </th>
+                  }
+                  <!-- Compensatory Off -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 8
+                    ) {
+                    <th>
+                      Compensatory Off
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 8
+                    ) {
+                    <th>
+                      Authorization Criteria(Compensatory Off)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 8
+                    ) {
+                    <th>
+                      Authorized User(Compensatory Off)
+                    </th>
+                  }
+                  <!-- Attendance Correction -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 7
+                    ) {
+                    <th>
+                      Attendance Correction
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 7
+                    ) {
+                    <th>
+                      Authorization Criteria(Attendance Correction)
+                    </th>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 7
+                    ) {
+                    <th>
+                      Authorized User(Attendance Correction)
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of rows; track item; let i = $index) {
+                  <tr>
+                    <!-- <td>
+                    <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                      Remove
+                    </button>
+                  </td> -->
+                  <td>
+                    <div style="width: 200px">
+                      {{ item.remarks }}
+                    </div>
+                  </td>
+                  <td>
+                    <div style="width: 250px">
+                      Name - {{ item.userName }}
+                      @if (
+                        item.employeeCode && item.employeeCode != '' && item.employeeCode != null
+                        ) {
+                        <span>
+                          ({{ item.employeeCode }})
+                        </span>
+                      }
+                      <br />
+                      Branch - {{ item.branch }}
+                      <br />
+                      Department - {{ item.department }}
+                      <br />
+                      Designation - {{ item.designation }}
+                      <br />
+                      Contact Number - {{ item.userNumber }}
+                    </div>
+                  </td>
+                  <!-- Expense -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 2
+                    ) {
+                    <td>
+                      @if (item.expense) {
+                        <div>
+                          {{ item.expense.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 2
+                    ) {
+                    <td>
+                      @if (item.expense) {
+                        <div>
+                          {{ item.expense.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 2
+                    ) {
+                    <td>
+                      @if (item.expense && item.expense.authorizedUsers.length > 0) {
+                        <div style="width: 200px">
+                          @for (name of item.expense.authorizedUsers; track name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                  <!-- Leave -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 1
+                    ) {
+                    <td>
+                      @if (item.leave) {
+                        <div>
+                          {{ item.leave.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 1
+                    ) {
+                    <td>
+                      @if (item.leave) {
+                        <div>
+                          {{ item.leave.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 1
+                    ) {
+                    <td>
+                      @if (item.leave && item.leave.authorizedUsers.length > 0) {
+                        <div style="width: 200px">
+                          @for (name of item.leave.authorizedUsers; track name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                  <!-- Overtime -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 3
+                    ) {
+                    <td>
+                      @if (item.overtime) {
+                        <div>
+                          {{ item.overtime.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 3
+                    ) {
+                    <td>
+                      @if (item.overtime) {
+                        <div>
+                          {{ item.overtime.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 3
+                    ) {
+                    <td>
+                      @if (item.overtime && item.overtime.authorizedUsers.length > 0) {
+                        <div style="width: 200px">
+                          @for (name of item.overtime.authorizedUsers; track name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                  <!-- Resignation -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 5
+                    ) {
+                    <td>
+                      @if (item.resignation) {
+                        <div>
+                          {{ item.resignation.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 5
+                    ) {
+                    <td>
+                      @if (item.resignation) {
+                        <div>
+                          {{ item.resignation.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 5
+                    ) {
+                    <td>
+                      @if (item.resignation && item.resignation.authorizedUsers.length > 0) {
+                        <div style="width: 200px">
+                          @for (name of item.resignation.authorizedUsers; track name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                  <!-- Gatepass -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 6
+                    ) {
+                    <td>
+                      @if (item.gatepass) {
+                        <div>
+                          {{ item.gatepass.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 6
+                    ) {
+                    <td>
+                      @if (item.gatepass) {
+                        <div>
+                          {{ item.gatepass.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 6
+                    ) {
+                    <td>
+                      @if (item.gatepass && item.gatepass.authorizedUsers.length > 0) {
+                        <div style="width: 200px">
+                          @for (name of item.gatepass.authorizedUsers; track name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                  <!-- `Compensatory Off -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 8
+                    ) {
+                    <td>
+                      @if (item.compensatoryOff) {
+                        <div>
+                          {{ item.compensatoryOff.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 8
+                    ) {
+                    <td>
+                      @if (item.compensatoryOff) {
+                        <div>
+                          {{ item.compensatoryOff.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 8
+                    ) {
+                    <td>
+                      @if (
+                        item.compensatoryOff &&
+                        item.compensatoryOff.authorizedUsers.length > 0
+                        ) {
+                        <div style="width: 200px">
+                          @for (name of item.compensatoryOff.authorizedUsers; track name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                  <!-- Attendance Correction -->
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 7
+                    ) {
+                    <td>
+                      @if (item.attendanceCorrection) {
+                        <div>
+                          {{ item.attendanceCorrection.authorizationMasterName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 7
+                    ) {
+                    <td>
+                      @if (item.attendanceCorrection) {
+                        <div>
+                          {{ item.attendanceCorrection.authorizationCriteriaName }}
+                        </div>
+                      }
+                    </td>
+                  }
+                  @if (
+                    filterData.authorizationMasterID == 0 || filterData.authorizationMasterID == 7
+                    ) {
+                    <td>
+                      @if (
+                        item.attendanceCorrection &&
+                        item.attendanceCorrection.authorizedUsers.length > 0
+                        ) {
+                        <div style="width: 200px">
+                          @for (
+                            name of item.attendanceCorrection.authorizedUsers
+                            ; track
+                            name) {
+                            <div>
+                              {{ name.displayName }}
+                              @if (name.employeeCode && name.employeeCode != null) {
+                                <span>
+                                  ( {{ name.employeeCode }})
+                                </span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <!-- <div class="row mt-3">
+        <div class="col">
+          <button type="button" class="btn btn-success btn-xs" (click)="addRow()">Add Row</button>
+        </div>
+      </div> -->
+    </form>
+  </div>
+</div>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

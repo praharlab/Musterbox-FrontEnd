@@ -1,0 +1,91 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="LWF Report"></app-heading>
+    <app-breadcrumb title="LWF Report"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+
+
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+                (change)="selectbranch($event)">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" ngModel #fromyearmonth="ngModel" name="fromyearmonth"
+                (change)="selectfromyearmonth($event)" required />
+                <span>Yearmonth*</span>
+                @if (!fromyearmonth.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From yearmonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-5">
+              <button class="btn btn-primary form-group" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+              <span> &nbsp;&nbsp; </span>
+              @if (finaldata == true) {
+                <button class="btn btn-success form-group" type="button"
+                  (click)="onClickDownloadPdf()">
+                  Download As PDF
+                </button>
+              }
+              <!-- <button class="btn btn-info mb-1" printTitle="Loan Report" printSectionId="content" ngxPrint layout="landscape">Save as PDF</button> -->
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+
+
+  @if (finaldata) {
+    <div class="d-flex justify-content-center mt-4">
+      <pdf-viewer [src]="lwfData" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false" [zoom]="1"
+        [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true" [external-link-target]="'blank'"
+      [autoresize]="true" [show-borders]="false" style="width: 90%; height: 1000px"></pdf-viewer>
+    </div>
+  }

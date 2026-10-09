@@ -1,0 +1,457 @@
+import { Component, ViewChild, OnInit, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { NavigationStart, Router ,ActivatedRoute} from '@angular/router';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { ApiService } from 'src/app/services/api.service';
+import { ConstantService } from 'src/app/services/constant.service';
+import { environment } from 'src/environments/environment';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { FormValueStorageService } from 'src/app/services/form-value-storage.service';
+import { AppNotificationService, NotificationType } from 'src/app/services/app-notification.service';
+import { NgForm } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { ItemOptionsPerPageArray } from 'src/app/constants/CommonFilterFields';
+
+
+@Component({
+    selector: 'app-list-dealer-plan',
+    templateUrl: './list-dealer-plan.component.html',
+    styleUrls: ['./list-dealer-plan.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
+})
+export class ListDealerPlanComponent implements OnInit {
+  @ViewChild('resetForm1') resetForm1: NgForm;
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild('closeModal') closeModal: ElementRef;
+  rows: any = [];
+  apiURL = environment.apiUrl;
+  adminRoot = environment.adminRoot;
+  ColumnMode = ColumnMode;
+  temp = [];
+  @ViewChild('myInput')
+  myInputVariable: ElementRef;
+  file: any;
+  format: any;
+  url: any;
+  itemsPerPage = 10;
+  itemOptionsPerPage = ItemOptionsPerPageArray;
+  selected = [];
+  // SelectionType = SelectionType;
+  selectAllState = '';
+  scrollBarHorizontal = window.innerWidth < 1201;
+  filterData = {
+    page: 1,
+    limit: 10,
+    searchQuery: '',
+  };
+  page = {
+    totalCount: 0,
+    offset: 0,
+  };
+  ipAddress: any;
+  rows1: any = [];
+  permissioncreate: any = [];
+  permissionedit: any = [];
+  permissionview: any = [];
+  permissiondelete: any = [];
+  usertype: any;
+  limit = 10;
+  currentPage: number;
+  formValue: any;
+  userNumber: any;
+  buttonDisabled = false;
+  buttonState = '';
+  constructor(
+    private spinner: NgxUiLoaderService,
+    private router: Router,
+    private notifications: AppNotificationService,
+    private api: ApiService,
+    private constant: ConstantService,
+    private http: HttpClient,
+    public activatedRoute: ActivatedRoute,
+    private formValueStorageService: FormValueStorageService,
+  ) {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        const protectedRoutes = [
+          '/app/superadminmenus/subadmin',
+          '/app/superadminmenus/dealerplan/edit_dealerplan',
+        ];
+
+        const isProtectedRoute = protectedRoutes.some((route) => event.url.includes(route));
+        if (!isProtectedRoute) {
+          formValueStorageService.removeData('ListDealerPlanComponent', false);
+        }
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.usertype = localStorage.getItem('usertype');
+    this.formValue = this.formValueStorageService.getData();
+    if (this.formValueStorageService.isEmptyObject('ListDealerPlanComponent')) {
+      this.filterData = {
+        page: 1,
+        limit: 10,
+        searchQuery: '',
+      };
+    } else {
+      this.filterData = this.formValue.ListDealerPlanComponent.body;
+    }
+
+    this.limit = 10;
+    this.page = {
+      totalCount: 0,
+      offset: 0,
+    };
+
+    this.getSubAdminData();
+    this.file = [];
+    this.checkpermission();
+    this.getIPAddress();
+  }
+
+  getSubAdminData() {
+    this.spinner.start('data');
+    this.api
+      .callApi(
+        this.constant.GETDEALERPLAN,
+        this.filterData,
+        'POST',
+        true,
+        false,
+        true,
+      )
+      .subscribe(
+        (res: any) => {
+          if (res.status == 200) {
+            this.rows = res.data;
+
+            this.temp = [...this.rows];
+            this.page.totalCount = res.totalcount;
+            setTimeout(() => {
+              this.currentPage = this.filterData.page;
+              this.itemsPerPage = this.filterData.limit;
+            }, 100);
+            this.spinner.stop('data');
+          } else {
+            this.handleError(res.message);
+            this.spinner.stop('data');
+          }
+        },
+        (err) => {
+          this.handleError(err.error.message);
+          this.spinner.stop('data');
+        },
+      );
+  }
+
+  checkpermission() {
+    if (this.usertype != 2) {
+      this.spinner.start();
+      let body = {
+        userMasterID: localStorage.getItem('id'),
+      };
+      this.api
+        .callApi(this.constant.GETPERMISSION, body, 'POST', true, false, true)
+        .subscribe((res: any) => {
+          if (res.status == 200) {
+            let permission = res.data;
+            this.permissiondelete = permission.filter((permissionval) => {
+              return (
+                permissionval.formName == 'EmployeeMaster' &&
+                permissionval.operationName.includes('Delete')
+              );
+            });
+            this.permissionedit = permission.filter((permissionval) => {
+              return (
+                permissionval.formName == 'EmployeeMaster' &&
+                permissionval.operationName.includes('Edit')
+              );
+            });
+            this.permissionview = permission.filter((permissionval) => {
+              return (
+                permissionval.formName == 'EmployeeMaster' &&
+                permissionval.operationName.includes('View')
+              );
+            });
+            this.permissioncreate = permission.filter((permissionval) => {
+              return (
+                permissionval.formName == 'EmployeeMaster' &&
+                permissionval.operationName.includes('Create')
+              );
+            });
+            this.spinner.stop();
+          }
+        });
+    } else {
+      this.permissioncreate = [1];
+      this.permissionedit = [1];
+      this.permissionview = [1];
+      this.permissiondelete = [1];
+    }
+  }
+
+  onSelect({ selected }): void {
+    this.selected.splice(0, this.selected.length);
+    this.selected.push(selected);
+    this.setSelectAllState();
+  }
+
+  setSelectAllState(): void {
+    if (this.selected.length === this.rows.length) {
+      this.selectAllState = 'checked';
+    } else if (this.selected.length !== 0) {
+      this.selectAllState = 'indeterminate';
+    } else {
+      this.selectAllState = '';
+    }
+  }
+
+  selectAllChange($event): void {
+    if ($event.target.checked) {
+      this.selected = [...this.rows];
+    } else {
+      this.selected = [];
+    }
+    this.setSelectAllState();
+  }
+
+  updateFilter(event): void {
+    const inputValue = event.target.value.trim().toLowerCase();
+    if (inputValue.length == 0) {
+      this.formValueStorageService.removeData('ListDealerPlanComponent', false);
+      this.filterData.searchQuery = '';
+      setTimeout(() => {
+        this.ngOnInit();
+      }, 100);
+    } else {
+      this.filterData.searchQuery = inputValue;
+      this.getSubAdminData();
+    }
+  }
+
+  onItemsPerPageChange(itemCount): void {
+    this.itemsPerPage = itemCount;
+  }
+
+  onChange(e: any) {
+    if (e) {
+      this.filterData.page = e.offset + 1;
+      this.getSubAdminData();
+    } else {
+      this.handleError('Something Went Wrong!');
+    }
+  }
+
+  onLimitChange(ev: any) {
+    if (ev) {
+      this.filterData.limit = ev;
+      this.limit = this.filterData.limit;
+      this.getSubAdminData();
+    } else {
+      this.handleError('Something Went Wrong!');
+    }
+  }
+
+  showAddNewModal() {
+    this.router.navigate([this.adminRoot + '/superadminmenus/dealerplan/add_dealerplan']);
+  }
+
+  alertConfirmation(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover!',
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+       
+        this.spinner.start('confirm');
+        this.api
+          .callApi(this.constant.DELETEDEALERPLAN + +id, {}, 'DELETE', true, true, true)
+          .subscribe(
+            (res: any) => {
+              this.notifications.create('Done', res.message, NotificationType.Bare, {
+                theClass: 'outline primary',
+                timeOut: 3000,
+                showProgressBar: true,
+              });
+              this.getSubAdminData();
+              this.spinner.stop('confirm');
+            },
+            (err) => {
+              this.handleError(err.error.message);
+              this.spinner.stop('confirm');
+            },
+          );
+      }
+    });
+  }
+
+
+  // this.notifications.create('Done', res.message, NotificationType.Bare, {
+  //   theClass: 'outline primary',
+  //   timeOut: 3000,
+  //   showProgressBar: true,
+
+  alertDeactiveConfirmation(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'User will deactive!',
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, deactive it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const body = {
+          dealerPlanID: id,
+          status: '0',
+        };
+        this.spinner.start('deactive');
+        this.api
+          .callApi(this.constant.STATUSCHANGEDEALERPLAN, body, 'POST', true, true, true)
+          .subscribe(
+            (res: any) => {
+              this.notifications.create('Done', res.message, NotificationType.Bare, {
+                theClass: 'outline primary',
+                timeOut: 3000,
+                showProgressBar: true,
+              });
+              this.getSubAdminData();
+              this.spinner.stop('deactive');
+            },
+            (err) => {
+              this.handleError(err.error.message);
+              this.spinner.stop('deactive');
+            },
+          );
+      }
+    });
+  }
+
+  alertActiveConfirmation(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'User will active!',
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, active it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const body = {
+          dealerPlanID: id,
+          status: '1',
+        }; 
+        this.spinner.start('active');
+        this.api
+          .callApi(this.constant.STATUSCHANGEDEALERPLAN, body, 'POST', true, true, true)
+          .subscribe(
+            (res: any) => {
+              this.notifications.create('Done', res.message, NotificationType.Bare, {
+                theClass: 'outline primary',
+                timeOut: 3000,
+                showProgressBar: true,
+              });
+              this.getSubAdminData();
+              this.spinner.stop('active');
+            },
+            (err) => {
+              this.handleError(err.error.message);
+              this.spinner.stop('active');
+            },
+          );
+      }
+    });
+  }
+
+  getIPAddress() {
+    this.http.get('https://api.ipify.org/?format=json').subscribe((res: any) => {
+      this.ipAddress = res.ip;
+    });
+  }
+
+  navigateToEditPage(rowData: any): void {
+    this.formValueStorageService.navigate(
+      'ListDealerPlanComponent',
+      this.filterData,
+      '/superadminmenus/dealerplan/edit_dealerplan',
+      rowData.dealerPlanID,
+    );
+  }
+
+  private handleError(message: any) {
+    this.notifications.create('Error', message, NotificationType.Error, {
+      theClass: 'outline primary',
+      timeOut: 3000,
+      showProgressBar: false,
+    });
+  }
+
+  resetForm() {
+    this.resetForm1.resetForm();
+  }
+
+  getdata(userNumber: number) {
+    this.userNumber = userNumber;
+  }
+
+  passwordchange() {
+    const newPassword = this.resetForm1.value.newPassword;
+    const confPassword = this.resetForm1.value.confPassword;
+    if (newPassword != confPassword) {
+      this.notifications.create('Error', 'Passwords do not match!', NotificationType.Bare, {
+        theClass: 'outline primary',
+        timeOut: 3000,
+        showProgressBar: false,
+
+      });
+    } else {
+      let body = {
+        mobile: this.userNumber,
+        new_password: this.resetForm1.value.newPassword,
+      };
+      this.spinner.start();
+      this.api.callApi(this.constant.RESETPASS, body, 'POST', true, true, true).subscribe(
+        (res: any) => {
+          if (res.status == 200) {
+            this.notifications.create('Done', res.message, NotificationType.Bare, {
+              theClass: 'outline primary',
+              timeOut: 3000,
+              showProgressBar: true,
+            });
+            this.resetForm1.resetForm();
+            this.closeModal.nativeElement.click();
+            setTimeout(() => {
+              this.resetForm1.resetForm();
+
+              this.spinner.stop();
+            }, 3000);
+          } else {
+            this.notifications.create('Error', res.message, NotificationType.Bare, {
+              theClass: 'outline primary',
+              timeOut: 3000,
+              showProgressBar: false,
+            });
+            this.closeModal.nativeElement.click();
+            this.spinner.stop();
+          }
+        },
+        (err) => {
+          this.notifications.create('Error', err, NotificationType.Bare, {
+            theClass: 'outline primary',
+            timeOut: 3000,
+            showProgressBar: false,
+          });
+          this.spinner.stop();
+        },
+      );
+    }
+  }
+
+}

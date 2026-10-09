@@ -1,0 +1,310 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [showItemsPerPage]="true" (itemsPerPageChange)="onItemPerPageChange($event)" [itemsPerPage]="filterData.limit"
+  (addNewItem)="lgModal.show(); selectcompany(company_id)" [showSearch]="true" name="Bulk Employee Skill Category"
+(searchKeyUp)="updateFilter($event)"></app-list-page-header>
+<br />
+@if (rows && permissionview.length != 0) {
+  <div class="row">
+    @for (item of rows; track item) {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;">
+            @if (item.photo) {
+              <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ item.photo }}"
+                class="img-thumbnail border-0 list-thumbnail" style="margin-top: 33%" />
+            }
+          </a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div class="card-body pl-0 align-self-center d-flex flex-column justify-content-between min-width-zero w-100"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <p class="list-item-heading mb-1 truncate">
+                    <b>Name :-</b>
+                    {{ item?.displayName }}
+                  </p>
+                  <p class="list-item-heading mb-1 truncate">
+                    <b>Mobile Number :-</b>
+                    {{ item?.userNumber }}
+                  </p>
+                  <br />
+                  <p class="list-item-heading mb-1 truncate"><b>List Of Skill Categories</b></p>
+                  <br />
+                  @if (item.employeeSkillCategories.length > 0) {
+                    <div class="row">
+                      @for (item1 of item.employeeSkillCategories; track item1) {
+                        <div class="col-md-6">
+                          <div class="card p-2 mt-3">
+                            <div>
+                              <p class="list-item-heading mb-1 truncate"
+                                style="font-size: 17px !important">
+                                {{ item1.skillCategory | uppercase }}
+                              </p>
+                              <p class="text-muted mb-0 text-small">
+                                Applicable Month:-{{ item1.applicableYYYYMM }}
+                              </p>
+                              <p class="text-muted mb-0 text-small">
+                                End Month:-{{ item1.endYYYYMM  }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Bulk Employee Skill Category</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide(); resetModel()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel
+                  #company="ngModel" name="company" [(ngModel)]="company_id" required>
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+
+
+                <ng-select [items]="allContractor" [multiple]="true" bindLabel="contractorName"
+                  groupBy="selectedAllGroup" (ngModelChange)="selectcontractor()"
+                  [(ngModel)]="selectedContractor" [selectableGroup]="true"
+                  [selectableGroupAsModel]="false" bindValue="contractorId" [closeOnSelect]="false"
+                  ngModel #contractor="ngModel" name="contractor">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{standalone: true}" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Contractor </span>
+                </label>
+              </div>
+
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName"
+                    groupBy="selectedAllGroup" (ngModelChange)="selectbranch()"
+                    [(ngModel)]="selectedBranch" [selectableGroup]="true"
+                    [selectableGroupAsModel]="false" bindValue="branchMasterID" [closeOnSelect]="false"
+                    ngModel #branch="ngModel" name="branch">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Branch</span>
+                  </label>
+                </div>
+
+                <!-- Department -->
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="alldepartment" [multiple]="true" bindLabel="departmentName"
+                      groupBy="selectedAllGroup" (ngModelChange)="selectdepartment()"
+                      [(ngModel)]="selectedDepartment" [selectableGroup]="true"
+                      [selectableGroupAsModel]="false" bindValue="departmentId" [closeOnSelect]="false"
+                      ngModel #department="ngModel" name="department">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Department</span>
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="allDivision" [multiple]="true" bindLabel="divisionName"
+                        groupBy="selectedAllGroup" (ngModelChange)="selectdivision()"
+                        [(ngModel)]="selectedDivision" [selectableGroup]="true"
+                        [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel
+                        #division="ngModel" name="division">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                            [ngModelOptions]="{standalone: true}" />
+                            Select All
+                          </ng-template>
+                        </ng-select>
+                        <span>Select Division</span>
+                      </label>
+                    </div>
+
+                    <!-- select designation -->
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select [items]="alldesignation" [multiple]="true" bindLabel="designationName"
+                          groupBy="selectedAllGroup" (ngModelChange)="selectdesig()"
+                          [(ngModel)]="selecteddesig" [selectableGroup]="true"
+                          [selectableGroupAsModel]="false" bindValue="designationId" [closeOnSelect]="false"
+                          ngModel #designation="ngModel" name="designation">
+                          <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                              [ngModelOptions]="{standalone: true}" />
+                              Select All
+                            </ng-template>
+                          </ng-select>
+                          <span>Select Designation</span>
+                        </label>
+                      </div>
+
+                      <!-- select working area -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select [items]="allWorkingArea" [multiple]="true" bindLabel="workingAreaName"
+                            groupBy="selectedAllGroup" (ngModelChange)="selectWorkingArea()"
+                            [(ngModel)]="selectedWorkingArea" [selectableGroup]="true"
+                            [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel
+                            #workingArea="ngModel" name="workingArea">
+                            <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                                [ngModelOptions]="{standalone: true}" />
+                                Select All
+                              </ng-template>
+                            </ng-select>
+                            <span>Select Working Area</span>
+                          </label>
+                        </div>
+
+                        <div class="col-md-8">
+                          <label class="form-group has-float-label">
+                            <ng-select [items]="alluser" [multiple]="true" bindLabel="name"
+                              groupBy="selectedAllGroup" required [selectableGroup]="true"
+                              [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                              ngModel #userMasterID="ngModel" name="userMasterID" [(ngModel)]="selectedUser">
+                              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                                  name="selectall" [ngModelOptions]="{standalone: true}" />
+                                  Select All
+                                </ng-template>
+                              </ng-select>
+                              <span>Select Employee *</span>
+                              @if (!userMasterID.valid && addcomp.submitted) {
+                                <div class="invalid-tooltip">
+                                  Employee is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" (ngModelChange)="selectgender()" ngModel
+                                #gender="ngModel" [(ngModel)]="selectedgender" name="gender">
+                                <ng-option value="male">
+                                  Male
+                                </ng-option>
+                                <ng-option value="female">
+                                  Female
+                                </ng-option>
+                                <ng-option value="other">
+                                  Other
+                                </ng-option>
+                              </ng-select>
+                              <span>Select Gender</span>
+                            </label>
+                          </div>
+
+
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" ngModel #category="ngModel" name="category"
+                                required>
+                                <ng-option value="skilled">Skilled</ng-option>
+                                <ng-option value="semiskilled">SemiSkilled</ng-option>
+                                <ng-option value="unskilled">UnSkilled</ng-option>
+                              </ng-select>
+                              <span>Select Skill Category *</span>
+                            </label>
+                            @if (!category.valid && addcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                Skill Category is required!
+                              </div>
+                            }
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="month" ngModel required #applicableYYYYMM="ngModel"
+                                name="applicableYYYYMM" />
+                                <span>Select Applicable Month *</span>
+                              </label>
+                              @if (!applicableYYYYMM.valid && addcomp.submitted) {
+                                <div class="invalid-tooltip">
+                                  Applicable Month is required!
+                                </div>
+                              }
+                            </div>
+                          </div>
+
+                          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <pagination class="justify-content-center" [totalItems]="page.totalCount" [itemsPerPage]="filterData.limit"
+                    [boundaryLinks]="true" [(ngModel)]="filterData.page" (pageChanged)="onChange($event)"
+                    [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate" [maxSize]="5"
+                    [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate">
+                  </pagination>
+                </div>
+
+                <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+                  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+                  <i class="simple-icon-arrow-left"></i>
+                </ng-template>
+                <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+                  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+                  <i class="simple-icon-arrow-right"></i>
+                </ng-template>
+                <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+                  <i class="simple-icon-arrow-right"></i>
+                </ng-template>
+                <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+                  <i class="simple-icon-arrow-left"></i>
+                </ng-template>
+
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

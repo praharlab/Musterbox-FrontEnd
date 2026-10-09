@@ -1,0 +1,443 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Payroll" [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="searchvalue" (searchKeyUp)="updateFilter($event)" (itemsPerPageChange)="onLimitChange($event)"
+  [itemsPerPage]="filterData.limit" [itemOptionsPerPage]="itemOptionsPerPage"
+(addNewItem)="showAddNewModal()"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #filterform="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                [(ngModel)]="selectedCompany" (change)="SelectedCompany($event)" required>
+                @for (comp of comp; track comp) {
+                  <ng-option [value]="comp.companyMasterID">
+                    {{ comp.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+            </label>
+            @if (!company.valid && filterform.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+                (change)="selectbranch()" [(ngModel)]="selectedbranch">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #department="ngModel" name="department"
+                (change)="selectdepartment()" [(ngModel)]="selecteddept">
+                @for (item of alldepartment; track item) {
+                  <ng-option [value]="item.departmentId">
+                    {{ item.departmentName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Department</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #designation="ngModel" name="designation"
+                (change)="selectdesig()" [(ngModel)]="selecteddesig">
+                @for (item of alldesignation; track item) {
+                  <ng-option [value]="item.designationId">
+                    {{ item.designationName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Designation</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #workingArea="ngModel" name="workingArea"
+                (change)="selectWorkingArea()" [(ngModel)]="selectedWorkingArea">
+                @for (item of allWorkingArea; track item) {
+                  <ng-option [value]="item.id">
+                    {{ item.workingAreaName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Working Area</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #division="ngModel" name="division"
+                (change)="selectdivision()" [(ngModel)]="selectedDivision">
+                @for (item of allDivision; track item) {
+                  <ng-option [value]="item.id">
+                    {{ item.divisionName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Division</span>
+            </label>
+          </div>
+          <!-- select Repotee User -->
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #repoteeUserMasterID="ngModel"
+                name="repoteeUserMasterID" [(ngModel)]="selectedRepoteeUser" (change)="selectReportingPerson()">
+                @for (item of allRepoteeUser; track item) {
+                  <ng-option [value]="item.userMasterID">
+                    {{ item.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Reporting Person</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #status="ngModel" name="status"
+                (change)="selectEmployeeStatusChange()" [(ngModel)]="selectedStatus" required>
+                <ng-option value="1">Active</ng-option>
+                <ng-option value="0">Deactive</ng-option>
+                <ng-option value="all">All</ng-option>
+              </ng-select>
+              <span>Select Status *</span>
+              @if (!status.valid && filterform.submitted) {
+                <div class="invalid-tooltip">
+                  Employee Status is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+          <div class="col-md-9">
+            <br>
+              <h6 style="text-align: right" type="button">Employee Count :- {{ this.page.totalCount }}</h6>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  <div style="text-align: right">
+    @if (permissionview.length != 0) {
+      <button (click)="exportUsersProfilePic()" class="export">
+        Export User Profile Pic
+      </button>
+    }
+    <span> &nbsp; </span>
+    @if (permissioncreate.length != 0) {
+      <button (click)="showImportOpeningBalanceModal()" class="export">Bulk Initial
+        Leave
+      Balance</button>
+    }
+    <span> &nbsp; </span>
+    @if (permissioncreate.length != 0) {
+      <button (click)="showUpdateBranchJob()" class="export">Update
+      Branch/Job</button>
+    }
+    <span> &nbsp; </span>
+    @if (rows.length != 0 && permissionview.length != 0) {
+      <button (click)="downloadFile()" class="export">Export</button>
+    }
+    <span> &nbsp; </span>
+    @if (permissioncreate.length != 0) {
+      <button (click)="lgModal.show()" class="export">Import</button>
+    }
+    <span> &nbsp; </span>
+    @if (
+      permissioncreate.length != 0) {
+      <button (click)="lgModal1.show()" class="export">Update In Bulk</button>
+    }
+    <span> &nbsp;&nbsp; </span>
+  </div>
+  <br />
+  @if (rows && permissionview.length != 0) {
+    <div class="row">
+      @for (item of rows; track item) {
+        <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+          <div class="card d-flex flex-row mb-4">
+            <a class="d-flex" href="javascript:;">
+              @if (item.photo) {
+                <span>
+                  <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ item.photo }}"
+                    class="img-thumbnail border-0 rounded-circle m-4 list-thumbnail align-self-center"
+                    style="height: 90px; width: 90px" />
+                  </span>
+                }
+                @if (!item.photo) {
+                  <span>
+                    @if ( item.firstName && item.lastName) {
+                      <app-profile-pic [Style]="'height: 90px; width: 90px;'"
+                        [Class]="'img-thumbnail border-0 rounded-circle m-4 list-thumbnail align-self-center'"
+                      [firstName]="item.firstName" [lastName]="item.lastName"></app-profile-pic>
+                    }
+                  </span>
+                }
+              </a>
+              <div class="d-flex flex-grow-1 min-width-zero">
+                <div
+                  class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                  <div class="min-width-zero">
+                    <a href="javascript:;">
+                      @if (permissionedit.length == 0) {
+                        <p class="list-item-heading mb-1 truncate">
+                          {{ item.displayName }}
+                        </p>
+                      }
+                      @if (permissionedit.length != 0) {
+                        <p class="list-item-heading mb-1 truncate"
+                          (click)="setStorage();navigateToEditPage(item)" tooltip="View Employee Profile">
+                          {{ item.displayName }}
+                        </p>
+                      }
+                      <p class="text-muted mb-0 text-small" style="letter-spacing: 2px">
+                        <b>Contact No</b>
+                        :-{{ item.userNumber }}
+                      </p>
+                      <p class="text-muted mb-0 text-small" style="letter-spacing: 2px">
+                        <b>Branch</b>
+                        :-@if (item.employeeBranches && item.employeeBranches.length && item.employeeBranches[0].branchMaster.branchName) {
+                        <span
+                          >
+                        {{ item.employeeBranches[0].branchMaster.branchName }}</span>
+                      }
+                    </p>
+                    <p class="text-muted mb-0 text-small" style="letter-spacing: 2px">
+                      <b>Department</b>
+                      :-@if (item.employeeDepartments && item.employeeDepartments.length && item.employeeDepartments[0].department.departmentName) {
+                      <span
+                        >
+                      {{ item.employeeDepartments[0].department.departmentName }}</span>
+                    }
+                  </p>
+                  <p class="text-muted mb-0 text-small" style="letter-spacing: 2px">
+                    <b>Designation</b>
+                    :-@if (item.employeeDesignations && item.employeeDesignations.length && item.employeeDesignations[0].designation.designationName) {
+                    <span
+                      >
+                    {{ item.employeeDesignations[0].designation.designationName }}</span>
+                  }
+                </p>
+                <p class="text-muted mb-0 text-small" style="letter-spacing: 2px">
+                  <b>Company Name</b>
+                  :-@if (item.companyMaster && item.companyMaster.companyName) {
+                  <span>
+                  {{ item.companyMaster.companyName }}</span>
+                }
+              </p>
+              @if (item.status == '1') {
+                <button type="button" class="btn btn-success"
+                  (click)="setStorage();navigateToDeactivePage(item.userMasterID)" style="margin-top: 10%">
+                  {{ 'Active' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.status == '0') {
+                <button type="button" class="btn btn-danger"
+                  (click)="alertActiveConfirmation(item.userMasterID)" style="margin-top: 10%">
+                  {{ 'Deactive' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+            </a>
+          </div>
+          <div style="margin-top: 14px">
+            @if (permissionedit.length != 0) {
+              <a class="btn btn-outline-primary btn-xs" (click)="setStorage();navigateToEditPage(item)"
+                >
+                EDIT
+              </a>
+            }
+            <br />
+            @if (permissiondelete.length != 0) {
+              <a class="btn btn-outline-primary btn-xs" (click)="setStorage();navigateToDeletePage(item)"
+                style="margin-top: 10%">
+                DELETE
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+<div class="col-12">
+  <pagination class="justify-content-center" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+    [customLastTemplate]="lastTemplate" [totalItems]="page.totalCount" [itemsPerPage]="filterData.limit" [maxSize]="5"
+    [(ngModel)]="currentPage" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+    [customPreviousTemplate]="prevTemplate">
+  </pagination>
+</div>
+</div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Import User</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addimportuser="ngForm" novalidate (ngSubmit)="onImportUserSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company" required
+                  (change)="showDemoUserExcelButton($event)">
+                  @for (comp of comp; track comp) {
+                    <ng-option [value]="comp.companyMasterID">
+                      {{ comp.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!company.valid && addimportuser.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="file" ngModel #file="ngModel" (change)="onSelectImportFile($event)"
+                  name="file" accept=".xls, .xlsx" required />
+                  <span>Import File *</span>
+                </label>
+                @if (!file.valid && addimportuser.submitted) {
+                  <div class="invalid-tooltip">
+                    File is required!
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+            &nbsp;
+            <span> &nbsp; </span>
+            @if (showdemoexcel == true) {
+              <button class="btn btn-success" type="button" (click)="downloadDemoImportUser()">Download Demo
+              Excel</button>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Update User</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #updateimportuser="ngForm" novalidate (ngSubmit)="onSubmitUpdateUserData()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #company1="ngModel" name="company1" required
+                    (change)="showDemoUpdateUser($event)">
+                    @for (comp of comp; track comp) {
+                      <ng-option [value]="comp.companyMasterID">
+                        {{ comp.companyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Company *</span>
+                  @if (!company1.valid && updateimportuser.submitted) {
+                    <div class="invalid-tooltip">
+                      Company is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #branch_update="ngModel" name="branch_update"
+                    (change)="selectbranch()" [(ngModel)]="selectedbranch_update">
+                    @for (item of allbranch_Update; track item) {
+                      <ng-option [value]="item.branchMasterID">
+                        {{ item.branchName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Branch</span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" ngModel #file1="ngModel" (change)="onSelectImportFile($event)"
+                    name="file1" accept=".xls, .xlsx" required />
+                    <span>Import File *</span>
+                  </label>
+                  @if (!file1.valid && updateimportuser.submitted) {
+                    <div class="invalid-tooltip">
+                      File is required!
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+              &nbsp;
+              <span> &nbsp; </span>
+              @if (showdemoexcel1 == true) {
+                <button class="btn btn-success" (click)="exportUpdateUserExcel()" type="button">Export
+                User</button>
+              }
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

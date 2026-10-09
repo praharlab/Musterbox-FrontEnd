@@ -1,0 +1,162 @@
+::ng-deep {
+  .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+    display: table;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: 10px !important;
+    padding-bottom: 0px;
+    padding-left: 3px;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 7px;
+  }
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+
+:host ::ng-deep {
+  datatable-footer.datatable-footer {
+    overflow: visible !important;
+    margin-top: 18px;
+  }
+  ngx-datatable.ngx-datatable.fixed-header.fixed-row.virtualized.scroll-horz {
+    margin-top: 19px;
+  }
+  .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+    display: table;
+    // padding: 15px 15px 15px 15px;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: 10px !important;
+    padding-bottom: 0px;
+    padding-left: 3px;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 7px;
+  }
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+
+::ng-deep {
+  .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+    display: table;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: 10px !important;
+    padding-bottom: 0px;
+    padding-left: 3px;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 7px;
+  }
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+
+.cursor:hover {
+  color: blue;
+}
+
+td,
+th {
+  white-space: nowrap;
+  overflow: hidden;
+}
+th {
+  background-color: var(--m-primary);
+  color: #fff;
+  padding: 0.5em 1em;
+  border: 1px solid white;
+}
+
+td {
+  border-top: 1px solid rgb(221, 221, 221);
+  border-right: 1px solid rgb(221, 221, 221);
+  padding: 0.5em 1em;
+  text-align: left;
+}
+
+input {
+  cursor: pointer;
+}
+
+.table-style {
+  overflow-x: auto;
+  margin-top: 10px;
+  font-size: 14px !important;
+}
+
+.name-col {
+  padding: 12px;
+  text-align: left;
+}
+
+.name-col-shadow {
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.table thead th {
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.left-border {
+  border-left: 1px solid rgb(221, 221, 221);
+}
+
+.bottom-border {
+  border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+.attachments {
+  width: fit-content;
+  padding: 0px 5px;
+  color: var(--m-primary);
+  background-color: white;
+  border-radius: 6px;
+  margin: 5px 0px;
+}
+
+.attachments:hover {
+  cursor: pointer;
+  color: white;
+  background: var(--m-primary);
+  padding: 0px 5px;
+  margin: 5px 0px;
+  width: fit-content;
+  border-radius: 6px;
+}
+
+th.sticky {
+  position: sticky;
+  right: 0;
+  background-color: var(--m-primary);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+td.sticky {
+  position: sticky;
+  right: 0;
+  background-color: white;
+}
+
+.no-records-message {
+  text-align: center;
+  color: #000;
+  font-size: 1.5rem;
+  margin: 20px 0 20px 0;
+  font-weight: 400px;
+}
+
+.left-margin {
+  margin-left: 5%;
+}

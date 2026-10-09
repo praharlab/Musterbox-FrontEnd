@@ -1,0 +1,395 @@
+
+<div style="text-align: right; margin-bottom: 2%">
+  <button class="btn btn-primary mb-1" (click)="lgModall.show()">Add New</button>
+</div>
+
+<div class="row">
+  @for (item of rows2; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <p class="list-item-heading mb-1 truncate">
+                  {{ item.memberName | uppercase }}
+                </p>
+                <table>
+                  <tr>
+                    <td>
+                      Relation
+                    </td>
+                    <td>: {{ item.relation }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Date of Birth
+                    </td>
+                    <td>: {{ item.dob | date: 'dd-MM-yyyy' }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Gender
+                    </td>
+                    <td>: {{ item.gender }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Contact
+                    </td>
+                    <td>: {{ item.contact }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Nominee For Gratuity
+                    </td>
+                    <td>: {{ item.nomineecheck }}</td>
+                  </tr>
+                  @if (item.nomineecheck == 'YES') {
+                    <tr>
+                      <td>
+                        Percent for Gratuity
+                      </td>
+                      <td>: {{ item.percentForNominee }}</td>
+                    </tr>
+                  }
+                  @if (item.createBy) {
+                    <tr>
+                      <td>
+                        Created by
+                      </td>
+                      <td>: {{ item.createBy }}</td>
+                    </tr>
+                  }
+                  @if (item.verifyBy) {
+                    <tr>
+                      <td>
+                        Verified by
+                      </td>
+                      <td>: {{ item.verifyBy }}</td>
+                    </tr>
+                  }
+                  @if (item.rejectionRemarks && item.verifyStatus != '1') {
+                    <tr>
+                      <td>Rejection Reason</td>
+                      <td>: {{ item.rejectionRemarks }}</td>
+                    </tr>
+                  }
+                </table>
+              </a>
+            </div>
+            <div style=" margin-top: 14px; width: 25%">
+              @if (item.status == '1') {
+                <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Active' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.status == '0') {
+                <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Deactive' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '0') {
+                <button type="button" class="btn btn-outline-warning btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Pending' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '1') {
+                <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Verified' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '2') {
+                <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Rejected' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus != '1') {
+                <div class="min-width-zero" style="margin-top: 90%">
+                  @if (item.verifyStatus != '1') {
+                    <a class="btn btn-xs btn-primary"
+                    (click)="lgModalfamedit.show(); editfam(item)">EDIT</a>
+                  }
+                  <br />
+                  @if (item.verifyStatus == '0' && !item.rejectionRemarks) {
+                    <a class="btn btn-xs btn-danger"
+                      (click)="alertConfirmfam(item.userFamilyID)" style="margin-top: 10%">
+                      DELETE
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<div bsModal #lgModall="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Family Details</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModall.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp1="ngForm" novalidate (ngSubmit)="onSubmit1()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #memberName="ngModel" name="memberName"
+                  required />
+                  <span>Member Name*</span>
+                  @if (!memberName.valid && addcomp1.submitted) {
+                    <div class="invalid-tooltip">
+                      Member Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="Date" id="datePickerId" ngModel #dob="ngModel"
+                    name="dob" onfocus="this.max=new Date().toISOString().split('T')[0]" required />
+                    <span>DOB*</span>
+                    @if (!dob.valid && addcomp1.submitted) {
+                      <div class="invalid-tooltip">
+                        This field is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" pattern="[0-9]{10}" ngModel #contact="ngModel"
+                      name="contact" required />
+                      <span>Contact Number *</span>
+                      @if (!contact.valid && addcomp1.submitted) {
+                        <div class="invalid-tooltip">
+                          This field should contain exactly 10 digits!
+                        </div>
+                      }
+                    </label>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #relation="ngModel" name="relation"
+                        required />
+                        <span>Relation*</span>
+                        @if (!relation.valid && addcomp1.submitted) {
+                          <div class="invalid-tooltip">
+                            This field is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <span>Gender *</span>
+                      &nbsp;&nbsp;
+                      <input type="radio" id="gender" name="gender" value="male" ngModel #gender="ngModel"
+                        required style="margin-right: 1%" />
+                        <label for="male" style="margin-right: 1%">Male</label>
+                        <input type="radio" id="female" name="gender" value="female" ngModel #gender="ngModel"
+                          required style="margin-right: 1%" />
+                          <label for="female" style="margin-right: 1%">Female</label>
+                          <input type="radio" id="other" name="gender" value="other" ngModel #gender="ngModel"
+                            required style="margin-right: 1%" />
+                            <label for="other">Other</label>
+                            @if (!gender.valid && addcomp1.submitted) {
+                              <div class="invalid-tooltip">
+                                This field is required!
+                              </div>
+                            }
+                          </div>
+
+                          <div class="col-md-6">
+                            <span>Nominee For Gratuity*</span>
+                            &nbsp;&nbsp;
+                            <input type="radio" id="nominee" name="nominee" value="1" ngModel #nominee="ngModel"
+                              required (change)="selectPercent($event)" style="margin-right: 1%" />
+                              <label for="1" style="margin-right: 1%">Yes</label>
+                              <input type="radio" id="notnominee" name="nominee" value="0" ngModel #nominee="ngModel"
+                                required (change)="selectPercent($event)" style="margin-right: 1%" />
+                                <label for="0">No</label>
+                                @if (!nominee.valid && addcomp1.submitted) {
+                                  <div class="invalid-tooltip">
+                                    This field is required!
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                            @if (PercentCheck == 1) {
+                              <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="number" [min]="0" [max]="MAX" ngModel required
+                                      #Percentage="ngModel" value="100" name="Percentage" required />
+                                      <span>Percent for Gratuity *</span>
+                                      @if (!Percentage.valid && addcomp1.submitted) {
+                                        <div class="invalid-tooltip">
+                                          This field is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                </div>
+                              }
+                              <button class="btn btn-primary" type="submit">
+                                {{ 'forms.submit' | translate }}
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div bsModal #lgModalfamedit="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+                      aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title pull-left">Edit Employee Family</h4>
+                            <button type="button" class="btn-close close pull-right" (click)="lgModalfamedit.hide()"
+                              aria-label="Close" #closeModalfam>
+                              <span aria-hidden="true" class="visually-hidden">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            @if (editbyidfam) {
+                              <form #editcompfam="ngForm" novalidate (ngSubmit)="onSubmitfam()">
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" ngModel #memberName="ngModel"
+                                        [(ngModel)]="editbyidfam.memberName" name="memberName" required />
+                                        <span>Member Name*</span>
+                                        @if (!memberName.valid && editcompfam.submitted) {
+                                          <div class="invalid-tooltip">
+                                            This field is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="Date" id="datePickerId" ngModel #dob="ngModel"
+                                          [(ngModel)]="editbyidfam.dob" name="dob"
+                                          onfocus="this.max=new Date().toISOString().split('T')[0]" required />
+                                          <span>DOB*</span>
+                                          @if (!dob.valid && editcompfam.submitted) {
+                                            <div class="invalid-tooltip">
+                                              This field is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="text" ngModel #contact="ngModel"
+                                            [(ngModel)]="editbyidfam.contact" name="contact" />
+                                            <span>Contact Number</span>
+                                            @if (!contact.valid && editcompfam.submitted) {
+                                              <div class="invalid-tooltip">
+                                                This field should contain exactly 10 digits!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <label class="form-group has-float-label">
+                                            <input class="form-control" type="text" ngModel #relation="ngModel"
+                                              [(ngModel)]="editbyidfam.relation" name="relation" required />
+                                              <span>Relation*</span>
+                                              @if (!relation.valid && editcompfam.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  This field is required!
+                                                </div>
+                                              }
+                                            </label>
+                                          </div>
+                                        </div>
+                                        <div class="row">
+                                          <div class="col-md-6">
+                                            <span>Gender*</span>
+                                            &nbsp;&nbsp;
+                                            <input type="radio" id="gender" name="gender" value="male" ngModel #gender="ngModel"
+                                              [(ngModel)]="editbyidfam.gender" style="margin-right: 1%" required />
+                                              <label for="male" style="margin-right: 1%">Male</label>
+                                              <input type="radio" id="female" name="gender" value="female" ngModel #gender="ngModel"
+                                                [(ngModel)]="editbyidfam.gender" style="margin-right: 1%" required />
+                                                <label for="female" style="margin-right: 1%">Female</label>
+                                                <input type="radio" id="gender" name="gender" value="other" ngModel #gender="ngModel"
+                                                  [(ngModel)]="editbyidfam.gender" style="margin-right: 1%" required />
+                                                  <label for="other" style="margin-right: 1%">Other</label>
+                                                  @if (!gender.valid && editcompfam.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      Gender is required!
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <div class="col-md-6">
+                                                  <span>Nominee For Gratuity</span>
+                                                  &nbsp;&nbsp;
+                                                  <input type="radio" id="nominee" name="nominee" value="1" ngModel #nominee="ngModel"
+                                                    [(ngModel)]="editbyidfam.nominee" (change)="selectPercentEdit($event)"
+                                                    style="margin-right: 1%" />
+                                                    <label for="1" style="margin-right: 1%">Yes</label>
+                                                    <input type="radio" id="notnominee" name="nominee" value="0" ngModel #nominee="ngModel"
+                                                      [(ngModel)]="editbyidfam.nominee" (change)="selectPercentEdit($event)"
+                                                      style="margin-right: 1%" />
+                                                      <label for="0">No</label>
+                                                    </div>
+                                                  </div>
+                                                  <!-- <div class="row" *ngIf="EditPercentCheck==1"> -->
+                                                  @if (EditPercentCheck == 1 || PercentCheckEdit == 1) {
+                                                    <div class="row">
+                                                      <div class="col-md-6"></div>
+                                                      <div class="col-md-6">
+                                                        <label class="form-group has-float-label">
+                                                          <input class="form-control" type="number" [min]="0" [max]="MAXEDIT" ngModel
+                                                            #Percentage="ngModel" name="Percentage" [(ngModel)]="editbyidfam.percentForNominee"
+                                                            required />
+                                                            <span>Percent for Gratuity*</span>
+                                                            @if (!Percentage.valid && editcompfam.submitted) {
+                                                              <div class="invalid-tooltip">
+                                                                This field is required!
+                                                              </div>
+                                                            }
+                                                          </label>
+                                                        </div>
+                                                      </div>
+                                                    }
+                                                    <button class="btn btn-primary" type="submit">
+                                                      {{ 'forms.submit' | translate }}
+                                                    </button>
+                                                  </form>
+                                                }
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>

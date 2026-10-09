@@ -1,0 +1,18 @@
+<div class="row">
+    <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/payrolls/empBonusPayment'"
+        style="margin-bottom: 22px">
+        Back
+    </button>
+</div>
+<div class="card p-4">
+    <div class="row">
+        <div class="col-md-6">
+            <app-paid-bonus #PaidBonusComponent></app-paid-bonus>
+        </div>
+        <div class="col-md-6">
+            <app-pending-bonus #PendingBonusComponent (checkEvent)="checkEvent($event)"></app-pending-bonus>
+        </div>
+    </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

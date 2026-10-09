@@ -1,0 +1,64 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add NDA Category</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (childcompany == 'false') {
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company">
+                @for (comp of comp; track comp) {
+                  <ng-option [value]="comp.companyMasterID">
+                    {{ comp.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #category="ngModel"
+              name="category"
+              />
+              <span>NDA Category *</span>
+              @if (!category.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  NDA Category is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/masters/nda_category'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

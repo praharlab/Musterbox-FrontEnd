@@ -1,0 +1,85 @@
+// This file can be replaced during build by using the `fileReplacements` array.
+// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
+// The list of file replacements can be found in `angular.json`.
+
+import { UserRole } from '../app/shared/auth.roles';
+
+export let environment: {
+  defaultMenuType: string;
+  subHiddenBreakpoint: number;
+  defaultRole: UserRole;
+  production: boolean;
+  buyUrl: string;
+  defaultDirection: string;
+  themeColorStorageKey: string;
+  mediumDateFormat: string;
+  firebase: {
+    storageBucket: string;
+    apiKey: string;
+    messagingSenderId: string;
+    appId: string;
+    projectId: string;
+    measurementId: string;
+    databaseURL: string;
+    authDomain: string;
+  };
+  menuHiddenBreakpoint: number;
+  isDarkSwitchActive: boolean;
+  themeRadiusStorageKey: string;
+  defaultColor: string;
+  apiUrl: string;
+  chatUrl: string;
+  isAuthGuardActive: boolean;
+  adminRoot: string;
+  isMultiColorActive: boolean;
+  SCARF_ANALYTICS: boolean;
+  permission: [];
+  appUrl: any;
+  appUrl1: any;
+  appUrl2: any;
+  appUrl3: any;
+  biometricApiUrl: string;
+  appLoginUrl: string;
+  secretKeyForEncoding: string;
+};
+environment = {
+  production: true,
+
+  buyUrl: 'https://1.envato.market/6NV1b',
+  SCARF_ANALYTICS: false,
+  adminRoot: '/app',
+
+  apiUrl: 'https://apitankhwapatra.tankhwapatra.co.in/',
+  biometricApiUrl: '',
+  chatUrl: 'https://chat.tankhwapatra.co.in',
+  appUrl: 'https://tankhwapatra.co.in/#/user/preboarding/',
+  appUrl1: 'https://tankhwapatra.co.in/#/user/submitform/',
+  appUrl2: '',
+  appUrl3: '',
+  appLoginUrl: '',
+  defaultMenuType: 'menu-default',
+  subHiddenBreakpoint: 1440,
+  menuHiddenBreakpoint: 768,
+  themeColorStorageKey: 'hrms-themecolor-v2',
+  isMultiColorActive: false,
+  defaultColor: 'light.tealslate',
+  isDarkSwitchActive: true,
+  defaultDirection: 'ltr',
+  themeRadiusStorageKey: 'vien-themeradius',
+  isAuthGuardActive: false,
+  defaultRole: UserRole.Admin,
+  secretKeyForEncoding: '8d8e2f43a6dbcc7281e2b1f9c8463ab243dfa9ecb541a12a38c9c5671f876c22',
+
+  firebase: {
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: '',
+    measurementId: '',
+  },
+  mediumDateFormat: 'mediumDate',
+  permission: [],
+};

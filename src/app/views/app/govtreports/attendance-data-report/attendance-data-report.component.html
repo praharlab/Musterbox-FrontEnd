@@ -1,0 +1,239 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Attendance Sheet Report"></app-heading>
+    <app-breadcrumb title="Attendance Sheet Report"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length > 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #cid="ngModel"
+                (change)="selectcompany($event)" name="cid" required>
+                @for (data of company; track data) {
+                  <ng-option [value]="data.companyMasterID">
+                    {{ data.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!cid.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #YearMM="ngModel" name="YearMM"
+                required />
+                <span>YearMonth *</span>
+                @if (!YearMM.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    YearMonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                  (change)="selectbranch($event)">
+                  @for (item of allbranch; track item) {
+                    <ng-option [value]="item.branchMasterID">
+                      {{ item.branchName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Branch</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select [items]="alluser" [multiple]="true" bindLabel="displayName"
+                  groupBy="selectedAllGroup" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                  bindValue="userMasterID" [closeOnSelect]="false" ngModel #user="ngModel" name="user">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{ standalone: true }" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select User</span>
+                </label>
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary form-group" type="submit">
+                  {{ 'Submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+              </div>
+              @if (rows.length > 0) {
+                <div class="col-md-3">
+                  <button class="btn btn-info form-group" type="button" printTitle="AttendanceData Report"
+                    printSectionId="content" ngxPrint layout="landscape" (click)="print($event)">
+                    Save as PDF
+                  </button>
+                  &nbsp;&nbsp;
+                  <button class="btn btn-success form-group" type="button" (click)="export()">Export Excel </button>
+                </div>
+              }
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    @if (rows.length > 0) {
+      <div>
+        <div #content id="content">
+          @if (companyData) {
+            <div style="text-align: center;">
+              <b style="font-size: 15px">
+                {{ companyData.companyName }}
+              </b>
+            </div>
+          }
+          <div style="display: flex;justify-content: space-between;">
+            <b style="text-align: left; font-size: 12px">
+              ATTENDANCE SHEET FOR THE MONTH OF : {{ rows[0].month }}
+            </b>
+            @if (branch1) {
+              <b style="text-align: right; font-size: 12px">
+                SITE : {{ branch1.branchName }}
+              </b>
+            }
+          </div>
+          <table id="table1" border="1" cellspacing="0" cellpadding="0"
+            style="border-collapse: collapse; margin-top: 10px; width: 90%">
+            <tr>
+              <td style="text-align: center; font-size: 12px">
+                <b>
+                  Sl.
+                  <br />
+                  No
+                </b>
+              </td>
+              <td style="text-align: center; font-size: 12px">
+                <b>Employee Code</b>
+              </td>
+              <td style="text-align: center; font-size: 12px">
+                <b>Employee Name</b>
+              </td>
+              <td style="text-align: center; font-size: 12px">
+                <b>Location</b>
+              </td>
+              <td style="text-align: center; font-size: 12px">
+                <b>Designation</b>
+              </td>
+              @for (attendance of rows[0].attendance; track attendance) {
+                <td style="text-align: center; font-size: 12px; width: 3%"
+                  >
+                  <b>{{ attendance.date }}</b>
+                </td>
+              }
+              <td style="text-align: center; font-size: 12px; padding: 3px">
+                <b>
+                  Work
+                  <br />
+                  ing
+                  <br />
+                  Days
+                </b>
+              </td>
+              <td style="text-align: center; font-size: 12px; padding: 3px">
+                <b>WH</b>
+              </td>
+              <td style="text-align: center; font-size: 12px; padding: 3px">
+                <b>A</b>
+              </td>
+              <td style="text-align: center; font-size: 12px; padding: 3px">
+                <b>PH</b>
+              </td>
+            </tr>
+            @for (data of rows; track data; let i = $index) {
+              <tr>
+                <td style="text-align: center; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ i + 1 }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.employeeCode }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.employeeName }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.branch }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.designation }}</b>
+                </td>
+                @for (attendance of data.attendance; track attendance) {
+                  <td style="text-align: center; width: 3%; font-size: 12px; padding: 5px"
+                    >
+                    @for (data of attendance.value; track data) {
+                      <div>
+                        <b>{{ data }}</b> <br>
+                      </div>
+                    }
+                  </td>
+                }
+                <td style="text-align: center; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.workingday }}</b>
+                </td>
+                <td style="text-align: center; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.week_Off }}</b>
+                </td>
+                <td style="text-align: center; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.absent }}</b>
+                </td>
+                <td style="text-align: center; font-size: 12px; padding: 6px 1px 6px 1px">
+                  <b>{{ data.holiday }}</b>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td colspan="5">
+                <div style="text-align: right;font-size: 12px"> <b>Daily total</b></div>
+              </td>
+              @for (sum of sumArray; track sum) {
+                <td style="text-align: center; width: 3%; font-size: 12px; padding: 5px">
+                  <b>{{ sum.totalValue }}</b>
+                </td>
+              }
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <div style="text-align: left;font-size: 12px;padding-left: 0.5%;"> <b>Initial Of Client</b></div>
+              </td>
+              <td [attr.colspan]="sumArray.length">
+                <div>&nbsp;</div>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    }

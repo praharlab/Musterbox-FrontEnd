@@ -1,0 +1,68 @@
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" name="Preboarding Form" [showSearch]="false"
+[showItemsPerPage]="false"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel [multiple]="true" [closeOnSelect]="false"
+                #companyMasterID="ngModel" name="companyMasterID" [(ngModel)]="filterData.companyMasterID" required>
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+<br>
+
+  @if (permissionview.length != 0) {
+    <div class="row">
+      @for (form of preboardingMaster; track form; let i = $index) {
+        <div class="col-md-4">
+          <qrcode [elementType]="elementType" [errorCorrectionLevel]="correctionLevel" [qrdata]="form.url"
+          cssClass="coolQRCode{{ i }}" style="text-align: center"></qrcode>
+          <h2 style="text-align: center; margin-top: 10px">{{ form.preboardingMasterName }}</h2>
+          <div id="outer">
+            <div class="inner">
+            </div>
+            <button class="btn btn-success btn-xs" style="margin-top: 10px" (click)="openForm(form.url)">Open Form</button>
+            &nbsp;
+            &nbsp;
+            &nbsp;
+            <button class="btn btn-success btn-xs" style="margin-top: 10px" (click)="downloadQRCode(i)">
+              Download QR
+            </button>
+            <br>
+              <button class="btn btn-success  btn-xs" style="margin-top: 10px;margin-bottom: 10px"
+                (click)="copyToClipboard(form.url)">
+                Copy Link
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }

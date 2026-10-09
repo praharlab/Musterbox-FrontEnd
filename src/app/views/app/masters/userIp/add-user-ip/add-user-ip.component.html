@@ -1,0 +1,112 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add IP Whitelisting</h5>
+
+    <form #addtask="ngForm" novalidate (ngSubmit)="onSubmit(addtask)">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel
+              #company="ngModel" name="company" required>
+              @for (company of allcomp; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && addtask.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectbranch($event)" ngModel
+              #branch="ngModel" name="branch" [(ngModel)]="finalbranch">
+              @for (allbranch of allbranch; track allbranch) {
+                <ng-option [value]="allbranch.branchMasterID">
+                  {{ allbranch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Branch</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="ownerList" [multiple]="true" bindLabel="displayName"
+              groupBy="selectedAllGroup" [selectableGroup]="true" [selectableGroupAsModel]="false"
+              bindValue="userMasterID" [closeOnSelect]="false" [(ngModel)]="selected" ngModel required
+              #userMasterID="ngModel" name="userMasterID">
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                Select All
+              </ng-template>
+            </ng-select>
+            <span>Select Employee *</span>
+          </label>
+          @if (!userMasterID.valid && addtask.submitted) {
+            <div class="invalid-tooltip">
+              EMPLOYEE is required!
+            </div>
+          }
+        </div>
+
+
+        <div class="container">
+          <div class="row">
+            <!-- Iterate over the values array to display IP input fields -->
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12" style="margin-top: 1%">
+                <div class="row align-items-center"> <!-- Align items in the center -->
+                  <!-- IP input field -->
+                  <div class="col-md-4"> <!-- Adjust column size to fit input field -->
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="value.ips"
+                        name="ip{{ i }}" #ips="ngModel" required />
+                        <span>IP *</span>
+                      </label>
+                      @if (!ips.valid && addtask.submitted) {
+                        <div class="invalid-tooltip">
+                          IP is required!
+                        </div>
+                      }
+                    </div>
+                    @if (values.length > 1 && i > 0) {
+                      <button class="btn btn-danger form-group" (click)="removevalue(i)"
+                        >
+                        Remove
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+
+          <div class="col-md-12" style="margin-bottom: 20px; text-align: right">
+            <span class="button" class="btn btn-success" (click)="addvalue()">ADD</span>
+          </div>
+
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+            <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/userIp'"
+              style="margin-left: 2%">
+              Cancel
+            </button>
+          </div>
+        <!-- </div> -->
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

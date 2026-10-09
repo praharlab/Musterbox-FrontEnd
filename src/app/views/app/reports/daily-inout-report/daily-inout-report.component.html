@@ -1,0 +1,36 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+<app-list-page-header name="Daily In Out Report" [showOrderBy]="false" [showDisplayMode]="false"
+[showItemsPerPage]="false" [showSearch]="false"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onClear)="clear()"
+    (clearData)="clear()" (init)="init($event)" (emitUsers)="emitUsers($event)"
+    [showRequiredFields]="showRequiredFields" customExportButtonName="Download PDF" [showCustomExportButton]="true"
+    (onExcelSubmit)="downloadPDF($event)">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" required ngModel #startDate="ngModel" name="startDate" required />
+        <span>Start Date *</span>
+        @if (!startDate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Start Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" required ngModel #endDate="ngModel" name="endDate" required />
+        <span>End Date *</span>
+        @if (!endDate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            End Date is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}

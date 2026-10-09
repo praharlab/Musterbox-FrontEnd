@@ -1,0 +1,122 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Penalty</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #penaltyName="ngModel"
+              name="penaltyName"
+              />
+              <span>Penalty Name *</span>
+              @if (!penaltyName.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Penalty Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="number"
+                required
+                ngModel
+                #penaltyAmount="ngModel"
+                name="penaltyAmount"
+                />
+                <span>Penalty Amount *</span>
+                @if (!penaltyAmount.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Penalty Amount is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <span><b>Deduction From Salary *</b></span>
+              &nbsp;&nbsp;
+              <input
+                type="radio"
+                name="deductionFromSalary"
+                value="1"
+                ngModel
+                #deductionFromSalary="ngModel"
+                style="margin-right: 1%"
+                required
+                />
+                <label for="true" style="margin-right: 1%">Yes</label>
+                <input
+                  type="radio"
+                  name="deductionFromSalary"
+                  value="0"
+                  ngModel
+                  #deductionFromSalary="ngModel"
+                  style="margin-right: 1%"
+                  required
+                  />
+                  <label for="false">No</label>
+                  @if (!deductionFromSalary.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Deduction From Salary is required!
+                    </div>
+                  }
+                </div>
+
+                <!-- <div class="col-md-4">
+                <label>Deduction From Salary*</label><br>
+                <input type="radio" name="deductionFromSalary" id="deductionFromSalary" ngModel #deductionFromSalary="ngModel"
+                  value="1">&nbsp;
+                  <label for="html">YES</label>&nbsp;&nbsp;
+                  <input type="radio" name="deductionFromSalary" id="deductionFromSalary" ngModel #deductionFromSalary="ngModel"
+                    value="0">&nbsp;
+                    <label for="css">NO</label><br><br>
+                    <div *ngIf="!deductionFromSalary.valid && addcomp.submitted" class="invalid-tooltip">Deduction From Salary is
+                    required!</div>
+                  </div> -->
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select
+                        placeholder="Choose your option"
+                        ngModel
+                        #companyMasterID="ngModel"
+                        name="companyMasterID"
+                        >
+                        @for (product of product; track product) {
+                          <ng-option [value]="product.companyMasterID">
+                            {{ product.companyName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Company</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                  <button
+                    class="btn btn-danger btn-shadow mt-4"
+                    [routerLink]="adminRoot + '/masters/penalty'"
+                    style="margin-left: 2%"
+                    >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <simple-notifications
+            [options]="{ position: ['top', 'center'], maxStack: 1 }"
+          ></simple-notifications>

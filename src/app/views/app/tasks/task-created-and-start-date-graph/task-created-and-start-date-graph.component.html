@@ -1,0 +1,99 @@
+<div class="card dislpay-none">
+  <div class="card-body">
+    <form #monthYearFilter="ngForm" novalidate>
+      <div class="row">
+        <div class="col-md-6">
+          <h5 class="font-size-15 pt-1">Task</h5>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <ng-select
+              ngModel
+              #listBy="ngModel"
+              name="listBy"
+              [(ngModel)]="listData"
+              (change)="onListByChange($event)"
+              required
+              >
+              <ng-option value="CreatedDate">Created Date</ng-option>
+              <ng-option value="StartDate">Start Date</ng-option>
+            </ng-select>
+            <span>Task Filter By *</span>
+            @if (!listBy.valid) {
+              <div class="invalid-tooltip">Task List By is required!</div>
+            }
+          </label>
+
+          &nbsp;&nbsp;
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label"style="display: inline-block;">
+            <input
+              class="btn btn-outline-primary btn-xs"
+              type="date"
+              [(ngModel)]="dateBeforeFifteenDays"
+              ngModel
+              #fromDate="ngModel"
+              name="fromDate"
+              (change)="onFromDateChange($event)"
+              required
+              />
+              <span>From Date *</span>
+              @if (!fromDate.valid) {
+                <div class="invalid-tooltip">From Date is required!</div>
+              }
+            </label>
+
+            &nbsp;&nbsp;
+
+            <label class="form-group has-float-label" style="display: inline-block;">
+              <input
+                class="btn btn-outline-primary btn-xs"
+                type="date"
+                [(ngModel)]="currentDate"
+                ngModel
+                #toDate="ngModel"
+                name="toDate"
+                min="{{ dateBeforeFifteenDays }}"
+                (change)="onToDateChange($event)"
+                required
+                />
+                <span>To Date *</span>
+                @if (!toDate.valid) {
+                  <div class="invalid-tooltip">To Date By is required!</div>
+                }
+              </label>
+            </div>
+            <div class="col-md-1">
+              @if (monthYearFilter.valid) {
+                <button
+                  class="btn btn-info form-group"
+                  type="button"
+                  (click)="download()"
+                  style="margin: 0px"
+                  >
+                  Export
+                </button>
+              }
+            </div>
+          </div>
+        </form>
+        @if (showloader == 'true') {
+          <div
+            style="color: #17a2b8; left: 50%"
+            class="la-ball-spin-clockwise"
+            >
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        }
+        <div [class]="'chart-container1'"><canvas #chart></canvas></div>
+      </div>
+    </div>

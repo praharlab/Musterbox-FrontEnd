@@ -1,0 +1,95 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-heading title="Designation Wise Goal Review Report"></app-heading>
+<app-breadcrumb title="Designation Wise Goal Review Report"></app-breadcrumb>
+
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #formFilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterId="ngModel"
+                [(ngModel)]="selectedCompany_id" name="companyMasterId" (change)="selectCompany($event)"
+                required>
+                @for (companyItem of company; track companyItem) {
+                  <ng-option [value]="companyItem.companyMasterID">
+                    {{ companyItem.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterId.valid && formFilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #designationId="ngModel"
+                name="designationId" required>
+                @for (designationItem of designations; track designationItem) {
+                  <ng-option
+                  [value]="designationItem.designationId">{{designationItem.designationName}}</ng-option>
+                }
+              </ng-select>
+              <span>Select Designation *</span>
+              @if (!designationId.valid && formFilter.submitted) {
+                <div class="invalid-tooltip">
+                  Designation is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #goalMasterId="ngModel" name="goalMasterId"
+                required>
+                @for (gl of goal; track gl) {
+                  <ng-option [value]="gl.id">{{gl.title}}</ng-option>
+                }
+              </ng-select>
+              <span>Select Goal Name *</span>
+              @if (!goalMasterId.valid && formFilter.submitted) {
+                <div class="invalid-tooltip">
+                  Goal Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary form-group ml-2" type="submit" (click)="onSubmit()">
+              Submit
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+              Clear
+            </button>
+            <span> &nbsp;&nbsp; </span>
+            @if (reportData) {
+              <button class="btn btn-primary form-group ml-1" (click)="onClickDownloadPdf()">
+                Download PDF
+              </button>
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+@if (reportData) {
+  <div class="d-flex justify-content-center mt-4">
+    <pdf-viewer [src]="reportData" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+      [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+      [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false"
+    style="width: 80%; height: 1000px"></pdf-viewer>
+  </div>
+}

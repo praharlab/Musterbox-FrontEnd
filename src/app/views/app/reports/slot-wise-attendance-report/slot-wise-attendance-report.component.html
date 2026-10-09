@@ -1,0 +1,174 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  [showItemsPerPage]="false"
+name="Slot Wise Attendance Report"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectcompany($event)" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName" groupBy="selectedAllGroup"
+                (ngModelChange)="selectbranch()" [(ngModel)]="selectedBranch" [selectableGroup]="true"
+                [selectableGroupAsModel]="false" bindValue="branchMasterID" [closeOnSelect]="false" ngModel
+                #branch="ngModel" name="branch">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alldepartment" [multiple]="true" bindLabel="departmentName" groupBy="selectedAllGroup"
+                (ngModelChange)="selectdepartment()" [(ngModel)]="selectedDepartment" [selectableGroup]="true"
+                [selectableGroupAsModel]="false" bindValue="departmentId" [closeOnSelect]="false" ngModel
+                #department="ngModel" name="department">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" [ngModelOptions]="{standalone: true}" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Department</span>
+            </label>
+          </div>
+          <!-- select designation -->
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alldesignation" [multiple]="true" bindLabel="designationName" groupBy="selectedAllGroup"
+                (ngModelChange)="selectdesig()" [(ngModel)]="selecteddesig" [selectableGroup]="true"
+                [selectableGroupAsModel]="false" bindValue="designationId" [closeOnSelect]="false" ngModel
+                #designation="ngModel" name="designation">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Designation</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="allDivision" [multiple]="true" bindLabel="divisionName" groupBy="selectedAllGroup"
+                  (ngModelChange)="selectdivision()" [(ngModel)]="selectedDivision" [selectableGroup]="true"
+                  [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel #division="ngModel"
+                  name="division">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{standalone: true}" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Division</span>
+                </label>
+              </div>
+              <!-- select working area -->
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="allWorkingArea" [multiple]="true" bindLabel="workingAreaName" groupBy="selectedAllGroup"
+                    (ngModelChange)="selectWorkingArea()" [(ngModel)]="selectedWorkingArea" [selectableGroup]="true"
+                    [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel #workingArea="ngModel"
+                    name="workingArea">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Working Area</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="alluser" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup" required
+                      [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                      ngModel #user="ngModel" name="user" [(ngModel)]="selectedUser">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectall"  [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select User *</span>
+                    @if (!user.valid && datefilter.submitted) {
+                      <div class="invalid-tooltip">
+                        User is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate" (change)="selectfrom()"
+                      required [max]="todaydate | date: 'yyyy-MM-dd' " />
+                      <span>From Date *</span>
+                      @if (!fromdate.valid && datefilter.submitted) {
+                        <div class="invalid-tooltip">
+                          From Date is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  @if (enddate != null) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="date" ngModel #todate="ngModel" name="todate"
+                          [ngModel]="enddate | date: 'yyyy-MM-dd'" required [max]="todaydate | date: 'yyyy-MM-dd' "/>
+                          <span>To Date *</span>
+                          @if (!todate.valid && datefilter.submitted) {
+                            <div class="invalid-tooltip">
+                              To Date is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    @if (enddate == null) {
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" required  [max]="todaydate | date: 'yyyy-MM-dd' "/>
+                          <span>To Date *</span>
+                          @if (!todate.valid && datefilter.submitted) {
+                            <div class="invalid-tooltip">
+                              To Date is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-12">
+                      <button class="btn btn-success form-group" type="submit" (click)="download()">
+                        Export Excel
+                      </button>
+                      &nbsp;&nbsp;
+                      <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+                    </div>
+                  </div>
+                </form>
+              }
+            </div>
+          </div>

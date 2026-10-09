@@ -1,0 +1,157 @@
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Sentiment Dashboard"></app-heading>
+    <app-breadcrumb title="Sentiment Dashboard"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #companyfilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="selectcompany($event)"
+                ngModel
+                [ngModel]="selectedCompany"
+                #companyMasterID="ngModel"
+                name="companyMasterID"
+                required
+                >
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && companyfilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #branch="ngModel"
+                name="branch"
+                (change)="selectbranch($event)"
+                >
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #userMasterId="ngModel"
+                name="userMasterId"
+                >
+                @for (item of employee; track item) {
+                  <ng-option [value]="item.userMasterID">
+                    {{ item.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select User</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #mood="ngModel" name="mood">
+                <ng-option value="sad">SAD</ng-option>
+                <ng-option value="happy">HAPPY</ng-option>
+                <ng-option value="stressed">STRESSED</ng-option>
+                <ng-option value="angry">ANGRY</ng-option>
+                <ng-option value="notSure">NOT_SURE</ng-option>
+                <ng-option value="ok">OK</ng-option>
+              </ng-select>
+              <span>Select Mood</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                ngModel
+                #startdate="ngModel"
+                name="startdate"
+                (change)="selectfrom()"
+                />
+                <span>From Date</span>
+              </label>
+            </div>
+            @if (enddate1 != null) {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="date"
+                    ngModel
+                    #enddate="ngModel"
+                    name="enddate"
+                    [ngModel]="enddate1 | date: 'yyyy-MM-dd'"
+                    required
+                    />
+                    <span>To Date *</span>
+                    @if (!enddate.valid && datefilter.submitted) {
+                      <div class="invalid-tooltip">
+                        To Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (enddate1 == null) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" />
+                    <span>To Date</span>
+                  </label>
+                </div>
+              }
+              <div class="col-md-6">
+                <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+                  {{ 'forms.submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+    @if (permissionview.length != 0) {
+      <div class="row">
+        <div class="col-lg-12 col-xl-12">
+          @if (flag) {
+            <app-cards [totalSentiments]="statusCounts"></app-cards>
+          }
+        </div>
+        <div class="col-lg-7 col-xl-6">
+          <app-month-year-graph></app-month-year-graph>
+        </div>
+        <div class="col-lg-5 col-xl-6">
+          @if (flag) {
+            <app-graphs [totalSentiments]="statusCounts"></app-graphs>
+          }
+        </div>
+      </div>
+    }

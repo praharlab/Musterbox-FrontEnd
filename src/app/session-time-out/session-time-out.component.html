@@ -1,0 +1,41 @@
+<button
+  style="display: none"
+  type="button"
+  #showClick
+  class="btn btn-primary"
+  (click)="openModal()"
+>
+  {{ 'modal.open-modal' | translate }}
+</button>
+
+<div bsModal #lgModal="bs-modal" class="z99999 modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"   [config]="{backdrop: 'static', keyboard: false}"
+>
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 col-md-10 mx-auto my-auto">
+              <div class="form-side">
+                <a (click)="redirect()">
+                  <span class="logo-single" style="margin-bottom: 10px !important"></span>
+                </a>
+                <h3 class="mb-4 font-weight-bold">Session Timeout!</h3>
+                <h5 class="mb-4 text-muted">Your Session has timed out. Please log in again.</h5>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 text-right">
+            <button
+              type="button"
+              class="btn btn-primary btn-shadow"
+              (click)="redirect()"
+            >
+              Log In
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

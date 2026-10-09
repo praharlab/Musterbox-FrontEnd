@@ -1,0 +1,474 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (companydata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Company</h5>
+      <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #companyName="ngModel"
+                [(ngModel)]="companydata.companyName" name="companyName" />
+                <span>Company Name *</span>
+                @if (!companyName.valid && editcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="email" placeholder="" required email ngModel #companyEmail="ngModel"
+                  [(ngModel)]="companydata.companyEmail" name="companyEmail" name="companyEmail" />
+                  <span>Company Email *</span>
+                  @if (!companyEmail.valid && editcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Email is required!
+                    </div>
+                  }
+                  @if (companyEmail?.errors?.email && editcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Email must be a valid address!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <!-- <div class="col-md-4">
+              <div class="input-group mb-3">
+                <div class="custom-file">
+                  <input
+                    type="file"
+                    class="custom-file-input"
+                    id="inputGroupFile02"
+                    (change)="onSelectFile($event)"
+                    />
+                    <label class="custom-file-label" for="inputGroupFile02">
+                      Choose a Company Logo
+                    </label>
+                  </div>
+                </div>
+              </div> -->
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" ngModel #file="ngModel" (change)="onSelectFile($event)"
+                    accept="image/png, image/jpeg, image/jpg" name="file" />
+                    <span>Choose a Company Logo</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="file" ngModel #file2="ngModel" (change)="onSelectFile2($event)"
+                      accept="image/png, image/jpeg, image/jpg" name="file2" />
+                      <span>Choose a Authorized Signature</span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="file" ngModel #letterHead="ngModel" (change)="onSelectFile3($event)"
+                        accept="image/png, image/jpeg, image/jpg" name="letterHead" />
+                        <span>Choose a Letter Head</span>
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      @if (!url && companydata.companyLogo) {
+                        <div class="d-flex flex-column align-items-center r position-relative">
+                          @if (!url && companydata.companyLogo) {
+                            <img (click)="openLightbox(apiURL + 'uploads/company/logo/' + companydata.companyLogo)"
+                              tooltip="Click To Open Image" [src]="apiURL + 'uploads/company/logo/' + companydata.companyLogo" height="100"
+                              width="100" style="margin-bottom: 10px;" class="img-fluid glyph-icon tool_tip cursor-pointer"
+                              />
+                          }
+                          @if (url) {
+                            <img src="{{ url }}" height="100" width="100" style="margin-bottom: 10px" />
+                          }
+                          @if (!url && companydata.companyLogo) {
+                            <button type="button" tooltip="Remove Logo" class="close-icon button-style close-icon-company"
+                              (click)="deleteCompanyLogo()">
+                              <i class="simple-icon-close"></i>
+                            </button>
+                          }
+                          @if (!url && companydata.companyLogo) {
+                            <div><span class="font-weight-bold">Company Logo</span></div>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-4">
+                      @if (!url2 && companydata.authorizedSignature) {
+                        <div class="d-flex flex-column align-items-center position-relative">
+                          @if (!url2 && companydata.authorizedSignature) {
+                            <img (click)="openLightbox(apiURL + 'uploads/company/signature/' + companydata.authorizedSignature)"
+                              tooltip="Click To Open Image" [src]="apiURL + 'uploads/company/signature/' + companydata.authorizedSignature"
+                              height="100" width="100" style="margin-bottom: 10px;" class="img-fluid glyph-icon tool_tip cursor-pointer"
+                              />
+                          }
+                          @if (url2) {
+                            <img src="{{ url2 }}" height="100" width="100" style="margin-bottom: 10px" />
+                          }
+                          @if (!url2 && companydata.authorizedSignature) {
+                            <button type="button" tooltip="Remove Signature" class="close-icon button-style close-icon-authsign"
+                              (click)="deleteAuthorizedSignature()">
+                              <i class="simple-icon-close"></i>
+                            </button>
+                          }
+                          @if (!url2 && companydata.authorizedSignature) {
+                            <div><span class="font-weight-bold">Authorized
+                            Signature</span></div>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-4">
+                      @if (companydata.letterHead) {
+                        <div class="d-flex flex-column align-items-center position-relative">
+                          @if (companydata.letterHead) {
+                            <img (click)="openLightbox(apiURL + 'uploads/company/letterHead/' + companydata.letterHead)"
+                              tooltip="Click To Open Image" [src]="apiURL + 'uploads/company/letterHead/' + companydata.letterHead"
+                              height="100" width="100" style="margin-bottom: 10px;" class="img-fluid glyph-icon tool_tip cursor-pointer"
+                              />
+                          }
+                          @if (companydata.letterHead) {
+                            <button type="button" tooltip="Remove Letter Head" class="close-icon button-style close-icon-authsign"
+                              (click)="deleteLetterHead()">
+                              <i class="simple-icon-close"></i>
+                            </button>
+                          }
+                          @if (companydata.letterHead) {
+                            <div><span class="font-weight-bold">Letter Head</span></div>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" placeholder="" ngModel #companyWebsite="ngModel"
+                          [(ngModel)]="companydata.companyWebsite" name="companyWebsite" />
+                          <span>Company Website</span>
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" (change)="selectcompanytype($event)"
+                            [(ngModel)]="companydata.companyTypeid" [ngModelOptions]="{ standalone: true }">
+                            @for (companytype of companytype; track companytype) {
+                              <ng-option [value]="companytype.companyTypeID">
+                                {{ companytype.companyTypename }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Company Type *</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" placeholder="" ngModel #ownerName="ngModel" name="ownerName"
+                            [(ngModel)]="companydata.ownerName" />
+                            <span>Owner Full Name </span>
+                          </label>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" placeholder="" ngModel #ownerFatherName="ngModel"
+                              name="ownerFatherName" [(ngModel)]="companydata.ownerFatherName" />
+                              <span>Owner's Father Full Name </span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" placeholder="" ngModel #cpName="ngModel"
+                                [(ngModel)]="companydata.cpName" name="cpName" required />
+                                <span>Contact Person Name *</span>
+                                @if (!cpName.valid && editcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Contact Person Name is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" placeholder="" ngModel #cpMobileNo="ngModel"
+                                  [(ngModel)]="companydata.cpMobileNo" name="cpMobileNo" required />
+                                  <span>Contact Person Mobile No. *</span>
+                                  @if (!cpMobileNo.valid && editcomp.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Contact Person Mobile No. is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" placeholder="" ngModel #cpEmail="ngModel"
+                                    [(ngModel)]="companydata.cpEmail" name="cpEmail" />
+                                    <span>Contact Person Email</span>
+                                  </label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <textarea class="form-control" ngModel #companyAddress="ngModel" name="companyAddress"
+                                    [(ngModel)]="companydata.companyAddress" required></textarea>
+                                    @if (!companyAddress.valid && editcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Company Address is required!
+                                      </div>
+                                    }
+                                    <span>Company Address *</span>
+                                  </label>
+                                </div>
+                                <div class="col-md-3">
+                                  <label class="form-group has-float-label">
+                                    <ng-select placeholder="Choose your option" #employeeCodeType="ngModel" name="employeeCodeType" ngModel
+                                      (change)="employeeCodetype($event)" [(ngModel)]="employeecodetype" required>
+                                      <ng-option value="manual">Manual</ng-option>
+                                      <ng-option value="auto">Auto-Increment</ng-option>
+                                      <ng-option value="pattern">Pattern(Pattern+YYYYMM+EmpCode)</ng-option>
+                                    </ng-select>
+                                    <span>Select EmployeeCode Type *</span>
+                                    @if (!employeeCodeType.valid && editcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        EmployeeCode Type is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                @if (employeecodetype == 'pattern') {
+                                  <div class="col-md-3">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" maxlength="4" ngModel #employeeCodePattern="ngModel"
+                                        name="employeeCodePattern" [(ngModel)]="companydata.employeeCodePattern" required />
+                                        <span>Employee Code Pattern *</span>
+                                        @if (!employeeCodePattern.valid && editcomp.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Employee Code Pattern is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                  }
+                                  <div class="col-md-3">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="number" min="0" ngModel #ExpeneDatePicker="ngModel"
+                                        name="ExpeneDatePicker" [(ngModel)]="companydata.expenseDatePicker" />
+                                        <span>Expense Date Picker(In Days)</span>
+                                      </label>
+                                    </div>
+                                    @if (companydata.parentCompanyMasterID == 0) {
+                                      <div class="col-md-8 mb-2">
+                                        <span><b> Set Unique Employee Code for All Companies *</b></span>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" name="uniqueEmpCode" [value]="true" ngModel #uniqueEmpCode="ngModel"
+                                          style="margin-right: 1%" [(ngModel)]="companydata.uniqueEmpCode" required />
+                                          <label for="true" style="margin-right: 1%"> YES </label>
+                                          <input type="radio" name="uniqueEmpCode" [value]="false" ngModel #uniqueEmpCode="ngModel"
+                                            style="margin-right: 1%" [(ngModel)]="companydata.uniqueEmpCode" required />
+                                            <label for="false" style="margin-right: 1%"> NO</label>
+                                            @if (!uniqueEmpCode.valid && editcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Setting Employee Code uniqueness is required!
+                                              </div>
+                                            }
+                                          </div>
+                                        }
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select placeholder="Choose your option" (change)="selectcountry($event)" [(ngModel)]="countryid"
+                                              required ngModel #country1="ngModel" name="country1">
+                                              @for (countrys of country; track countrys) {
+                                                <ng-option [value]="countrys.countryMasterID">
+                                                  {{ countrys.countryName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Company Country *</span>
+                                            @if (!country1.valid && editcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Country is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select placeholder="Choose your option" (change)="selectstate($event)" [(ngModel)]="stateid" required
+                                              ngModel #state1="ngModel" name="state1">
+                                              @for (states of state; track states) {
+                                                <ng-option [value]="states.stateMasterID">
+                                                  {{ states.stateName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Company State *</span>
+                                            @if (!state1.valid && editcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                State is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select placeholder="Choose your option" (change)="selectcity($event)" [(ngModel)]="cityid" required
+                                              ngModel #city1="ngModel" name="city1">
+                                              @for (citys of city; track citys) {
+                                                <ng-option [value]="citys.cityMasterID">
+                                                  {{ citys.cityName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Company City *</span>
+                                            @if (!city1.valid && editcomp.submitted) {
+                                              <div class="invalid-tooltip">
+                                                City is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <input class="form-control" type="text" placeholder="" ngModel #panNumber="ngModel"
+                                              [(ngModel)]="companydata.panNumber" name="panNumber" />
+                                              <span>Pan No.</span>
+                                            </label>
+                                          </div>
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="text" placeholder="" ngModel #tanNumber="ngModel"
+                                                [(ngModel)]="companydata.tanNumber" name="tanNumber" />
+                                                <span>Tan No.</span>
+                                              </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="text" placeholder="" ngModel #cinNumber="ngModel"
+                                                  [(ngModel)]="companydata.cinNumber" name="cinNumber" />
+                                                  <span>CIN Number</span>
+                                                </label>
+                                              </div>
+                                              <div class="col-md-4">
+                                                <span><b> TDS Deduction *</b></span>
+                                                &nbsp;&nbsp;
+                                                <input type="radio" name="tdsdeduction" [value]="true" ngModel #tdsdeduction="ngModel"
+                                                  style="margin-right: 1%" [(ngModel)]="companydata.tdsdeduction" required />
+                                                  <label for="true" style="margin-right: 1%"> YES </label>
+                                                  <input type="radio" name="tdsdeduction" [value]="false" ngModel #tdsdeduction="ngModel"
+                                                    style="margin-right: 1%" [(ngModel)]="companydata.tdsdeduction" required />
+                                                    <label for="false" style="margin-right: 1%"> NO</label>
+                                                    @if (!tdsdeduction.valid && editcomp.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        TDS Deduction is required!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <span><b> Import file by *</b></span>
+                                                    &nbsp;&nbsp;
+                                                    <input type="radio" name="fileUploadType" value="mobileNumber" ngModel #fileUploadType="ngModel"
+                                                      style="margin-right: 1%" [(ngModel)]="companydata.fileUploadType" required />
+                                                      <label style="margin-right: 1%">Mobile Number</label>
+                                                      <input type="radio" name="fileUploadType" value="employeeCode" ngModel #fileUploadType="ngModel"
+                                                        style="margin-right: 1%" [(ngModel)]="companydata.fileUploadType" required />
+                                                        <label style="margin-right: 1%">Employee Code</label>
+                                                        @if (!fileUploadType.valid && editcomp.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Import file by is required!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      @if (usertype == 2) {
+                                                        <div class="col-md-4">
+                                                          <label>OTP for Login *</label>
+                                                          &nbsp;&nbsp;
+                                                          <input type="radio" name="otp" ngModel #otp="ngModel" value="Y" [(ngModel)]="companydata.otp" required />
+                                                          &nbsp;
+                                                          <label for="html">YES</label>
+                                                          &nbsp;&nbsp;
+                                                          <input type="radio" name="otp" ngModel #otp="ngModel" value="N" [(ngModel)]="companydata.otp" required />
+                                                          &nbsp;
+                                                          <label for="html">NO</label>
+                                                          <br />
+                                                          <br />
+                                                          @if (!otp.valid && editcomp.submitted) {
+                                                            <div class="invalid-tooltip">
+                                                              OTP for Login is required!
+                                                            </div>
+                                                          }
+                                                        </div>
+                                                      }
+                                                      @if (usertype == 2 || usertype == 3) {
+                                                        <div class="col-md-4">
+                                                          <label class="form-group has-float-label">
+                                                            <input class="form-control" type="number" ngModel #setUpTime="ngModel" name="setUpTime"
+                                                              [(ngModel)]="companydata.setUpTime" readonly />
+                                                              <span>Given Time For SetUp To Company *</span>
+                                                            </label>
+                                                          </div>
+                                                        }
+                                                        @if (usertype == 2 || usertype == 3) {
+                                                          <div class="col-md-12">
+                                                            <label class="form-group has-float-label">
+                                                              <textarea class="form-control" rows="6" ngModel #companyDescription="ngModel"
+                                                              [(ngModel)]="companydata.companyDescription" name="companyDescription"></textarea>
+                                                              <span>Company Description</span>
+                                                            </label>
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      <!-- <div class="d-flex flex-row align-items-end" style="margin-top: 1.5rem"
+                                                      *ngIf="(!url && companydata.companyLogo) || (!url2 && companydata.authorizedSignature)">
+                                                      <div class="d-flex flex-column align-items-center r position-relative mr-4"
+                                                        *ngIf="!url && companydata.companyLogo">
+                                                        <img (click)="openLightbox(apiURL + 'uploads/company/logo/' + companydata.companyLogo)"
+                                                          tooltip="Click To Open Image" [src]="apiURL + 'uploads/company/logo/' + companydata.companyLogo"
+                                                          height="100" width="100" style="margin-bottom: 10px" class="img-fluid glyph-icon tool_tip cursor-pointer"
+                                                          *ngIf="!url && companydata.companyLogo" />
+                                                          <img src="{{ url }}" height="100" width="100" style="margin-bottom: 10px" *ngIf="url" />
+                                                          <button type="button" tooltip="Remove Logo" class="close-icon button-style close-icon-company"
+                                                            (click)="deleteCompanyLogo()" *ngIf="!url && companydata.companyLogo">
+                                                            <i class="simple-icon-close"></i>
+                                                          </button>
+                                                          <div *ngIf="!url && companydata.companyLogo"><span class="font-weight-bold">Company Logo</span></div>
+                                                        </div>
+                                                        <div class="d-flex flex-column align-items-center position-relative mr-4"
+                                                          *ngIf="!url2 && companydata.authorizedSignature">
+                                                          <img (click)="openLightbox(apiURL + 'uploads/company/signature/' + companydata.authorizedSignature)"
+                                                            tooltip="Click To Open Image"
+                                                            [src]="apiURL + 'uploads/company/signature/' + companydata.authorizedSignature" height="100" width="100"
+                                                            style="margin-bottom: 10px" class="img-fluid glyph-icon tool_tip cursor-pointer"
+                                                            *ngIf="!url2 && companydata.authorizedSignature" />
+                                                            <img src="{{ url2 }}" height="100" width="100" style="margin-bottom: 10px" *ngIf="url2" />
+                                                            <button type="button" tooltip="Remove Signature" class="close-icon button-style close-icon-authsign"
+                                                              (click)="deleteAuthorizedSignature()" *ngIf="!url2 && companydata.authorizedSignature">
+                                                              <i class="simple-icon-close"></i>
+                                                            </button>
+                                                            <div *ngIf="!url2 && companydata.authorizedSignature"><span class="font-weight-bold">Authorized
+                                                            Signature</span></div>
+                                                          </div>
+                                                        </div> -->
+                                                        <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                                                          [isDisabled]="buttonDisabled" click="onLoginClick()">
+                                                          {{ 'forms.submit' | translate }}
+                                                        </app-state-button>
+                                                        <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/company_master'"
+                                                          style="margin-left: 2%">
+                                                          Cancel
+                                                        </button>
+                                                      </form>
+                                                    </div>
+                                                  </div>
+                                                }
+
+                                                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,300 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Manual Attendance"></app-heading>
+    <app-breadcrumb title="Manual Attendance"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<!-- <app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" (itemsPerPageChange)="onLimitChange($event)"
+[itemsPerPage]="body.limit" [itemOptionsPerPage]="itemOptionsPerPage">
+</app-list-page-header> -->
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      @if (companyData) {
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #date="ngModel" name="date" (change)="selectdate($event)"
+                max="{{ todaydate }}" required />
+                <span>Attendance Date(MM/DD/YYYY)*</span>
+                @if (!date.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    Attendance Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #company="ngModel"
+                  [(ngModel)]="companyData.companyMasterID" name="company" (change)="selectcompany($event)" required>
+                  @for (company1 of company1; track company1) {
+                    <ng-option [value]="company1.companyMasterID">
+                      {{ company1.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!company.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                  (change)="selectbranch($event)" required>
+                  @for (item of allbranch; track item) {
+                    <ng-option [value]="item.branchMasterID">
+                      {{ item.branchName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Branch*</span>
+                @if (!branchName.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    Branch is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectdepart($event)" ngModel #department="ngModel"
+                  name="department" [(ngModel)]="selecteddept">
+                  @for (item of alldepartment; track item) {
+                    <ng-option [value]="item.departmentId">
+                      {{ item.departmentName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Department</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectdesig($event)" ngModel #designation="ngModel"
+                  name="designation" [(ngModel)]="selecteddesig">
+                  @for (item of alldesignation; track item) {
+                    <ng-option [value]="item.designationId">
+                      {{ item.designationName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Designation</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectWorkingArea($event)" ngModel
+                  #workingArea="ngModel" name="workingArea" [(ngModel)]="selectedWorkingArea">
+                  @for (item of allWorkingArea; track item) {
+                    <ng-option [value]="item.id">
+                      {{ item.workingAreaName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Working Area</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectdivision($event)" ngModel #division="ngModel"
+                  name="division" [(ngModel)]="selectedDivision">
+                  @for (item of allDivision; track item) {
+                    <ng-option [value]="item.id">
+                      {{ item.divisionName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Division</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="employees" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                  ngModel #employee="ngModel" name="employee" [(ngModel)]="selectedEmployees" required>
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" [ngModelOptions]="{standalone: true}" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Employee *</span>
+                @if (!employee.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    Employee is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" #AttendanceType="ngModel" name="AttendanceType" ngModel
+                  (change)="selectAttn($event)" required>
+                  <ng-option value="1">Present Absent</ng-option>
+                  <ng-option value="2">PunchInTime punchOutTime</ng-option>
+                </ng-select>
+                <span>Attendance Type *</span>
+                @if (!AttendanceType.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    This is required field!
+                  </div>
+                }
+              </label>
+            </div>
+            <!-- <div class="col-md-4" *ngIf="Attnvalue == '1'">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #shiftID="ngModel" name="shiftID" required>
+                <ng-option *ngFor="let item of allshift" [value]="item.shiftID">
+                  {{ item.shiftName }}
+                </ng-option>
+              </ng-select>
+              <span>Select Shift *</span>
+            </label>
+            <div *ngIf="!shiftID.valid && datefilter.submitted" class="invalid-tooltip">
+              Shift is required!
+            </div>
+          </div> -->
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'Submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+</div>
+
+@if (rows.length > 0) {
+  <div>
+    @if (branch1) {
+      <div>
+        <div class="row" style="background-color: #85dcd7; height: 61px; align-items: center">
+          <div class="col-md-4" style="font-size: 15px; margin-left: 22%">
+            Branch Name:
+            <b>{{ branch1.branchName }}</b>
+          </div>
+          <div class="col-md-4" style="font-size: 15px; margin-left: 10px">
+            Attendance Date:
+            <b>{{ body.date | date: 'dd-MM-yyyy' }}</b>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="table-style">
+      @if (body.attendancetype == '2') {
+        <table style="width: 100%;">
+          <thead>
+            <tr>
+              <th>Sr No.</th>
+              <th class="name-col">Employee Code</th>
+              <th class="name-col">Employee Name</th>
+              <th class="name-col">Number</th>
+              <th class="name-col">Branch</th>
+              <th class="name-col">Department</th>
+              <th class="name-col">Designation</th>
+              <th class="name-col">PunchInTime(MM/DD/YYYY)</th>
+              <th>PunchOutTime(MM/DD/YYYY)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (maindata of rows; track maindata; let i = $index) {
+              <tr class="student">
+                <td>{{ i + 1 }}</td>
+                <td class="name-col">{{ maindata.employeeCode }}</td>
+                <td class="name-col">{{ maindata.Name }}</td>
+                <td class="name-col">{{maindata.number}}</td>
+                <td class="name-col">{{maindata.branch}}</td>
+                <td class="name-col">{{maindata.department}}</td>
+                <td class="name-col">{{maindata.designation}}</td>
+                <td class="name-col">
+                  <input type="datetime-local" class="form-control" ngModel #punchin="ngModel" [(ngModel)]="maindata.punchin"
+                    name="punchin" min="{{ maindata.minpunchinvalid }}" max="{{ maindata.maxpunchinvalid }}"
+                    [name]="'name_' + i" (change)="manual(maindata,'in')" [disabled]="maindata.Attendance_Verify" />
+                    <!-- <input type="datetime-local" *ngIf="maindata.punchin==''||maindata.punchin!=null"
+                    class="form-control" ngModel #punchin="ngModel" [(ngModel)]="maindata.punchin" name="punchin"
+                    valueDefault=' ' min={{maindata.minpunchinvalid}} max={{maindata.maxpunchinvalid}}
+                    [name]="'name_'+i" (change)="manual(maindata)" (click)="selectedDate(i)"> -->
+                  </td>
+                  <td class="name-col">
+                    <input type="datetime-local" class="form-control" ngModel #punchout="ngModel"
+                      [(ngModel)]="maindata.punchout" name="punchout" min="{{ maindata.minpunchinvalid }}"
+                      max="{{ maindata.maxpunchinvalid1 }}" [name]="'name_' + i" (change)="manual(maindata,'out')" [disabled]="maindata.Attendance_Verify" />
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+          @if (body.attendancetype == '1') {
+            <table style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Sr No.</th>
+                  <th class="name-col">Employee Code</th>
+                  <th class="name-col">Employee Name</th>
+                  <th class="name-col">Number</th>
+                  <th class="name-col">Branch</th>
+                  <th class="name-col">Department</th>
+                  <th class="name-col">Designation</th>
+                  <th class="name-col">Attendance Type</th>
+                  <th class="name-col" style="width: 120px !important;">Shift</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (maindata of rows; track maindata; let i = $index) {
+                  <tr class="student h-10">
+                    <td>{{ i + 1 }}</td>
+                    <td class="name-col">{{ maindata.employeeCode }}</td>
+                    <td class="name-col">{{ maindata.Name }}</td>
+                    <td class="name-col">{{maindata.number}}</td>
+                    <td class="name-col">{{maindata.branch}}</td>
+                    <td class="name-col">{{maindata.department}}</td>
+                    <td class="name-col">{{maindata.designation}}</td>
+                    <td class="name-col">
+                      <!-- <input type="text" class="form-control" ngModel #attendanceType="ngModel" [(ngModel)]="maindata.attendanceType"
+                      name="attendanceType" [name]="'name_'+i" (change)="manual(maindata)"> -->
+                      <select placeholder="Choose your option" ngModel #attendanceType1="ngModel"
+                        style="width: 100px;padding: 4px;" [(ngModel)]="maindata.attendanceType" name="attendanceType1"
+                        [name]="'name_' + i" (change)="manual(maindata,'')" [disabled]="maindata.Attendance_Verify">
+                        <option [value]="1">P</option>
+                        <option [value]="0">A</option>
+                        <option [value]="0.5">HD</option>
+                      </select>
+                    </td>
+                    @if (maindata.attendanceType!='0') {
+                      <td class="attend-col">
+                        <select placeholder="Choose your option" ngModel #shift="ngModel" style="width: 120px;padding: 4px"
+                          [(ngModel)]="maindata.Shift" name="shift" [name]="'name_' + i" (change)="manual(maindata,'')" [disabled]="maindata.Attendance_Verify">
+                          @for (shiftData of maindata.shiftList; track shiftData) {
+                            <option [value]="shiftData.shiftID">{{shiftData.shiftName}}
+                            </option>
+                          }
+                        </select>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+        <button class="btn btn-success form-group" style="float: right" type="button" (click)="onSubmit1()">
+          Submit
+        </button>
+      </div>
+    }
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

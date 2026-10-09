@@ -1,0 +1,51 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (moduleListData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Module</h5>
+      <form #editModule="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #moduleName="ngModel"
+                name="moduleName"
+                [(ngModel)]="moduleListData.moduleName"
+                />
+                <span>Module Name*</span>
+                @if (!moduleName.valid && editModule.submitted) {
+                  <div class="invalid-tooltip">
+                    Module Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-lg btn-shadow mt-4"
+            [routerLink]="adminRoot + '/superadminmenus/Module_list'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  }
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

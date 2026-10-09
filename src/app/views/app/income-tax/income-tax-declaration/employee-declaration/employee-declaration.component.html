@@ -1,0 +1,109 @@
+<div class="d-flex flex-column mb-4">
+  <h3>{{data.sectionName}}</h3>
+  <p class="m-0">{{data.sectionInfo}}</p>
+</div>
+
+
+<section class="mb-4">
+  <div class="table-style">
+    @if (loaderstatus) {
+      <div style="color: var(--m-primary); left: 50%;" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    <table style="width: 100%">
+      <thead>
+        <tr>
+          @for (name of myDeclationHeaderNames; track name; let i = $index) {
+            <th class="name-col name-col-shadow" style=" width: 20%;"
+              [style.border-radius]="i === 0 ? '10px 0px 0px 0px' : i === (myDeclationHeaderNames.length - 1) ? '0px 10px 0px 0px' : '0px 0px 0px 0px' ">
+              {{ name }}
+            </th>
+          }
+        </tr>
+      </thead>
+      @if (myDeclationData.length > 0) {
+        <tbody class="text-black" style="font-weight: 600;">
+          @for (item of myDeclationData; track item) {
+            <tr class="student bottom-border bottom-border-radius">
+              <td class="name-col left-border">{{item.categoryName}}</td>
+              <td class="name-col left-border">{{item.noOfDeclaration}}</td>
+              <td class="name-col left-border">INR &nbsp;{{item.amountDeclared | number: '1.0-0'}}</td>
+              <td class="name-col left-border">{{item.proof}}</td>
+              <td class="name-col left-border">INR &nbsp;{{item.amountRejected | number: '1.0-0'}}</td>
+              <td class="name-col left-border">INR &nbsp;{{item.amountAccepted | number: '1.0-0'}}</td>
+              <td class="name-col left-border">INR &nbsp;{{item.actualApprovedAmount | number: '1.0-0'}}</td>
+            </tr>
+          }
+        </tbody>
+      }
+    </table>
+  </div>
+</section>
+
+<hr>
+
+  <section class="mb-4">
+
+    <div class="d-flex flex-column mb-4">
+      <h3>{{texDeductionDetails.title}}</h3>
+      <p class="m-0">{{texDeductionDetails.titleDesc}}</p>
+    </div>
+
+
+    <div class="d-flex flex-row justify-content-start align-items-center mb-4 font-weight-bold">
+      @for (salary of taxAmount; track salary) {
+        <div class="mr-4 my-0 px-4 py-2" style="background-color:#f0f0f0;border-radius: 0.75rem;"
+          >
+          <p class="my-1" style="font-size: 12px;">{{salary.name | uppercase}}</p>
+          <p class="my-1" style="font-size: 16px;">INR &nbsp;{{salary.value }}</p>
+        </div>
+      }
+    </div>
+
+
+
+    <div class="table-style">
+      @if (taxdataloader) {
+        <div style="color: var(--m-primary); left: 50%;" class="la-ball-spin-clockwise">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+
+      <table style="width: 100%">
+        <thead>
+          <th class="name-col name-col-shadow" style=" border-radius: '10px 0px 0px 0px'">
+            MONTH
+          </th>
+          @for (item of myTaxData; track item; let i = $index) {
+            <th class="name-col name-col-shadow"
+              [style.border-radius]="i === (myTaxData.length - 1) ? '0px 10px 0px 0px' : '0px 0px 0px 0px' ">
+              {{ item.month }}
+            </th>
+          }
+        </thead>
+        <tbody class=" text-black" style="font-weight: 600;">
+          <tr class="student bottom-border bottom-border-radius">
+            <td class="name-col left-border">Monthly Total Tax</td>
+            @for (item of myTaxData; track item) {
+              <td class="name-col left-border">INR &nbsp;{{item.amount}}</td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>

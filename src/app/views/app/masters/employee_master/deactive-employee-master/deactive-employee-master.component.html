@@ -1,0 +1,39 @@
+<router-outlet></router-outlet>
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-md-10">
+    <button
+      class="btn btn-danger btn-shadow"
+      [routerLink]="adminRoot + '/masters/employee'"
+      style="margin-bottom: 22px"
+      >
+      Back
+    </button>
+  </div>
+  <div class="col-md-2">
+    <button
+      class="btn btn-danger btn-shadow"
+      style="display: flex; justify-content: end"
+      style="margin-bottom: 22px"
+      (click)="alertDeactiveConfirmation(userId)"
+      [disabled]="reportToDataCount > 0 || authorizationDataCount > 0"
+      >
+      Deactive User
+    </button>
+  </div>
+</div>
+
+@if (userId) {
+  <app-list-user-data [userMasterID]="userId"></app-list-user-data>
+}
+
+<app-list-reportsto-data
+  (childEvent)="receiveReportToData($event)"
+></app-list-reportsto-data>
+
+<app-list-authorization-data
+  (childEvent)="receiveAuthorizationData($event)"
+></app-list-authorization-data>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

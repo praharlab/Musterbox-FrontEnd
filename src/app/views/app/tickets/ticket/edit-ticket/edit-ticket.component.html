@@ -1,0 +1,189 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Ticket</h5>
+    @if (ticketSubCategory) {
+      <form #editTicket="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="selectTicketCategory($event)"
+                ngModel
+                [(ngModel)]="editData.ticketCategoryId"
+                #ticketCategoryID="ngModel"
+                name="ticketCategoryID"
+                required
+                >
+                @for (ticket of ticketCategory; track ticket) {
+                  <ng-option [value]="ticket.id">
+                    {{ ticket.name }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Ticket Category *</span>
+              @if (!ticketCategoryID.valid && editTicket.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #ticketSubCategoryId="ngModel"
+                [(ngModel)]="editData.ticketSubCategoryId"
+                name="ticketSubCategoryId"
+                required
+                >
+                @for (item of ticketSubCategory; track item) {
+                  <ng-option [value]="item.id">
+                    {{ item.name }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Ticket Sub Category *</span>
+              @if (!ticketSubCategoryId.valid && editTicket.submitted) {
+                <div class="invalid-tooltip">
+                  Select Ticket Sub Category is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #title="ngModel"
+                name="title"
+                [(ngModel)]="editData.title"
+                required
+                />
+                <span>Title *</span>
+                @if (!title.valid && editTicket.submitted) {
+                  <div class="invalid-tooltip">
+                    Title is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea
+                  class="form-control"
+                  ngModel
+                  #description="ngModel"
+                  name="description"
+                  [(ngModel)]="editData.description"
+                  required
+                ></textarea>
+                <span>Description *</span>
+                @if (!description.valid && editTicket.submitted) {
+                  <div class="invalid-tooltip">
+                    Description is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #priority="ngModel"
+                  name="priority"
+                  [(ngModel)]="editData.priority"
+                  required
+                  >
+                  <ng-option value="High">HIGH</ng-option>
+                  <ng-option value="Low">LOW</ng-option>
+                  <ng-option value="Medium">MEDIUM</ng-option>
+                </ng-select>
+                <span>Select Priority *</span>
+                @if (!priority.valid && editTicket.submitted) {
+                  <div class="invalid-tooltip">
+                    Priority is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #status="ngModel"
+                  name="status"
+                  [(ngModel)]="editData.status"
+                  required
+                  >
+                  <ng-option value="Created">CREATED</ng-option>
+                  <ng-option value="In Progress">IN_PROGRESS</ng-option>
+                  <ng-option value="On Hold">ON_HOLD</ng-option>
+                  <ng-option value="Closed">CLOSED</ng-option>
+                </ng-select>
+                <span>Select Status *</span>
+                @if (!status.valid && editTicket.submitted) {
+                  <div class="invalid-tooltip">
+                    Status is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #user="ngModel"
+                  name="user"
+                  [(ngModel)]="editData.assignee"
+                  required
+                  >
+                  @for (person of employee; track person) {
+                    <ng-option [value]="person.userMasterID">
+                      {{ person.displayName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Assign Person *</span>
+                @if (!user.valid && editTicket.submitted) {
+                  <div class="invalid-tooltip">
+                    Assign Person is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-lg btn-shadow mt-4"
+            [routerLink]="adminRoot + '/tickets/listTicket'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

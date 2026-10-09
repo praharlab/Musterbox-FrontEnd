@@ -1,0 +1,180 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Review Form</h5>
+      <form #addReviewForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="editData.companyMasterId"
+                #companyMasterID="ngModel" name="companyMasterID" required>
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addReviewForm.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required [(ngModel)]="editData.title"
+                #reviewFormTitle="ngModel" name="reviewFormTitle" />
+                <span>Review Form Title *</span>
+                @if (!reviewFormTitle.valid && addReviewForm.submitted) {
+                  <div class="invalid-tooltip">
+                    Review Form Title is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" [(ngModel)]="editData.description"
+                #reviewFormDescription="ngModel" required name="reviewFormDescription"></textarea>
+                <span>Review Form Description *</span>
+                @if (!reviewFormDescription.valid && addReviewForm.submitted) {
+                  <div class="invalid-tooltip">
+                    Review Form Description is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-12" style="margin-bottom: 20px">
+              <span class="button" class="btn btn-primary" (click)="addReviewFormQuestionCategory()">ADD REVIEW
+              FORM QUESTION CATEGORY</span>
+            </div>
+            <br />
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12 my-2">
+                <div class="row mb-4 kraform">
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="value.title"
+                        #questionCategoryTitle="ngModel" required name="questionCategoryTitle{{ i }}"
+                        [disabled]="value.delete && value.delete== true ? value.delete : false" />
+                        <span>{{i + 1 }}. Question Category Title *</span>
+                        @if (!questionCategoryTitle.valid && addReviewForm.submitted && !value.delete) {
+                          <div
+                            class="invalid-tooltip">
+                            Question Category Title is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <textarea class="form-control" [(ngModel)]="value.description"
+                          #questionCategoryDescription="ngModel" required
+                          [disabled]="value.delete && value.delete== true ? value.delete : false"
+                        name="questionCategoryDescription{{ i }}"></textarea>
+                        <span>{{i + 1 }}. Question Category Description *</span>
+                        @if (!questionCategoryDescription.valid && addReviewForm.submitted && !value.delete) {
+                          <div
+                            class="invalid-tooltip">
+                            Question Category Description is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      <button class="btn btn-danger mb-1" type="button"
+                        [disabled]="value.delete && value.delete== true ? value.delete : false"
+                        (click)="removeReviewFormQuestionCategory(value)" [disabled]="i===0">REMOVE
+                      QUESTION CATEGORY</button>
+                      {{' '}}
+                      <span class="btn btn-success mb-1" type="button"
+                        [disabled]="value.delete && value.delete== true ? value.delete : false"
+                        (click)="addReviewFormQuestion(i)">Add
+                      QUESTION</span>
+                    </div>
+                    @for (item of values[i].reviewFormQuestions; track item; let j = $index) {
+                      <div class="col-md-12">
+                        <div class="row mb-4 kpiform">
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" [(ngModel)]="item.question" required
+                                #question="ngModel" name="question{{ i }}{{ j }}"
+                                [disabled]="item.delete && item.delete== true ? item.delete : false" />
+                                <span>{{j + 1 }}. Question *</span>
+                                @if (!question.valid && addReviewForm.submitted && !item.delete) {
+                                  <div
+                                    class="invalid-tooltip">
+                                    Question is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose Question Response Type" [searchable]="false"
+                                  [(ngModel)]="item.responseType" #questionResponseType="ngModel"
+                                  name="questionResponseType{{ i }}{{ j }}" required
+                                  [disabled]="item.delete && item.delete== true ? item.delete : false">
+                                  <ng-option value="Rating">Rating</ng-option>
+                                  <ng-option value="Text">TEXT</ng-option>
+                                  <ng-option value="Grade">GRADE</ng-option>
+                                  <ng-option value="Rating and Text">RATING AND TEXT</ng-option>
+                                  <ng-option value="Grade and Text">GRADE AND TEXT</ng-option>
+                                </ng-select>
+                                <span>{{j + 1 }}. Question ResponseType Type *</span>
+                                @if (!questionResponseType.valid && addReviewForm.submitted && !item.delete) {
+                                  <div
+                                    class="invalid-tooltip">
+                                    Question ResponseType Type is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <textarea class="form-control" [(ngModel)]="item.description" required
+                                  #questionDescription="ngModel"
+                                  [disabled]="item.delete && item.delete== true ? item.delete : false"
+                                name="questionDescription{{ i }}{{ j }}"></textarea>
+                                <span>{{j + 1 }}. Question Description *</span>
+                                @if (!questionDescription.valid && addReviewForm.submitted && !item.delete) {
+                                  <div
+                                    class="invalid-tooltip">
+                                    Question Description is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <button class="btn btn-danger mb-2" type="button"
+                                [disabled]="item.delete && item.delete== true ? item.delete : false"
+                                (click)="removeReviewFormQuestion(i,j)" [disabled]="j===0">REMOVE
+                              QUESTION</button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      <br>
+                      </div>
+                    </div>
+                  }
+                </div>
+                <app-state-button [btnClass]="'btn btn-primary  btn-shadow mt-2'" type="submit" [currentState]="buttonState"
+                  [isDisabled]="buttonDisabled" click="onLoginClick()">
+                  {{ 'forms.submit' | translate }}
+                </app-state-button>
+                <button class="btn btn-danger  btn-shadow mt-2" type="button" [routerLink]="adminRoot + '/pms/reviewform'"
+                  style="margin-left: 2%">
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        }
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

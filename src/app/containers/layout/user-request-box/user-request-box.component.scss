@@ -1,0 +1,52 @@
+:host ::ng-deep {
+  .navbar .header-icon#notificationButton .count {
+    font-size: 9px;
+    border: 1px solid var(--m-primary);
+    border-radius: 10px;
+    position: absolute;
+    width: 13px !important;
+    height: 18px !important;
+    text-align: center;
+    font-weight: 700;
+    top: -4px;
+    right: 1px;
+    line-height: 14px;
+    color: white !important;
+    background: var(--m-primary) !important;
+  }
+
+  #notificationDropdown {
+    width: 320px !important;
+    padding: 1rem !important;
+    height: 320px !important;
+    right: 15px !important;
+    background: var(--m-primary) !important;
+  }
+
+  perfect-scrollbar > .ps {
+    max-width: unset;
+    width: unset;
+    margin-right: -15px;
+    padding-right: 0px !important;
+    margin-left: -15px;
+    padding-left: 15px;
+  }
+}
+
+.icon {
+  font-size: 18px;
+  color: #3a3a3a;
+}
+
+.countStyle {
+  background-color: var(--m-primary);
+  color: white;
+  width: 13px;
+  height: 18px;
+}
+
+.bedgeStyle {
+  font-size: 10px;
+  right: 4px;
+  top: -2px;
+}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="avTitle">
+  <title id="avTitle">User avatar placeholder</title>
+  <defs>
+    <linearGradient id="avBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6fffb"/>
+      <stop offset="1" stop-color="#ccfbf1"/>
+    </linearGradient>
+    <linearGradient id="avFg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <clipPath id="avClip"><circle cx="64" cy="64" r="64"/></clipPath>
+  </defs>
+  <g clip-path="url(#avClip)">
+    <rect width="128" height="128" fill="url(#avBg)"/>
+    <circle cx="64" cy="50" r="22" fill="url(#avFg)"/>
+    <path d="M64 80c-23 0-42 15-42 34v14h84v-14c0-19-19-34-42-34z" fill="url(#avFg)"/>
+  </g>
+</svg>

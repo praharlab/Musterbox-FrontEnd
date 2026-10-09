@@ -1,0 +1,27 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{ 'dashboards.calendar' | translate }}</h5>
+    @if (showloader == 'true') {
+      <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    @if (calendarVisible) {
+      <full-calendar #fullCalendar [events]="events" [options]="calendarOptions">
+        <ng-template #eventContent let-arg>
+          <b>{{ arg.timeText }}</b>
+          <!-- <b>{{ arg }}</b> -->
+          <!-- <i>{{ arg.event.title }}</i> -->
+          <div [innerHTML]="arg.event.title" style="text-wrap: wrap;text-align: center;"></div>
+        </ng-template>
+      </full-calendar>
+    }
+  </div>
+</div>

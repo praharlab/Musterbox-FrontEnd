@@ -1,0 +1,481 @@
+<div bsModal #financeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Expense Data</h4>
+        <button type="button" class="btn-close close pull-right" (click)="closeModal()" aria-label="Close"
+          #closeViewFormModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (showData) {
+          <tabset class="separator-tabs">
+            <tab class="cursor-pointer" heading="Details">
+              <div class="tab-content">
+                <div>
+                  <table class="table table-striped">
+                    <tr>
+                      <td>Expense Head</td>
+                      <td>{{expenseData.expenseHead}}</td>
+                    </tr>
+                    <tr>
+                      <td>Amount</td>
+                      <td>{{expenseData.expenseAmount}}</td>
+                    </tr>
+                    <tr>
+                      <td>Date</td>
+                      <td>{{expenseData.expense_date | date: 'dd-MM-yyyy'}}</td>
+                    </tr>
+                    <tr>
+                      <td>Description</td>
+                      <td>{{expenseData.description}}</td>
+                    </tr>
+                    <tr>
+                      <td>Attachment - 1</td>
+                      <td>
+                        @if (expenseData.attachFile && !showImage(expenseData.attachFile) && expenseData.attachFile != '' && expenseData.attachFile != null && expenseData.attachFile != 'null') {
+                          <button class="btn btn-primary btn-xs"
+                          (click)="view(expenseData.attachFile)">View</button>
+                        }
+                        @if (expenseData.attachFile && expenseData.attachFile != null && expenseData.attachFile != 'null' && showImage(expenseData.attachFile) && expenseData.attachFile != '') {
+                          <img [src]="apiURL + expenseData.attachFile" width="200px" alt="Attachment" (click)="view(expenseData.attachFile)"
+                            >
+                        }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Attachment - 2</td>
+                      <td>
+                        @if (expenseData.attachFile2 && !showImage(expenseData.attachFile2) && expenseData.attachFile2 != '' && expenseData.attachFile2 != null && expenseData.attachFile2 != 'null') {
+                          <button class="btn btn-primary btn-xs"
+                          (click)="view(expenseData.attachFile2)">View</button>
+                        }
+                        @if (expenseData.attachFile2 && expenseData.attachFile2 != null && expenseData.attachFile2 != '' && expenseData.attachFile2 != 'null' && showImage(expenseData.attachFile2)) {
+                          <img [src]="apiURL + expenseData.attachFile2" width="200px"
+                            alt="Attachment" (click)="view(expenseData.attachFile2)">
+                        }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Attachment - 3</td>
+                      <td>
+                        @if (expenseData.attachFile3 && !showImage(expenseData.attachFile3) && expenseData.attachFile3 != '' && expenseData.attachFile3 != null && expenseData.attachFile3 != 'null') {
+                          <button class="btn btn-primary btn-xs"
+                          (click)="view(expenseData.attachFile3)">View</button>
+                        }
+                        @if (expenseData.attachFile3 && expenseData.attachFile3 != null && expenseData.attachFile3 != '' && expenseData.attachFile3 != 'null' && showImage(expenseData.attachFile3)) {
+                          <img [src]="apiURL + expenseData.attachFile3" width="200px"
+                            alt="Attachment" (click)="view(expenseData.attachFile3)">
+                        }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Attachment - 4</td>
+                      <td>
+                        @if (expenseData.attachFile4 && !showImage(expenseData.attachFile4) && expenseData.attachFile4 != '' && expenseData.attachFile4 != null && expenseData.attachFile4 != 'null') {
+                          <button class="btn btn-primary btn-xs"
+                          (click)="view(expenseData.attachFile4)">View</button>
+                        }
+                        @if (expenseData.attachFile4 && expenseData.attachFile4 != null && expenseData.attachFile4 != '' && expenseData.attachFile4 != 'null' && showImage(expenseData.attachFile4)) {
+                          <img [src]="apiURL + expenseData.attachFile4" width="200px"
+                            alt="Attachment" (click)="view(expenseData.attachFile4)">
+                        }
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="mt-2">
+                  <h3>Authorization Critria :  {{expenseData.auth_creteria}}</h3>
+                  <table class="table table-striped">
+                    @for (items of authdata; track items) {
+                      <tbody>
+                        <tr>
+                          <th>{{ items?.authorizedPerson?.displayName }}</th>
+                          <td>
+                            @if (items.authstatus == 1) {
+                              <button class="btn btn-outline-success btn-xs"
+                                >
+                                Approved
+                              </button>
+                            }
+                            @if (items.authstatus == 0) {
+                              <button class="btn btn-outline-danger btn-xs"
+                                >
+                                Rejected
+                              </button>
+                            }
+                            @if (items.authstatus == 2) {
+                              <button class="btn btn-outline-warning btn-xs"
+                                >
+                                Pending
+                              </button>
+                            }
+                          </td>
+                          <td>
+                            @if (items.authstatus != 2) {
+                              <p class="mb0">Updated At :</p>
+                            }
+                            @if (items.authstatus != 2) {
+                              <p class="mb0">{{items.updatedAt | date:
+                              'dd-MM-yyyy h:mm a'}}</p>
+                            }
+                          </td>
+                          <th>{{ items.remarks }}</th>
+                        </tr>
+                      </tbody>
+                    }
+                  </table>
+                </div>
+              </div>
+            </tab>
+            <tab class="cursor-pointer" [heading]="tabHeading" (selectTab)="selectTab()">
+              <div class="tab-content">
+                @if (tabHeading == 'Visit Data') {
+                  <div>
+                    @if (visitData) {
+                      <table class="table table-striped">
+                        <tbody>
+                          <tr>
+                            <th>Assign Name</th>
+                            <td>{{ userData?.displayName }}</td>
+                          </tr>
+                          <tr>
+                            <th>Visit Date</th>
+                            <td>
+                              {{ visitData.visitDate | date: 'dd-MM-yyyy' }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Visit Time</th>
+                            <td>{{ visitData.visitTime }}</td>
+                          </tr>
+                          <tr>
+                            <th>Check-In Date and Time</th>
+                            <td>{{ visitData.checkInDateTime }}</td>
+                          </tr>
+                          <tr>
+                            <th>Check-In Location</th>
+                            <td>{{ visitData.checkInLocation }}</td>
+                          </tr>
+                          <tr>
+                            <th>Check-Out Date and Time</th>
+                            <td>{{ visitData.checkOutDateTime }}</td>
+                          </tr>
+                          <tr>
+                            <th>Check-Out Location</th>
+                            <td>{{ visitData.checkOutLocation }}</td>
+                          </tr>
+                          @if (visitData.coPersonID != null && visitData.coPersonID != '') {
+                            <tr>
+                              <th>Co-Person</th>
+                              <td>
+                                {{ coperson }}
+                              </td>
+                            </tr>
+                          }
+                          <tr>
+                            <th>Customer Name</th>
+                            <td>{{ visitData?.customer?.customerName }}</td>
+                          </tr>
+                          @if (visitData.product != null) {
+                            <tr>
+                              <th>Product Name</th>
+                              <td>{{ visitData?.product?.productName }}</td>
+                            </tr>
+                          }
+                          <tr>
+                            <th>Visit Purpose</th>
+                            <td>{{ visitData?.visitPurpose?.visitPurpose }}</td>
+                          </tr>
+                          <tr>
+                            <th>Company Name</th>
+                            <td>{{ visitData?.customer?.companyName }}</td>
+                          </tr>
+                          @for (items of visitcustomizefield; track items) {
+                            <tr>
+                              <th>{{ items.visitFormCustomize.fieldLabel }}</th>
+                              <td>{{ items.value }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    }
+                    @if (visitreportcustomizefield.length > 0) {
+                      <div>
+                        <h3>Visit Report</h3>
+                        <hr />
+                        <table class="table table-striped">
+                          <tbody>
+                            @for (items of visitreportcustomizefield; track items) {
+                              <tr>
+                                <th>{{ items.visitReportCustomize.fieldLabel }}</th>
+                                @if (
+                                  items.visitReportCustomize.inputType != 'image' &&
+                                  items.visitReportCustomize.inputType != 'signature'
+                                  ) {
+                                  <td style="overflow: hidden">
+                                    {{ items.value }}
+                                  </td>
+                                }
+                                @if (
+                                  items.visitReportCustomize.inputType == 'image' ||
+                                  items.visitReportCustomize.inputType == 'signature'
+                                  ) {
+                                  <td>
+                                    <img src="{{ 'data:image/jpeg;base64,' + items.value }}"
+                                      height="200" width="200" />
+                                    </td>
+                                  }
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (tabHeading == 'Tour Data') {
+                    <div>
+                      @if (tourData) {
+                        <table class="table table-striped">
+                          <tbody>
+                            <tr>
+                              <th>Tour Name</th>
+                              <td>{{ tourData.ToursName }}</td>
+                            </tr>
+                            <tr>
+                              <th>Assign Name</th>
+                              <td>{{ tourData?.assign?.displayName }}</td>
+                            </tr>
+                            @if (tourData.CoPersonId != null && tourData.CoPersonId != '') {
+                              <tr>
+                                <th>Co-Person</th>
+                                @for (i of tourData.CoPersonId; track i; let index = $index) {
+                                  <span>{{ i.Name
+                                    }}@if (index != tourData.CoPersonId?.length - 1) {
+                                    <span>,</span>
+                                  }</span>
+                                }
+                              </tr>
+                            }
+                            <tr>
+                              <th>Tour from-Date</th>
+                              <td>{{ tourData.FromDate | date: 'dd-MM-yyyy' }}</td>
+                            </tr>
+                            <tr>
+                              <th>Tour To-Date</th>
+                              <td>{{ tourData.ToDate | date: 'dd-MM-yyyy' }}</td>
+                            </tr>
+                            <tr>
+                              <th>TotalDays</th>
+                              <td>{{ tourData.TotalDays }}</td>
+                            </tr>
+                            <tr>
+                              <th>Description</th>
+                              <td>{{ tourData.Description }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      }
+                    </div>
+                  }
+                  @if (tabHeading == 'Project Data') {
+                    <div>
+                      @if (projectData) {
+                        <table class="table table-striped">
+                          <tbody>
+                            <tr>
+                              <th>Project Name</th>
+                              <td>{{ projectData.projectName }}</td>
+                            </tr>
+                            <tr>
+                              <th>Description</th>
+                              <td>{{ projectData.projectDescription }}</td>
+                            </tr>
+                            <tr>
+                              <th>Company name</th>
+                              <td>{{ projectData?.companyMaster?.companyName }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      }
+                    </div>
+                  }
+                </div>
+              </tab>
+              @if (showVersion && versionData.length > 0) {
+                <tab class="cursor-pointer" heading="Version">
+                  <div class="tab-content">
+                    @if (versionData) {
+                      <div>
+                        @for (item of versionData; track item) {
+                          <div>
+                            @if (item.version != null) {
+                              <h4>
+                                Version :- {{ item.version }}
+                              </h4>
+                            }
+                            @if (item.version == null) {
+                              <h4>Version :- 0</h4>
+                            }
+                            <table class="table table-striped">
+                              <tbody>
+                                <tr>
+                                  <th>Expense Head</th>
+                                  <td>{{ item?.expenseHead?.expenseHead }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Expense Amount</th>
+                                  <td>{{ item?.expenseAmount }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Expense Date</th>
+                                  <td>{{ $safeNavigationMigration(item?.userExpense?.expense_date) | date: 'dd-MM-yyyy' }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>Submitted Date</th>
+                                  <td>{{ item.submited_date | date: 'dd-MM-yyyy' }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>Description</th>
+                                  <td>{{ item.description }}</td>
+                                </tr>
+                                @if (
+                                  item.attachFile != null &&
+                                  item.attachFile != ''
+                                  ) {
+                                  <tr>
+                                    <th>Attachment - 1</th>
+                                    <td>
+                                      <!-- <img src="data:image/jpeg;base64,{{ item.attachFile }}" -->
+                                      @if (!showImage(item.attachFile)) {
+                                        <button class="btn btn-primary btn-xs"
+                                        (click)="view(item.attachFile)">View</button>
+                                      }
+                                      @if (showImage(item.attachFile)) {
+                                        <img [src]="apiURL + item.attachFile"
+                                          (click)="view(item.attachFile)"
+                                          height="200" width="200" />
+                                      }
+                                    </td>
+                                  </tr>
+                                }
+                                @if (
+                                  item.attachFile2 != null &&
+                                  item.attachFile2 != ''
+                                  ) {
+                                  <tr>
+                                    <th>Attachment - 2</th>
+                                    <td>
+                                      <!-- <img src="data:image/jpeg;base64,{{ item.attachFile }}" -->
+                                      @if (!showImage(item.attachFile2)) {
+                                        <button class="btn btn-primary btn-xs"
+                                        (click)="view(item.attachFile2)">View</button>
+                                      }
+                                      @if (showImage(item.attachFile2)) {
+                                        <img [src]="apiURL + item.attachFile2"
+                                          (click)="view(item.attachFile2)"
+                                          height="200" width="200" />
+                                      }
+                                    </td>
+                                  </tr>
+                                }
+                                @if (
+                                  item.attachFile3 != null &&
+                                  item.attachFile3 != ''
+                                  ) {
+                                  <tr>
+                                    <th>Attachment - 3</th>
+                                    <td>
+                                      <!-- <img src="data:image/jpeg;base64,{{ item.attachFile }}" -->
+                                      @if (!showImage(item.attachFile3)) {
+                                        <button class="btn btn-primary btn-xs"
+                                        (click)="view(item.attachFile3)">View</button>
+                                      }
+                                      @if (showImage(item.attachFile3)) {
+                                        <img [src]="apiURL + item.attachFile3"
+                                          (click)="view(item.attachFile3)"
+                                          height="200" width="200" />
+                                      }
+                                    </td>
+                                  </tr>
+                                }
+                                @if (
+                                  item.attachFile4 != null &&
+                                  item.attachFile4 != ''
+                                  ) {
+                                  <tr>
+                                    <th>Attachment - 4</th>
+                                    <td>
+                                      <!-- <img src="data:image/jpeg;base64,{{ item.attachFile }}" -->
+                                      @if (!showImage(item.attachFile4)) {
+                                        <button class="btn btn-primary btn-xs"
+                                        (click)="view(item.attachFile4)">View</button>
+                                      }
+                                      @if (showImage(item.attachFile4)) {
+                                        <img [src]="apiURL + item.attachFile4"
+                                          (click)="view(item.attachFile4)"
+                                          height="200" width="200" />
+                                      }
+                                    </td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                            <br />
+                            <h3><b>Authorization Status :-</b></h3>
+                            <table class="table table-striped">
+                              @for (items of item.expenseAuthorizations; track items) {
+                                <tbody>
+                                  <tr>
+                                    <th>{{ items.authorizedPerson?.displayName }}</th>
+                                    <td>
+                                      @if (items.authstatus == 1) {
+                                        <button class="btn btn-outline-success btn-xs"
+                                          >
+                                          Approved
+                                        </button>
+                                      }
+                                      @if (items.authstatus == 0) {
+                                        <button class="btn btn-outline-danger btn-xs"
+                                          >
+                                          Rejected
+                                        </button>
+                                      }
+                                      @if (items.authstatus == 2) {
+                                        <button class="btn btn-outline-warning btn-xs"
+                                          >
+                                          Pending
+                                        </button>
+                                      }
+                                    </td>
+                                    @if (items.authstatus != 2) {
+                                      <th>{{ items.remarks }}</th>
+                                    }
+                                    @if (items.authstatus != 2) {
+                                      <th>{{ items.updatedAt |
+                                      date: 'dd-MM-yyyy h:mm:ss a' }}</th>
+                                    }
+                                  </tr>
+                                </tbody>
+                              }
+                            </table>
+                            <hr style="height: 2px; background-color: black; border: none" />
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </tab>
+              }
+            </tabset>
+          }
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,18 @@
+td,
+th {
+  white-space: nowrap;
+  overflow: hidden;
+}
+th {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 0.5em 1em;
+  border: 1px solid white;
+}
+
+td {
+  border-top: 1px solid rgb(221, 221, 221);
+  border-right: 1px solid rgb(221, 221, 221);
+  padding: 0.5em 1em;
+  text-align: left;
+}

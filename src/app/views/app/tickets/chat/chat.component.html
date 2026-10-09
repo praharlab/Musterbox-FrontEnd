@@ -1,0 +1,331 @@
+<div class="row app-row">
+  <div class="col-xl-9 chat-app">
+    @if (this.mainLoader) {
+      <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    @if (selectedConversation) {
+      <div class="d-flex flex-row chat-heading">
+        <div class="d-flex flex-row chat-heading">
+          @if (selectedConversation.users[0].img) {
+            <a class="d-flex">
+              <img [src]="selectedConversation.users[0].img" alt="imge"
+                class="img-thumbnail border-0 rounded-circle ml-0 mr-4 list-thumbnail align-self-center small height-width-chat-profile-img" />
+              </a>
+            }
+            @if (!selectedConversation.users[0].img) {
+              <a class="d-flex">
+                @if (selectedConversation.users[0].firstName && selectedConversation.users[0].lastName ) {
+                  <app-profile-pic
+                    [Class]="'img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img'"
+                    [firstName]=" selectedConversation.users[0].firstName"
+                  [lastName]="selectedConversation.users[0].lastName"></app-profile-pic>
+                }
+              </a>
+            }
+            <div class="d-flex min-width-zero">
+              <div
+                class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                <div class="min-width-zero">
+                  <a>
+                    <p class="list-item-heading mb-1 truncate">
+                      <span>{{ displayName }}</span>
+                      <span type="button" class="btn-primary simple-icon-info info-icon ml-1"
+                      (click)="handleClick($event); onInfoClick()"></span>
+                    </p>
+                  </a>
+                  <p class="mb-0 text-muted text-small">
+                    {{ designation }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (selectedConversation) {
+        <div class="separator mb-2"></div>
+      }
+      @if (selectedConversation) {
+        <perfect-scrollbar class="scroll1" [config]="{ suppressScrollX: true, wheelPropagation: false }" #scroll
+          [scrollIndicators]="true" (psYReachStart)="onScrollEvent($event)" (YReachStart)="onScrollEvent1($event)">
+          @if (this.psYReachStartLoader) {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          @for (m of selectedConversation.messages; track m; let i = $index) {
+            @if (isNewDate(m, i)) {
+              <div class="date-separator">
+                <span>{{ isNewDateToday(m) ? 'Today' : (m.date | date: 'dd-MM-yyyy') }}</span>
+              </div>
+            }
+          <div [ngClass]="{
+              'float-right': m.senderID == currentUserId,
+              'float-left': m.senderID != currentUserId,
+              'd-inline-block mb-3': true
+            }">
+              <div>
+              <span [ngClass]="{
+                  'float-right': m.senderID == currentUserId,
+                  'float-left': m.senderID != currentUserId,
+                  'text-extra-small': true
+                }">
+                  {{ m.date | date: 'dd-MM-yyyy' }},{{ m.time }}
+                </span>
+              </div>
+            <div [ngClass]="{
+                'float-right senderBack': m.senderID == currentUserId,
+                'float-left receiverBack': m.senderID != currentUserId,
+                card: true
+              }" style="width: fit-content" [style.border-radius]="
+                m.senderID == currentUserId ? '15px 15px 0px 15px' : '0px 15px 15px 15px'
+              " (contextmenu)="onRightClick($event); toggleOptions(m)">
+                <div class="card-body card-body-padding">
+                  <p class="mb-0 text-black">{{ m.text }}</p>
+                  @if (m.attachment) {
+                    <div class="mt-2">
+                      <a (click)="showDocument(m.attachment)">
+                        <i class="simple-icon-paper-clip"></i>
+                        {{ m.attachment }}
+                      </a>
+                    </div>
+                  }
+                </div>
+                @if (m.showOptions) {
+                  <div class="message-options">
+                    <ul>
+                      <li (click)="deleteForMe(m)">Delete for me</li>
+                      @if (m.createBy == this.currentUserId) {
+                        <li (click)="deleteForEveryone(m)">
+                          Delete for everyone
+                        </li>
+                      }
+                      <li (click)="close(m)">Close</li>
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          }
+        </perfect-scrollbar>
+      }
+    </div>
+  </div>
+  @if (selectedConversation) {
+    <div class="chat-input-container" style="height: auto">
+      @if (images) {
+        <div class="d-flex justify-content-between align-items-center attachemnt-main flex-column">
+          @for (name of images; track name) {
+            <div class="attachment-names col-md-12">
+              <span style="color: white">{{ name.name }}</span>
+              {{ ' ' }}
+              <button type="button" class="close-icon" (click)="removeAttachment(name)">
+                <i class="simple-icon-close"></i>
+              </button>
+            </div>
+          }
+        </div>
+      }
+      <div class="d-flex justify-content-between align-items-center">
+        <textarea class="form-control flex-grow-1" placeholder="Say something..." [(ngModel)]="message"
+        (keyup)="messageInputKeyUp($event)"></textarea>
+        <div>
+          <button type="button" class="btn btn-outline-primary icon-button large" (click)="attachFile()">
+            <i class="simple-icon-paper-clip"></i>
+          </button>
+          <input type="file" #fileInput style="display: none" (change)="onFileChange($event)"
+            accept="image/png, image/jpeg, image/png,.xls, .xlsx, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/pdf" />
+            <button type="button" class="btn btn-primary icon-button large ml-2" (click)="sendMessage()">
+              <i class="simple-icon-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+    <app-application-menu>
+      <tabset class="card-tabs h-100" [justified]="true">
+        <tab [heading]="'chat.messages' | translate" class="card-body h-100">
+          @if (this.conversationsLoader) {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          @if (conversations.length != 0) {
+            <div class="chat-app-tab-pane-messages">
+              <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: false }">
+                @for (item of conversations; track item) {
+                  <div class="d-flex flex-row mb-1 border-bottom pb-3 mb-3"
+                    (click)="openChat(item)">
+                    @if (item.img) {
+                      <a class="d-flex">
+                        <img [src]="item.img" alt="img"
+                          class="img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img" />
+                        </a>
+                      }
+                      @if (!item.img) {
+                        <a class="d-flex">
+                          @if (item.firstName && item.lastName ) {
+                            <app-profile-pic
+                              [Class]="'img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img'"
+                            [firstName]=" item.firstName" [lastName]="item.lastName"></app-profile-pic>
+                          }
+                        </a>
+                      }
+                      <div class="d-flex flex-grow-1 min-width-zero">
+                        <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                          <div class="min-width-zero">
+                            <p class="mb-0 text-semi-muted text-small">{{ item.title }}</p>
+                            <p class="mb-0 text-small p-1">
+                              <span [style.font-weight]="item.messageCount != 0 ? '900' : '500'">
+                                {{ item.msg ? item.msg : item.attachment }}
+                              </span>
+                              @if (item.messageCount != 0) {
+                                <span class="messageCount">
+                                  {{ item.messageCount }}
+                                </span>
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </perfect-scrollbar>
+              </div>
+            }
+          </tab>
+          <tab [heading]="'chat.contacts' | translate" class="card-body h-100">
+            <div class="form-group">
+              <input type="text" class="form-control rounded-100" placeholder="Search" #searchBoxContact id="search-box"
+                (input)="search($event)" />
+              </div>
+              @if (this.contactLoader) {
+                <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              }
+              @if (contacts.length != 0) {
+                <div class="chat-app-tab-pane-contacts">
+                  <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: false }">
+                    @if (searchKeyword === '') {
+                      @for (contact of contacts; track contact) {
+                        <div class="d-flex flex-row mb-3 border-bottom pb-3"
+                          (click)="openChat(contact)">
+                          @if (contact.img) {
+                            <a class="d-flex">
+                              <img [src]="contact.img" alt="img"
+                                class="img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img" />
+                              </a>
+                            }
+                            @if (!contact.img) {
+                              <a class="d-flex">
+                                @if (contact.firstName && contact.lastName ) {
+                                  <app-profile-pic
+                                    [Class]="'img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img'"
+                                  [firstName]=" contact.firstName" [lastName]="contact.lastName"></app-profile-pic>
+                                }
+                              </a>
+                            }
+                            <div class="d-flex flex-grow-1 min-width-zero">
+                              <div
+                                class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                <div class="min-width-zero">
+                                  <a>
+                                    <p class="mb-0 text-small">{{ contact.title }}</p>
+                                    <p class="mb-0 text-semi-muted text-small">{{ contact.designation }}</p>
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      }
+                      @if (searchKeyword !== '') {
+                        @for (contact of contacts; track contact) {
+                          <div class="d-flex flex-row mb-3 border-bottom pb-3">
+                            @if (contact.img) {
+                              <a class="d-flex">
+                                <img [src]="contact.img" alt="img"
+                                  class="img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img" />
+                                </a>
+                              }
+                              @if (!contact.img) {
+                                <a class="d-flex">
+                                  @if (contact.firstName && contact.lastName ) {
+                                    <app-profile-pic
+                                      [Class]="'img-thumbnail border-0 rounded-circle mr-3 list-thumbnail align-self-center xsmall height-width-list-profile-img'"
+                                    [firstName]=" contact.firstName" [lastName]="contact.lastName"></app-profile-pic>
+                                  }
+                                </a>
+                              }
+                              <div class="d-flex flex-grow-1 min-width-zero">
+                                <div
+                                  class="m-2 pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                  <div class="min-width-zero">
+                                    <a>
+                                      <p class="mb-0 truncate">{{ contact.title }}</p>
+                                      <p class="mb-0 truncate">{{ contact.designation }}</p>
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        }
+                      </perfect-scrollbar>
+                    </div>
+                  }
+                </tab>
+              </tabset>
+            </app-application-menu>
+            <div bsModal #openModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <button type="button" class="btn-close close pull-right mb-1" (click)="openModal.hide()" aria-label="Close"
+                      #closeModal>
+                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                    <img src="{{ imageUrl }}" alt="Image" id="previewImage" class="img-fluid" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            @if (displayUserInformation) {
+              <app-user-modal [pagex]="userModalLeftPosition" [pagey]="userModalTopPosition" [masterId]="openChatUserId"
+              (myEvent)="onChildEvent($event)"></app-user-modal>
+            }
+
+            <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

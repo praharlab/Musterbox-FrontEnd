@@ -1,0 +1,17 @@
+<!-- /app/dashboards/* custom container -->
+<style>
+  ::ng-deep .nav-tabs {
+  border-bottom: none !important;
+}
+</style>
+@if (usertype != 2 && usertype != 3) {
+  <div class="w-100">
+    <tabset class="tabset">
+      <tab heading="Home" (selectTab)="navigate('analytics')"></tab>
+      @if (permissionview.length > 0) {
+        <tab heading="Hr DashBoard" (selectTab)="navigate('hr-dashboard')"></tab>
+      }
+    </tabset>
+  </div>
+}
+<router-outlet></router-outlet>

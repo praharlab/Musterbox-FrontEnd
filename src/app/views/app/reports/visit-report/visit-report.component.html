@@ -1,0 +1,291 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Visit Report" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="download($event)" (clearData)="clear()" (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate" (change)="selectfrom()"
+          required />
+          <span>From Date *</span>
+          @if (!fromdate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              From Date is required!
+            </div>
+          }
+        </label>
+      </div>
+      @if (enddate != null) {
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #todate="ngModel" name="todate"
+              [(ngModel)]="enddate" />
+              <span>To Date *</span>
+              @if (!todate.valid && commonFilter?.filterForm?.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        @if (enddate == null) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" />
+              <span>To Date *</span>
+            </label>
+          </div>
+        }
+      </app-common-filter>
+    }
+
+    @if (rows && rows.length > 0) {
+      <div class="row">
+        <div class="col-12 mb-4 data-table-rows">
+          <ngx-datatable [scrollbarH]="true" [rowHeight]="'auto'" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+            [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+            (page)="onChange($event)">
+            <ngx-datatable-column name="Sr.No" prop="srlNo" [flexGrow]="1.2" [width]="80" value="1">
+              <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                {{ filterData.limit * (filterData.page - 1) + rowIndex + 1 }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Employee Code" prop="EmployeeCode" [flexGrow]="1.2"
+            [width]="200"></ngx-datatable-column>
+            <ngx-datatable-column name="Name" prop="Employee" [flexGrow]="1.2" [width]="250"></ngx-datatable-column>
+            <ngx-datatable-column name="Co-Person" prop="Coperson" [flexGrow]="1.2" [width]="250"></ngx-datatable-column>
+            <ngx-datatable-column name="Punch-In Time" prop="PunchInTime" [flexGrow]="1.2"
+            [width]="200"></ngx-datatable-column>
+            <ngx-datatable-column name="Punch-Out Time" prop="PunchOutTime" [flexGrow]="1.2"
+            [width]="200"></ngx-datatable-column>
+            <ngx-datatable-column name="Visit Date" prop="VisitDate" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+            <ngx-datatable-column name="Time" prop="VisitTime" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+            <ngx-datatable-column name="Check-In-DateTime" prop="CheckInDateTime" [flexGrow]="1.2"
+            [width]="230"></ngx-datatable-column>
+            <ngx-datatable-column name="Check-In-Location" prop="CheckInLocation" [flexGrow]="1.2"
+            [width]="700"></ngx-datatable-column>
+            <ngx-datatable-column name="Check-Out-DateTime" prop="CheckOutDateTime" [flexGrow]="1.2"
+            [width]="230"></ngx-datatable-column>
+            <ngx-datatable-column name="Check-Out-Location" prop="CheckOutLocation" [flexGrow]="1.2"
+            [width]="700"></ngx-datatable-column>
+            <ngx-datatable-column name="Tracking(Km)" prop="TotalKms" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+            <ngx-datatable-column name="Product" prop="Product" [flexGrow]="1.2" [width]="230"></ngx-datatable-column>
+            <ngx-datatable-column name="Visit Purpose" prop="VisitPurpose" [flexGrow]="1.2"
+            [width]="200"></ngx-datatable-column>
+            <ngx-datatable-column name="Customer" prop="CustomerContact" [flexGrow]="1.2"
+            [width]="300"></ngx-datatable-column>
+            <ngx-datatable-column name="Customer's Company" prop="CustomerCompany" [flexGrow]="1.2"
+            [width]="300"></ngx-datatable-column>
+            <ngx-datatable-column name="Customer's Address" prop="CustomerAddress" [flexGrow]="1.2"
+            [width]="700"></ngx-datatable-column>
+            <ngx-datatable-column name="Customize Fields" prop="visitFormCustomizeValue" [flexGrow]="4" [width]="700">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @for (data of row.visitFormCustomizeValue; track data; let i = $index) {
+                  <div>
+                    <div>
+                      {{ i + 1 }}. &nbsp;
+                      <b>{{ data.visitFormCustomize.fieldLabel }} :</b>
+                      &nbsp; &nbsp;{{ data.value }}
+                      <br />
+                    </div>
+                  </div>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Report Customize Fields" prop="visitReportCustomizeValue" [flexGrow]="4"
+              [width]="700">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @for (data of row.visitReportCustomizeValue; track data; let i = $index) {
+                  <div>
+                    @if (data.value.length <= 500) {
+                      <div>
+                        {{ i + 1 }}. &nbsp;
+                        <b>{{ data.visitReportCustomize.fieldLabel }} :</b>
+                        &nbsp; &nbsp;{{ data.value }}
+                        <br />
+                      </div>
+                    }
+                    @if (data.value.length > 500) {
+                      <div>
+                        {{ i + 1 }}. &nbsp;
+                        <b>{{ data.visitReportCustomize.fieldLabel }} :</b>
+                        &nbsp; &nbsp;
+                        @if (data.value != '' || data.value != null) {
+                          <img src="data:image/jpeg;base64,{{ data.value }}" alt=" " (click)="lgModal.show(); editimage(data.value)"
+                            height="50px" width="50px" />
+                        }
+                        <br />
+                      </div>
+                    }
+                  </div>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+            <div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+              aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Visit Data</h4>
+                    <button type="button" class="btn-close close pull-right" (click)="lgModal3.hide()" aria-label="Close">
+                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
+                      @if (visitdata) {
+                        <table class="table table-striped">
+                          <tbody>
+                            <tr>
+                              <th>Assign Name</th>
+                              <td>{{ visitdata.assign.firstName }}</td>
+                            </tr>
+                            <tr>
+                              <th>Visit Date</th>
+                              <td>
+                                {{ visitdata.visitDate | date: 'dd-MM-yyyy' }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Visit Time</th>
+                              <td>{{ visitdata.visitTime }}</td>
+                            </tr>
+                            <tr>
+                              <th>Check-In Date and Time</th>
+                              <td>{{ visitdata.checkInDateTime }}</td>
+                            </tr>
+                            <tr>
+                              <th>Check-In Location</th>
+                              <td>{{ visitdata.checkInLocation }}</td>
+                            </tr>
+                            <tr>
+                              <th>Check-Out Date and Time</th>
+                              <td>{{ visitdata.checkOutDateTime }}</td>
+                            </tr>
+                            <tr>
+                              <th>Check-Out Location</th>
+                              <td>{{ visitdata.checkOutLocation }}</td>
+                            </tr>
+                            @if (visitdata.coPersonID != null && visitdata.coPersonID != '') {
+                              <tr>
+                                <th>Co-Person</th>
+                                <td>
+                                  {{ coperson }}
+                                </td>
+                              </tr>
+                            }
+                            <tr>
+                              <th>Customer Name</th>
+                              <td>{{ visitdata.customer.customerName }}</td>
+                            </tr>
+                            @if (visitdata.product != null) {
+                              <tr>
+                                <th>Product Name</th>
+                                <td>{{ visitdata.product.productName }}</td>
+                              </tr>
+                            }
+                            <tr>
+                              <th>Visit Purpose</th>
+                              <td>{{ visitdata.visitPurpose.visitPurpose }}</td>
+                            </tr>
+                            <tr>
+                              <th>Company Name</th>
+                              <td>{{ visitdata.customer.companyName }}</td>
+                            </tr>
+                            @for (items of visitcustomizefield; track items) {
+                              <tr>
+                                <th>{{ items.visitFormCustomize.fieldLabel }}</th>
+                                <td>{{ items.value }}</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      }
+                      <h3>Visit Report</h3>
+                      <hr />
+                      <table class="table table-striped">
+                        <tbody>
+                          @for (items of visitreportcustomizefield; track items) {
+                            <tr>
+                              <th>{{ items.visitReportCustomize.fieldLabel }}</th>
+                              @if (
+                                items.visitReportCustomize.inputType != 'image' &&
+                                items.visitReportCustomize.inputType != 'signature'
+                                ) {
+                                <td style="overflow: hidden">
+                                  {{ items.value }}
+                                </td>
+                              }
+                              @if (
+                                items.visitReportCustomize.inputType == 'image' ||
+                                items.visitReportCustomize.inputType == 'signature'
+                                ) {
+                                <td>
+                                  <img src="{{ 'data:image/jpeg;base64,' + items.value }}" height="200" width="200" />
+                                </td>
+                              }
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            @if (true) {
+              <ngx-datatable-footer>
+                <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                  let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                  <div class="w-100 d-flex justify-content-center">
+                    <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                      [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                      [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                    [customPreviousTemplate]="prevTemplate"></pagination>
+                  </div>
+                </ng-template>
+              </ngx-datatable-footer>
+            }
+          </ngx-datatable>
+        </div>
+      </div>
+    }
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+    <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Image</h4>
+            <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div style="text-align: center">
+              <img src="data:image/jpeg;base64,{{ image }}" height="350px" width="350px" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

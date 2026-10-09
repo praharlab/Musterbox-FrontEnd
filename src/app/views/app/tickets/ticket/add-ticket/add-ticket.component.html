@@ -1,0 +1,132 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Ticket</h5>
+
+    <form #addTicket="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              (change)="selectTicketCategory($event)"
+              ngModel
+              #ticketCategoryID="ngModel"
+              name="ticketCategoryID"
+              required
+              >
+              @for (ticket of ticketCategory; track ticket) {
+                <ng-option [value]="ticket.id">
+                  {{ ticket.name }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Ticket Category *</span>
+            @if (!ticketCategoryID.valid && addTicket.submitted) {
+              <div class="invalid-tooltip">
+                Ticket Category is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #ticketSubCategoryId="ngModel"
+              name="ticketSubCategoryId"
+              [(ngModel)]="selectedTicketSubcategory"
+              required
+              >
+              @for (item of ticketSubCategory; track item) {
+                <ng-option [value]="item.id">
+                  {{ item.name }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Ticket Sub Category *</span>
+            @if (!ticketSubCategoryId.valid && addTicket.submitted) {
+              <div class="invalid-tooltip">
+                Select Ticket Sub Category is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #title="ngModel"
+              name="title"
+              required
+              />
+              <span>Title *</span>
+              @if (!title.valid && addTicket.submitted) {
+                <div class="invalid-tooltip">
+                  Title is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <textarea
+                class="form-control"
+                ngModel
+                #description="ngModel"
+                name="description"
+                required
+              ></textarea>
+              <span>Description *</span>
+              @if (!description.valid && addTicket.submitted) {
+                <div class="invalid-tooltip">
+                  Description is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="file"
+                placeholder=""
+                multiple
+                (change)="onFileChange($event)"
+                accept="image/png, image/jpeg, image/jpg"
+                />
+                <span>Attachment Document</span>
+              </label>
+            </div>
+          </div>
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-lg btn-shadow mt-4"
+            [routerLink]="adminRoot + '/tickets/listTicket'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

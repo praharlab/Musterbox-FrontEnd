@@ -1,0 +1,515 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card">
+  <div class="card-body">
+    <form #dateFilterImmediate="ngForm" novalidate>
+      <div class="float-right float-none-xs mt-2">
+        <input class="btn btn-outline-primary btn-xs float-right" type="date" [(ngModel)]="currentDate" ngModel
+          #monthYear="ngModel" name="monthYear" max="{{ maxDate }}" (change)="onDateSelect($event)" />
+
+        <input class="float-right"
+          style="text-align: left;padding: 3px 5px 3px 10px;margin-right: 5px;border-radius: 16px;border: 1px solid var(--m-primary);"
+          type="text" ngModel #search="ngModel" name="search" placeholder="search..."
+          (ngModelChange)="onSearch($event)" />
+
+      </div>
+    </form>
+    <tabset class="card-tabs">
+      <tab heading="Immediate Team" (selectTab)="loadComponent('ImmadiateTeam')" style="margin-bottom: 5px">
+        @if (showloader == 'true') {
+          <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        }
+        @if (currentUser) {
+          <div class="scroll dashboard-list-with-data">
+            <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+              <div class="d-flex myclass mb-3">
+                <a class="d-block position-relative">
+                  @if (
+                    currentUser.firstName &&
+                    currentUser.lastName &&
+                    (!currentUser || currentUser.photo == '' || currentUser.photo == null)
+                    ) {
+                    <app-profile-pic [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                    [firstName]="currentUser.firstName" [lastName]="currentUser.lastName"></app-profile-pic>
+                  }
+                  @if (currentUser && currentUser.photo != '' && currentUser.photo != null) {
+                    <img src="{{ apiURL }}uploads/user/photo/{{ currentUser.photo }}" [alt]="currentUser.title"
+                      class="list-thumbnail border-0"
+                      style="height: 85px; width: 113px" />
+                  }
+                  @if (
+                    currentUser.attendanceTransactions &&
+                    currentUser.attendanceTransactions.length > 0 &&
+                    currentUser.attendanceTransactions[0].InDatetime &&
+                    !currentUser.attendanceTransactions[0].OutDateTime
+                    ) {
+                    <span class="badge badge-pill badge-success badge-bottom-right position-absolute">
+                      Punched-In
+                    </span>
+                  }
+                  @if (
+                    currentUser.attendanceTransactions &&
+                    currentUser.attendanceTransactions.length > 0 &&
+                    currentUser.attendanceTransactions[0].InDatetime &&
+                    currentUser.attendanceTransactions[0].OutDateTime
+                    ) {
+                    <span class="badge badge-pill badge-danger badge-bottom-right position-absolute">
+                      Punched-Out
+                    </span>
+                  }
+                  @if (
+                    !currentUser.attendanceTransactions ||
+                    currentUser.attendanceTransactions.length == 0
+                    ) {
+                    <span class="badge badge-pill badge-primary badge-bottom-right position-absolute">
+                      Not Punched-In
+                    </span>
+                  }
+                </a>
+                <div class="pl-3 pt-2 pr-2 pb-2">
+                  <a>
+                    <p class="list-item-heading">
+                      {{ currentUser.displayName }} &nbsp; @if (currentUser && currentUser.employeeJoiningDetails && currentUser.employeeJoiningDetails.length > 0&& currentUser.employeeJoiningDetails[0]?.employeeCode) {
+                      <span
+                      >({{currentUser.employeeJoiningDetails[0]?.employeeCode}})</span>
+                    }
+                  </p>
+                  @if (
+                    currentUser.employeeDesignations &&
+                    currentUser.employeeDesignations.length > 0
+                    ) {
+                    <div class="pr-4">
+                      <p class="text-muted mb-1 text-small">
+                        {{ currentUser.employeeDesignations[0].designation.designationName }}
+                      </p>
+                    </div>
+                  }
+                  <div class="text-primary text-small font-weight-medium">
+                    Punch In :-
+                    @if (
+                      currentUser.attendanceTransactions &&
+                      currentUser.attendanceTransactions.length > 0
+                      ) {
+                      <span>
+                        {{
+                        currentUser.attendanceTransactions[0].InDatetime
+                        | date : 'dd-MM-yyyy HH:mm:ss'
+                        }}
+                      </span>
+                    }
+                    <br />
+                    Punch Out :-
+                    @if (
+                      currentUser.attendanceTransactions &&
+                      currentUser.attendanceTransactions.length > 0
+                      ) {
+                      <span>
+                        {{
+                        currentUser.attendanceTransactions[0].OutDateTime
+                        | date : 'dd-MM-yyyy HH:mm:ss'
+                        }}
+                      </span>
+                    }
+                  </div>
+                </a>
+              </div>
+              <div class="d-flex buttonPlace align-items-center">
+                @if (currentUser.attendanceTransactions && currentUser.attendanceTransactions.length > 0 && currentUser.attendanceTransactions[0].AttendanceTransID) {
+                  <button class="btn btn-primary form-group m-0" style="height: fit-content" type="button"
+                  (click)="
+                    ViewCurrentUserData(
+                      currentUser.displayName,
+                      currentUser.attendanceTransactions[0].AttendanceTransID
+                    )
+                  ">
+                    View
+                  </button>
+                }
+              </div>
+            </div>
+            @if (immediateChildData && immediateChildData.length > 0) {
+              <div>
+                @for (item of immediateChildData; track item) {
+                  <div class="d-flex myclass mb-3">
+                    <a class="d-block position-relative">
+                      @if (
+                        item.employee.firstName &&
+                        item.employee.lastName &&
+                        (!item.employee || item.employee.photo == '' || item.employee.photo == null)
+                        ) {
+                        <app-profile-pic [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                        [firstName]="item.employee.firstName" [lastName]="item.employee.lastName"></app-profile-pic>
+                      }
+                      @if (
+                        item.employee && item.employee.photo != '' && item.employee.photo != null
+                        ) {
+                        <img src="{{ apiURL }}uploads/user/photo/{{ item.employee.photo }}" [alt]="item.title"
+                          class="list-thumbnail border-0" style="height: 85px; width: 113px" />
+                      }
+                      @if (
+                        item.employee.attendanceTransactions &&
+                        item.employee.attendanceTransactions.length > 0 &&
+                        item.employee.attendanceTransactions[0].InDatetime &&
+                        !item.employee.attendanceTransactions[0].OutDateTime
+                        ) {
+                        <span class="badge badge-pill badge-success badge-bottom-right position-absolute">
+                          Punched-In
+                        </span>
+                      }
+                      @if (
+                        item.employee.attendanceTransactions &&
+                        item.employee.attendanceTransactions.length > 0 &&
+                        item.employee.attendanceTransactions[0].InDatetime &&
+                        item.employee.attendanceTransactions[0].OutDateTime
+                        ) {
+                        <span class="badge badge-pill badge-danger badge-bottom-right position-absolute">
+                          Punched-Out
+                        </span>
+                      }
+                      @if (
+                        !item.employee.attendanceTransactions ||
+                        item.employee.attendanceTransactions.length == 0
+                        ) {
+                        <span class="badge badge-pill badge-primary badge-bottom-right position-absolute">
+                          Not Punched-In
+                        </span>
+                      }
+                    </a>
+                    <div class="pl-3 pt-2 pr-2 pb-2">
+                      <a>
+                        <p class="list-item-heading">
+                          {{ item.employee.displayName }} &nbsp; @if (item.employee && item.employee.employeeJoiningDetails && item.employee.employeeJoiningDetails[0]?.employeeCode) {
+                          <span
+                          >({{item.employee.employeeJoiningDetails[0]?.employeeCode}})</span>
+                        }
+                      </p>
+                      @if (
+                        item.employee.employeeDesignations &&
+                        item.employee.employeeDesignations.length > 0
+                        ) {
+                        <div class="pr-4">
+                          <p class="text-muted mb-1 text-small">
+                            {{ item.employee.employeeDesignations[0].designation.designationName }}
+                          </p>
+                        </div>
+                      }
+                      <div class="text-primary text-small font-weight-medium">
+                        Punch In :-
+                        @if (
+                          item.employee.attendanceTransactions &&
+                          item.employee.attendanceTransactions.length > 0
+                          ) {
+                          <span>
+                            {{
+                            item.employee.attendanceTransactions[0].InDatetime
+                            | date : 'dd-MM-yyyy HH:mm:ss'
+                            }}
+                          </span>
+                        }
+                        <br />
+                        Punch Out :-
+                        @if (
+                          item.employee.attendanceTransactions &&
+                          item.employee.attendanceTransactions.length > 0
+                          ) {
+                          <span>
+                            {{
+                            item.employee.attendanceTransactions[0].OutDateTime
+                            | date : 'dd-MM-yyyy HH:mm:ss'
+                            }}
+                          </span>
+                        }
+                      </div>
+                    </a>
+                  </div>
+                  @if (
+                    item.employee.attendanceTransactions &&
+                    item.employee.attendanceTransactions.length > 0
+                    ) {
+                    <div class="d-flex buttonPlace align-items-center">
+                      @if (item.employee.attendanceTransactions && item.employee.attendanceTransactions.length > 0 && item.employee.attendanceTransactions[0].AttendanceTransID) {
+                        <button class="btn btn-primary form-group m-0" style="height: fit-content" type="button"
+                    (click)="
+                      ViewCurrentUserData(
+                        item.employee.displayName,
+                        item.employee.attendanceTransactions[0].AttendanceTransID
+                      )
+                    ">
+                          View
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </perfect-scrollbar>
+      </div>
+    }
+  </tab>
+  <tab heading="My Team" (selectTab)="loadComponent('MyTeam')">
+    <!-- <h5 class="card-title">My Team</h5> -->
+    @if (showloader == 'true') {
+      <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    <div class="scroll dashboard-list-with-data">
+      <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+        @for (item of teamData; track item) {
+          <div class="d-flex myclass mb-3">
+            <a class="d-block position-relative">
+              @if (
+                item.employee.firstName &&
+                item.employee.lastName &&
+                (!item.employee || item.employee.photo == '' || item.employee.photo == null)
+                ) {
+                <app-profile-pic [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                [firstName]="item.employee.firstName" [lastName]="item.employee.lastName"></app-profile-pic>
+              }
+              @if (item.employee && item.employee.photo != '' && item.employee.photo != null) {
+                <img src="{{ apiURL }}uploads/user/photo/{{ item.employee.photo }}" [alt]="item.title"
+                  class="list-thumbnail border-0"
+                  style="height: 85px; width: 113px" />
+              }
+              @if (
+                item.attendanceData &&
+                item.attendanceData.InDatetime &&
+                !item.attendanceData.OutDateTime
+                ) {
+                <span class="badge badge-pill badge-success badge-bottom-right position-absolute">
+                  Punched-In
+                </span>
+              }
+              @if (
+                item.attendanceData &&
+                item.attendanceData.InDatetime &&
+                item.attendanceData.OutDateTime
+                ) {
+                <span class="badge badge-pill badge-danger badge-bottom-right position-absolute">
+                  Punched-Out
+                </span>
+              }
+              @if (!item.attendanceData) {
+                <span class="badge badge-pill badge-primary badge-bottom-right position-absolute"
+                  >
+                  Not Punched-In
+                </span>
+              }
+            </a>
+            <div class="pl-3 pt-2 pr-2 pb-2">
+              <a>
+                <p class="list-item-heading">
+                  {{ item.employee.displayName }} &nbsp; @if (item.employee && item.employee.employeeJoiningDetails && item.employee.employeeJoiningDetails[0]?.employeeCode) {
+                  <span
+                  >({{item.employee.employeeJoiningDetails[0]?.employeeCode}})</span>
+                }
+              </p>
+              <div class="pr-4">
+                <p class="text-muted mb-1 text-small">
+                  {{ item.designation }}
+                </p>
+              </div>
+              <div class="text-primary text-small font-weight-medium">
+                Punch In :-
+                @if (item.attendanceData && item.attendanceData.InDatetime) {
+                  <span>
+                    {{ item.attendanceData.InDatetime | date : 'dd-MM-yyyy HH:mm:ss' }}
+                  </span>
+                }
+                <br />
+                Punch Out :-
+                @if (item.attendanceData && item.attendanceData.OutDateTime) {
+                  <span>
+                    {{ item.attendanceData.OutDateTime | date : 'dd-MM-yyyy HH:mm:ss' }}
+                  </span>
+                }
+              </div>
+            </a>
+          </div>
+          @if (item.attendanceData && item.attendanceData.AttendanceTransID) {
+            <div class="d-flex buttonPlace align-items-center"
+              >
+              @if (item.attendanceData.AttendanceTransID) {
+                <button class="btn btn-primary form-group m-0" style="height: fit-content" type="button"
+                  (click)="View(item)">
+                  View
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </perfect-scrollbar>
+  </div>
+</tab>
+</tabset>
+</div>
+</div>
+
+<div bsModal #openModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+    <div class="modal-content">
+      <div class="modal-header">
+        @if (userName) {
+          <h5 class="modal-title pull-left">Attendance Logs - {{ userName }}</h5>
+        }
+        <button type="button" class="btn-close close pull-right" (click)="openModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              @if (logData && logData.length > 0) {
+                <div class="table-style">
+                  <table class="table">
+                    <thead>
+                      <tr class="text-uppercase" style="text-align: center">
+                        <th>LogDate</th>
+                        <th>LogTime</th>
+                        <th>Direction</th>
+                        <th>Photo</th>
+                        <th>
+                          Attendnace
+                          <br />
+                          From
+                        </th>
+                        <th>Address</th>
+                        <th>Longitude</th>
+                        <th>Latitude</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of logData; track item) {
+                        <tr>
+                          <td>{{ item.logDateTime | date : 'dd-MM-yyyy ' }}</td>
+                          <td>{{ item.logDateTime | date : 'h:mm a' }}</td>
+                          <td>{{ item.direction }}</td>
+                          <!-- <td>
+                          <img *ngIf="item.photo != '' && item.photo != null && item.photo != 'url'"
+                            src="data:image/jpeg;base64,{{ item.photo }}" (click)="lgModal.show(); editimage(item.photo)"
+                            height="50px" width="50px" />
+                        </td> -->
+                        <td>
+                          <!-- Check if the photo is in base64 format -->
+                          @if (
+                            item.photo != '' &&
+                            item.photo != null &&
+                            item.photo != 'url' &&
+                            item.photo.startsWith('/')
+                            ) {
+                            <img src="data:image/jpeg;base64,{{ item.photo }}"
+                              (click)="lgModal.show(); editimage(item.photo)" height="50px" width="50px" />
+                          }
+                          <!-- Check if the photo is a URL with .png extension -->
+                          @if (
+                            item.photo != '' && item.photo != null && (item.photo.endsWith('.png') || item.photo.endsWith('.jpeg') || item.photo.endsWith('.jpg'))
+                            ) {
+                            <img src="{{ apiURL }}{{ item.photo }}" (click)="lgModal.show(); editimage(item.photo)"
+                              height="50px" width="50px" />
+                          }
+                        </td>
+                        <td>
+                          @if (item.attendnaceFrom && item.attendnaceFrom == 'mobile') {
+                            <img src="../../../../assets/img/attendace_icons/mobile_enable.png" class="attendnaceFrom"
+                              height="50px" width="50px" />
+                          }
+                          @if (item.attendnaceFrom && item.attendnaceFrom == 'manual') {
+                            <img src="../../../../assets/img/attendace_icons/manual_enable.png" class="attendnaceFrom"
+                              height="50px" width="50px" />
+                          }
+                          @if (item.attendnaceFrom && (item.attendnaceFrom == 'biometric' || item.attendnaceFrom == 'tpmirror')) {
+                            <img src="../../../../assets/img/attendace_icons/biometrics_enable.png" class="attendnaceFrom"
+                              height="50px" width="50px"
+                              />
+                          }
+                          @if (item.attendnaceFrom && item.attendnaceFrom == 'web') {
+                            <img src="../../../../assets/img/attendace_icons/computer_enable.png" height="50px" width="50px"
+                              />
+                          }
+                        </td>
+                        @if (item.address == 'manual') {
+                          <td></td>
+                        }
+                        @if (item.address != 'manual') {
+                          <td class="multiline-text">
+                            {{ item.address }}
+                          </td>
+                        }
+                        @if (item.longitude == 'manual') {
+                          <td></td>
+                        }
+                        @if (item.longitude != 'manual') {
+                          <td>{{ item.longitude }}</td>
+                        }
+                        @if (item.latitude == 'manual') {
+                          <td></td>
+                        }
+                        @if (item.latitude != 'manual') {
+                          <td>{{ item.latitude }}</td>
+                        }
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Image</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center">
+          <!-- <img src="data:image/jpeg;base64,{{ image }}" height="350px" width="350px" /> -->
+
+          <!-- Check if the photo is in base64 format -->
+          @if (image != '' && image != null && image.startsWith('/')) {
+            <img src="data:image/jpeg;base64,{{ image }}"
+              height="350px" width="350px" />
+          }
+
+          <!-- Check if the photo is a URL with .png extension -->
+          @if (image != '' && image != null && (image.endsWith('.png') || image.endsWith('.jpeg') || image.endsWith('.jpg'))) {
+            <img
+              src="{{ apiURL }}{{ image }}" height="350px" width="350px" />
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

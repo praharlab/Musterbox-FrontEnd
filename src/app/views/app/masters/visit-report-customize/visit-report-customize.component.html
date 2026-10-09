@@ -1,0 +1,465 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Visit Report Customize"></app-heading>
+    <app-breadcrumb title="Visit Report Customize"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <ng-select placeholder="Choose your option" (change)="selectcompany($event)">
+        @for (company of company; track company) {
+          <ng-option [value]="company.companyMasterID">
+            {{ company.companyName }}
+          </ng-option>
+        }
+      </ng-select>
+      <span>Select Company</span>
+    </label>
+  </div>
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <ng-select placeholder="Choose your option" (change)="selectreport($event)" [(ngModel)]="selectedreport">
+        @for (report of report; track report) {
+          <ng-option [value]="report.visitReportMasterID">
+            {{ report.visitReportName }}
+          </ng-option>
+        }
+      </ng-select>
+      <span>Select Report</span>
+    </label>
+  </div>
+</div>
+@if (selectedcompany && selectedreport) {
+  <div>
+    <div style="text-align: right">
+      @if (permissioncreate.length != 0) {
+        <button class="btn btn-info mb-1" (click)="lgModal.show()">
+          Add
+        </button>
+      }
+    </div>
+    <br />
+    <br />
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="mb-4">Add Visit Report Form Demo</h5>
+        @if (permissionview.length != 0) {
+          <form>
+            <h5>Extra Fields</h5>
+            <hr />
+            @for (fields of field; track fields) {
+              <div class="row" style="margin-top: 4%; margin-bottom: 6%">
+                <div class="col-md-5">
+                  @if (fields.inputType == 'number' && fields.isRequired == false) {
+                    <label class="form-group has-float-label"
+                      >
+                      <input class="form-control" type="number" ngModel #{{fields.fieldLabel}}="ngModel"
+                        name="{{ fields.fieldLabel }}" />
+                        <span>{{ fields.fieldLabel }}</span>
+                      </label>
+                    }
+                    @if (fields.inputType == 'text' && fields.isRequired == false) {
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                          name="{{ fields.fieldLabel }}" />
+                          <span>{{ fields.fieldLabel }}</span>
+                        </label>
+                      }
+                      @if (fields.inputType == 'image' && fields.isRequired == false) {
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="file" ngModel #{{fields.fieldLabel}}="ngModel"
+                            name="{{ fields.fieldLabel }}" />
+                            <span>{{ fields.fieldLabel }}</span>
+                          </label>
+                        }
+                        @if (fields.inputType == 'signature' && fields.isRequired == false) {
+                          <span>
+                            <div class="container">
+                              <ngx-signature-pad [config]="config" #sign></ngx-signature-pad>
+                            </div>
+                            <button (click)="getImage()" class="btn btn-success"
+                              style="margin-top: 10px; margin-left: 75%; width: 26%">
+                              Confirm Sign
+                            </button>
+                            <!-- <button (click)="clear()">clear</button>
+                            -->
+                          </span>
+                        }
+                        @if (fields.inputType == 'textarea' && fields.isRequired == false) {
+                          <label class="form-group has-float-label"
+                            >
+                            <textarea class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                            name="{{ fields.fieldLabel }}"></textarea>
+                            <span>{{ fields.fieldLabel }}</span>
+                          </label>
+                        }
+                        @if (fields.inputType == 'radio' && fields.isRequired == false) {
+                          <div class="row"
+                            style="margin-left: 1%; margin-bottom: 2%">
+                            <label style="margin-right: 30px">
+                              <b>{{ fields.fieldLabel }}</b>
+                            </label>
+                            @for (values of fields.value; track values) {
+                              <div>
+                                <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                  [value]="values" style="margin-right: 10px" />
+                                  <label for="value" style="margin-right: 25px">{{ values }}</label>
+                                </div>
+                              }
+                            </div>
+                          }
+                          @if (fields.inputType == 'checkbox' && fields.isRequired == false) {
+                            <div class="row"
+                              style="margin-left: 1%; margin-bottom: 2%">
+                              <label style="margin-right: 30px">
+                                <b>{{ fields.fieldLabel }}</b>
+                              </label>
+                              @for (values of fields.value; track values) {
+                                <div>
+                                  <input type="checkbox" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    [value]="values" style="margin-right: 10px" />
+                                    <label for="value" style="margin-right: 25px">{{ values }}</label>
+                                  </div>
+                                }
+                              </div>
+                            }
+                            @if (fields.inputType == 'dropdown' && fields.isRequired == false) {
+                              <label class="form-group has-float-label"
+                                >
+                                <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                                  name="{{ fields.fieldLabel }}">
+                                  @for (values of fields.value; track values) {
+                                    <ng-option [value]="values">
+                                      {{ values }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>{{ fields.fieldLabel }}</span>
+                              </label>
+                            }
+                            @if (fields.inputType == 'number' && fields.isRequired == true) {
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="number" ngModel #{{fields.fieldLabel}}="ngModel"
+                                  name="{{ fields.fieldLabel }}" required />
+                                  <span>{{ fields.fieldLabel }}</span>
+                                </label>
+                              }
+                              @if (fields.inputType == 'text' && fields.isRequired == true) {
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    name="{{ fields.fieldLabel }}" required />
+                                    <span>{{ fields.fieldLabel }}</span>
+                                  </label>
+                                }
+                                @if (fields.inputType == 'textarea' && fields.isRequired == true) {
+                                  <label class="form-group has-float-label"
+                                    >
+                                    <textarea class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    name="{{ fields.fieldLabel }}" required></textarea>
+                                    <span>{{ fields.fieldLabel }}</span>
+                                  </label>
+                                }
+                                @if (fields.inputType == 'image' && fields.isRequired == true) {
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="file" ngModel #{{fields.fieldLabel}}="ngModel"
+                                      name="{{ fields.fieldLabel }}" />
+                                      <span>{{ fields.fieldLabel }}</span>
+                                    </label>
+                                  }
+                                  @if (fields.inputType == 'signature' && fields.isRequired == true) {
+                                    <label class="form-group has-float-label" style="margin-bottom: 100px"
+                                      >
+                                      <!-- <div class="container">
+                                      <ngx-signature-pad [config]="config" #testPad1></ngx-signature-pad>
+                                    </div>
+                                    <button (click)="clear()">clear</button>
+                                    <button (click)="getImage()" >get image</button> -->
+                                    <div class="container">
+                                      <ngx-signature-pad [config]="config" #sign></ngx-signature-pad>
+                                    </div>
+                                    <button (click)="getImage()" class="btn btn-success"
+                                      style="margin-top: 10px; margin-left: 75%; width: 26%">
+                                      Confirm Sign
+                                    </button>
+                                  </label>
+                                }
+                                @if (fields.inputType == 'radio' && fields.isRequired == true) {
+                                  <div class="row"
+                                    style="margin-left: 1%; margin-bottom: 2%">
+                                    <label style="margin-right: 30px">
+                                      <b>{{ fields.fieldLabel }}</b>
+                                    </label>
+                                    @for (values of fields.value; track values) {
+                                      <div>
+                                        <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                          [value]="values" style="margin-right: 10px" required />
+                                          <label for="value" style="margin-right: 25px">{{ values }}</label>
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  @if (fields.inputType == 'checkbox' && fields.isRequired == true) {
+                                    <div class="row"
+                                      style="margin-left: 1%; margin-bottom: 2%">
+                                      <label style="margin-right: 30px">
+                                        <b>{{ fields.fieldLabel }}</b>
+                                      </label>
+                                      @for (values of fields.value; track values) {
+                                        <div>
+                                          <input type="checkbox" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                            [value]="values" style="margin-right: 10px" required />
+                                            <label for="value" style="margin-right: 25px">{{ values }}</label>
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    @if (fields.inputType == 'dropdown' && fields.isRequired == true) {
+                                      <label class="form-group has-float-label"
+                                        >
+                                        <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                                          name="{{ fields.fieldLabel }}" required>
+                                          @for (values of fields.value; track values) {
+                                            <ng-option [value]="values">
+                                              {{ values }}
+                                            </ng-option>
+                                          }
+                                        </ng-select>
+                                        <span>{{ fields.fieldLabel }}</span>
+                                      </label>
+                                    }
+                                  </div>
+                                  @if (permissionedit.length != 0) {
+                                    <span class="btn btn-primary" (click)="editfields(lgModal12.show(), fields.visitReportCustomizeID)"
+                                      style="margin-left: 10%; cursor: pointer">
+                                      Edit
+                                    </span>
+                                  }
+                                  @if (permissiondelete.length != 0) {
+                                    <span class="btn btn-danger" (click)="removefields(fields.visitReportCustomizeID)"
+                                      style="margin-left: 10%; cursor: pointer">
+                                      Remove
+                                    </span>
+                                  }
+                                </div>
+                              }
+                              <br />
+                            </form>
+                          }
+                        </div>
+                      </div>
+                      <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Add Customize Field For Visit Report Form</h4>
+                              <button #closeModal type="button" class="btn-close close pull-right" (click)="close(lgModal,'add')"
+                                aria-label="Close">
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form #addvisitreportcustom="ngForm" novalidate (ngSubmit)="onSubmit()">
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" required ngModel #fieldLabel="ngModel" name="fieldLabel" />
+                                      <span>Field Label *</span>
+                                      @if (!fieldLabel.valid && addvisitreportcustom.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Filed Label is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <ng-select placeholder="Choose your option" ngModel #inputType="ngModel" name="inputType"
+                                        (change)="selectinput($event)" required>
+                                        <ng-option value="text">Text</ng-option>
+                                        <ng-option value="number">Number</ng-option>
+                                        <ng-option value="textarea">Text Area</ng-option>
+                                        <ng-option value="radio">Radio</ng-option>
+                                        <ng-option value="checkbox">Checkbox</ng-option>
+                                        <ng-option value="dropdown">Dropdown</ng-option>
+                                        <ng-option value="image">Image</ng-option>
+                                        <ng-option value="signature">Signature</ng-option>
+                                      </ng-select>
+                                      <span>Select Input Type *</span>
+                                      @if (!inputType.valid && addvisitreportcustom.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Input Type is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <ng-select placeholder="Choose your option" ngModel #isRequired="ngModel" name="isRequired" required>
+                                        <ng-option value="1">Yes</ng-option>
+                                        <ng-option value="0">No</ng-option>
+                                      </ng-select>
+                                      <span>Field Required *</span>
+                                      @if (!isRequired.valid && addvisitreportcustom.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Required selection is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                </div>
+                                @if (valueshow == true) {
+                                  <div class="row">
+                                    <div class="col-md-12" style="margin-bottom: 20px">
+                                      <span class="button" class="btn btn-success" (click)="addvalue()">
+                                        ADD Value For Dropdown / Radio
+                                      </span>
+                                    </div>
+                                    <br />
+                                    @for (value of values; track value; let i = $index) {
+                                      <div class="col-md-12">
+                                        <label class="form-group has-float-label">
+                                          <div class="row">
+                                            <div class="col-md-6">
+                                              <input type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}"
+                                                class="form-control" required/>
+                                                @if (!name.valid && addvisitreportcustom.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Value is required!
+                                                  </div>
+                                                }
+                                              </div>
+                                              <div class="col-md-6">
+                                                @if (i >= 1) {
+                                                  <span (click)="removevalue(i)" style="margin-left: 3%">
+                                                    Remove
+                                                  </span>
+                                                }
+                                              </div>
+                                            </div>
+                                            <span>Value</span>
+                                          </label>
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  <button class="btn btn-primary" type="submit" [disabled]="isdisabled">
+                                    {{ 'forms.submit' | translate }}
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    <div bsModal #lgModal12="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                      @if (customizedata) {
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Edit Customize Field For Preboarding Form</h4>
+                              <button #closeModal1 type="button" class="btn-close close pull-right" (click)="close(lgModal12, 'edit')" aria-label="Close">
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form #editreportcustom="ngForm" novalidate (ngSubmit)="onSubmit1()">
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" required ngModel #fieldLabel="ngModel"
+                                        [(ngModel)]="customizedata.fieldLabel" name="fieldLabel" />
+                                        <span>Field Label *</span>
+                                        @if (!fieldLabel.valid && editreportcustom.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Filed Label is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <ng-select placeholder="Choose your option" ngModel #inputType="ngModel" name="inputType"
+                                          (change)="selectinput($event)" [(ngModel)]="customizedata.inputType" required>
+                                          <ng-option value="text">Text</ng-option>
+                                          <ng-option value="number">Number</ng-option>
+                                          <ng-option value="textarea">Text Area</ng-option>
+                                          <ng-option value="radio">Radio</ng-option>
+                                          <ng-option value="checkbox">Checkbox</ng-option>
+                                          <ng-option value="dropdown">Dropdown</ng-option>
+                                          <ng-option value="image">Image</ng-option>
+                                        </ng-select>
+                                        <span>Select Input Type *</span>
+                                        @if (!inputType.valid && editreportcustom.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Input Type is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <ng-select placeholder="Choose your option" ngModel #isRequired="ngModel" name="isRequired"
+                                          [(ngModel)]="required" required>
+                                          <ng-option value="true">Yes</ng-option>
+                                          <ng-option value="false">No</ng-option>
+                                        </ng-select>
+                                        <span>Field Required *</span>
+                                        @if (!isRequired.valid && editreportcustom.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Required selection is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                  </div>
+                                  @if (valueshow == true) {
+                                    <div class="row">
+                                      <div class="col-md-12" style="margin-bottom: 20px">
+                                        <span class="button" class="btn btn-success" (click)="addvalue()">
+                                          ADD Value For Dropdown / Radio
+                                        </span>
+                                      </div>
+                                      <br />
+                                      @for (value of values; track value; let i = $index) {
+                                        <div class="col-md-12">
+                                          <label class="form-group has-float-label">
+                                            <div class="row">
+                                              <div class="col-md-6">
+                                                <input type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}"
+                                                  class="form-control" required/>
+                                                  @if (!name.valid && editreportcustom.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      Value is required!
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <div class="col-md-6">
+                                                  @if (i >= 1) {
+                                                    <span (click)="removevalue(i)" style="margin-left: 3%">
+                                                      Remove
+                                                    </span>
+                                                  }
+                                                </div>
+                                              </div>
+                                              <span>Value</span>
+                                            </label>
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    <button class="btn btn-primary" type="submit" [disabled]="isdisabled">
+                                      {{ 'forms.submit' | translate }}
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

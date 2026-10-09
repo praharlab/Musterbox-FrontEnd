@@ -1,0 +1,154 @@
+.chat-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background-color: var(--m-primary);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.badge-primary-custom {
+  font-size: 12px;
+  right: -5px;
+  bottom: 20px;
+  background-color: white !important;
+  color: var(--m-primary);
+}
+
+/* ---------- daily mood check-in ----------
+   Shares the bottom-right rail with the chat launcher (a 52px circle anchored
+   at right: 20px), so this one starts a launcher-width plus a gap further in
+   and the two read as a pair instead of colliding. */
+
+.moodWidget {
+  position: fixed;
+  right: 84px;
+  bottom: 20px;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.moodLauncher {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--m-gradient);
+  box-shadow: var(--m-shadow-brand);
+  cursor: pointer;
+  transition: transform 0.18s var(--m-ease);
+
+  &:hover {
+    transform: scale(1.06);
+  }
+
+  &__face {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  /* A ring that breathes outward, in place of the old scale+rotate beat: it
+     still catches the eye, but the button itself no longer jumps around. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    animation: moodRing 2.4s var(--m-ease) infinite;
+  }
+
+  &--open::after {
+    animation: none;
+  }
+}
+
+.moodCard {
+  padding: 14px 16px;
+  background: var(--m-surface);
+  border: 1px solid var(--m-border-subtle);
+  border-radius: var(--m-radius-xl);
+  box-shadow: var(--m-shadow-lg);
+  transform-origin: bottom right;
+  animation: moodCardIn 0.18s var(--m-ease);
+
+  &__prompt {
+    margin-bottom: 10px;
+    color: var(--m-text);
+    font-size: 0.84rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .emoji-container {
+    display: flex;
+    gap: 4px;
+  }
+
+  .emoji {
+    padding: 4px 6px;
+    border: none;
+    border-radius: var(--m-radius-sm);
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 0.18s var(--m-ease), background 0.18s var(--m-ease);
+
+    &:hover {
+      transform: scale(1.25);
+      background: var(--m-primary-soft);
+    }
+  }
+}
+
+@keyframes moodRing {
+  0% {
+    box-shadow: 0 0 0 0 var(--m-primary-ring);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes moodCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moodLauncher::after,
+  .moodCard {
+    animation: none;
+  }
+}
+
+@media print {
+  #print {
+    visibility: hidden;
+  }
+}

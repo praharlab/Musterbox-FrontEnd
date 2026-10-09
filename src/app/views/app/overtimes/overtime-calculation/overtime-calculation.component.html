@@ -1,0 +1,601 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>
+<app-list-page-header
+  name="Overtime Calculation"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)"
+  [itemsPerPage]="filterData.limit"
+  [showSearch]="false"
+  [itemOptionsPerPage]="itemOptionsPerPage"
+></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form
+        #datefilter="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #cid="ngModel"
+                (change)="selectcompany($event)"
+                name="cid"
+                required
+                >
+                @for (data of company; track data) {
+                  <ng-option [value]="data.companyMasterID">
+                    {{ data.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!cid.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                required
+                ngModel
+                #yyyymm="ngModel"
+                name="yyyymm"
+                />
+                <span>YearMonth *</span>
+                @if (!yyyymm.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    YearMonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #ratio="ngModel"
+                  name="ratio"
+                  />
+                  <span>ratio *</span>
+                  @if (!ratio.valid && datefilter.submitted) {
+                    <div class="invalid-tooltip">
+                      ratio is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary form-group" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+              </div>
+              <div class="col-md-3" style="text-align: right">
+                <!-- <span class="btn btn-info mb-1" (click)="downloadFile()" *ngIf="rows && permissionview.length != 0">Export</span> -->
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    @if (rows && rows.length != 0 && showData) {
+      <div class="card" style="padding: 0px">
+        <div class="card-body" style="padding: 20px">
+          <div class="row">
+            <div class="col-md-2 d-flex align-items-center">
+              <input
+                type="checkbox"
+                (change)="selectAll($event)"
+                [checked]="allSelected"
+                style="margin: 10px; transform: scale(1.3)"
+                [disabled]="rows.length === 0"
+                />
+                Select All
+              </div>
+              <div class="col-md-10 d-flex justify-content-end align-items-center">
+                <button
+                  class="btn btn-danger"
+                  (click)="deleteRequest()"
+                  [disabled]="selectedItems.length === 0"
+                  >
+                  Delete Selected
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (rows && permissionview.length != 0) {
+        <div class="row">
+          @if (rows && rows.length != 0) {
+            <div class="col-12 mb-4 data-table-rows">
+              <ngx-datatable
+                [scrollbarH]="true"
+                [rowHeight]="50"
+                [rows]="rows"
+                [footerHeight]="100"
+                [columnMode]="'force'"
+                [limit]="filterData.limit"
+                [externalPaging]="true"
+                [count]="page.totalCount"
+                [offset]="page.offset"
+                (page)="onChange($event)"
+                >
+                <ngx-datatable-column name="Select" [flexGrow]="1.2" [width]="100">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (permissiondelete.length != 0 && row.paidinsalary == 'No') {
+                      <div>
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="row.selected"
+                          (change)="selectRow(row, $event)"
+                          style="margin: 10px; transform: scale(1.3)"
+                          />
+                        </div>
+                      }
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Name"
+                    prop="employeeName"
+                    [flexGrow]="1.2"
+                    [width]="180"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Gross/CTC Income "
+                    prop="gross"
+                    [flexGrow]="1.2"
+                    [width]="120"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Net Income"
+                    prop="netPay"
+                    [flexGrow]="1.2"
+                    [width]="100"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Overtime(Min)"
+                    prop="overtime_minutes"
+                    [flexGrow]="1.2"
+                    [width]="120"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Rate"
+                    prop="dailyrate"
+                    [flexGrow]="1.2"
+                    [width]="180"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Ratio"
+                    prop="ratio"
+                    [flexGrow]="1.2"
+                    [width]="80"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column
+                    name="Total Amount"
+                    prop="totalAmount"
+                    [flexGrow]="1.2"
+                    [width]="180"
+                  ></ngx-datatable-column>
+                  <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      <button type="button" class="btn btn-primary" (click)="lgModal1.show(); showdata(row)">
+                        {{ 'Show Data' | translate }}
+                      </button>
+                      {{ ' ' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Show Data" [flexGrow]="1.2" [width]="180">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      @if (row.showpendingButton == 'Yes') {
+                        <button
+                          type="button"
+                          class="btn btn-warning"
+                          (click)="lgModal2.show(); getpendingdata(row)"
+                          >
+                          {{ 'Approval Pending' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Action" [sortable]="true" [width]="180">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      @if (permissionedit.length != 0 && row.paidinsalary == 'No') {
+                        <a
+                          (click)="lgModal.show(); overtime(row)"
+                          >
+                          <span
+                            tooltip="Edit Overtime Calculation."
+                            [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                            style="padding-right: 6px; font-size: 18px"
+                          ></span>
+                          {{ ' ' }}
+                        </a>
+                      }
+                      @if (permissiondelete.length != 0 && row.paidinsalary == 'No') {
+                        <a
+                          (click)="alertConfirmation(row)"
+                          >
+                          <span
+                            tooltip="Delete Overtime Details."
+                            [class]="'glyph-icon simple-icon-trash tool_tip'"
+                            style="padding-right: 6px; font-size: 18px"
+                          ></span>
+                          {{ ' ' }}
+                        </a>
+                      }
+                      @if (row.paidinsalary == 'Yes') {
+                        <button class="btn btn-outline-success btn-xs">
+                          Paid In Salary
+                        </button>
+                      }
+                    </ng-template>
+                  </ngx-datatable-column>
+                  @if (true) {
+                    <ngx-datatable-footer>
+                      <ng-template
+                        ngx-datatable-footer-template
+                        let-rowCount="rowCount"
+                        let-pageSize="pageSize"
+                        let-selectedCount="selectedCount"
+                        let-curPage="curPage"
+                        let-offset="offset"
+                        let-limit="limit"
+                        >
+                        <div class="w-100 d-flex justify-content-center">
+                          <pagination
+                            [totalItems]="rowCount"
+                            [boundaryLinks]="true"
+                            [customFirstTemplate]="firstTemplate"
+                            [customLastTemplate]="lastTemplate"
+                            [itemsPerPage]="filterData.limit"
+                            [maxSize]="5"
+                            (pageChanged)="table.onFooterPage($event)"
+                            [customNextTemplate]="nextTemplate"
+                            [customPreviousTemplate]="prevTemplate"
+                          ></pagination>
+                        </div>
+                      </ng-template>
+                    </ngx-datatable-footer>
+                  }
+                </ngx-datatable>
+              </div>
+            }
+          </div>
+        }
+
+        <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+          <i class="simple-icon-arrow-left"></i>
+        </ng-template>
+        <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+          <i class="simple-icon-arrow-right"></i>
+        </ng-template>
+        <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-right"></i>
+        </ng-template>
+        <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+          <i class="simple-icon-arrow-left"></i>
+        </ng-template>
+
+        <div
+          bsModal
+          #lgModal="bs-modal"
+          class="modal fade"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+          >
+          @if (overtimedata) {
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title pull-left">Edit Overtime Calculation</h4>
+                  <button
+                    type="button"
+                    class="btn-close close pull-right"
+                    (click)="lgModal.hide()"
+                    aria-label="Close"
+                    #closeModal1
+                    >
+                    <span aria-hidden="true" class="visually-hidden">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form #editovertime="ngForm" novalidate (ngSubmit)="onSubmit12()">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input
+                            type="text"
+                            class="form-control"
+                            ngModel
+                            #name="ngModel"
+                            name="name"
+                            [(ngModel)]="overtimedata.employeeName"
+                            readonly
+                            />
+                            <span>Name</span>
+                          </label>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input
+                              type="text"
+                              class="form-control"
+                              ngModel
+                              #grossincome="ngModel"
+                              name="grossincome"
+                              [(ngModel)]="overtimedata.gross"
+                              readonly
+                              />
+                              <span>Gross Income</span>
+                            </label>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input
+                                type="text"
+                                class="form-control"
+                                ngModel
+                                #overtimehours="ngModel"
+                                name="overtimehours"
+                                [(ngModel)]="overtimedata.overtime_minutes"
+                                readonly
+                                />
+                                <span>Overtime minutes</span>
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  ngModel
+                                  #grossincome="ngModel"
+                                  name="dailyrate"
+                                  [(ngModel)]="overtimedata.dailyrate"
+                                  readonly
+                                  />
+                                  <span>Daily Rate</span>
+                                </label>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input
+                                    type="number"
+                                    class="form-control"
+                                    ngModel
+                                    #ratio="ngModel"
+                                    name="ratio"
+                                    [(ngModel)]="overtimedata.ratio"
+                                    required
+                                    />
+                                    <span>Ratio *</span>
+                                    @if (!ratio.valid && editovertime.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Ratio is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      ngModel
+                                      #totalamount="ngModel"
+                                      name="totalamount"
+                                      [(ngModel)]="overtimedata.totalAmount"
+                                      readonly
+                                      />
+                                      <span>Total Amount</span>
+                                    </label>
+                                  </div>
+                                </div>
+                                <button class="btn btn-primary" type="submit">
+                                  {{ 'forms.submit' | translate }}
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <div
+                      bsModal
+                      #lgModal1="bs-modal"
+                      class="modal fade"
+                      tabindex="-1"
+                      role="dialog"
+                      aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+                      >
+                      @if (showovertimeData) {
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Overtime Data</h4>
+                              <button
+                                type="button"
+                                class="btn-close close pull-right"
+                                (click)="lgModal1.hide()"
+                                aria-label="Close"
+                                #closeModal1
+                                >
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <table border="1" style="width: 100%">
+                                <tr style="background-color: rgb(17, 44, 121); text-align: center; color: white">
+                                  <th>OvertimeDate</th>
+                                  <th>Overtime In</th>
+                                  <th>Overtime Out</th>
+                                  <th>Minutes</th>
+                                </tr>
+                                @for (item of showovertimeData; track item) {
+                                  <tr>
+                                    <td style="padding: 10px; text-align: center">
+                                      {{ item.OverTimeDate | date : 'dd-MM-yyyy' }}
+                                    </td>
+                                    <td style="padding: 10px; text-align: center">
+                                      {{ item.UpdateTimeInDateTime | date : 'dd-MM-yyyy h:mm a' }}
+                                    </td>
+                                    <td style="padding: 10px; text-align: center">
+                                      {{ item.UpdateTimeOutDateTime | date : 'dd-MM-yyyy h:mm a' }}
+                                    </td>
+                                    <td style="padding: 10px; text-align: center">
+                                      {{ item.UpdateOverTimeHourAndMin }}
+                                    </td>
+                                  </tr>
+                                }
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <div
+                      bsModal
+                      #lgModal2="bs-modal"
+                      class="modal fade"
+                      tabindex="-1"
+                      role="dialog"
+                      aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}"
+                      >
+                      @if (pendingData.length > 0) {
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Pending Overtime Data</h4>
+                              <button
+                                type="button"
+                                class="btn-close close pull-right"
+                                (click)="lgModal2.hide()"
+                                aria-label="Close"
+                                #closeModal1
+                                >
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="table-style">
+                                <table style="width: 100%; display: block; overflow-x: auto; white-space: nowrap">
+                                  <thead>
+                                    <tr style="background-color: rgb(17, 44, 121); text-align: center; color: white">
+                                      <th style="padding: 5px">OvertimeDate</th>
+                                      <th style="padding: 5px">Punch In</th>
+                                      <th style="padding: 5px">Punch Out</th>
+                                      <th style="padding: 5px">Overtime In</th>
+                                      <th style="padding: 5px">Overtime Out</th>
+                                      <th style="padding: 5px">Minutes</th>
+                                      <th style="padding: 5px">Authorization : {{ pendingData[0].criteria }}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    @for (item of pendingData; track item) {
+                                      <tr>
+                                        <td style="padding: 5px; text-align: center">
+                                          {{ item.OverTimeDate | date : 'dd-MM-yyyy' }}
+                                        </td>
+                                        <td style="padding: 5px; text-align: center">
+                                          {{ item.punchin | date : 'dd-MM-yyyy h:mm a' }}
+                                        </td>
+                                        <td style="padding: 5px; text-align: center">
+                                          {{ item.punchout | date : 'dd-MM-yyyy h:mm a' }}
+                                        </td>
+                                        <td style="padding: 5px; text-align: center">
+                                          {{ item.OverTimeInDateTime | date : 'dd-MM-yyyy h:mm a' }}
+                                        </td>
+                                        <td style="padding: 5px; text-align: center">
+                                          {{ item.OverTimeOutDateTime | date : 'dd-MM-yyyy h:mm a' }}
+                                        </td>
+                                        <td style="padding: 5px; text-align: center">
+                                          {{ item.OverTimeHourAndMin }}
+                                        </td>
+                                        <td style="padding: 5px; text-align: left">
+                                          @for (data of item.auth; track data) {
+                                            <div>
+                                              <span>{{ data.displayName }}</span>
+                                              - &nbsp;
+                                              <span>
+                                                @if (data.authstatus == 'Accepted') {
+                                                  <button
+                                                    type="button"
+                                                    class="btn btn-outline-success btn-xs mb-1"
+                                                    >
+                                                    Accepted
+                                                  </button>
+                                                }
+                                                {{ ' ' }}
+                                                @if (data.authstatus == 'Rejected') {
+                                                  <button
+                                                    type="button"
+                                                    class="btn btn-outline-danger btn-xs mb-1"
+                                                    >
+                                                    Rejected
+                                                  </button>
+                                                }
+                                                {{ ' ' }}
+                                                @if (data.authstatus == 'Pending') {
+                                                  <button
+                                                    type="button"
+                                                    class="btn btn-outline-warning btn-xs mb-1"
+                                                    >
+                                                    Pending
+                                                  </button>
+                                                }
+                                                {{ ' ' }}
+                                              </span>
+                                              <br />
+                                            </div>
+                                          }
+                                        </td>
+                                      </tr>
+                                    }
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>

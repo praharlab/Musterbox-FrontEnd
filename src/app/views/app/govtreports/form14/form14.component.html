@@ -1,0 +1,2244 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 14"></app-heading>
+    <app-breadcrumb title="Form 14"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form
+        #datefilter="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #company="ngModel"
+                name="company"
+                (change)="selectcompany($event)"
+                required
+                >
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #branchName="ngModel"
+                name="branch"
+                required
+                >
+                @for (item of branch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch *</span>
+              @if (!branchName.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Branch is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-5">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            <span> &nbsp;&nbsp; </span>
+            @if (rows.length > 0) {
+              <button
+                class="btn btn-success form-group"
+                type="button"
+                (click)="downloadPdf()"
+                >
+                Download As PDF
+              </button>
+            }
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="Generator" content="Microsoft Word 15 (filtered)" />
+    <style>
+      /* Font Definitions */
+      @font-face
+      {font-family:"Cordia New";
+      panose-1:2 11 3 4 2 2 2 2 2 4;}
+      @font-face
+      {font-family:"Cambria Math";
+      panose-1:2 4 5 3 5 4 6 3 2 4;}
+      /* Style Definitions */
+      p.MsoNormal, li.MsoNormal, div.MsoNormal
+      {margin-top:0in;
+      margin-right:0in;
+      margin-bottom:8.0pt;
+      margin-left:0in;
+      layout-grid-mode:char;
+      text-autospace:none;
+      font-size:10.5pt;
+      font-family:"Arial",sans-serif;
+      color:black;
+      layout-grid-mode:line;}
+      .MsoChpDefault
+      {font-size:10.5pt;
+      font-family:"Arial",sans-serif;
+      color:black;
+      layout-grid-mode:line;}
+      .MsoPapDefault
+      {margin-bottom:8.0pt;
+      line-height:107%;}
+      /* Page Definitions */
+      @page WordSection1
+      {size:8.5in 11.0in;
+      margin:60.95pt 0in 78.8pt 1.65pt;}
+      div.WordSection1
+      {page:WordSection1;}
+    </style>
+  </head>
+  @if (rows.length > 0) {
+    <div>
+      <body lang="EN-US" style="word-wrap: break-word">
+        <div class="WordSection1" id="content-data">
+          <div style="text-align: center">
+            <h1 style="font-weight: 900; font-size: 42px">FORM NO. 14</h1>
+          </div>
+          <p class="MsoNormal" align="center" style="text-align: center">[Rule 87]</p>
+          <div class="MsoNormal" align="center" style="text-align: center">
+            <h1 style="font-size: 22px">Notice of period of work for adult workers</h1>
+          </div>
+          <table
+            class="MsoNormalTable"
+            border="1"
+            cellspacing="0"
+            cellpadding="0"
+            style="border-collapse: collapse; border: none; width: 100%"
+            >
+            <tr style="height: 15pt">
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 15pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.2pt; line-height: 15pt">
+                  <span
+                  style="
+                    font-size: 11pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -2pt;
+                  "
+                    >
+                    Name
+                    <span style="letter-spacing: 1pt"></span>
+                    of
+                    <span style="letter-spacing: 0.95pt"></span>
+                    factory :
+                    <span style="letter-spacing: 0.95pt">
+                      <b>{{ companyData.companyName }}</b>
+                    </span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border: solid black 1pt;
+                border-left: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 15pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.45pt; line-height: 15pt">
+                  <span
+                  style="
+                    font-size: 11pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -2pt;
+                  "
+                    >
+                    Registration
+                    <span style="letter-spacing: 1.5pt"></span>
+                    No
+                    <span style="letter-spacing: 1pt">………………………… ..</span>
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr style="height: 13.95pt">
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 13.95pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.45pt; line-height: 13.95pt">
+                  <span
+                    style="font-family: 'Times New Roman', serif; position: relative; top: -0.5pt"
+                    >
+                    Address :
+                    <span style="letter-spacing: 1.55pt">…</span>
+                    <span style="letter-spacing: 1.5pt">
+                      <b>{{ branch1.branchAddress }}</b>
+                    </span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 13.95pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.5pt; line-height: 13.95pt">
+                  <span
+                    style="font-family: 'Times New Roman', serif; position: relative; top: -0.5pt"
+                    >
+                    Licence
+                    <span style="letter-spacing: 1.4pt"></span>
+                    No
+                    <span style="letter-spacing: 1.4pt">……………………………… ..</span>
+                    <span style="letter-spacing: 1.3pt">.</span>
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr style="height: 13.95pt">
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 13.95pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.55pt; line-height: 13.95pt">
+                  <span
+                    style="font-family: 'Times New Roman', serif; position: relative; top: -0.5pt"
+                    >
+                    District
+                    <span style="letter-spacing: 1.5pt">…</span>
+                    <span style="letter-spacing: 1.4pt">………………………………… ..</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 13.95pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 6.1pt; line-height: 13.95pt">
+                  <span
+                  style="
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -0.5pt;
+                    letter-spacing: 2pt;
+                  "
+                    >
+                    *
+                  </span>
+                  <span
+                    style="font-family: 'Times New Roman', serif; position: relative; top: -0.5pt"
+                    >
+                    NIC
+                    <span style="letter-spacing: 1.4pt"></span>
+                    Code
+                    <span style="letter-spacing: 1.4pt"></span>
+                    No
+                    <span style="letter-spacing: 1.4pt">…………………………… .</span>
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr style="height: 14.55pt">
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 14.55pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.55pt; line-height: 14.5pt">
+                  <span
+                  style="
+                    font-size: 11pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                  "
+                    >
+                    First
+                    <span style="letter-spacing: 0.95pt"></span>
+                    day
+                    <span style="letter-spacing: 0.95pt"></span>
+                    of
+                    <span style="letter-spacing: 0.95pt"></span>
+                    week :
+                    <span style="letter-spacing: 0.95pt"><b>Monday</b></span>
+                    <span style="letter-spacing: 0.85pt">.</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="295"
+                valign="top"
+              style="
+                width: 221.5pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 14.55pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.75pt; line-height: 14.5pt">
+                  <span
+                  style="
+                    font-size: 11pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                    letter-spacing: 1.15pt;
+                  "
+                    >
+                    (
+                  </span>
+                  <span
+                  style="
+                    font-size: 11pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                  "
+                    >
+                    As
+                    <span style="letter-spacing: 0.9pt"></span>
+                    given
+                    <span style="letter-spacing: 0.9pt"></span>
+                    in
+                    <span style="letter-spacing: 0.9pt"></span>
+                    the
+                    <span style="letter-spacing: 0.9pt"></span>
+                    licence
+                    <span style="letter-spacing: 0.9pt">)………………… ..</span>
+                  </span>
+                </p>
+              </td>
+            </tr>
+          </table>
+          <p class="MsoNormal">&nbsp;</p>
+          <p class="MsoNormal" style="line-height: 0.7pt">&nbsp;</p>
+          <table
+            class="MsoNormalTable"
+            border="1"
+            cellspacing="0"
+            cellpadding="0"
+            style="border-collapse: collapse; border: none; width: 100%"
+            >
+            <tr style="height: 28.85pt">
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 28.85pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.55pt; line-height: 14.5pt; padding: 7px">
+                  <span
+                  style="
+                    font-size: 11pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -0.5pt;
+                    letter-spacing: 0.4pt;
+                  "
+                    >
+                    Periods of work
+                  </span>
+                </p>
+              </td>
+              <td
+                width="198"
+                colspan="4"
+                rowspan="2"
+                valign="top"
+              style="
+                width: 148.75pt;
+                border: solid black 1pt;
+                border-left: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 28.85pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 3.85pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  text-align: center;
+                  line-height: 70%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 70%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    Men
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                  style="margin-left: 5.55pt; line-height: 16.7pt; text-align: center"
+                  >
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                  "
+                    >
+                    Total
+                    <span style="letter-spacing: 1.25pt"></span>
+                    number
+                    <span style="letter-spacing: 1.25pt"></span>
+                    of
+                    <span style="letter-spacing: 1.25pt"></span>
+                    men employed :
+                    <span style="letter-spacing: 1.25pt"></span>
+                    <b>{{ rows[0].male }}</b>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="204"
+                colspan="4"
+                rowspan="2"
+                valign="top"
+              style="
+                width: 152.95pt;
+                border: solid black 1pt;
+                border-left: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 28.85pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 3.85pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  line-height: 70%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 70%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.05pt;
+                  "
+                    >
+                    Women
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                  style="margin-left: 5.6pt; line-height: 16.7pt; text-align: center"
+                  >
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                  "
+                    >
+                    Total
+                    <span style="letter-spacing: 1.45pt"></span>
+                    number
+                    <span style="letter-spacing: 1.45pt"></span>
+                    of
+                    <span style="letter-spacing: 1.4pt"></span>
+                    women employed :
+                    <span style="letter-spacing: 1.4pt"></span>
+                    <b>{{ rows[0].female }}</b>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="144"
+                colspan="2"
+                valign="top"
+              style="
+                width: 107.9pt;
+                border: solid black 1pt;
+                border-left: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 28.85pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 0in;
+                  margin-right: 6.15pt;
+                  margin-bottom: 8pt;
+                  margin-left: 38.9pt;
+                  text-indent: -0.45in;
+                  line-height: 106%;
+                  text-align: center;
+                  padding: 7px;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    line-height: 106%;
+                    font-family: 'Times New Roman', serif;
+                  "
+                    >
+                    Identification
+                    <span style="letter-spacing: 1.8pt"></span>
+                    of
+                    <span style="letter-spacing: 1.75pt"></span>
+                    the
+                    <span style="letter-spacing: 0.15pt">Group</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border: solid black 1pt;
+                border-left: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 28.85pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 5.55pt; line-height: 15.5pt; padding: 7px">
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -0.5pt;
+                    letter-spacing: 0.3pt;
+                    text-align: center;
+                  "
+                    >
+                    Remarks
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr style="height: 14pt">
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 14pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="84"
+                valign="top"
+              style="
+                width: 62.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 14pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="60"
+                valign="top"
+              style="
+                width: 44.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 14pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 14pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+            </tr>
+            <tr style="height: 55.4pt">
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 36px;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 5.8pt;
+                  line-height: 80%;
+                  padding: 10px;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 80%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    Groups Relays
+                  </span>
+                </p>
+                <p class="MsoNormal" style="margin-left: 5.55pt; line-height: 14.55pt">
+                  <span
+                  style="
+                    font-size: 12pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                    letter-spacing: -0.05pt;
+                  "
+                  ></span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    A
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    B
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="54"
+                valign="top"
+              style="
+                width: 40.75pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    C
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    D
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    A
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    B
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    C
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="60"
+                valign="top"
+              style="
+                width: 44.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    D
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 20px;
+                  margin-right: 5.95pt;
+                  margin-bottom: 8pt;
+                  text-indent: 6.35pt;
+                  line-height: 107%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: -0.45pt">1</span>
+                    <span style="letter-spacing: -0.25pt">23</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="84"
+                valign="top"
+              style="
+                width: 62.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 0.05pt;
+                  margin-right: 9.4pt;
+                  margin-bottom: 8pt;
+                  text-indent: -1.65pt;
+                  line-height: 111%;
+                  text-align: center;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 11pt;
+                    line-height: 111%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: 0.65pt;
+                  "
+                    >
+                    Alphabet
+                  </span>
+                  <span
+                    style="font-size: 11pt; line-height: 111%; font-family: 'Times New Roman', serif"
+                    >
+                    <span style="letter-spacing: 0.4pt">a</span>
+                    <span style="letter-spacing: 0.35pt">ssigned</span>
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 1.95pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 16.05pt;
+                  line-height: 75%;
+                "
+                  >
+                  <span
+                    style="font-size: 11.5pt; line-height: 75%; font-family: 'Times New Roman', serif"
+                    >
+                    A
+                    <span style="letter-spacing: 0.55pt">,</span>
+                    B
+                    <span style="letter-spacing: 0.5pt">,</span>
+                    C
+                  </span>
+                </p>
+                <p class="MsoNormal" style="margin-left: 24.8pt; line-height: 15.05pt">
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1pt;
+                  "
+                    >
+                    etc
+                    <span style="letter-spacing: 0.9pt">.</span>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="60"
+                valign="top"
+              style="
+                width: 44.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p class="MsoNormal" style="margin-left: 6pt; line-height: 13.5pt">
+                  <span
+                  style="
+                    font-size: 10pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1pt;
+                    letter-spacing: 1pt;
+                  "
+                    >
+                    Nature
+                  </span>
+                </p>
+                <p class="MsoNormal" style="margin-left: 17.85pt; line-height: 16.15pt">
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -1.5pt;
+                    letter-spacing: 0.6pt;
+                  "
+                    >
+                    of
+                  </span>
+                </p>
+                <p class="MsoNormal" style="margin-left: 10.05pt; line-height: 14.7pt">
+                  <span
+                  style="
+                    font-size: 11.5pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: -0.5pt;
+                    letter-spacing: 0.25pt;
+                  "
+                    >
+                    work
+                  </span>
+                </p>
+              </td>
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 55.4pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+            </tr>
+            <tr style="height: 181.6pt">
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 2.75pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 5.8pt;
+                  line-height: 71%;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 71%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.2pt;
+                  "
+                    >
+                    O
+                  </span>
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 71%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    n
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 0in;
+                  margin-right: 8.55pt;
+                  margin-bottom: 8pt;
+                  margin-left: 5.75pt;
+                  text-indent: -0.3pt;
+                  line-height: 107%;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 107%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.05pt;
+                  "
+                    >
+                    wor
+                  </span>
+                  <span
+                    style="font-size: 12pt; line-height: 107%; font-family: 'Times New Roman', serif"
+                    >
+                    king
+                    <span style="letter-spacing: -0.2pt">d</span>
+                    <span style="letter-spacing: -0.1pt">ays</span>
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 2.35pt;
+                  margin-right: 7.6pt;
+                  margin-bottom: 8pt;
+                  margin-left: 5.55pt;
+                  line-height: 97%;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 97%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.05pt;
+                  "
+                    >
+                    From …
+                  </span>
+                  <span
+                    style="font-size: 12pt; line-height: 97%; font-family: 'Times New Roman', serif"
+                    >
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    ...
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i < 3) {
+                      <span>
+                        <span>
+                          <b>{{ item.startTime }} To {{ item.firsthalfendTime }}</b>
+                        </span>
+                        <br />
+                        <span>
+                          <b>{{ item.secondhalfstartTime }} To {{ item.endTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 3 && i < 6) {
+                      <span>
+                        <span>
+                          <b>{{ item.startTime }} To {{ item.firsthalfendTime }}</b>
+                        </span>
+                        <br />
+                        <span>
+                          <b>{{ item.secondhalfstartTime }} To {{ item.endTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="54"
+                valign="top"
+              style="
+                width: 40.75pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 6 && i < 9) {
+                      <span>
+                        <span>
+                          <b>{{ item.startTime }} To {{ item.firsthalfendTime }}</b>
+                        </span>
+                        <br />
+                        <span>
+                          <b>{{ item.secondhalfstartTime }} To {{ item.endTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="60"
+                valign="top"
+              style="
+                width: 44.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                rowspan="2"
+                width="84"
+                valign="top"
+              style="
+                width: 62.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 2.75pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 27.1pt;
+                  line-height: 77%;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 77%; font-family: 'Times New Roman', serif"
+                    >
+                    A
+                  </span>
+                </p>
+                <p class="MsoNormal" style="line-height: 113%">&nbsp;</p>
+                <p class="MsoNormal" style="line-height: 113%">&nbsp;</p>
+                <p class="MsoNormal" style="line-height: 113%">&nbsp;</p>
+                <p class="MsoNormal" style="line-height: 114%">&nbsp;</p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 3.45pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 27.55pt;
+                  line-height: 76%;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 76%; font-family: 'Times New Roman', serif"
+                    >
+                    B
+                  </span>
+                </p>
+                <p class="MsoNormal" style="line-height: 111%">&nbsp;</p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 3.45pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 27.8pt;
+                  line-height: 77%;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 77%; font-family: 'Times New Roman', serif"
+                    >
+                    C
+                  </span>
+                </p>
+                <p class="MsoNormal" style="line-height: 112%">&nbsp;</p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 3.45pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 27.2pt;
+                  line-height: 76%;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 76%; font-family: 'Times New Roman', serif"
+                    >
+                    D
+                  </span>
+                </p>
+                <p class="MsoNormal" style="line-height: 112%">&nbsp;</p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 3.45pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 27.95pt;
+                  line-height: 76%;
+                "
+                  >
+                  <span
+                    style="font-size: 12pt; line-height: 76%; font-family: 'Times New Roman', serif"
+                    >
+                    E
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 8.1pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 29.9pt;
+                  line-height: 7.95pt;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    font-family: 'Times New Roman', serif;
+                    position: relative;
+                    top: 0.5pt;
+                  "
+                    >
+                    -
+                  </span>
+                </p>
+              </td>
+              <td
+                rowspan="2"
+                width="60"
+                valign="top"
+              style="
+                width: 44.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                rowspan="2"
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 181.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+            </tr>
+            <tr style="height: 91.6pt">
+              <td
+                width="72"
+                valign="top"
+              style="
+                width: 54.2pt;
+                border: solid black 1pt;
+                border-top: none;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 2.75pt;
+                  margin-right: 0in;
+                  margin-bottom: 8pt;
+                  margin-left: 5.8pt;
+                  line-height: 71%;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 71%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.2pt;
+                  "
+                    >
+                    Break
+                  </span>
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 71%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.1pt;
+                  "
+                    >
+                    Time
+                  </span>
+                </p>
+                <p
+                  class="MsoNormal"
+                style="
+                  margin-top: 2.35pt;
+                  margin-right: 7.6pt;
+                  margin-bottom: 8pt;
+                  margin-left: 5.55pt;
+                  line-height: 97%;
+                "
+                  >
+                  <span
+                  style="
+                    font-size: 12pt;
+                    line-height: 97%;
+                    font-family: 'Times New Roman', serif;
+                    letter-spacing: -0.05pt;
+                  "
+                    >
+                    From …
+                  </span>
+                  <span
+                    style="font-size: 12pt; line-height: 97%; font-family: 'Times New Roman', serif"
+                    >
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    ...
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                    <span style="letter-spacing: -0.05pt">From …</span>
+                    To
+                    <span style="letter-spacing: -0.05pt"></span>
+                    …
+                  </span>
+                </p>
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i < 3) {
+                      <span>
+                        <span>
+                          <b>{{ item.firsthalfendTime }} To {{ item.secondhalfstartTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 3 && i < 6) {
+                      <span>
+                        <span>
+                          <b>{{ item.firsthalfendTime }} To {{ item.secondhalfstartTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="54"
+                valign="top"
+              style="
+                width: 40.75pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 6 && i < 9) {
+                      <span>
+                        <span>
+                          <b>{{ item.firsthalfendTime }} To {{ item.secondhalfstartTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 9 && i < 12) {
+                      <span>
+                        <span>
+                          <b>{{ item.firsthalfendTime }} To {{ item.secondhalfstartTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 12 && i < 15) {
+                      <span>
+                        <span>
+                          <b>{{ item.firsthalfendTime }} To {{ item.secondhalfstartTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                @for (item of rows[0].shiftdata; track item; let i = $index) {
+                  <p class="MsoNormal">
+                    @if (i >= 15 && i < 18) {
+                      <span>
+                        <span>
+                          <b>{{ item.firsthalfendTime }} To {{ item.secondhalfstartTime }}</b>
+                        </span>
+                      </span>
+                    }
+                  </p>
+                }
+              </td>
+              <td
+                width="48"
+                valign="top"
+              style="
+                width: 0.5in;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+              <td
+                width="60"
+                valign="top"
+              style="
+                width: 44.95pt;
+                border-top: none;
+                border-left: none;
+                border-bottom: solid black 1pt;
+                border-right: solid black 1pt;
+                padding: 0in 5.4pt 0in 5.4pt;
+                height: 91.6pt;
+              "
+                >
+                <p class="MsoNormal">&nbsp;</p>
+              </td>
+            </tr>
+          </table>
+          <p
+            class="MsoNormal"
+          style="
+            margin-top: 12.55pt;
+            margin-right: 0in;
+            margin-bottom: 8pt;
+            margin-left: 88.5pt;
+            line-height: 14.75pt;
+          "
+            >
+            <span
+            style="
+              font-size: 11pt;
+              font-family: 'Times New Roman', serif;
+              position: relative;
+              top: -0.5pt;
+            "
+              >
+              Date
+              <span style="letter-spacing: 2.15pt"></span>
+              on
+              <span style="letter-spacing: 2pt"></span>
+              which
+              <span style="letter-spacing: 2pt"></span>
+              this
+              <span style="letter-spacing: 2pt"></span>
+              notice
+              <span style="letter-spacing: 2pt"></span>
+              is
+              <span style="letter-spacing: 2pt"></span>
+              first
+              <span style="letter-spacing: 2pt"></span>
+              exhibited
+              <span style="letter-spacing: 2pt">:</span>
+            </span>
+          </p>
+          <p class="MsoNormal" style="margin-left: 124.5pt; line-height: 13.8pt">
+            <span
+            style="
+              position: absolute;
+              z-index: 251658240;
+              left: 0px;
+              margin-left: 118px;
+              margin-top: 3px;
+              width: 13px;
+              height: 62px;
+            "
+              >
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="13" height="62" style="vertical-align: top">
+                    <span style="position: absolute; left: 0pt; z-index: 251658240">
+                      <table cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                          <td>
+                            <div style="padding: 0pt 0pt 0pt 0pt">
+                              <p
+                                class="MsoNormal"
+                              style="
+                                margin-top: 1pt;
+                                margin-right: 0in;
+                                margin-bottom: 8pt;
+                                margin-left: 1pt;
+                                line-height: 14.35pt;
+                              "
+                                >
+                                <span
+                                style="
+                                  font-size: 12pt;
+                                  font-family: 'Times New Roman', serif;
+                                  position: relative;
+                                  top: 1.5pt;
+                                "
+                                  >
+                                  *
+                                </span>
+                              </p>
+                              <p
+                                class="MsoNormal"
+                              style="
+                                margin-top: 13.2pt;
+                                margin-right: 0in;
+                                margin-bottom: 8pt;
+                                margin-left: 1pt;
+                                line-height: 14.35pt;
+                              "
+                                >
+                                <span
+                                style="
+                                  font-size: 12pt;
+                                  font-family: 'Times New Roman', serif;
+                                  position: relative;
+                                  top: 1.5pt;
+                                "
+                                  >
+                                  *
+                                </span>
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </span>
+                    &nbsp;
+                  </td>
+                </tr>
+              </table>
+            </span>
+            <span style="font-family: 'Times New Roman', serif; position: relative; top: -1.5pt">
+              Describe
+              <span style="letter-spacing: 3.45pt"></span>
+              the
+              <span style="letter-spacing: 3.45pt"></span>
+              groups
+              <span style="letter-spacing: 3.45pt">&amp;</span>
+              Explain
+              <span style="letter-spacing: 3.45pt"></span>
+              the
+              <span style="letter-spacing: 3.45pt"></span>
+              nature
+              <span style="letter-spacing: 3.45pt"></span>
+              of
+              <span style="letter-spacing: 3.45pt"></span>
+              work
+              <span style="letter-spacing: 3.35pt"></span>
+              against
+            </span>
+          </p>
+          <p class="MsoNormal" style="margin-left: 124.65pt; line-height: 13.8pt">
+            <span style="font-family: 'Times New Roman', serif; position: relative; top: -1.5pt">
+              identification
+              <span style="letter-spacing: 2.75pt"></span>
+              letter
+              <span style="letter-spacing: 2.6pt"></span>
+              marked
+              <span style="letter-spacing: 2.6pt"></span>
+              A
+              <span style="letter-spacing: 2.6pt">,</span>
+              B
+              <span style="letter-spacing: 2.6pt">,</span>
+              C
+              <span style="letter-spacing: 2.6pt">,</span>
+              D
+              <span style="letter-spacing: 2.6pt">,</span>
+              E
+              <span style="letter-spacing: 2.6pt">…………</span>
+            </span>
+          </p>
+          <p class="MsoNormal" style="margin-left: 124.15pt; line-height: 14.8pt">
+            <span
+            style="
+              font-size: 11pt;
+              font-family: 'Times New Roman', serif;
+              position: relative;
+              top: -2pt;
+            "
+              >
+              National
+              <span style="letter-spacing: 3.3pt"></span>
+              Industrial
+              <span style="letter-spacing: 3.15pt"></span>
+              Classification
+              <span style="letter-spacing: 3.15pt">(</span>
+              NIC
+              <span style="letter-spacing: 3.15pt">)</span>
+            </span>
+          </p>
+          <p
+            class="MsoNormal"
+          style="
+            margin-top: 11.8pt;
+            margin-bottom: 8pt;
+            margin-left: 402.35pt;
+            text-indent: -1pt;
+            line-height: 108%;
+            text-align: right;
+          "
+            >
+            <b>
+              <span
+              style="
+                font-size: 12pt;
+                line-height: 108%;
+                font-family: 'Times New Roman', serif;
+                letter-spacing: -0.05pt;
+              "
+                >
+                Signatur
+              </span>
+            </b>
+            <b>
+              <span style="font-size: 12pt; line-height: 108%; font-family: 'Times New Roman', serif">
+                e
+              </span>
+            </b>
+            <span
+            style="
+              font-size: 12pt;
+              line-height: 108%;
+              font-family: 'Times New Roman', serif;
+              letter-spacing: -0.05pt;
+            "
+            ></span>
+            <b>
+              <span style="font-size: 12pt; line-height: 108%; font-family: 'Times New Roman', serif">
+                of
+              </span>
+            </b>
+            <span
+            style="
+              font-size: 12pt;
+              line-height: 108%;
+              font-family: 'Times New Roman', serif;
+              letter-spacing: -0.05pt;
+            "
+            ></span>
+            <b>
+              <span style="font-size: 12pt; line-height: 108%; font-family: 'Times New Roman', serif">
+                Manager
+              </span>
+            </b>
+            <span style="font-size: 12pt; line-height: 108%; font-family: 'Times New Roman', serif">
+              <b><span style="letter-spacing: -0.05pt">Name</span></b>
+              <span style="letter-spacing: -0.05pt">
+                <b>(I</b>
+              </span>
+              <b>n</b>
+              <span style="letter-spacing: -0.05pt"></span>
+              <b>block</b>
+              <span style="letter-spacing: -0.05pt"></span>
+              <b>
+                letters
+                <span style="letter-spacing: -0.05pt">)</span>
+              </b>
+            </span>
+          </p>
+        </div>
+      </body>
+    </div>
+  }
+</html>

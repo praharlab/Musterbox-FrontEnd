@@ -1,0 +1,237 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    @if (item.holidayPolicyID) {
+                      <p class="list-item-heading mb-1 truncate">
+                        <a tooltip="Please click here to view Holiday Policy details" [class]="'glyph-icon tool_tip'"
+                          style="cursor: pointer" (click)="getHolidayPolicyDataModal(item); holidayPolicyDataModal.show()">
+                          {{ item.HolidayPolicy.holidayPolicyName | uppercase }}
+                        </a>
+                      </p>
+                    }
+                  </div>
+                  <div>
+                    <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+                    <a class="btn btn-outline-danger btn-xs" (click)="alertConfirmation(item.employeeholidayPolicyID)">
+                      DELETE
+                    </a>
+                  </div>
+                </div>
+                <!-- <div class="d-flex mt-2" style="margin-top: 5%"  *ngIf="item.HolidayPolicy.createdByUserDetails != null">
+                <p class="text-muted mb-0 text-small">
+                  <strong>Policy Created</strong> by {{ item.HolidayPolicy.createdByUserDetails.displayName }}, at {{
+                  item.HolidayPolicy.createdAt
+                  | date: 'dd-MM-yyyy hh:mm a' }}
+                </p>
+              </div>
+              <div class="d-flex mt-1" style="margin-top: 1px" *ngIf="item.HolidayPolicy.updatedByUserDetails != null">
+                <p class="text-muted mb-0 text-small">
+                  <strong>Policy Updated</strong> by {{ item.HolidayPolicy.updatedByUserDetails.displayName }}, at {{
+                  item.HolidayPolicy.updatedAt
+                  | date: 'dd-MM-yyyy hh:mm a' }}
+                </p>
+              </div> -->
+              <hr>
+                <p class="text-muted mb-0 text-small">
+                  Start Date : {{ item.applicableDate | date : 'dd-MM-yyyy' }}
+                </p>
+                @if (item.endDate != null) {
+                  <p class="text-muted mb-0 text-small">
+                    End Date : {{ item.endDate | date : 'dd-MM-yyyy' }}
+                  </p>
+                }
+                <div style="margin-top: 2%;">
+                  <p class="text-muted mb-0 text-small">
+                    <strong>Assigned</strong> by {{ item.createdByUserDetails.displayName}}, at {{
+                    item.createdAt
+                    | date: 'dd-MM-yyyy hh:mm a' }}
+                  </p>
+                </div>
+                <div class="min-width-zero">
+                  <a href="javascript:;">
+                    @if (item.holidaypolicystatus == 'active') {
+                      <button type="button" class="btn btn-success"
+                        style="margin-top: 10%">
+                        {{ 'Active' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                    @if (item.holidaypolicystatus == 'deactive') {
+                      <button type="button" class="btn btn-danger"
+                        style="margin-top: 10%">
+                        {{ 'Deactive' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                  </a>
+                </div>
+              </a>
+            </div>
+            <!-- <div style="margin-top: 14px">
+            <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br>
+            <a class="btn btn-outline-primary btn-xs" (click)="alertConfirmation(item.employeeholidayPolicyID)"
+              style="margin-top: 10%">
+              DELETE
+            </a>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Holiday Policy</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #holidayPolicyID="ngModel" name="holidayPolicyID"
+                  required>
+                  @for (item of allweekoff; track item) {
+                    <ng-option [value]="item.holidayPolicyID">
+                      {{ item.holidayPolicyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Holiday Policy *</span>
+              </label>
+              @if (!holidayPolicyID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Holiday Policy is required!
+                </div>
+              }
+            </div>
+            <!-- <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel required #applicableDate="ngModel"
+                name="applicableDate">
+                <ng-option value="0">Past Month</ng-option>
+                <ng-option value="1">Current Month</ng-option>
+                <ng-option value="2">Upcoming Month</ng-option>
+              </ng-select>
+              <span>Applicable from *</span>
+            </label>
+            <div *ngIf="!applicableDate.valid && addcomp.submitted" class="invalid-tooltip">
+              Applicable Date is required!
+            </div>
+          </div> -->
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #monthYear="ngModel" name="monthYear"
+                required />
+                <span>YearMonth *</span>
+
+                @if (!monthYear.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Year Month is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Employee Holiday Policy</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (editbyid) {
+          <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #holidayPolicyID="ngModel"
+                    [ngModel]="editbyid.holidayPolicyID" name="holidayPolicyID" required>
+                    @for (item of allweekoff; track item) {
+                      <ng-option [value]="item.holidayPolicyID">
+                        {{ item.holidayPolicyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Holiday Policy *</span>
+                </label>
+                @if (!holidayPolicyID.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Holiday Policy is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="Date" ngModel #applicableDate="ngModel"
+                    [ngModel]="editbyid.applicableDate | date : 'yyyy-MM-dd'" name="applicableDate" required />
+                    <span>Applicable Date *</span>
+                  </label>
+                  @if (!applicableDate.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Applicable Date is required!
+                    </div>
+                  }
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #holidayPolicyDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{ backdrop: 'static', keyboard: false }">
+    <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">
+            {{ selectedHolidayPolicyName | uppercase }} - Holiday Policy Details
+          </h4>
+          <button type="button" class="btn-close close pull-right" (click)="holidayPolicyDataModal.hide()"
+            aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-view-holiday-policy [getHolidayPolicyID]="getHolidayPolicyID"></app-view-holiday-policy>
+        </div>
+      </div>
+    </div>
+  </div>

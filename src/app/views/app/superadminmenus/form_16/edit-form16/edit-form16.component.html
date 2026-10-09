@@ -1,0 +1,172 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Form 16</h5>
+
+    @if (editformdata) {
+      <form #editform="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #detailsofsalary="ngModel"
+                name="detailsofsalary"
+                [(ngModel)]="editformdata.SalaryDetails"
+                />
+                <span>Details of Salary *</span>
+                @if (!detailsofsalary.valid && editform.submitted) {
+                  <div class="invalid-tooltip">
+                    Details of Salary is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #series="ngModel"
+                  name="series"
+                  [(ngModel)]="editformdata.Series"
+                  />
+                  <span>Series *</span>
+                  @if (!series.valid && editform.submitted) {
+                    <div class="invalid-tooltip">
+                      Series is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #parentFormMasterID="ngModel"
+                    name="parentFormMasterID"
+                    [(ngModel)]="editformdata.ParentForm16ID"
+                    >
+                    @for (parentformdata of parentformdata; track parentformdata) {
+                      <ng-option
+                        [value]="parentformdata.ParentForm16ID"
+                        >
+                        {{ parentformdata.SalaryDetails }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select ParentForm</span>
+                </label>
+              </div>
+              @if (show) {
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="date"
+                      ngModel
+                      #startdate="ngModel"
+                      name="startdate"
+                      required
+                      [ngModel]="editformdata.childdata.StartDate | date: 'yyyy-MM-dd'"
+                      />
+                      <span>From Date *</span>
+                      @if (!startdate.valid && editform.submitted) {
+                        <div class="invalid-tooltip">
+                          From Date is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (show) {
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="date"
+                        ngModel
+                        #enddate="ngModel"
+                        name="enddate"
+                        required
+                        [ngModel]="editformdata.childdata.EndDate | date: 'yyyy-MM-dd'"
+                        />
+                        <span>To Date *</span>
+                        @if (!enddate.valid && editform.submitted) {
+                          <div class="invalid-tooltip">
+                            To Date is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  @if (show) {
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="text"
+                          required
+                          ngModel
+                          #grossAmount="ngModel"
+                          name="grossAmount"
+                          [(ngModel)]="editformdata.childdata.GrossAmount"
+                          />
+                          <span>Gross Amount *</span>
+                          @if (!grossAmount.valid && editform.submitted) {
+                            <div class="invalid-tooltip">
+                              Gross Amount is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    @if (show) {
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="text"
+                            required
+                            ngModel
+                            #qualifyingAmount="ngModel"
+                            name="qualifyingAmount"
+                            [(ngModel)]="editformdata.childdata.QualifyingAmount"
+                            />
+                            <span>Qualifying Amount</span>
+                            @if (!qualifyingAmount.valid && editform.submitted) {
+                              <div class="invalid-tooltip">
+                                Qualifying Amount is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                    </div>
+                    <br />
+                    <div class="col-md-12">
+                      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                      <button
+                        class="btn btn-danger btn-shadow mt-4"
+                        [routerLink]="adminRoot + '/superadminmenus/form16'"
+                        style="margin-left: 2%"
+                        >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                }
+              </div>
+            </div>
+
+            <simple-notifications
+              [options]="{ position: ['top', 'center'], maxStack: 1 }"
+            ></simple-notifications>

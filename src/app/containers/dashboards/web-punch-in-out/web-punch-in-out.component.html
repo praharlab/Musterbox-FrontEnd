@@ -1,0 +1,349 @@
+@if (finalCardData) {
+  <div class="card">
+    <div class="card-body">
+      @if (this.showloader) {
+        <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+      @if (finalCardData.direction == 'in' && lastAttedanceStatusData.data) {
+        <span class="badge badge-pill badge-info badge-top-right position-absolute"
+          >
+          Punched-In
+        </span>
+      }
+      @if (finalCardData.direction == 'out' && lastAttedanceStatusData.data) {
+        <span class="badge badge-pill badge-danger badge-top-right position-absolute"
+          >
+          Punched-Out
+        </span>
+      }
+      <p class="text-muted text-small mb-2">Address</p>
+      @if (finalCardData.address) {
+        <p class="text-primary font-weight-bold mb-3">
+          {{ finalCardData.address }}
+        </p>
+      }
+      <div class="row">
+        @if (finalCardData.logDateTime) {
+          <div class="col-md-4">
+            <p class="text-muted text-small mb-2">Date</p>
+            <p class="text-primary font-weight-bold m-0">
+              {{ finalCardData.logDateTime | date : 'dd-MM-yyyy' }}
+            </p>
+          </div>
+        }
+        @if (finalCardData.logDateTime) {
+          <div class="col-md-4">
+            <p class="text-muted text-small mb-2">Time</p>
+            <p class="text-primary font-weight-bold m-0">
+              {{ finalCardData.logDateTime | date : 'h:mm:ss a' }}
+            </p>
+          </div>
+        }
+        @if (!finalCardData.logDateTime  && !lastAttedanceStatusData.data) {
+          <div class="col-md-8">
+            <p class="text-muted text-small mb-2">Time</p>
+            <p class="text-primary font-weight-bold m-0">
+            </p>
+          </div>
+        }
+        @if (!finalCardData.logDateTime && lastAttedanceStatusData.data) {
+          <div class="col-md-8">
+            <p class="text-muted text-small mb-2">DateTime</p>
+            <p class="text-primary font-weight-bold m-0">
+              Missed Punch Out
+            </p>
+          </div>
+        }
+        <div class="d-flex align-items-end justify-content-end col-md-4">
+          <!-- without selfie -->
+          @if (finalCardData.selfieAttendance == 0) {
+            <div>
+              @if (finalCardData.direction == 'out') {
+                <button (click)="nonSelfiePunchInModal.show()"
+                  class="btn btn-primary">
+                  {{ 'Punch In' | translate }}
+                  <i class="simple-icon-arrow-right"></i>
+                </button>
+              }
+              @if (finalCardData.direction == 'in') {
+                <button (click)="nonSelfiePunchOutModal.show()"
+                  class="btn btn-primary">
+                  {{ 'Punch Out' | translate }}
+                  <i class="simple-icon-arrow-right"></i>
+                </button>
+              }
+            </div>
+          }
+          <!-- with selfie -->
+          @if (finalCardData.selfieAttendance == 1) {
+            <div>
+              @if (finalCardData.direction == 'out') {
+                <button (click)="selfieCameraModal.show(); initCamera()"
+                  class="btn btn-primary">
+                  {{ 'Punch In' | translate }}
+                  <i class="simple-icon-arrow-right"></i>
+                </button>
+              }
+              @if (finalCardData.direction == 'in') {
+                <button (click)="selfieCameraModal.show(); initCamera()"
+                  class="btn btn-primary">
+                  {{ 'Punch Out' | translate }}
+                  <i class="simple-icon-arrow-right"></i>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- selfie -->
+<div bsModal #selfieCameraModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-body">
+        @if (finalCardData) {
+          <div>
+            @if (finalCardData.selfieAttendance == 0) {
+              <button #closeselfieCameraModal class="close-button"
+                (click)="selfieCameraModal.hide()">
+                x
+              </button>
+            }
+            @if (finalCardData.selfieAttendance == 1) {
+              <button #closeselfieCameraModal class="close-button"
+                (click)="selfieCameraModal.hide(); stopCamera()">
+                x
+              </button>
+            }
+          </div>
+        }
+        @if (this.showloader) {
+          <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        }
+        @if (hasCamera) {
+          <div>
+            <div class="center">
+              <canvas #canvasElement style="display: none"></canvas>
+              @if (!hideVideo) {
+                <div>
+                  <video style="width: 280px" #videoElement playsinline autoplay></video>
+                </div>
+              }
+            </div>
+            <div class="mb-2">
+              @if (finalCardData.direction == 'out') {
+                <button class="btn btn-primary float-right"
+                  (click)="takeSnapshot(); selfiePunchInModal.show()">
+                  Take Selfie
+                </button>
+              }
+              @if (finalCardData.direction == 'in') {
+                <button class="btn btn-primary float-right"
+                  (click)="takeSnapshot(); selfiePunchOutModal.show()">
+                  Take Selfie
+                </button>
+              }
+            </div>
+          </div>
+        }
+        @if (!hasCamera) {
+          <div>
+            <div class="center">
+              <img src="../../../../assets/img/profiles/avatar-default.png" alt="image"
+                class="list-thumbnail border-0 image-size" />
+                <p class="font-weight-bold text mt-4">
+                  Your device does not have a camera. an above image will be used for attendance.
+                </p>
+              </div>
+              <div class="d-flex justify-content-end">
+                @if (finalCardData.direction == 'out') {
+                  <button class="btn btn-primary mx-1"
+                    (click)="selfieCameraModal.hide(); selfiePunchInModal.show(); stopCamera()">
+                    Ok
+                  </button>
+                }
+                @if (finalCardData.direction == 'in') {
+                  <button class="btn btn-primary mx-1"
+                    (click)="selfieCameraModal.hide(); selfiePunchOutModal.show(); stopCamera()">
+                    Ok
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #selfiePunchInModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <button class="close-button" #closeSelfiePunchInModal (click)="selfiePunchInModal.hide()">
+            x
+          </button>
+          @if (this.showloader) {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div>
+            <img src="{{ setClickedImage}}" width="240px" />
+          </div>
+          <div>
+            <p class="font-weight-bold text my-1">Are you sure you want to punch in?</p>
+            <button class="btn btn-primary btn-xs m-1" style="font-size: smaller"
+              (click)="punchIn('newPunchin', true)">
+              New Punch In
+            </button>
+            @if (finalCardData) {
+              @if (finalCardData.continuePunchIN) {
+                <button class="btn btn-primary btn-xs m-1"
+                  style="font-size: smaller" (click)="punchIn('continuePunchIn', true)">
+                  Continued Punch In
+                </button>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #selfiePunchOutModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <button class="close-button" #closeSelfiePunchOutModal (click)="selfiePunchOutModal.hide()">
+            x
+          </button>
+          @if (this.showloader) {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div>
+            <img src="{{ setClickedImage }}" width="240px" />
+          </div>
+          <div>
+            <p class="font-weight-bold text my-1">Are you sure you want to punch out?</p>
+            <button class="btn btn-primary m-1" (click)="punchOut(true)">Yes</button>
+            <button class="btn btn-primary m-1" (click)="selfiePunchOutModal.hide()">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- no selfie -->
+  <div bsModal #nonSelfiePunchInModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <button class="close-button" #closenonSelfiePunchInModal (click)="nonSelfiePunchInModal.hide()">
+            x
+          </button>
+          @if (this.showloader) {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div>
+            <p class="font-weight-bold text my-1">Are you sure you want to punch in?</p>
+            <button class="btn btn-primary btn-xs m-1" style="font-size: smaller"
+              (click)="punchIn('newPunchin', false)">
+              New Punch In
+            </button>
+            @if (finalCardData) {
+              @if (finalCardData.continuePunchIN) {
+                <button class="btn btn-primary btn-xs m-1"
+                  style="font-size: smaller" (click)="punchIn('continuePunchIn', false)">
+                  Continued Punch In
+                </button>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #nonSelfiePunchOutModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <button class="close-button" #closenonSelfiePunchOutModal (click)="nonSelfiePunchOutModal.hide()">
+            x
+          </button>
+          @if (this.showloader) {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div>
+            <p class="font-weight-bold text my-1">Are you sure you want to punch out?</p>
+            <button class="btn btn-primary m-1" (click)="punchOut(false)">Yes</button>
+            <button class="btn btn-primary m-1" (click)="nonSelfiePunchOutModal.hide()">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,120 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (checklistdata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Check List</h5>
+      <form #addchecklist="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="getDesignation($event)"
+                ngModel
+                #companyMasterID="ngModel"
+                name="companyMasterID"
+                required
+                [(ngModel)]="checklistdata['designation.companyMaster.companyMasterID']"
+                >
+                @for (product of product; track product) {
+                  <ng-option [value]="product.companyMasterID">
+                    {{ product.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addchecklist.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #designationId="ngModel"
+                name="designationId"
+                required
+                [(ngModel)]="checklistdata.designationId"
+                >
+                @for (designation of designation; track designation) {
+                  <ng-option
+                    [value]="designation.designationId"
+                    >
+                    {{ designation.designationName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Designation *</span>
+              @if (!designationId.valid && addchecklist.submitted) {
+                <div class="invalid-tooltip">
+                  Designation is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #checkListName="ngModel"
+                name="checkListName"
+                [(ngModel)]="checklistdata.checkListName"
+                />
+                <span>Check List Name *</span>
+                @if (!checkListName.valid && addchecklist.submitted) {
+                  <div class="invalid-tooltip">
+                    check List Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #backDatedDays="ngModel"
+                  [min]="0"
+                  name="backDatedDays"
+                  [(ngModel)]="checklistdata.pastdays"
+                  />
+                  <span>Back Dated Days *</span>
+                  @if (!backDatedDays.valid && addchecklist.submitted) {
+                    <div class="invalid-tooltip">
+                      backDatedDays is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button
+                class="btn btn-danger btn-shadow mt-4"
+                [routerLink]="adminRoot + '/checklists/checklist'"
+                style="margin-left: 2%"
+                >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

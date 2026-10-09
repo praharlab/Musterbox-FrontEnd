@@ -1,0 +1,435 @@
+<style>
+  /* ===== Login - modern layer =====
+  Colours come from the active theme via CSS custom properties defined in
+  _modern.scss, so this screen follows the theme switcher like everything else.
+  This block stays inline (rather than moving to login.component.scss) because
+  .btn-login has to reach the button rendered inside <app-state-button>. */
+
+  .login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--m-surface, #fff);
+}
+
+/* ---------- Left: brand panel ---------- */
+.login-left-panel {
+flex: 0 0 46%;
+position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 56px 48px;
+overflow: hidden;
+background: var(--m-gradient-deep, linear-gradient(145deg, #042f2e 0%, #134e4a 45%, #0f766e 100%));
+isolation: isolate;
+}
+
+/* Decorative mesh sits behind the content, never over it */
+.login-left-panel::before {
+content: '';
+position: absolute;
+inset: 0;
+background: url('/assets/img/modern/pattern-mesh.svg') center / cover no-repeat;
+opacity: .55;
+z-index: -1;
+}
+
+.login-left-panel::after {
+content: '';
+position: absolute;
+left: 50%;
+bottom: -38%;
+width: 130%;
+aspect-ratio: 1;
+transform: translateX(-50%);
+border-radius: 50%;
+background: radial-gradient(circle, rgba(94, 234, 212, .16) 0%, transparent 62%);
+z-index: -1;
+}
+
+.lp-inner {
+position: relative;
+z-index: 1;
+width: 100%;
+max-width: 440px;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.lp-hero {
+width: 100%;
+max-width: 380px;
+height: auto;
+margin-bottom: 30px;
+animation: lpFloat 7s ease-in-out infinite;
+}
+
+@keyframes lpFloat {
+0%, 100% { transform: translateY(0); }
+50%      { transform: translateY(-12px); }
+}
+
+.lp-headline {
+font-size: 1.85rem;
+font-weight: 700;
+color: #fff;
+text-align: center;
+line-height: 1.26;
+letter-spacing: -.024em;
+margin-bottom: 12px;
+}
+
+.lp-subline {
+font-size: .95rem;
+color: rgba(255, 255, 255, .72);
+text-align: center;
+line-height: 1.62;
+max-width: 340px;
+margin: 0 auto;
+}
+
+.lp-features {
+list-style: none;
+padding: 0;
+margin: 30px 0 0;
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 12px 18px;
+width: 100%;
+}
+
+.lp-features li {
+display: flex;
+align-items: center;
+gap: 10px;
+color: rgba(255, 255, 255, .88);
+font-size: .82rem;
+font-weight: 500;
+line-height: 1.35;
+}
+
+.lp-features .feat-icon {
+width: 30px;
+height: 30px;
+flex: 0 0 30px;
+border-radius: 9px;
+background: rgba(255, 255, 255, .14);
+border: 1px solid rgba(255, 255, 255, .16);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 13px;
+color: #fff;
+}
+
+/* ---------- Right: form panel ---------- */
+.login-right-panel {
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+background: var(--m-surface, #fff);
+padding: 40px;
+}
+
+.login-card {
+width: 100%;
+max-width: 408px;
+}
+
+.login-logo-top {
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 22px;
+}
+
+.login-logo-top .logo-single {
+width: 52px;
+height: 52px;
+margin-bottom: 0;
+}
+
+.login-title {
+font-size: 1.55rem;
+font-weight: 700;
+color: var(--m-text, #0f172a);
+letter-spacing: -.026em;
+text-align: center;
+margin-bottom: 6px;
+}
+
+.login-subtitle {
+font-size: .86rem;
+color: var(--m-text-muted, #64748b);
+text-align: center;
+line-height: 1.55;
+margin-bottom: 30px;
+}
+
+.login-input-group {
+position: relative;
+margin-bottom: 18px;
+}
+
+.login-input-group .input-label {
+display: block;
+font-size: .79rem;
+font-weight: 600;
+color: var(--m-text-muted, #64748b);
+margin-bottom: 6px;
+}
+
+.login-input-group .input-icon {
+position: absolute;
+left: 14px;
+top: 50%;
+transform: translateY(-50%);
+color: var(--m-text-subtle, #94a3b8);
+font-size: 15px;
+pointer-events: none;
+z-index: 2;
+transition: color .18s ease;
+}
+
+.login-input-group .form-control {
+width: 100%;
+border: 1px solid var(--m-border, #e2e8f0) !important;
+border-radius: var(--m-radius, 10px) !important;
+padding: 12px 46px 12px 42px !important;
+font-size: .87rem !important;
+color: var(--m-text, #0f172a) !important;
+background: var(--m-surface, #fff) !important;
+font-family: inherit !important;
+height: auto !important;
+transition: border-color .18s ease, box-shadow .18s ease !important;
+}
+
+.login-input-group .form-control:focus {
+border-color: var(--m-primary, #0f766e) !important;
+box-shadow: 0 0 0 3px var(--m-primary-ring, rgba(15, 118, 110, .18)) !important;
+}
+
+.login-input-group .form-control:focus ~ .input-icon,
+.login-input-group .form-control:focus + .input-icon {
+color: var(--m-primary, #0f766e);
+}
+
+.login-input-group .form-control.ng-invalid.ng-touched {
+border-color: var(--m-danger, #dc2626) !important;
+box-shadow: 0 0 0 3px var(--m-danger-soft, rgba(220, 38, 38, .12)) !important;
+}
+
+.login-input-group .error-msg {
+font-size: .75rem;
+color: var(--m-danger, #dc2626);
+margin-top: 5px;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.pw-toggle {
+position: absolute;
+right: 12px;
+top: 50%;
+transform: translateY(-50%);
+cursor: pointer;
+border: none;
+background: transparent;
+padding: 4px;
+z-index: 2;
+display: flex;
+align-items: center;
+border-radius: 6px;
+}
+
+.pw-toggle img {
+width: 19px;
+opacity: .55;
+transition: opacity .18s ease;
+}
+
+.pw-toggle:hover img { opacity: 1; }
+
+.login-actions {
+display: flex;
+justify-content: flex-end;
+align-items: center;
+margin-bottom: 22px;
+}
+
+.forgot-link {
+font-size: .8rem;
+color: var(--m-primary, #0f766e);
+font-weight: 600;
+text-decoration: none;
+}
+
+.forgot-link:hover {
+color: var(--m-primary-hover, #0d675f);
+text-decoration: underline;
+}
+
+/* Angular scopes this <style> to the login view, so the selector has to be
+pierced with ::ng-deep to reach the <button> that app-state-button renders.
+Without it the submit button falls back to unstyled browser chrome. */
+::ng-deep .btn-login {
+width: 100%;
+padding: 12px 24px !important;
+background: var(--m-gradient, linear-gradient(135deg, #0f766e 0%, #0d9488 100%)) !important;
+border: none !important;
+border-radius: var(--m-radius, 10px) !important;
+font-size: .88rem !important;
+font-weight: 700 !important;
+letter-spacing: .02em;
+color: #fff !important;
+font-family: inherit !important;
+cursor: pointer;
+box-shadow: var(--m-shadow-brand, 0 6px 18px rgba(15, 118, 110, .28)) !important;
+transition: filter .18s ease, box-shadow .18s ease, transform .12s ease !important;
+}
+
+::ng-deep .btn-login:hover {
+filter: brightness(1.08);
+box-shadow: 0 10px 26px rgba(15, 118, 110, .34) !important;
+transform: translateY(-1px);
+}
+
+::ng-deep .btn-login:active { transform: translateY(0); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+.login-left-panel { display: none; }
+
+.login-right-panel {
+background: var(--m-canvas, #f6f7f9);
+padding: 28px 20px;
+}
+
+.login-card {
+background: var(--m-surface, #fff);
+border-radius: var(--m-radius-xl, 20px);
+padding: 38px 30px;
+box-shadow: var(--m-shadow-lg, 0 18px 44px rgba(15, 23, 42, .12));
+}
+}
+
+@media (max-width: 480px) {
+.login-card { padding: 30px 20px; }
+.login-title { font-size: 1.35rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.lp-hero { animation: none; }
+}
+</style>
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="login-wrapper">
+  <!-- Brand panel -->
+  <div class="login-left-panel">
+    <div class="lp-inner">
+      <img class="lp-hero" src="assets/img/modern/login-hero.svg"
+        alt="Payroll dashboard showing a payslip, an approval badge and monthly payroll totals" />
+
+      <h1 class="lp-headline">Smart Payroll<br />Management</h1>
+      <p class="lp-subline">
+        Simplify HR operations, automate payroll, and empower your workforce — all in one place.
+      </p>
+
+      <ul class="lp-features">
+        <li>
+          <span class="feat-icon"><i class="simple-icon-check"></i></span>
+          Automated payroll processing
+        </li>
+        <li>
+          <span class="feat-icon"><i class="simple-icon-people"></i></span>
+          Employee self-service portal
+        </li>
+        <li>
+          <span class="feat-icon"><i class="simple-icon-chart"></i></span>
+          Real-time HR analytics
+        </li>
+        <li>
+          <span class="feat-icon"><i class="simple-icon-shield"></i></span>
+          Secure &amp; compliant data
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Form panel -->
+  <div class="login-right-panel">
+    <div class="login-card">
+      <div class="login-logo-top">
+        <span class="logo-single d-block"></span>
+      </div>
+
+      <h2 class="login-title">Welcome back</h2>
+      <p class="login-subtitle">Sign in to your account to continue</p>
+
+      <form #loginForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <!-- Phone / Email -->
+        <div class="login-input-group">
+          <label class="input-label" for="loginPhone">{{ LoginPageLabel }}</label>
+          <div style="position: relative">
+            <input id="loginPhone" class="form-control" required ngModel #phone="ngModel" name="phone"
+              [placeholder]="'Enter ' + LoginPageLabel" />
+            <i class="simple-icon-user input-icon"></i>
+            @if (!phone.valid && loginForm.submitted) {
+              <div class="error-msg">
+                <i class="simple-icon-close" style="font-size: 10px"></i>
+                {{ LoginPageLabel }} is required!
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="login-input-group">
+          <label class="input-label" for="loginPassword">{{ 'user.password' | translate }}</label>
+          <div style="position: relative">
+            <input id="loginPassword" class="form-control" [type]="showPassword ? 'text' : 'password'"
+              placeholder="Enter password" required ngModel #password="ngModel" name="password" />
+            <i class="simple-icon-lock input-icon"></i>
+            <button type="button" class="pw-toggle" (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+              @if (showPassword) {
+                <img src="assets/eyeclosed.png" alt="" />
+              }
+              @if (!showPassword) {
+                <img src="assets/eyeopen.png" alt="" />
+              }
+            </button>
+            @if (!password.valid && loginForm.submitted) {
+              <div class="error-msg">
+                <i class="simple-icon-close" style="font-size: 10px"></i>
+                Password is required!
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="login-actions">
+          <a routerLink="/user/forgot-password" class="forgot-link">
+            {{ 'user.forgot-password' | translate }}?
+          </a>
+        </div>
+
+        <app-state-button [btnClass]="'btn-login'" [currentState]="buttonState" [isDisabled]="buttonDisabled">
+          {{ 'user.login-button' | translate | uppercase }}
+        </app-state-button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

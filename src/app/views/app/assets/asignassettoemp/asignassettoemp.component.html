@@ -1,0 +1,361 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" (searchKeyUp)="updateFilter($event)"
+  [searchValue]="filterData.searchQuery" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()" [showadd]="permissioncreate"
+name="Assign Asset"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (product.length != 0) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" (change)="alldata($event);"
+                name="companyMasterID" [(ngModel)]="selectedCompany" required>
+                @for (product of product; track product) {
+                  <ng-option [value]="product.companyMasterID">
+                    {{ product.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #assetCategoryID="ngModel" name="assetCategoryID"
+                (change)="assetNameselect($event)" [(ngModel)]="selectedCategory">
+                @for (asset of asset; track asset) {
+                  <ng-option [value]="asset.assetCategoryID">
+                    {{ asset.assetCategory }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Asset Category</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #assetName="ngModel" name="assetName"
+                [(ngModel)]="selectedName">
+                @for (assetN of assetN; track assetN) {
+                  <ng-option [value]="assetN.assetMasterID">
+                    {{ assetN.assetName }} {{ assetN.assetSerialNo }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Asset Name </span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel" [(ngModel)]="selectedUser"
+                name="userMasterID" [multiple]="true" [closeOnSelect]="false">
+                @for (ownerList of ownerList; track ownerList) {
+                  <ng-option [value]="ownerList.userMasterID">
+                    {{ ownerList.firstName }} {{ ownerList.lastName }} ({{ ownerList.userNumber }})
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" placeholder="" ngModel #fromDate="ngModel" name="fromDate"
+                required />
+                <span>From Date *</span>
+                @if (!fromDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    From Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" placeholder="" ngModel #toDate="ngModel" name="toDate" required />
+                <span>To Date *</span>
+                @if (!toDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    To Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary btn-shadow btn-lg mt-4" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>&nbsp;&nbsp;
+            <button class="btn btn-danger btn-shadow btn-lg mt-4" type="button" (click)="clear()">
+              Clear
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-success btn-shadow btn-lg mt-4" type="button" (click)="downloadFile()">
+              Export
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-success btn-shadow btn-lg mt-4" type="button" (click)="lgModal.show();">
+              Import
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  <br />
+  @if (rows && permissionview.length != 0) {
+    <div class="row">
+      <div class="col-12 mb-4 data-table-rows">
+        <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+          [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+          (page)="onChange($event)">
+          <ngx-datatable-column name="Company" prop="employee.companyMaster.companyName" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="Employee Name" prop="employee.displayName" [flexGrow]="1.2" [width]="180">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.employee.displayName }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Asset Category" prop="assetCategory.assetCategory" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="Asset Name" prop="assetMaster.assetName" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="Asset Serial No" prop="assetMaster.assetSerialNo" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="Quantity Assigned" prop="quantity" [flexGrow]="1.2"
+          [width]="180"></ngx-datatable-column>
+          <ngx-datatable-column name="Asign Date" prop="assignDate" [flexGrow]="1.2" [width]="180">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.assignDate | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Return Date" prop="returnDate" [flexGrow]="1.2" [width]="180">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.returnDate | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <!-- <ngx-datatable-column name="Status" prop="status" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button type="button" class="btn btn-success" *ngIf="row.status == '1'"
+              (click)="alertDeactiveConfirmation(row.assignAssetToEmployeeID)">
+              {{ 'Active' | translate }}
+            </button>
+            {{ ' ' }}
+            <button type="button" class="btn btn-danger" *ngIf="row.status == '0'"
+              (click)="alertActiveConfirmation(row.assignAssetToEmployeeID)">
+              {{ 'Deactive' | translate }}
+            </button>
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column> -->
+        @if (permissionedit.length != 0 || permissiondelete.length != 0) {
+          <ngx-datatable-column name="Action" [sortable]="true" [width]="230"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a (click)="navigateToEditPage(row)">
+                @if (permissionedit.length != 0) {
+                  <span tooltip="Edit Assign Asset to Employee" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                  style="padding-right: 10px; font-size: 18px"></span>
+                }
+                {{ ' ' }}
+              </a>
+              <a (click)="alertConfirmation(row.assignAssetToEmployeeID)">
+                @if (permissiondelete.length != 0) {
+                  <span tooltip="Delete Assign Asset to Employee" [class]="'glyph-icon simple-icon-trash tool_tip'"
+                  style="padding-right: 6px; font-size: 18px"></span>
+                }
+                {{ ' ' }}
+              </a>
+              @if (row.returnDate == null) {
+                <button type="button" class="btn btn-danger" (click)="lgModal2.show(); edit(row)"
+                  >
+                  {{ 'Return' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Return Asset</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (editbyid) {
+          <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" [max]="currDate" [min]="minDate" placeholder="" ngModel
+                    #returnDate="ngModel" name="returnDate" required />
+                    <span>Return Date *</span>
+                  </label>
+                  @if (!returnDate.valid && addcomp2.submitted) {
+                    <div class="invalid-tooltip">
+                      Invalid Date!
+                    </div>
+                  }
+                </div>
+              </div>
+              <br />
+              <br />
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Import Assets</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide();resetForm()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addimportuser="ngForm" novalidate (ngSubmit)="submit()">
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" [(ngModel)]="companyId"
+                    (change)="getAssetCategory($event);" name="companyMasterID" required>
+                    @for (product of product; track product) {
+                      <ng-option [value]="product.companyMasterID">
+                        {{ product.companyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Company *</span>
+                  @if (!companyMasterID.valid && addimportuser.submitted) {
+                    <div class="invalid-tooltip">
+                      Company is required!
+                    </div>
+                  }
+
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #assetCategoryID="ngModel" name="assetCategoryID"
+                    (change)="assetNameselect($event)" [(ngModel)]="selectedCategory1" required>
+                    @for (asset of assetCayegory; track asset) {
+                      <ng-option [value]="asset.assetCategoryID">
+                        {{ asset.assetCategory }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Asset Category *</span>
+                  @if (!assetCategoryID.valid && addimportuser.submitted) {
+                    <div class="invalid-tooltip">
+                      Asset Category is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" ngModel #file="ngModel" (change)="onSelectFile($event)"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    name="file" required />
+                    <span>Import File *</span>
+                  </label>
+                  @if (!file.valid && addimportuser.submitted) {
+                    <div class="invalid-tooltip">
+                      File is required!
+                    </div>
+                  }
+                </div>
+                <!-- <div class="col-md-6" *ngIf="selectedCategory1 && assetN && assetN.length != 0">
+                <button (click)="demo()" type="button" class="btn btn-success">
+                  Download Demo Excel
+                </button>
+              </div> -->
+              <!-- <br />
+              <br /> -->
+            </div>
+
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            <span> &nbsp;&nbsp; </span>
+            @if (selectedCategory1 && assetN && assetN.length != 0) {
+              <button (click)="downloadDemoExcel()" type="button" class="btn btn-success"
+                >
+                Download Demo Excel
+              </button>
+            }
+            @if (selectedCategory1 && assetN && assetN.length == 0) {
+              <p style="color: red">
+                * No Asset in these Category
+              </p>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

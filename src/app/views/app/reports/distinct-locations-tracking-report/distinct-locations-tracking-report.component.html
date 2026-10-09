@@ -1,0 +1,24 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Distinct Locations Tracking Report" [showOrderBy]="false" [showDisplayMode]="false"
+[showItemsPerPage]="false" [showSearch]="false"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="download($event)"
+    (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #date="ngModel" name="date" required />
+        <span>Date*</span>
+        @if (!date.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Date is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

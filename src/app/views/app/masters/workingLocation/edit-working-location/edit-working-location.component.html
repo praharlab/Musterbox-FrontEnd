@@ -1,0 +1,260 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (workinglocationdata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Working Location</h5>
+      @if (workinglocationdata) {
+        <form
+          #editworkinglocation="ngForm"
+          novalidate
+          (ngSubmit)="onSubmit()"
+          >
+          <div class="row">
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  (change)="selectcompany($event)"
+                  [(ngModel)]="workinglocationdata.companyMasterID"
+                  ngModel
+                  #company="ngModel"
+                  name="company"
+                  required
+                  >
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && editworkinglocation.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <!-- <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                [(ngModel)]="workinglocationdata.branchMasterID"
+                ngModel
+                #branch="ngModel"
+                name="branch"
+                required
+                >
+                <ng-option [value]="item.branchMasterID" *ngFor="let item of allbranch">
+                  {{ item.branchName }}
+                </ng-option>
+              </ng-select>
+              <span>Select Branch *</span>
+              <div *ngIf="!branch.valid && editworkinglocation.submitted" class="invalid-tooltip">
+                Branch is required!
+              </div>
+            </label>
+          </div> -->
+          <div class="col-md-5">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #workingLocationName="ngModel"
+                [(ngModel)]="workinglocationdata.workingLocationName"
+                name="workingLocationName"
+                />
+                <span>Working Location Name *</span>
+                @if (!workingLocationName.valid && editworkinglocation.submitted) {
+                  <div
+                    class="invalid-tooltip"
+                    >
+                    Working Location Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder=""
+                  ngModel
+                  #latitude="ngModel"
+                  [(ngModel)]="workinglocationdata.latitude"
+                  name="latitude"
+                  required
+                  />
+                  <span>Latitude *</span>
+                  @if (!latitude.valid && editworkinglocation.submitted) {
+                    <div class="invalid-tooltip">
+                      This Field is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder=""
+                    ngModel
+                    #longitude="ngModel"
+                    [(ngModel)]="workinglocationdata.longitude"
+                    name="longitude"
+                    required
+                    />
+                    <span>Longitude *</span>
+                    @if (!longitude.valid && editworkinglocation.submitted) {
+                      <div class="invalid-tooltip">
+                        This Field is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder=""
+                      ngModel
+                      #radius="ngModel"
+                      [(ngModel)]="workinglocationdata.radius"
+                      name="radius"
+                      required
+                      />
+                      <span>Radius *</span>
+                      @if (!radius.valid && editworkinglocation.submitted) {
+                        <div class="invalid-tooltip">
+                          This Field is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-group has-float-label">
+                      <textarea
+                        class="form-control"
+                        ngModel
+                        #workingLocationAddress="ngModel"
+                        name="workingLocationAddress"
+                        [(ngModel)]="workinglocationdata.workingLocationAddress"
+                        required
+                      ></textarea>
+                      <span>Working Location Address *</span>
+                      @if (!workingLocationAddress.valid && editworkinglocation.submitted) {
+                        <div
+                          class="invalid-tooltip"
+                          >
+                          Working Location Address is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select
+                        placeholder="Choose your option"
+                        (change)="selectcountry($event)"
+                        [(ngModel)]="countryid"
+                        required
+                        ngModel
+                        #country1="ngModel"
+                        name="country1"
+                        >
+                        @for (countrys of country; track countrys) {
+                          <ng-option [value]="countrys.countryMasterID">
+                            {{ countrys.countryName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Country *</span>
+                      @if (!country1.valid && editworkinglocation.submitted) {
+                        <div class="invalid-tooltip">
+                          Country is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select
+                        placeholder="Choose your option"
+                        (change)="selectstate($event)"
+                        [(ngModel)]="stateid"
+                        required
+                        ngModel
+                        #state1="ngModel"
+                        name="state1"
+                        >
+                        @for (states of state; track states) {
+                          <ng-option [value]="states.stateMasterID">
+                            {{ states.stateName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>State *</span>
+                      @if (!state1.valid && editworkinglocation.submitted) {
+                        <div class="invalid-tooltip">
+                          State is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select
+                        placeholder="Choose your option"
+                        (change)="selectcity($event)"
+                        [(ngModel)]="cityid"
+                        required
+                        ngModel
+                        #city1="ngModel"
+                        name="city1"
+                        >
+                        @for (citys of city; track citys) {
+                          <ng-option [value]="citys.cityMasterID">
+                            {{ citys.cityName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>City *</span>
+                      @if (!city1.valid && editworkinglocation.submitted) {
+                        <div class="invalid-tooltip">
+                          City is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                </div>
+                <app-state-button
+                  [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+                  [currentState]="buttonState"
+                  [isDisabled]="buttonDisabled"
+                  click="onLoginClick()"
+                  >
+                  {{ 'forms.submit' | translate }}
+                </app-state-button>
+                <button
+                  class="btn btn-danger btn-lg btn-shadow mt-4"
+                  [routerLink]="adminRoot + '/masters/workingLocation'"
+                  style="margin-left: 2%"
+                  >
+                  Cancel
+                </button>
+              </form>
+            }
+          </div>
+        </div>
+      }
+
+      <simple-notifications
+        [options]="{ position: ['top', 'center'], maxStack: 1 }"
+      ></simple-notifications>

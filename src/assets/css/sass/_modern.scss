@@ -1,0 +1,1644 @@
+/* =============================================================================
+   Modern UI Layer
+   -----------------------------------------------------------------------------
+   Imported LAST by every theme file, so it wins over the stock Vien styles
+   without those files having to be edited. Everything here is derived from the
+   active theme's variables, so switching themes still works.
+
+   Contents
+     01. Tokens (CSS custom properties)
+     02. Typography
+     03. Surfaces & cards
+     04. Buttons
+     05. Forms & inputs
+     06. Tables & datatables
+     07. Navigation: navbar, menu, breadcrumb, tabs
+     08. Badges, alerts, notifications
+     09. Overlays: modal, dropdown, popover, tooltip
+     10. Third-party widget alignment
+     11. Utilities & motion
+   ========================================================================== */
+
+/* ---------- 01. Tokens ---------------------------------------------------- */
+
+$m-radius-sm: 6px;
+$m-radius: 10px;
+$m-radius-lg: 14px;
+$m-radius-xl: 20px;
+
+/* Every theme file feeds the same variable names, so the only reliable way to
+   tell a dark theme from a light one is the canvas itself. Anything derived
+   from $primary-color (the body text colour) flips meaning on a dark theme -
+   shadows and backdrops built from it turn into white glows - so those are
+   branched on this flag instead. */
+$m-is-dark: lightness($background-color) < 40%;
+
+$m-success: if($m-is-dark, #22c55e, #16a34a);
+$m-warning: if($m-is-dark, #f59e0b, #d97706);
+$m-danger: if($m-is-dark, #f87171, #dc2626);
+$m-info: if($m-is-dark, #38bdf8, #0284c7);
+
+$m-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Hover/pressed states move away from the canvas: darker on light themes,
+   lighter on dark ones. */
+@function m-shade($color, $amount) {
+  @return if($m-is-dark, lighten($color, $amount), darken($color, $amount));
+}
+
+/* Readable text for a status colour sitting on its own soft tint */
+@function m-on-soft($color) {
+  @return if($m-is-dark, lighten($color, 8%), darken($color, 8%));
+}
+
+$m-shadow-ink: if($m-is-dark, #000, $primary-color);
+$m-shadow-k: if($m-is-dark, 4, 1);
+$m-soft-k: if($m-is-dark, 1.6, 1);
+
+@function m-shadow-alpha($a) {
+  @return rgba($m-shadow-ink, min($a * $m-shadow-k, 0.6));
+}
+
+$m-surface-raised: if($m-is-dark, lighten($foreground-color, 4%), $foreground-color);
+
+:root {
+  /* brand */
+  --m-primary: #{$theme-color-1};
+  --m-primary-hover: #{m-shade($theme-color-1, 6%)};
+  --m-primary-active: #{m-shade($theme-color-1, 12%)};
+  --m-primary-soft: #{rgba($theme-color-1, 0.1 * $m-soft-k)};
+  --m-primary-softer: #{rgba($theme-color-1, 0.05 * $m-soft-k)};
+  --m-primary-ring: #{rgba($theme-color-1, if($m-is-dark, 0.32, 0.18))};
+  --m-accent: #{$theme-color-2};
+  --m-accent-soft: #{rgba($theme-color-2, 0.12 * $m-soft-k)};
+  --m-on-primary: #{$button-text-color};
+
+  /* surfaces */
+  --m-canvas: #{$background-color};
+  --m-surface: #{$foreground-color};
+  --m-surface-raised: #{$m-surface-raised};
+  --m-surface-sunken: #{$separator-color-light};
+  --m-input: #{$input-background};
+  --m-border: #{$separator-color};
+  --m-border-subtle: #{$separator-color-light};
+  --m-border-hover: #{m-shade($separator-color, 8%)};
+
+  /* text */
+  --m-text: #{$primary-color};
+  --m-text-muted: #{$secondary-color};
+  --m-text-subtle: #{$muted-color};
+
+  /* semantic */
+  --m-success: #{$m-success};
+  --m-warning: #{$m-warning};
+  --m-danger: #{$m-danger};
+  --m-info: #{$m-info};
+  --m-success-soft: #{rgba($m-success, 0.12 * $m-soft-k)};
+  --m-warning-soft: #{rgba($m-warning, 0.12 * $m-soft-k)};
+  --m-danger-soft: #{rgba($m-danger, 0.12 * $m-soft-k)};
+  --m-info-soft: #{rgba($m-info, 0.12 * $m-soft-k)};
+
+  /* gradients */
+  --m-gradient: linear-gradient(135deg, #{$gradient-color-1} 0%, #{$gradient-color-2} 100%);
+  --m-gradient-deep: linear-gradient(145deg, #{$lp-bg-color-1} 0%, #{$lp-bg-color-2} 45%, #{$lp-bg-color-4} 100%);
+
+  /* drawer: brand gradient on light themes; on dark themes a big saturated
+     gradient is the loudest thing on screen, so it becomes a quiet panel one
+     step above the canvas with the brand colour kept for the active state. */
+  @if $m-is-dark {
+    --m-rail-bg: linear-gradient(180deg, #{lighten($background-color, 3%)} 0%, #{$background-color} 100%);
+    --m-rail-border: #{$separator-color-light};
+  } @else {
+    --m-rail-bg: var(--m-gradient-deep);
+    --m-rail-border: transparent;
+  }
+
+  /* elevation */
+  --m-shadow-xs: 0 1px 2px #{m-shadow-alpha(0.05)};
+  --m-shadow-sm: 0 1px 3px #{m-shadow-alpha(0.07)}, 0 1px 2px #{m-shadow-alpha(0.04)};
+  --m-shadow: 0 4px 12px #{m-shadow-alpha(0.07)}, 0 1px 3px #{m-shadow-alpha(0.05)};
+  --m-shadow-md: 0 8px 24px #{m-shadow-alpha(0.09)}, 0 2px 6px #{m-shadow-alpha(0.05)};
+  --m-shadow-lg: 0 18px 44px #{m-shadow-alpha(0.12)}, 0 4px 10px #{m-shadow-alpha(0.06)};
+  --m-shadow-brand: 0 6px 18px #{rgba($theme-color-1, if($m-is-dark, 0.35, 0.28))};
+
+  /* geometry */
+  --m-radius-sm: #{$m-radius-sm};
+  --m-radius: #{$m-radius};
+  --m-radius-lg: #{$m-radius-lg};
+  --m-radius-xl: #{$m-radius-xl};
+
+  --m-ease: #{$m-ease};
+}
+
+@if $m-is-dark {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* ---------- 02. Typography ------------------------------------------------ */
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  letter-spacing: -0.006em;
+  color: var(--m-text);
+  background: var(--m-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: inherit;
+  color: var(--m-text);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+h1, .h1 { font-size: 1.6rem; }
+h2, .h2 { font-size: 1.3rem; }
+h3, .h3 { font-size: 1.1rem; }
+h4, .h4 { font-size: 1rem; }
+h5, .h5 { font-size: 0.92rem; }
+h6, .h6 { font-size: 0.82rem; }
+
+.card-title {
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+  color: var(--m-text);
+  margin-bottom: 1.25rem;
+}
+
+.list-item-heading {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.text-muted { color: var(--m-text-muted) !important; }
+.text-semi-muted { color: var(--m-text-subtle) !important; }
+
+/* Numeric data reads better with tabular figures and no ligature surprises */
+td, th,
+.datatable-body-cell-label,
+.count,
+.value,
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+a {
+  color: var(--m-primary);
+  transition: color 0.18s var(--m-ease);
+
+  &:hover,
+  &:focus {
+    color: var(--m-primary-hover);
+  }
+}
+
+/* Visible focus for keyboard users only - never a focus ring on mouse click */
+*:focus-visible {
+  outline: 2px solid var(--m-primary);
+  outline-offset: 2px;
+  border-radius: var(--m-radius-sm);
+}
+
+/* ---------- 03. Surfaces & cards ----------------------------------------- */
+
+.card {
+  border: 1px solid var(--m-border-subtle);
+  border-radius: var(--m-radius-lg);
+  background: var(--m-surface);
+  box-shadow: var(--m-shadow-sm);
+  transition: box-shadow 0.22s var(--m-ease), transform 0.22s var(--m-ease),
+    border-color 0.22s var(--m-ease);
+
+  &:hover {
+    box-shadow: var(--m-shadow-md);
+    border-color: var(--m-border);
+  }
+
+  .card-body {
+    padding: 1.5rem;
+
+    @include respond-below(xs) {
+      padding: 1.15rem;
+    }
+  }
+
+  .card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--m-border-subtle);
+    padding: 1.15rem 1.5rem;
+  }
+
+  .card-footer {
+    background: transparent;
+    border-top: 1px solid var(--m-border-subtle);
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* Cards that only exist to hold a chart or a metric shouldn't lift on hover -
+   the movement reads as interactive when nothing is clickable. */
+.card.no-lift:hover,
+.dashboard-small-chart:hover,
+.icon-cards-row .card:hover {
+  transform: none;
+}
+
+/* Opt-in accent bar for section-leading cards */
+.card.card-accent {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--m-gradient);
+  }
+}
+
+.card.card-flush {
+  box-shadow: none;
+  border-color: var(--m-border-subtle);
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+.separator {
+  border-color: var(--m-border-subtle);
+}
+
+/* ---------- 04. Buttons --------------------------------------------------- */
+
+.btn {
+  border-radius: var(--m-radius);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.005em;
+  padding: 0.62rem 1.15rem;
+  line-height: 1.45;
+  border-width: 1px;
+  transition: background-color 0.18s var(--m-ease), border-color 0.18s var(--m-ease),
+    color 0.18s var(--m-ease), box-shadow 0.18s var(--m-ease), transform 0.12s var(--m-ease);
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled,
+  &.disabled {
+    opacity: 0.55;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+.btn-lg, .btn-group-lg > .btn {
+  padding: 0.8rem 1.6rem;
+  font-size: 0.88rem;
+  border-radius: var(--m-radius-lg);
+}
+
+.btn-sm, .btn-group-sm > .btn {
+  padding: 0.42rem 0.85rem;
+  font-size: 0.74rem;
+  border-radius: var(--m-radius-sm);
+}
+
+.btn-xs, .btn-group-xs > .btn {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.68rem;
+  border-radius: var(--m-radius-sm);
+}
+
+.btn-primary,
+a.btn-primary:not([href]):not([tabindex]) {
+  background-color: var(--m-primary);
+  border-color: var(--m-primary);
+  color: var(--m-on-primary);
+  box-shadow: var(--m-shadow-xs);
+
+  &:hover,
+  &:focus {
+    background-color: var(--m-primary-hover);
+    border-color: var(--m-primary-hover);
+    color: var(--m-on-primary);
+    box-shadow: var(--m-shadow-brand);
+  }
+}
+
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active,
+.show > .btn-primary.dropdown-toggle {
+  background-color: var(--m-primary-active);
+  border-color: var(--m-primary-active);
+}
+
+.btn-secondary,
+a.btn-secondary:not([href]):not([tabindex]) {
+  background-color: var(--m-accent);
+  border-color: var(--m-accent);
+  color: var(--m-on-primary);
+
+  &:hover,
+  &:focus {
+    background-color: #{m-shade($theme-color-2, 7%)};
+    border-color: #{m-shade($theme-color-2, 7%)};
+    color: var(--m-on-primary);
+  }
+}
+
+.btn-outline-primary {
+  border-color: var(--m-primary);
+  color: var(--m-primary);
+  background: transparent;
+
+  &:hover,
+  &:focus {
+    background-color: var(--m-primary);
+    border-color: var(--m-primary);
+    color: var(--m-on-primary);
+  }
+}
+
+.btn-outline-secondary {
+  border-color: var(--m-border);
+  color: var(--m-text-muted);
+
+  &:hover,
+  &:focus {
+    background-color: var(--m-surface-sunken);
+    border-color: var(--m-border);
+    color: var(--m-text);
+  }
+}
+
+/* Quiet button: the default for secondary actions in dense toolbars */
+.btn-light {
+  background-color: var(--m-surface-sunken);
+  border-color: transparent;
+  color: var(--m-text-muted);
+
+  &:hover,
+  &:focus {
+    background-color: var(--m-border);
+    border-color: transparent;
+    color: var(--m-text);
+  }
+}
+
+.btn-success { background-color: var(--m-success); border-color: var(--m-success); }
+.btn-warning { background-color: var(--m-warning); border-color: var(--m-warning); color: #fff; }
+.btn-danger  { background-color: var(--m-danger);  border-color: var(--m-danger); }
+.btn-info    { background-color: var(--m-info);    border-color: var(--m-info); }
+
+.btn-success:hover, .btn-success:focus { background-color: #{darken($m-success, 7%)}; border-color: #{darken($m-success, 7%)}; }
+.btn-warning:hover, .btn-warning:focus { background-color: #{darken($m-warning, 7%)}; border-color: #{darken($m-warning, 7%)}; color: #fff; }
+.btn-danger:hover,  .btn-danger:focus  { background-color: #{darken($m-danger, 7%)};  border-color: #{darken($m-danger, 7%)}; }
+.btn-info:hover,    .btn-info:focus    { background-color: #{darken($m-info, 7%)};    border-color: #{darken($m-info, 7%)}; }
+
+.btn-primary.btn-primary-gradient,
+.btn-secondary-gradient {
+  background: var(--m-gradient);
+  border: initial;
+
+  &:hover,
+  &:focus {
+    background: var(--m-gradient);
+    filter: brightness(1.07);
+    box-shadow: var(--m-shadow-brand);
+  }
+}
+
+.btn-link {
+  color: var(--m-primary);
+  font-weight: 600;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.icon-button {
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-border);
+  background: var(--m-surface);
+  color: var(--m-text-muted);
+  transition: all 0.18s var(--m-ease);
+
+  &:hover {
+    border-color: var(--m-primary);
+    color: var(--m-primary);
+    background: var(--m-primary-softer);
+  }
+}
+
+.btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group > .btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* ---------- 05. Forms & inputs -------------------------------------------- */
+
+.form-control,
+.bootstrap-tagsinput,
+.custom-select {
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-border);
+  background: var(--m-input);
+  color: var(--m-text);
+  font-size: 0.84rem;
+  padding: 0.6rem 0.85rem;
+  line-height: 1.5;
+  height: auto;
+  transition: border-color 0.18s var(--m-ease), box-shadow 0.18s var(--m-ease),
+    background-color 0.18s var(--m-ease);
+
+  &:hover:not(:focus):not(:disabled) {
+    border-color: var(--m-border-hover);
+  }
+
+  &:focus {
+    border-color: var(--m-primary);
+    box-shadow: 0 0 0 3px var(--m-primary-ring) !important;
+    background: var(--m-input);
+  }
+
+  &::placeholder {
+    color: var(--m-text-subtle);
+    opacity: 1;
+  }
+
+  &:disabled,
+  &[readonly] {
+    background: var(--m-surface-sunken);
+    color: var(--m-text-muted);
+    cursor: not-allowed;
+  }
+}
+
+/* Validation state has to be legible without relying on colour alone,
+   so the border weight changes too. */
+.form-control.ng-invalid.ng-touched,
+.form-control.is-invalid {
+  border-color: var(--m-danger);
+  box-shadow: 0 0 0 3px var(--m-danger-soft) !important;
+}
+
+.form-control.ng-valid.ng-touched.ng-dirty {
+  border-color: #{rgba($m-success, 0.55)};
+}
+
+.form-group label,
+.form-label,
+label.control-label {
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--m-text-muted);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.005em;
+}
+
+.form-control-sm { padding: 0.4rem 0.65rem; font-size: 0.75rem; border-radius: var(--m-radius-sm); }
+.form-control-lg { padding: 0.8rem 1.05rem; font-size: 0.9rem; border-radius: var(--m-radius-lg); }
+
+textarea.form-control {
+  min-height: 90px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.input-group-text {
+  background: var(--m-surface-sunken);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  color: var(--m-text-muted);
+  font-size: 0.8rem;
+}
+
+.custom-control-label {
+  line-height: 1.6;
+
+  &::before {
+    border: 1px solid var(--m-border);
+    background: var(--m-surface);
+    border-radius: 5px;
+    transition: all 0.16s var(--m-ease);
+  }
+}
+
+.custom-radio .custom-control-label::before {
+  border-radius: 50%;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background: var(--m-primary);
+  border-color: var(--m-primary);
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 3px var(--m-primary-ring);
+}
+
+.custom-switch .custom-control-label::after {
+  transition: transform 0.18s var(--m-ease), background 0.18s var(--m-ease);
+}
+
+/* ---------- 06. Tables & datatables --------------------------------------- */
+
+table,
+.table {
+  color: var(--m-text);
+  border-color: var(--m-border-subtle);
+
+  thead th {
+    background: var(--m-surface-sunken);
+    border-bottom: 1px solid var(--m-border);
+    border-top: none;
+    color: var(--m-text-muted);
+    font-weight: 600;
+    /* Left in sentence case on purpose: these tables carry 15-30 payroll
+       columns, and uppercase + tracking widens every header enough to force
+       horizontal scrolling on the wider reports. */
+    font-size: 0.76rem;
+    padding: 0.8rem 0.9rem;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    border-top: 1px solid var(--m-border-subtle);
+    padding: 0.75rem 0.9rem;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background-color 0.14s var(--m-ease);
+
+    &:hover {
+      background-color: var(--m-primary-softer);
+    }
+  }
+}
+
+.table-bordered,
+.table-bordered th,
+.table-bordered td {
+  border-color: var(--m-border-subtle);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--m-surface-sunken);
+}
+
+/* Rounded, clipped table shell so header corners follow the card radius */
+.table-responsive,
+.data-table-responsive {
+  border-radius: var(--m-radius);
+  overflow-x: auto;
+}
+
+.ngx-datatable {
+  .datatable-header {
+    background: var(--m-surface-sunken);
+    border-bottom: 1px solid var(--m-border);
+
+    .datatable-header-cell {
+      color: var(--m-text-muted);
+      font-weight: 600;
+      font-size: 0.76rem;
+    }
+  }
+
+  .datatable-body-row {
+    border-bottom: 1px solid var(--m-border-subtle);
+    transition: background-color 0.14s var(--m-ease);
+
+    &:hover {
+      background-color: var(--m-primary-softer);
+    }
+
+    &.active {
+      background-color: var(--m-primary-soft);
+    }
+  }
+
+  .datatable-body-cell-label {
+    color: var(--m-text);
+  }
+}
+
+.datatable-footer,
+.pagination {
+  .page-link {
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius-sm);
+    color: var(--m-text-muted);
+    margin: 0 2px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    transition: all 0.16s var(--m-ease);
+
+    &:hover {
+      background: var(--m-primary-softer);
+      border-color: var(--m-primary);
+      color: var(--m-primary);
+    }
+  }
+
+  .page-item.active .page-link {
+    background: var(--m-primary);
+    border-color: var(--m-primary);
+    color: var(--m-on-primary);
+  }
+
+  .page-item.disabled .page-link {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- 07. Navigation ------------------------------------------------ */
+
+.navbar {
+  background: var(--m-surface);
+  border-bottom: 1px solid var(--m-border-subtle);
+  box-shadow: var(--m-shadow-xs);
+}
+
+/* Drawer
+   Two panels: the icon rail (.main-menu) and the slide-out list (.sub-menu).
+   Rail items are inset tiles rather than full-bleed rows so hover/active read
+   as a shape, and the list gets icon chips, a section header and a proper
+   active marker instead of the stock 4px dot. */
+.menu {
+  .main-menu {
+    background: var(--m-rail-bg);
+    border-right: 1px solid var(--m-rail-border);
+    box-shadow: var(--m-shadow);
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    .scroll {
+      --scrollbar-thumb-color: #{rgba(#fff, 0.18)};
+      --scrollbar-thumb-hover-color: #{rgba(#fff, 0.3)};
+    }
+
+    .ps__thumb-y {
+      background: #{rgba(#fff, 0.18)} !important;
+    }
+
+    ul li {
+      padding: 3px 10px;
+
+      a {
+        height: 80px;
+        gap: 7px;
+        padding: 0 4px;
+        border: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        border-radius: 14px;
+        color: #{rgba(#fff, 0.66)};
+        transition: color 0.18s var(--m-ease), background-color 0.18s var(--m-ease),
+          border-color 0.18s var(--m-ease);
+
+        &:hover,
+        &:focus {
+          color: #fff;
+          background: #{rgba(#fff, 0.07)};
+        }
+      }
+
+      /* The SVGs ship in a single navy fill; flatten them to white and use
+         opacity for state so every icon reads on the rail. */
+      .icon {
+        width: 24px !important;
+        height: 24px !important;
+        filter: brightness(0) invert(1);
+        opacity: 0.62;
+        transition: opacity 0.18s var(--m-ease), transform 0.18s var(--m-ease);
+      }
+
+      a:hover .icon {
+        opacity: 0.95;
+        transform: translateY(-1px);
+      }
+
+      span {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        line-height: 1.25 !important;
+        margin-top: 0 !important;
+        padding: 0 2px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      &.active {
+        > a {
+          color: #fff;
+          font-weight: 600;
+          @if $m-is-dark {
+            background: #{rgba($theme-color-1, 0.16)};
+            border-color: #{rgba($theme-color-1, 0.35)};
+          } @else {
+            background: #{rgba(#fff, 0.14)};
+            border-color: #{rgba(#fff, 0.14)};
+          }
+          box-shadow: 0 6px 16px #{rgba(#000, 0.18)};
+        }
+
+        .icon {
+          opacity: 1;
+        }
+
+        &::after {
+          background: var(--m-accent);
+          width: 4px;
+          height: 32px;
+          border-radius: 0 4px 4px 0;
+          box-shadow: 0 0 12px #{rgba($theme-color-2, 0.7)};
+        }
+      }
+    }
+
+    @include respond-below(sm) {
+      ul li {
+        padding: 2px 6px;
+
+        a {
+          height: 68px;
+        }
+
+        &.active::after {
+          width: 3px;
+          height: 26px;
+        }
+      }
+    }
+  }
+
+  .sub-menu {
+    background: var(--m-surface);
+    border-left: none;
+    border-right: 1px solid var(--m-border-subtle);
+    box-shadow: 4px 0 24px #{m-shadow-alpha(0.08)};
+    padding-top: 6px;
+
+    ul {
+      padding: 0 12px;
+
+      li {
+        margin-left: 0;
+
+        a {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 6px 10px 6px 6px;
+          margin-bottom: 2px;
+          border-radius: var(--m-radius);
+          color: var(--m-text-muted);
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 1.35;
+          transition: background-color 0.16s var(--m-ease), color 0.16s var(--m-ease);
+
+          span {
+            height: auto;
+            white-space: normal;
+          }
+
+          &:hover {
+            background: var(--m-surface-sunken);
+            color: var(--m-text);
+
+            i {
+              color: var(--m-primary);
+            }
+          }
+        }
+
+        /* icon chip */
+        i {
+          flex: 0 0 30px;
+          width: 30px;
+          height: 30px;
+          margin-right: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          background: var(--m-surface-sunken);
+          color: var(--m-text-subtle);
+          font-size: 15px;
+          transition: background-color 0.16s var(--m-ease), color 0.16s var(--m-ease);
+        }
+
+        &.active {
+          > a {
+            background: var(--m-primary-soft);
+            color: var(--m-primary);
+            font-weight: 600;
+          }
+
+          > a i {
+            background: var(--m-primary);
+            color: var(--m-on-primary);
+          }
+
+          &::after {
+            left: -12px;
+            width: 4px;
+            height: 22px;
+            border-radius: 0 4px 4px 0;
+            background: var(--m-primary);
+          }
+        }
+      }
+
+      /* Section header naming the rail item this list belongs to */
+      li.sub-menu-header {
+        padding: 10px 6px 12px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid var(--m-border-subtle);
+
+        .sub-menu-title {
+          display: block;
+          font-size: 15px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          color: var(--m-text);
+        }
+      }
+
+      /* Collapsible group toggle reads as a section label, chevron on the right */
+      li.has-sub-item > a.rotate-arrow-icon {
+        opacity: 1 !important;
+        margin-top: 10px;
+        padding: 6px;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--m-text-subtle);
+        cursor: pointer;
+
+        i {
+          order: 2;
+          flex: 0 0 auto;
+          width: auto;
+          height: auto;
+          margin-left: auto;
+          background: none;
+          font-size: 10px;
+        }
+
+        &:hover {
+          background: transparent;
+          color: var(--m-text);
+        }
+      }
+    }
+
+    /* Third level hangs off a guide line instead of repeating the chips */
+    ul.inner-level-menu {
+      position: relative;
+      padding: 0 0 4px 14px;
+      margin-left: 14px;
+      border-left: 1px solid var(--m-border);
+
+      li {
+        a {
+          padding: 6px 10px;
+          font-size: 12.5px;
+          color: var(--m-text-muted);
+        }
+
+        i {
+          flex-basis: 16px;
+          width: 16px;
+          height: 16px;
+          background: none;
+          font-size: 13px;
+          color: var(--m-text-subtle);
+        }
+
+        a:hover,
+        &.active > a {
+          color: var(--m-primary);
+        }
+
+        &.active > a {
+          background: var(--m-primary-softer);
+        }
+
+        &.active > a i {
+          background: none;
+          color: var(--m-primary);
+        }
+
+        &.active::after {
+          left: -15px;
+          width: 2px;
+          height: 18px;
+          border-radius: 2px;
+        }
+      }
+    }
+  }
+}
+
+/* The page header puts an inline-block <h1> and the breadcrumb side by side.
+   Bootstrap's default 1rem left padding on .breadcrumb was the only thing
+   separating them, so zeroing it made the title and trail collide
+   ("Super Admin MenuDashboards | ..."). Space them explicitly instead. */
+.breadcrumb-container {
+  vertical-align: middle;
+  margin-left: 1rem;
+
+  @include respond-below(md) {
+    margin-left: 0;
+    display: block;
+  }
+}
+
+h1 + .breadcrumb-container,
+h1 + nav.breadcrumb-container {
+  margin-left: 1rem;
+}
+
+.breadcrumb {
+  background: transparent;
+  padding-left: 0;
+  margin-bottom: 0;
+
+  .breadcrumb-item {
+    font-size: 0.76rem;
+    color: var(--m-text-subtle);
+
+    a {
+      color: var(--m-text-muted);
+
+      &:hover {
+        color: var(--m-primary);
+      }
+    }
+
+    &.active {
+      color: var(--m-text);
+      font-weight: 500;
+    }
+  }
+}
+
+.nav-tabs {
+  border-bottom: 1px solid var(--m-border-subtle);
+
+  .nav-link {
+    color: var(--m-text-muted);
+    font-weight: 600;
+    font-size: 0.82rem;
+    border: none;
+    padding: 0.7rem 1.1rem;
+    transition: color 0.16s var(--m-ease);
+
+    &:hover,
+    &:focus {
+      color: var(--m-text);
+      border: none;
+    }
+
+    &.active {
+      color: var(--m-primary);
+      background: transparent;
+      border: none;
+
+      &::before {
+        background: var(--m-primary);
+        height: 2px;
+        border-radius: 2px 2px 0 0;
+      }
+    }
+  }
+}
+
+.nav-pills .nav-link {
+  border-radius: var(--m-radius);
+  font-weight: 600;
+  color: var(--m-text-muted);
+
+  &.active {
+    background: var(--m-primary);
+    color: var(--m-on-primary);
+  }
+}
+
+/* ---------- 08. Badges, alerts, notifications ----------------------------- */
+
+.badge {
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  padding: 0.36em 0.75em;
+  line-height: 1.4;
+}
+
+.badge-primary, .badge-theme-1, .bg-primary, .bg-theme-1 { background: var(--m-primary); color: var(--m-on-primary); }
+.badge-secondary, .badge-theme-2, .bg-theme-2 { background: var(--m-accent); color: var(--m-on-primary); }
+.badge-success { background: var(--m-success-soft); color: var(--m-success); }
+.badge-warning { background: var(--m-warning-soft); color: var(--m-warning); }
+.badge-danger  { background: var(--m-danger-soft);  color: var(--m-danger); }
+.badge-info    { background: var(--m-info-soft);    color: var(--m-info); }
+.badge-light   { background: var(--m-surface-sunken); color: var(--m-text-muted); }
+
+.badge-outline-primary, .badge-outline-theme-1 {
+  background: transparent;
+  border: 1px solid var(--m-primary);
+  color: var(--m-primary);
+}
+
+.alert {
+  border: 1px solid transparent;
+  border-radius: var(--m-radius);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.82rem;
+}
+
+.alert-primary { background: var(--m-primary-soft); border-color: #{rgba($theme-color-1, 0.25)}; color: var(--m-primary); }
+.alert-success { background: var(--m-success-soft); border-color: #{rgba($m-success, 0.25)}; color: #{m-on-soft($m-success)}; }
+.alert-warning { background: var(--m-warning-soft); border-color: #{rgba($m-warning, 0.25)}; color: #{m-on-soft($m-warning)}; }
+.alert-danger  { background: var(--m-danger-soft);  border-color: #{rgba($m-danger, 0.25)};  color: #{m-on-soft($m-danger)}; }
+.alert-info    { background: var(--m-info-soft);    border-color: #{rgba($m-info, 0.25)};    color: #{m-on-soft($m-info)}; }
+
+.simple-notification {
+  border-radius: var(--m-radius) !important;
+  box-shadow: var(--m-shadow-lg) !important;
+  font-size: 0.82rem;
+}
+
+.progress {
+  background: var(--m-surface-sunken);
+  border-radius: 999px;
+  height: 7px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: var(--m-gradient);
+  border-radius: 999px;
+}
+
+/* ---------- 09. Overlays --------------------------------------------------- */
+
+.modal-content {
+  border: none;
+  border-radius: var(--m-radius-xl);
+  box-shadow: var(--m-shadow-lg);
+  background: var(--m-surface-raised);
+  overflow: hidden;
+  @if $m-is-dark { border: 1px solid var(--m-border); }
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--m-border-subtle);
+  padding: 1.25rem 1.5rem;
+
+  .modal-title {
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.015em;
+  }
+}
+
+.modal-body { padding: 1.5rem; }
+
+.modal-footer {
+  border-top: 1px solid var(--m-border-subtle);
+  padding: 1rem 1.5rem;
+  gap: 0.5rem;
+}
+
+.modal-backdrop.show {
+  background: #{if($m-is-dark, rgba(#020617, 0.72), rgba(darken($primary-color, 20%), 0.55))};
+  backdrop-filter: blur(2px);
+}
+
+.dropdown-menu {
+  border: 1px solid var(--m-border-subtle);
+  border-radius: var(--m-radius-lg);
+  box-shadow: var(--m-shadow-md);
+  background: var(--m-surface-raised);
+  padding: 0.4rem;
+}
+
+.dropdown-item {
+  border-radius: var(--m-radius-sm);
+  color: var(--m-text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.14s var(--m-ease);
+
+  &:hover,
+  &:focus {
+    background: var(--m-primary-softer);
+    color: var(--m-primary);
+  }
+
+  &.active,
+  &:active {
+    background: var(--m-primary);
+    color: var(--m-on-primary);
+  }
+}
+
+.dropdown-divider {
+  border-color: var(--m-border-subtle);
+}
+
+.popover {
+  border: 1px solid var(--m-border-subtle);
+  border-radius: var(--m-radius-lg);
+  box-shadow: var(--m-shadow-md);
+  background: var(--m-surface-raised);
+}
+
+/* Light tooltip on dark themes would be a white slab; use a raised surface. */
+.tooltip-inner {
+  background: #{if($m-is-dark, lighten($foreground-color, 10%), rgba(darken($primary-color, 5%), 0.95))};
+  color: #{if($m-is-dark, $primary-color, #fff)};
+  border-radius: var(--m-radius-sm);
+  font-size: 0.74rem;
+  padding: 0.4rem 0.65rem;
+}
+
+/* ---------- 10. Third-party widget alignment ------------------------------ */
+
+.ng-select .ng-select-container {
+  border-radius: var(--m-radius) !important;
+  border: 1px solid var(--m-border) !important;
+  background: var(--m-input) !important;
+  min-height: 38px;
+  color: var(--m-text);
+}
+
+.ng-select.ng-select-focused .ng-select-container {
+  border-color: var(--m-primary) !important;
+  box-shadow: 0 0 0 3px var(--m-primary-ring) !important;
+}
+
+.ng-dropdown-panel {
+  border-radius: var(--m-radius) !important;
+  border: 1px solid var(--m-border-subtle) !important;
+  box-shadow: var(--m-shadow-md) !important;
+  background: var(--m-surface-raised) !important;
+}
+
+.ng-dropdown-panel .ng-option.ng-option-marked {
+  background: var(--m-primary-softer) !important;
+  color: var(--m-primary) !important;
+}
+
+.ng-dropdown-panel .ng-option.ng-option-selected {
+  background: var(--m-primary-soft) !important;
+  color: var(--m-primary) !important;
+  font-weight: 600;
+}
+
+.ng-select .ng-value {
+  border-radius: var(--m-radius-sm);
+}
+
+/* Date picker */
+.bs-datepicker {
+  border-radius: var(--m-radius-lg);
+  box-shadow: var(--m-shadow-md);
+  overflow: hidden;
+}
+
+.bs-datepicker-head {
+  background: var(--m-primary) !important;
+}
+
+.bs-datepicker-body table td span.selected,
+.bs-datepicker-body table td.selected span {
+  background: var(--m-primary) !important;
+}
+
+/* Scrollbar */
+.ps__thumb-y {
+  background: var(--m-border) !important;
+  border-radius: 999px;
+
+  &:hover {
+    background: var(--m-text-subtle) !important;
+  }
+}
+
+.ps__rail-y {
+  background: transparent !important;
+  width: 8px;
+}
+
+/* Quill editor */
+.ql-toolbar.ql-snow {
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius) var(--m-radius) 0 0;
+  background: var(--m-surface-sunken);
+}
+
+.ql-container.ql-snow {
+  border: 1px solid var(--m-border);
+  border-top: none;
+  border-radius: 0 0 var(--m-radius) var(--m-radius);
+}
+
+/* Calendar */
+.fc .fc-button-primary {
+  background: var(--m-primary);
+  border-color: var(--m-primary);
+  border-radius: var(--m-radius-sm);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background: var(--m-primary-softer);
+}
+
+/* Dark themes: widgets whose own stylesheets hard-code white panels and
+   #333 text. Only emitted for dark themes. */
+@if $m-is-dark {
+  .ng-dropdown-panel .ng-option {
+    background: transparent !important;
+    color: var(--m-text) !important;
+  }
+
+  .ng-select .ng-select-container .ng-value-container .ng-input > input,
+  .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value {
+    color: var(--m-text) !important;
+  }
+
+  .ng-select .ng-select-container .ng-value-container .ng-placeholder {
+    color: var(--m-text-subtle) !important;
+  }
+
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    background: var(--m-primary-soft) !important;
+    color: var(--m-primary) !important;
+    border: none;
+  }
+
+  .ng-dropdown-panel .ng-dropdown-header,
+  .ng-dropdown-panel .ng-dropdown-footer {
+    border-color: var(--m-border-subtle) !important;
+  }
+
+  .bs-datepicker,
+  .bs-datepicker-body,
+  .bs-datepicker-container {
+    background: var(--m-surface-raised) !important;
+    border-color: var(--m-border) !important;
+  }
+
+  .bs-datepicker-body table td,
+  .bs-datepicker-body table th {
+    color: var(--m-text);
+  }
+
+  .bs-datepicker-body table td span.is-other-month,
+  .bs-datepicker-body table td.is-other-month span {
+    color: var(--m-text-subtle);
+  }
+
+  .bs-datepicker-body table td span:not(.selected):hover,
+  .bs-datepicker-body table td:not(.selected) span:hover {
+    background: var(--m-surface-sunken) !important;
+  }
+
+  .ngx-datatable,
+  .ngx-datatable .datatable-body,
+  .ngx-datatable .datatable-footer {
+    background: transparent;
+    color: var(--m-text);
+  }
+
+  .ql-snow .ql-stroke { stroke: var(--m-text-muted); }
+  .ql-snow .ql-fill { fill: var(--m-text-muted); }
+  .ql-snow .ql-picker { color: var(--m-text-muted); }
+
+  .fc-theme-standard td,
+  .fc-theme-standard th,
+  .fc-theme-standard .fc-scrollgrid {
+    border-color: var(--m-border-subtle);
+  }
+
+  .tooltip.bs-tooltip-top .arrow::before { border-top-color: #{lighten($foreground-color, 10%)}; }
+  .tooltip.bs-tooltip-bottom .arrow::before { border-bottom-color: #{lighten($foreground-color, 10%)}; }
+  .tooltip.bs-tooltip-left .arrow::before { border-left-color: #{lighten($foreground-color, 10%)}; }
+  .tooltip.bs-tooltip-right .arrow::before { border-right-color: #{lighten($foreground-color, 10%)}; }
+
+  .btn-outline-white {
+    color: var(--m-text);
+    border-color: var(--m-border);
+  }
+
+  .close {
+    color: var(--m-text-muted);
+    text-shadow: none;
+  }
+
+  hr {
+    border-color: var(--m-border-subtle);
+  }
+}
+
+/* ---------- 11. Utilities & motion ---------------------------------------- */
+
+.m-surface  { background: var(--m-surface); }
+.m-sunken   { background: var(--m-surface-sunken); }
+.m-elevated { box-shadow: var(--m-shadow-md); border-radius: var(--m-radius-lg); }
+.m-gradient-text {
+  background: var(--m-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Soft status pills used across list and detail screens */
+.m-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  border-radius: 999px;
+  padding: 0.3em 0.7em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.4;
+  background: var(--m-surface-sunken);
+  color: var(--m-text-muted);
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.is-success { background: var(--m-success-soft); color: var(--m-success); }
+  &.is-warning { background: var(--m-warning-soft); color: var(--m-warning); }
+  &.is-danger  { background: var(--m-danger-soft);  color: var(--m-danger); }
+  &.is-info    { background: var(--m-info-soft);    color: var(--m-info); }
+  &.is-primary { background: var(--m-primary-soft); color: var(--m-primary); }
+}
+
+/* Empty state block for screens with no rows yet */
+.m-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--m-text-muted);
+
+  img, svg {
+    width: 160px;
+    max-width: 60%;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+  }
+
+  .m-empty-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--m-text);
+    margin-bottom: 0.35rem;
+  }
+
+  .m-empty-text {
+    font-size: 0.82rem;
+    max-width: 380px;
+  }
+}
+
+/* Skeleton shimmer for loading rows */
+.m-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--m-surface-sunken) 25%,
+    #{rgba($separator-color, 0.6)} 37%,
+    var(--m-surface-sunken) 63%
+  );
+  background-size: 400% 100%;
+  animation: m-shimmer 1.4s ease infinite;
+  border-radius: var(--m-radius-sm);
+}
+
+@keyframes m-shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* Brand mark. The stock rule reserves a 300x100 box with a 60px bottom margin,
+   which was sized for a wide wordmark PNG. The mark is square, so give it a
+   square box and normal spacing. Used by login, OTP, reset, register,
+   session-timeout and the error pages. */
+.logo-single {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.5rem;
+  background-size: contain;
+  background-position: center center;
+}
+
+/* Auth cards: forgot-password, register, reset-password, OTP.
+   The stock theme fills .image-side with an orange marketing JPG, which fights
+   every palette in the switcher. Rebuilding that panel from the theme tokens
+   means it travels with whichever theme is active. */
+.auth-card {
+  border: 1px solid var(--m-border-subtle);
+  border-radius: var(--m-radius-xl);
+  box-shadow: var(--m-shadow-lg);
+  overflow: hidden;
+
+  .image-side {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--m-gradient-deep);
+    color: #fff;
+
+    /* mesh texture */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('../../img/modern/pattern-mesh.svg') center / cover no-repeat;
+      opacity: .6;
+    }
+
+    /* the same illustration the login screen uses */
+    &::after {
+      content: '';
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 250px;
+      height: 210px;
+      background: url('../../img/modern/login-hero.svg') center / contain no-repeat;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+    }
+  }
+
+  .form-side {
+    background: var(--m-surface);
+  }
+}
+
+/* Full-bleed auth layout.
+   The /user shell renders every auth route inside .container > .row > .col-*,
+   which is right for the centred card pages but boxes in the split-screen login
+   and clips it below ~576px. LoginComponent toggles this class on <body> so only
+   that one route opts out of the container. */
+body.login-fullbleed {
+  main {
+    margin: 0 !important;
+    height: 100%;
+  }
+
+  main > .container {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  main > .container > .row {
+    margin: 0;
+    height: 100%;
+  }
+
+  main > .container > .row > [class*='col-'] {
+    padding: 0;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  footer.page-footer {
+    display: none;
+  }
+}
+
+/* Theme switcher swatch for the new palette */
+.theme-colors .theme-color-tealslate {
+  background: #0f766e;
+}
+
+/* Respect a reduced-motion preference: keep colour changes, drop movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 12. Angular upgrade compatibility & polish -------------------- */
+/* Added with the Angular 10 → 22 upgrade (see docs/12-migration-progress.md). */
+
+/* ngx-quill 20+ gives its host `:host { display: inline-block }`; up to v12 the
+   host was a plain inline element. The templates set `style="height: 100px"` /
+   `height="100px"` on <quill-editor>, which inline elements ignore, so every
+   editor was designed around its natural (full-width, ~200px) size. As
+   inline-block the height suddenly applies and the width shrinks to the content.
+   Restore the original inline host; `:root` outranks the :host rule. */
+:root quill-editor {
+  display: inline;
+}
+
+/* ngx-material-timepicker ships in bright blue (#00bfff); map its theme
+   variables onto the app tokens so it follows light/dark and every colour theme.
+   `:root` raises specificity above the component's own :host defaults. */
+:root ngx-material-timepicker-container {
+  --primary-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --body-background-color: var(--m-surface-raised);
+  --dial-background-color: var(--m-primary);
+  --dial-editable-background-color: var(--m-surface);
+  --dial-active-color: var(--m-on-primary);
+  --dial-inactive-color: #{rgba($button-text-color, 0.6)};
+  --dial-editable-active-color: var(--m-primary);
+  --clock-face-background-color: var(--m-surface-sunken);
+  --clock-hand-color: var(--m-primary);
+  --clock-face-time-active-color: var(--m-on-primary);
+  --clock-face-time-inactive-color: var(--m-text);
+  --clock-face-inner-time-inactive-color: var(--m-text-muted);
+  --clock-face-time-disabled-color: var(--m-text-subtle);
+  --button-color: var(--m-primary);
+
+  .timepicker {
+    border-radius: var(--m-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--m-shadow-lg);
+  }
+
+  .timepicker-button {
+    border-radius: var(--m-radius-sm);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+
+    &:hover,
+    &:focus-visible {
+      background-color: var(--m-primary-soft);
+    }
+  }
+}
+
+.timepicker-backdrop-overlay {
+  background: #{if($m-is-dark, rgba(#020617, 0.6), rgba(darken($primary-color, 20%), 0.35))} !important;
+}
+
+/* Empty datatables: the bare "No data to display" line sat flush-left in
+   body text; show it as a quiet, centred empty state instead. */
+.ngx-datatable .empty-row {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--m-text-subtle);
+  font-size: 0.85rem;
+}
+
+/* Phones: the floating chat/help buttons sit bottom-right over the last table
+   row and the pager; leave room for them at the end of the page. */
+@media (max-width: 767.98px) {
+  main {
+    padding-bottom: 5.5rem;
+  }
+}

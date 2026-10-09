@@ -1,0 +1,59 @@
+<div bsModal #acceptModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Accept Expense Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="acceptModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #accept="ngForm" novalidate (ngSubmit)="onAcceptSubmit()">
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <input type="text" class="form-control" ngModel #remarks="ngModel" name="remarks" />
+              <span>Remarks</span>
+            </label>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #rejectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Reject Expense Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="rejectModal.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #reject="ngForm" novalidate (ngSubmit)="onRejectSubmit()">
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <input type="text" class="form-control" ngModel #remarks="ngModel" name="remarks" required/>
+              <span>Remarks *</span>
+            </label>
+            @if (!remarks.valid && reject.submitted) {
+              <div class="invalid-tooltip">
+                Rejection Remarks are required!
+              </div>
+            }
+          </div>
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

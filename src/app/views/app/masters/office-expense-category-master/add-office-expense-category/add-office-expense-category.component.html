@@ -1,0 +1,22 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+@if (permissioncreate.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (getCompany)="getCompany($event)"
+    cancelRoute="/masters/officeExpenseCategory" heading="Add Office Expense Category">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="text" required ngModel #officeExpenseCategory="ngModel"
+          name="officeExpenseCategory" />
+          <span>Office Expense Category *</span>
+          @if (!officeExpenseCategory.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Office Expense Category is required!
+            </div>
+          }
+        </label>
+      </div>
+    </app-common-filter>
+  }

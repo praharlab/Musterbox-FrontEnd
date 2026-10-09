@@ -1,0 +1,249 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form D Attedance Register"></app-heading>
+    <app-breadcrumb title="Form D Attedance Register"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length>0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #cid="ngModel" (change)="selectcompany($event)"
+                name="cid" required>
+                @for (data of company; track data) {
+                  <ng-option [value]="data.companyMasterID">
+                    {{ data.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!cid.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #YearMM="ngModel" name="YearMM" required />
+              <span>YearMonth *</span>
+              @if (!YearMM.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  YearMonth is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+                (change)="selectbranch($event)">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alluser" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                ngModel #user="ngModel" name="user">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{ standalone: true }" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select User</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary form-group" type="submit">
+                {{ 'Submit' | translate }}
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            </div>
+            @if (rows.length > 0) {
+              <div class="col-md-3">
+                <button class="btn btn-info form-group" printTitle="pa-musterROll Report" printSectionId="content" ngxPrint
+                  layout="landscape" (click)="print($event)" type="button">
+                  Save as PDF
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-success form-group" type="button" (click)="export()">Export Excel </button>
+              </div>
+            }
+          </div>
+          <div style="color: red;">Note:**Select A4 size Paper,when you Save As PDF</div>
+        </form>
+      }
+
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div>
+      <div #content id="content" style="word-wrap: break-word">
+        <div style="text-align: center; width: 100%">
+          <h4><b>FORM D</b></h4>
+          <h5><b>FORMAT OF ATTENDANCE REGISTER</b></h5>
+        </div>
+        @if (companyData) {
+          <div>
+            <b style="text-align: left; font-size: 15px">
+              Name and Address of Company : {{ companyData.companyName }}
+            </b>
+            <br />
+            <span style="font-size: 13px; padding-left: 5%">{{ companyData.companyAddress }}</span>
+          </div>
+        }
+        @if (branch1) {
+          <div>
+            <b style="text-align: left; font-size: 15px">
+              Name and Address of Branch : {{ branch1.branchName }}
+            </b>
+            <br />
+            <span style="font-size: 13px; padding-left: 5%">{{ branch1.branchAddress }}</span>
+          </div>
+        }
+        <div style="text-align: left; font-size: 15px">
+          <b>For the period From : {{ rows[0].start_date }} To {{ rows[0].end_date }}</b>
+        </div>
+        <table id="table1" border="1" cellspacing="0" cellpadding="0"
+          style="border-collapse: collapse; margin-top: 10px; width: 90%">
+          <tr>
+            <td style="text-align: center; font-size: 12px">
+              <b>
+                Sl.
+                <br />
+                No
+              </b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Employee Code</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Designation</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Employee Name</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Branch</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Time</b>
+            </td>
+            @for (attendance of rows[0].attendance; track attendance) {
+              <td style="text-align: center; width: 3%; font-size: 12px">
+                <b>{{ attendance.date }}</b>
+              </td>
+            }
+            <td style="font-size: 12px">
+              <b>summary No. of days</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>
+                Week
+                <br />
+                off
+              </b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>
+                Holi
+                <br />
+                day
+              </b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Absent</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Remarks No. of hours</b>
+            </td>
+            <td style="text-align: center; font-size: 12px">
+              <b>Signature of Register keeper</b>
+            </td>
+          </tr>
+          @for (data of rows; track data; let i = $index) {
+            <tbody>
+              <tr>
+                <td style="text-align: center; font-size: 12px; padding-top: 6px; padding-bottom: 6px" rowspan="2">
+                  <b>{{ i + 1 }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding-top: 6px; padding-bottom: 6px" rowspan="2">
+                  <b>{{ data.employeeCode }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding-top: 6px; padding-bottom: 6px" rowspan="2">
+                  <b>{{ data.designation }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding-top: 6px; padding-bottom: 6px" rowspan="2">
+                  <b>{{ data.employeeName }}</b>
+                </td>
+                <td style="text-align: left; font-size: 12px; padding-top: 6px; padding-bottom: 6px" rowspan="2">
+                  <b>{{ data.branch }}</b>
+                </td>
+                <td style="text-align: center; font-size: 10px">In</td>
+                @for (attendance of data.attendance; track attendance) {
+                  <td style="text-align: center; width: 3%">
+                    <b style="font-size: 11px; padding: 3pt">{{ attendance.intime }}</b>
+                  </td>
+                }
+                <td rowspan="2" style="text-align: center; font-size: 10px; padding-top: 6px; padding-bottom: 6px">
+                  <b> <b>{{data.present}}</b></b>
+                </td>
+                <td rowspan="2" style="text-align: center; font-size: 11px; padding-top: 6px; padding-bottom: 6px">
+                  <b>{{ data.week_Off }}</b>
+                </td>
+                <td rowspan="2" style="text-align: center; font-size: 11px; padding-top: 6px; padding-bottom: 6px">
+                  <b>{{ data.holiday }}</b>
+                </td>
+                <td rowspan="2" style="text-align: center; font-size: 11px; padding-top: 6px; padding-bottom: 6px">
+                  <b>{{ data.absent }}</b>
+                </td>
+                <td rowspan="2">&nbsp;</td>
+                <td rowspan="2">&nbsp;</td>
+              </tr>
+              <tr>
+                <td style="text-align: center; font-size: 10px">Out</td>
+                @for (attendance of data.attendance; track attendance) {
+                  <td style="text-align: center; width: 3%">
+                    <b style="font-size: 11px; padding: 3pt">{{ attendance.outtime }}</b>
+                  </td>
+                }
+              </tr>
+            </tbody>
+          }
+        </table>
+        <div>
+          <span>
+            <p style="text-align: left;"> #Relay and *Place of Work in case of Mines only (Underground/Opencast/Surface)
+            </p>
+            <p style="text-align: left;"> **In case an employee is not present the following to be entered: PL for PaidLeave
+            / A for Absent / WH for WeekOff / PH for Holiday </p>
+            <p style="text-align: left;"> **Not neccessary in case of E Form maintenance.</p>
+            <p style="text-align: right;padding-right: 2%;"> <b>M/s.
+            .........................................................</b> </p>
+          </span>
+        </div>
+        <div style="text-align: right;padding-right: 2%; padding-top: 2%;"><b>Authorised Signatory</b> </div>
+      </div>
+    </div>
+  }

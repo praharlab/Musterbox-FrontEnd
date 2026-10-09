@@ -1,0 +1,401 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<h3>Edit Accident Form</h3>
+<div class="card">
+  <div class="card-body">
+    <!-- <form #editAccident="ngForm" novalidate (ngSubmit)="onSubmit()" *ngIf="permissionview.length != 0"> -->
+    <form #editAccident="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <!-- <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select
+            placeholder="Choose your option"
+            ngModel
+            #company="ngModel"
+            name="company"
+            (change)="selectcompany($event)"
+            required
+            >
+            <ng-option
+              *ngFor="let company1 of company1"
+              [value]="company1.companyMasterID"
+              >
+              {{ company1.companyName }}
+            </ng-option>
+          </ng-select>
+          <span>Select Company *</span>
+          <div
+            *ngIf="!company.valid && editAccident.submitted"
+            class="invalid-tooltip"
+            >
+            Company is required!
+          </div>
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select
+            placeholder="Choose your option"
+            ngModel
+            #branch="ngModel"
+            name="branch"
+            (change)="selectbranch($event)"
+            >
+            <ng-option
+              [value]="item.branchMasterID"
+              *ngFor="let item of allbranch"
+              >
+              {{ item.branchName }}
+            </ng-option>
+          </ng-select>
+          <span>Select Branch</span>
+        </label>
+      </div>
+
+      <div class="col-md-4"  *ngIf="branchfilter == false">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel"  name="userMasterID" required>
+            <ng-option [value]="item.userMasterID" *ngFor="let item of employee">{{item.displayName}} - {{item.userNumber}}</ng-option>
+          </ng-select>
+          <span>Select Employee *</span>
+        </label>
+        <div *ngIf="!userMasterID.valid && editAccident.submitted" class="invalid-tooltip">Employee is required!</div>
+      </div> -->
+
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="AccidentData.displayName"
+            #name="ngModel"
+            name="name"
+            readonly
+            />
+            <span>Name</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              [(ngModel)]="AccidentData.userNumber"
+              #Number="ngModel"
+              name="Number"
+              readonly
+              />
+              <span>Number</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                [(ngModel)]="AccidentData.NoticeDate"
+                #NoticeDate="ngModel"
+                name="NoticeDate"
+                required
+                />
+                <span>Notice Date *</span>
+                @if (!NoticeDate.valid && editAccident.submitted) {
+                  <div class="invalid-tooltip">
+                    Notice Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="date"
+                  [(ngModel)]="AccidentData.AccidentDate"
+                  #AccidentDate="ngModel"
+                  name="AccidentDate"
+                  (change)="calcdays()"
+                  required
+                  />
+                  <span>Accident Date *</span>
+                  @if (!AccidentDate.valid && editAccident.submitted) {
+                    <div class="invalid-tooltip">
+                      Accident Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    [ngxTimepicker]="visitpicker"
+                    class="form-control"
+                    placeholder="Enter Accident Time"
+                    [(ngModel)]="AccidentData.AccidentTime"
+                    #AccidentTime="ngModel"
+                    name="AccidentTime"
+                    required
+                    />
+                    <ngx-material-timepicker #visitpicker></ngx-material-timepicker>
+                    <span>Accident Time *</span>
+                    @if (!AccidentTime.valid && editAccident.submitted) {
+                      <div class="invalid-tooltip">
+                        Accident Time is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea
+                      class="form-control"
+                      [(ngModel)]="AccidentData.AccidentLocation"
+                      #AccidentLocation="ngModel"
+                      name="AccidentLocation"
+                      required
+                    ></textarea>
+                    <span>Accident Location *</span>
+                    @if (!AccidentLocation.valid && editAccident.submitted) {
+                      <div class="invalid-tooltip">
+                        Accident Location is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea
+                      [(ngModel)]="AccidentData.AccidentCause"
+                      #AccidentCause="ngModel"
+                      name="AccidentCause"
+                      rows="3"
+                      cols="45"
+                      required
+                    ></textarea>
+                    <span>Accident Cause *</span>
+                    @if (!AccidentCause.valid && editAccident.submitted) {
+                      <div class="invalid-tooltip">
+                        Accident Cause is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select
+                      placeholder="Choose your option"
+                      [(ngModel)]="AccidentData.InjuryNature"
+                      #InjuryNature="ngModel"
+                      name="InjuryNature"
+                      required
+                      >
+                      <ng-option value="Minor">Minor</ng-option>
+                      <ng-option value="Major">Major</ng-option>
+                      <ng-option value="Danjerous">Danjerous</ng-option>
+                    </ng-select>
+                    <span>Nature Of Injury *</span>
+                    @if (!InjuryNature.valid && editAccident.submitted) {
+                      <div class="invalid-tooltip">
+                        Nature Of Injury is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-12">
+                  <h6>(1).Witness :-</h6>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      [(ngModel)]="AccidentData.WitnessOneName"
+                      #WitnessOneName="ngModel"
+                      name="WitnessOneName"
+                      required
+                      />
+                      <span>Name *</span>
+                      @if (!WitnessOneName.valid && editAccident.submitted) {
+                        <div class="invalid-tooltip">
+                          This is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <textarea
+                        class="form-control"
+                        [(ngModel)]="AccidentData.WitnessOneAddress"
+                        #WitnessOneAddress="ngModel"
+                        name="WitnessOneAddress"
+                        required
+                      ></textarea>
+                      <span>Address *</span>
+                      @if (!WitnessOneAddress.valid && editAccident.submitted) {
+                        <div class="invalid-tooltip">
+                          This is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="text"
+                        [(ngModel)]="AccidentData.WitnessOneOccupation"
+                        #WitnessOneOccupation="ngModel"
+                        name="WitnessOneOccupation"
+                        required
+                        />
+                        <span>Occupation *</span>
+                        @if (!WitnessOneOccupation.valid && editAccident.submitted) {
+                          <div
+                            class="invalid-tooltip"
+                            >
+                            This is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+
+                    <div class="col-md-12">
+                      <h6>(2).Witness :-</h6>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="text"
+                          [(ngModel)]="AccidentData.WitnessSecondName"
+                          #WitnessSecondName="ngModel"
+                          name="WitnessSecondName"
+                          required
+                          />
+                          <span>Name *</span>
+                          @if (!WitnessSecondName.valid && editAccident.submitted) {
+                            <div class="invalid-tooltip">
+                              This is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <textarea
+                            class="form-control"
+                            [(ngModel)]="AccidentData.WitnessSecondAddress"
+                            #WitnessSecondAddress="ngModel"
+                            name="WitnessSecondAddress"
+                            required
+                          ></textarea>
+                          <span>Address *</span>
+                          @if (!WitnessSecondAddress.valid && editAccident.submitted) {
+                            <div
+                              class="invalid-tooltip"
+                              >
+                              This is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="text"
+                            [(ngModel)]="AccidentData.WitnessSecondOccupation"
+                            #WitnessSecondOccupation="ngModel"
+                            name="WitnessSecondOccupation"
+                            required
+                            />
+                            <span>Occupation *</span>
+                            @if (!WitnessSecondOccupation.valid && editAccident.submitted) {
+                              <div
+                                class="invalid-tooltip"
+                                >
+                                This is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input
+                              class="form-control"
+                              type="date"
+                              [(ngModel)]="AccidentData.ReturnDate"
+                              #ReturnDate="ngModel"
+                              name="ReturnDate"
+                              (change)="calcdays()"
+                              required
+                              />
+                              <span>Return Date *</span>
+                              @if (!ReturnDate.valid && editAccident.submitted) {
+                                <div class="invalid-tooltip">
+                                  Return Date is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input
+                                class="form-control"
+                                type="number"
+                                required
+                                [(ngModel)]="AccidentData.TotalDays"
+                                #TotalDays="ngModel"
+                                name="TotalDays"
+                                min="0"
+                                max="maxdays"
+                                [ngModel]="days"
+                                />
+                                <span>No. of Absent Days</span>
+                                @if (!TotalDays.valid && editAccident.submitted) {
+                                  <div class="invalid-tooltip">
+                                    This is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+
+                            <div class="col-md-4">
+                              <button class="btn btn-primary form-group" type="submit">
+                                {{ 'forms.submit' | translate }}
+                              </button>
+                              &nbsp;&nbsp;
+                              <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+                                Clear
+                              </button>
+                              &nbsp;&nbsp;
+                              <button
+                                class="btn btn-danger form-group ml-1"
+                                [routerLink]="adminRoot + '/payrolls/list_employee_accident'"
+                                >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                    <simple-notifications
+                      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                    ></simple-notifications>

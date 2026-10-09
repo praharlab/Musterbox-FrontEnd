@@ -1,0 +1,45 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Letter Template Type</h5>
+
+    <form #addletter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #letterTypename="ngModel"
+              name="letterTypename"
+              />
+              <span>Letter Template Type Name *</span>
+              @if (!letterTypename.valid && addletter.submitted) {
+                <div class="invalid-tooltip">
+                  Letter Template Type Name is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/superadminmenus/letter_type'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

@@ -1,0 +1,122 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Companywise Report</h5>
+
+    <form #addcompanyreport="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              required
+              >
+              @for (company of allcomp; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && addcompanyreport.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #functionName="ngModel"
+              name="functionName"
+              />
+              <span>Function Name *</span>
+              @if (!functionName.valid && addcompanyreport.submitted) {
+                <div class="invalid-tooltip">
+                  Function Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #displayName="ngModel"
+                name="displayName"
+                />
+                <span>Display Name *</span>
+                @if (!displayName.valid && addcompanyreport.submitted) {
+                  <div class="invalid-tooltip">
+                    Display Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <!-- <input class="form-control" type="text" [(ngModel)]="value.value" #name="ngModel" name="name{{i}}">  -->
+                      <ng-select
+                        placeholder="Choose your option"
+                        ngModel
+                        #name="ngModel"
+                        [(ngModel)]="value.value"
+                        name="name{{ i }}"
+                        >
+                        <ng-option value="companyid">companyid</ng-option>
+                        <ng-option value="userid">userid</ng-option>
+                        <ng-option value="yyyymm">yyyymm</ng-option>
+                        <ng-option value="fromdate">fromdate</ng-option>
+                        <ng-option value="todate">todate</ng-option>
+                        <ng-option value="designation">designation</ng-option>
+                        <ng-option value="department">department</ng-option>
+                        <ng-option value="branch">branch</ng-option>
+                      </ng-select>
+                      <span>Params</span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <span class="btn btn-danger" (click)="removevalue(i)" style="margin-left: 3%">
+                      Remove
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+            <div class="col-md-12" style="margin-bottom: 20px">
+              <span class="button" class="btn btn-success" (click)="addvalue()">ADD Params</span>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+            <button
+              class="btn btn-danger btn-shadow mt-4"
+              [routerLink]="adminRoot + '/superadminmenus/company_report'"
+              style="margin-left: 2%"
+              >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

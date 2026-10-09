@@ -1,0 +1,150 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Kms Report" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+[showItemsPerPage]="false"></app-list-page-header>
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="download()" (clearData)="clear()" (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" required ngModel #startdate="ngModel" name="startdate" />
+        <span>From Date *</span>
+        @if (!startdate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            From Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" required ngModel #enddate="ngModel" name="enddate" />
+        <span>To Date *</span>
+        @if (!enddate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            To Date is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}
+@if (kmsData.length > 0) {
+  <div style="overflow-x: auto">
+    <table>
+      <thead>
+        <tr>
+          <th class="name-col" style="width: 80%">Employee Code</th>
+          <th class="name-col" style="width: 80%">Employee Name</th>
+          <th class="name-col" style="width: 50%">Number</th>
+          <th class="name-col" style="width: 100%">Branch</th>
+          <th class="name-col" style="width: 100%">Department</th>
+          <th class="name-col" style="width: 100%">Designation</th>
+          @for (data of datesArray; track data) {
+            <th style="width: 100%">
+              {{ data | date: 'dd-MM-yyyy' }}
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (maindata of kmsData; track maindata) {
+          <tr class="student">
+            <td class="name-col">{{ maindata.employeeCode }}</td>
+            <td class="name-col">{{ maindata.user }}</td>
+            <td class="name-col">{{ maindata.Number }}</td>
+            <td class="name-col">{{ maindata.branch }}</td>
+            <td class="name-col">{{ maindata.department }}</td>
+            <td class="name-col">{{ maindata.designation }}</td>
+            @for (data of maindata.total_kms; track data) {
+              <td class="name-col">
+                <span class="missed-col1">
+                  <button class="map" style="border: none" (click)="lgModal.show(); showtracking(maindata, data.date)">
+                    {{ data.total_kms }} Kms
+                  </button>
+                </span>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+    <div class="col-12">
+      <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+        [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit"
+        [maxSize]="5" [(ngModel)]="currentPage" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+      [customPreviousTemplate]="prevTemplate"></pagination>
+    </div>
+  </div>
+}
+
+<br />
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Map Data</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="margin: 10px">
+          <span><b>Map View</b></span>
+          &nbsp;&nbsp;
+          <input type="radio" name="defaultRight" value="true" ngModel [(ngModel)]="defaultVal" #defaultRight="ngModel"
+            style="margin-right: 1%" required (click)="showpoly()" />
+            <label for="true" style="margin-right: 1%">Polylines</label>
+            <input type="radio" name="defaultRight" value="false" ngModel #defaultRight="ngModel" style="margin-right: 1%"
+              required (click)="showdir()" />
+              <label for="false">Directions</label>
+              <br />
+            </div>
+
+            <agm-map [latitude]="lat" [longitude]="lng" style="height: 500px" [fullscreenControl]="true">
+              @if (polyline == true) {
+                <agm-polyline [strokeColor]="'red'">
+                  @for (i of dirs; track i) {
+                    <agm-polyline-point [latitude]="i.origin.lat" [longitude]="i.origin.lng"></agm-polyline-point>
+                  }
+                </agm-polyline>
+              }
+              @for (i of dirs; track i) {
+                <agm-marker [latitude]="i.origin.lat" [longitude]="i.origin.lng"
+                [iconUrl]="i.markerColor"></agm-marker>
+              }
+
+              @if (direction == true) {
+                <div>
+                  @for (dir of dirs; track dir) {
+                    <agm-direction [origin]="dir.origin" [destination]="dir.destination"
+                    [renderOptions]="dir.renderOptions" [markerOptions]="dir.markerOptions"></agm-direction>
+                  }
+                </div>
+              }
+            </agm-map>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,154 @@
+<style>
+  .password-toggle-icon {
+  position: absolute;
+  top: 47%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+  /* Adjust the color as needed */
+}
+</style>
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Dealer</h5>
+
+    <form #addsubadmin="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #firstNAme="ngModel" name="firstNAme" />
+            <span>First Name *</span>
+            @if (!firstNAme.valid && addsubadmin.submitted) {
+              <div class="invalid-tooltip">
+                First Name is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text"  ngModel #middleNAme="ngModel" name="middleNAme" />
+            <span>Middle Name</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #lastNAme="ngModel" name="lastNAme" />
+            <span>Last Name *</span>
+            @if (!lastNAme.valid && addsubadmin.submitted) {
+              <div class="invalid-tooltip">
+                Last Name is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <!-- <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input
+            class="form-control"
+            type="text"
+            required
+            ngModel
+            #contactNumber="ngModel"
+            name="contactNumber"
+            />
+            <span>Mobile Number *</span>
+            <div *ngIf="!contactNumber.valid && addsubadmin.submitted" class="invalid-tooltip">
+              Contact Number is required!
+            </div>
+          </label>
+        </div> -->
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required pattern="\d{10}" ngModel #contactNumber="ngModel"
+              name="contactNumber" />
+              <span>Mobile Number *</span>
+              @if (!contactNumber.valid && addsubadmin.submitted) {
+                <div class="invalid-tooltip">
+                  Contact Number is required!
+                </div>
+              }
+              @if (contactNumber.errors?.pattern && addsubadmin.submitted) {
+                <div class="invalid-tooltip">
+                  Contact Number must be exactly 10 digits!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="email" required email ngModel #email="ngModel" name="email" />
+              <span>Email *</span>
+              @if (!email.valid && addsubadmin.submitted) {
+                <div class="invalid-tooltip">
+                  Email is required!
+                </div>
+              }
+              @if (email?.errors?.email && addsubadmin.submitted) {
+                <div class="invalid-tooltip">
+                  Email must be a valid address!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="{{ showPassword ? 'text' : 'password' }}" placeholder="" required ngModel
+                #password="ngModel" name="password" />
+                <span>Password *</span>
+                @if (!password.valid && addsubadmin.submitted) {
+                  <div class="invalid-tooltip">
+                    Password is required!
+                  </div>
+                }
+                <div class="password-toggle-icon" (click)="togglePasswordVisibility()">
+                  @if (showPassword == true) {
+                    <!-- <span class="glyph-icon simple-icon-close"></span> -->
+                  <img src="../../../../../assets/eyeclosed.png" alt="" style="
+                      position: absolute;
+                      top: 47%;
+                      right: 10px;
+                      transform: translateY(-50%);
+                      cursor: pointer;
+                      width: 22px;
+                      color: #999;
+                    " />
+                    }
+                    @if (showPassword == false) {
+                  <img src="../../../../../assets/eyeopen.png" alt="" style="
+                      position: absolute;
+                      top: 47%;
+                      right: 10px;
+                      transform: translateY(-50%);
+                      cursor: pointer;
+                      width: 22px;
+                      color: #999;
+                    " />
+                      }
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/superadminmenus/list_dealer'"
+                  style="margin-left: 2%">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

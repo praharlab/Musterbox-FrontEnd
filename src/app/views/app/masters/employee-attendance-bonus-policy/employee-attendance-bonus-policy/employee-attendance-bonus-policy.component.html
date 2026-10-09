@@ -1,0 +1,80 @@
+
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                @if (item.attendanceBonusPolicyId) {
+                  <p class="list-item-heading mb-1 truncate">
+                    <a tooltip="Please click here to view Week Off Policy details" class="glyph-icon tool_tip"
+                      style="cursor: pointer"
+                      (click)="getAttendanceBonusDataModal(item); attendancebonuspolicyModel.show()">
+                      {{ item.attendanceBonusPolicy.attendanceBonusPolicyName | uppercase }}
+                    </a>
+                  </p>
+                }
+                <p class="text-muted mb-0 text-small">
+                  Start Date: {{ item.startDate | date: 'yyyy-MM-dd' }}
+                </p>
+                @if (item.endDate != null) {
+                  <p class="text-muted mb-0 text-small">
+                    End Date: {{ item.endDate | date: 'yyyy-MM-dd' }}
+                  </p>
+                }
+                <div class="min-width-zero">
+                  <a href="javascript:;">
+                    @if (item.attendancebonuspolicystatus == 'active') {
+                      <button type="button" class="btn btn-success"
+                        style="margin-top: 10%">
+                        {{ 'Active' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                    @if (item.attendancebonuspolicystatus == 'deactive') {
+                      <button type="button" class="btn btn-danger"
+                        style="margin-top: 10%">
+                        {{ 'Deactive' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                  </a>
+                </div>
+              </a>
+            </div>
+            <div style="margin-top: 14px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+
+
+<div bsModal #attendancebonuspolicyModel="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          {{ attendanceBonusPolicyName | uppercase }} - Attendance Bonus Details
+        </h4>
+        <button type="button" class="btn-close close pull-right" (click)="attendancebonuspolicyModel.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-view-employee-attendance-bonus-policy
+        [attendanceBonusPolicyID]="attendanceBonusPolicyID"></app-view-employee-attendance-bonus-policy>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Hourly Salary Register" [showOrderBy]="false" [showDisplayMode]="false"  [showSearch]="false"
+[showItemsPerPage]="false"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons"
+    (onSubmit)="download($event)"  (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" ngModel #fromyearmonth="ngModel" name="fromyearmonth" required />
+        <span>Yearmonth*</span>
+        @if (!fromyearmonth.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            From yearmonth is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

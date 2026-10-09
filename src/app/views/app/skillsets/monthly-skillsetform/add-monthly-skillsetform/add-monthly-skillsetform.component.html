@@ -1,0 +1,220 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name="Add Monthly Skillset Form"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  [showItemsPerPage]="false"
+  [showSearch]="false"
+></app-list-page-header>
+
+<button
+  class="btn btn-danger btn-shadow"
+  [routerLink]="adminRoot + '/skillsets/monthlySkillsetform'"
+  style="margin-bottom: 22px"
+  >
+  Back
+</button>
+
+<div class="card">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form
+        #datefilter="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #company="ngModel"
+                name="company"
+                (change)="selectcompany($event)"
+                required
+                >
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #branch="ngModel"
+                name="branch"
+                (change)="selectbranch($event)"
+                >
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                ngModel
+                #fromyearmonth="ngModel"
+                name="fromyearmonth"
+                required
+                />
+                <span>From Year Month*</span>
+                @if (!fromyearmonth.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From Year month is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="month"
+                  ngModel
+                  #toyearmonth="ngModel"
+                  name="toyearmonth"
+                  required
+                  />
+                  <span>To Year Month*</span>
+                  @if (!toyearmonth.valid && datefilter.submitted) {
+                    <div class="invalid-tooltip">
+                      To Year month is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <!-- <div class="col-md-3" *ngIf="branchfilter == false">
+              <label class="form-group has-float-label">
+                <ng-select [items]="employee" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                  ngModel #user="ngModel" name="user" required>
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select User *</span>
+                <div *ngIf="!user.valid && datefilter.submitted" class="invalid-tooltip">
+                  User is required!
+                </div>
+              </label>
+            </div>
+            <div class="col-md-3" *ngIf="branchfilter == true">
+              <label class="form-group has-float-label">
+                <ng-select [items]="employeedata" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                  ngModel #user="ngModel" name="user" required>
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select User *</span>
+                <div *ngIf="!user.valid && datefilter.submitted" class="invalid-tooltip">
+                  User is required!
+                </div>
+              </label>
+            </div> -->
+            <div class="col-md-3">
+              <button class="btn btn-primary form-group" type="submit">Submit</button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  <div class="row">
+    @if (userDesignationFormisNotCreated && userDesignationFormisNotCreated.length > 0) {
+      <div
+        class="col-xl-4 col-lg-4 my-4"
+        >
+        <div class="card" style="height: 100%">
+          <div
+            class="card-body d-flex justify-content-between align-items-start"
+            style="flex-direction: column"
+            >
+            <h4>Form not available for selected employee's designation.</h4>
+            <div style="height: 100%">
+              <p style="margin-bottom: 0px">
+                @for (item of userDesignationFormisNotCreated; track item; let i = $index) {
+                  <span
+                    class="badge badge-pill badge-outline-theme-2 mb-1 mr-2 ml-1"
+                    >
+                    {{ item.displayName }}
+                  </span>
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (usserFormCreatedSuccessfully && usserFormCreatedSuccessfully.length > 0) {
+      <div
+        class="col-xl-4 col-lg-4 my-4"
+        >
+        <div class="card" style="height: 100%">
+          <div
+            class="card-body d-flex justify-content-between align-items-start"
+            style="flex-direction: column"
+            >
+            <h4>Form Assigned Successfully</h4>
+            <div style="height: 100%">
+              <p style="margin-bottom: 0px">
+                @for (item of usserFormCreatedSuccessfully; track item; let i = $index) {
+                  <span
+                    class="badge badge-pill badge-outline-theme-2 mb-1 mr-2 ml-1"
+                    >
+                    {{ item.displayName }}
+                  </span>
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- <div class="col-xl-4 col-lg-4 my-4" *ngIf="userFormisThereForThatMonth && userFormisThereForThatMonth.length > 0">
+    <div class="card" style="height: 100%;">
+      <div class="card-body d-flex justify-content-between align-items-start" style="flex-direction: column;">
+        <h4 >Form  already assigned to following employees.</h4>
+        <div style="height: 100%;">
+          <p style="margin-bottom: 0px;">
+            <span *ngFor="let item of userFormisThereForThatMonth;let i=index;"
+            class="badge badge-pill badge-outline-theme-2 mb-1 mr-2  ml-1"> {{item.displayName}} </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

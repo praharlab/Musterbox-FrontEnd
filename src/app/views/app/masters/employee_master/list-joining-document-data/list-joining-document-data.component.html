@@ -1,0 +1,525 @@
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <p class="list-item-heading mb-1">
+                  {{ item.documentName | uppercase }}
+                </p>
+                @if (item.isDocument) {
+                  <div>
+                    @if (item.attachment) {
+                      <div>
+                        <div>Document :
+                          <button type="button" class="btn btn-outline-primary btn-xs"
+                            style="margin-bottom: 5%" (click)="view(item.attachment)">
+                            {{ 'View' | translate }}
+                          </button>
+                          {{ ' ' }}
+                        </div>
+                      </div>
+                    }
+                    @if (item.issueDate) {
+                      <div>
+                        <div>Issue Date : {{ item.issueDate }}</div>
+                      </div>
+                    }
+                    @if (item.fromDate) {
+                      <div>
+                        <div>From Date : {{ item.fromDate }}</div>
+                      </div>
+                    }
+                    @if (item.expiryDate) {
+                      <div>
+                        <div>Expiry Date : {{ item.expiryDate }}</div>
+                      </div>
+                    }
+                    @if (item.identificationNumber) {
+                      <div>
+                        <div>Identification Number : {{ item.identificationNumber }}</div>
+                      </div>
+                    }
+                  </div>
+                }
+              </a>
+            </div>
+            @if (!item.isDocument) {
+              <div style="width: 40%">
+                <button type="button" class="btn btn-outline-primary btn-xs" style="margin-bottom: 5%"
+                  (click)="getRequireJoiningDocumentByID(item);getJoiningDocumentHistroyByID(item);lgModal3.show()">
+                  History
+                </button>
+                {{ ' ' }}
+                <button type="button" class="btn btn-primary btn-xs" style="margin-bottom: 5%"
+                  (click)="getRequireJoiningDocumentByID(item);lgModal.show()">
+                  Upload
+                </button>
+                {{ ' ' }}
+              </div>
+            }
+            @if (item.isDocument) {
+              <div style="width: 40%">
+                <button type="button" class="btn btn-outline-primary btn-xs" style="margin-bottom: 5%"
+                  (click)="getRequireJoiningDocumentByID(item);getJoiningDocumentHistroyByID(item);lgModal3.show()">
+                  History
+                </button>
+                {{ ' ' }}
+                <button type="button" class="btn btn-primary btn-xs" style="margin-bottom: 5%"
+                  (click)="getRequireJoiningDocumentByID(item);getJoiningDocumentByID(item.joiningDocumentID);lgModal1.show()">
+                  EDIT
+                </button>
+                {{ ' ' }}
+                <button type="button" class="btn btn-danger btn-xs" style="margin-bottom: 5%"
+                  (click)="alertConfirmation(item.joiningDocumentID)">
+                  DELETE
+                </button>
+                {{ ' ' }}
+                @if (item.hasExpired) {
+                  <button type="button" class="btn btn-primary btn-xs" style="margin-bottom: 5%"
+                    (click)="getRequireJoiningDocumentByID(item);lgModal2.show()">
+                    Renew
+                  </button>
+                }
+                {{ ' ' }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+
+<!-- Add Document -->
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      @if (reduireData) {
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Upload - {{reduireData.documentName}}</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+      }
+      @if (reduireData) {
+        <div class="modal-body">
+          <form #addDocument="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <!-- Issue Date -->
+              @if (reduireData.hasIssueDate) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #issueDate="ngModel" name="issueDate"
+                      [required]="reduireData.hasIssueDate" />
+                      <span>Issue Date @if (reduireData.hasIssueDate) {
+                        <span>*</span>
+                      }</span>
+                      @if (!issueDate.valid && addDocument.submitted && reduireData.hasIssueDate) {
+                        <div
+                          class="invalid-tooltip">
+                          Issue Date is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                <!-- From Date -->
+                @if (reduireData.hasFromDate) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate"
+                        [required]="reduireData.hasFromDate" />
+                        <span>From Date @if (reduireData.hasFromDate) {
+                          <span>*</span>
+                        }</span>
+                        @if (!fromDate.valid && addDocument.submitted && reduireData.hasFromDate) {
+                          <div
+                            class="invalid-tooltip">
+                            Issue Date is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <!-- Expiry Date -->
+                  @if (reduireData.hasExpiryDate) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="date" ngModel #expiryDate="ngModel" name="expiryDate"
+                          [required]="reduireData.hasExpiryDate" />
+                          <span>Expiry Date @if (reduireData.hasExpiryDate) {
+                            <span>*</span>
+                          }</span>
+                          @if (!expiryDate.valid && addDocument.submitted && reduireData.hasExpiryDate) {
+                            <div
+                              class="invalid-tooltip">
+                              Expiry Date is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    <!-- Identification Number -->
+                    @if (reduireData.hasIdentificationNumber) {
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #identificationNumber="ngModel"
+                            name="identificationNumber" [required]="reduireData.hasIdentificationNumber" />
+                            <span>Identification Number @if (reduireData.hasIdentificationNumber) {
+                              <span
+                              >*</span>
+                            }</span>
+                            @if (!identificationNumber.valid && addDocument.submitted && reduireData.hasIdentificationNumber) {
+                              <div
+                                class="invalid-tooltip">
+                                Identification Number is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      <!-- Documnet Upload -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="file" ngModel #attachment="ngModel" name="attachment"
+                            required [accept]="reduireData.documentFileType" (change)="onSelectFile($event)" />
+                            <span>Document *</span>
+                            @if (!attachment.valid && addDocument.submitted) {
+                              <div class="invalid-tooltip">
+                                Document is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      </div>
+                      <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                    </form>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Document -->
+          <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+            [config]="{ backdrop: 'static', keyboard: false }">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                @if (reduireData && editData) {
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Edit - {{reduireData.documentName}}</h4>
+                    <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+                      #closeModal1>
+                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                  </div>
+                }
+                @if (reduireData && editData) {
+                  <div class="modal-body">
+                    <form #editDocument="ngForm" novalidate (ngSubmit)="onEditSubmit()">
+                      <div class="row">
+                        <!-- Issue Date -->
+                        @if (reduireData.hasIssueDate) {
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" ngModel #issueDate="ngModel" name="issueDate"
+                                [(ngModel)]="editData.issueDate" [required]="reduireData.hasIssueDate" />
+                                <span>Issue Date @if (reduireData.hasIssueDate) {
+                                  <span>*</span>
+                                }</span>
+                                @if (!issueDate.valid && editDocument.submitted && reduireData.hasIssueDate) {
+                                  <div
+                                    class="invalid-tooltip">
+                                    Issue Date is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          }
+                          <!-- From Date -->
+                          @if (reduireData.hasFromDate) {
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate"
+                                  [(ngModel)]="editData.fromDate" [required]="reduireData.hasFromDate" />
+                                  <span>From Date @if (reduireData.hasFromDate) {
+                                    <span>*</span>
+                                  }</span>
+                                  @if (!fromDate.valid && editDocument.submitted && reduireData.hasFromDate) {
+                                    <div
+                                      class="invalid-tooltip">
+                                      From Date is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            }
+                            <!-- Expiry Date -->
+                            @if (reduireData.hasExpiryDate) {
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="date" ngModel #expiryDate="ngModel" name="expiryDate"
+                                    [(ngModel)]="editData.expiryDate" [required]="reduireData.hasExpiryDate" />
+                                    <span>Expiry Date @if (reduireData.hasExpiryDate) {
+                                      <span>*</span>
+                                    }</span>
+                                    @if (!expiryDate.valid && editDocument.submitted && reduireData.hasExpiryDate) {
+                                      <div
+                                        class="invalid-tooltip">
+                                        Expiry Date is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                              }
+                              <!-- Identification Number -->
+                              @if (reduireData.hasIdentificationNumber) {
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="text" ngModel #identificationNumber="ngModel"
+                                      [(ngModel)]="editData.identificationNumber" name="identificationNumber"
+                                      [required]="reduireData.hasIdentificationNumber" />
+                                      <span>Identification Number @if (reduireData.hasIdentificationNumber) {
+                                        <span
+                                        >*</span>
+                                      }</span>
+                                      @if (!identificationNumber.valid && editDocument.submitted && reduireData.hasIdentificationNumber) {
+                                        <div
+                                          class="invalid-tooltip">
+                                          Identification Number is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                }
+                                <!-- Documnet Upload -->
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="file" ngModel #attachment="ngModel" name="attachment"
+                                      [required]="!editData.attachment" [accept]="reduireData.documentFileType"
+                                      (change)="onSelectFile($event)" />
+                                      <span>Document *</span>
+                                      @if (!attachment.valid && editDocument.submitted && !editData.attachment) {
+                                        <div
+                                          class="invalid-tooltip">
+                                          Document is required!
+                                        </div>
+                                      }
+                                    </label>
+                                    <!-- <p>{{editData.attachment}}</p> -->
+                                  </div>
+                                </div>
+                                <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                              </form>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <!-- Renew Document -->
+                    <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                      [config]="{ backdrop: 'static', keyboard: false }">
+                      <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                          @if (reduireData) {
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Renew - {{reduireData.documentName}}</h4>
+                              <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+                                #closeModal2>
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                          }
+                          @if (reduireData) {
+                            <div class="modal-body">
+                              <form #renewDocument="ngForm" novalidate (ngSubmit)="onRenewSubmit()">
+                                <div class="row">
+                                  <!-- Issue Date -->
+                                  @if (reduireData.hasIssueDate) {
+                                    <div class="col-md-4">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="date" ngModel #issueDate="ngModel" name="issueDate"
+                                          [required]="reduireData.hasIssueDate" />
+                                          <span>Issue Date @if (reduireData.hasIssueDate) {
+                                            <span>*</span>
+                                          }</span>
+                                          @if (!issueDate.valid && renewDocument.submitted && reduireData.hasIssueDate) {
+                                            <div
+                                              class="invalid-tooltip">
+                                              Issue Date is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                    <!-- From Date -->
+                                    @if (reduireData.hasFromDate) {
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate"
+                                            [required]="reduireData.hasFromDate" />
+                                            <span>From Date @if (reduireData.hasFromDate) {
+                                              <span>*</span>
+                                            }</span>
+                                            @if (!fromDate.valid && renewDocument.submitted && reduireData.hasFromDate) {
+                                              <div
+                                                class="invalid-tooltip">
+                                                From Date is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                      }
+                                      <!-- Expiry Date -->
+                                      @if (reduireData.hasExpiryDate) {
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <input class="form-control" type="date" ngModel #expiryDate="ngModel" name="expiryDate"
+                                              [required]="reduireData.hasExpiryDate" />
+                                              <span>Expiry Date @if (reduireData.hasExpiryDate) {
+                                                <span>*</span>
+                                              }</span>
+                                              @if (!expiryDate.valid && renewDocument.submitted && reduireData.hasExpiryDate) {
+                                                <div
+                                                  class="invalid-tooltip">
+                                                  Expiry Date is required!
+                                                </div>
+                                              }
+                                            </label>
+                                          </div>
+                                        }
+                                        <!-- Identification Number -->
+                                        @if (reduireData.hasIdentificationNumber) {
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="text" ngModel #identificationNumber="ngModel"
+                                                name="identificationNumber" [required]="reduireData.hasIdentificationNumber" />
+                                                <span>Identification Number @if (reduireData.hasIdentificationNumber) {
+                                                  <span
+                                                  >*</span>
+                                                }</span>
+                                                @if (!identificationNumber.valid && renewDocument.submitted && reduireData.hasIdentificationNumber) {
+                                                  <div
+                                                    class="invalid-tooltip">
+                                                    Identification Number is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                          <!-- Documnet Upload -->
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="file" ngModel #attachment="ngModel" name="attachment"
+                                                required [accept]="reduireData.documentFileType" (change)="onSelectFile($event)" />
+                                                <span>Document *</span>
+                                                @if (!attachment.valid && renewDocument.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Document is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          </div>
+                                          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                                        </form>
+                                      </div>
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+
+
+                              <!--Document History -->
+                              <div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                                [config]="{ backdrop: 'static', keyboard: false }">
+                                <div class="modal-dialog modal-xl">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      @if (reduireData) {
+                                        <h4 class="modal-title pull-left">History - {{reduireData.documentName}}</h4>
+                                      }
+                                      <button type="button" class="btn-close close pull-right" (click)="lgModal3.hide()" aria-label="Close">
+                                        <span aria-hidden="true" class="visually-hidden">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      @if (reduireData && historyData && historyData.length > 0 ) {
+                                        <div class="table-style mb-2">
+                                          <table style="width: 100%">
+                                            <thead>
+                                              <tr>
+                                                @if (reduireData.hasIssueDate) {
+                                                  <th class="name-col name-col-shadow" style="width: 20%"
+                                                  >Issue Date</th>
+                                                }
+                                                @if (reduireData.hasFromDate) {
+                                                  <th class="name-col name-col-shadow" style="width: 20%">
+                                                  From Date</th>
+                                                }
+                                                @if (reduireData.hasExpiryDate) {
+                                                  <th class="name-col name-col-shadow" style="width: 20%"
+                                                  >Expiry Date</th>
+                                                }
+                                                @if (reduireData.hasIdentificationNumber) {
+                                                  <th class="name-col name-col-shadow" style="width: 20%"
+                                                  >identification Number</th>
+                                                }
+                                                <th class="name-col name-col-shadow" style="width: 20%">Document</th>
+                                                <th class="name-col name-col-shadow" style="width: 20%">Upload Date</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody class="text-black" style="font-weight: 600">
+                                              @for (data of historyData; track data) {
+                                                <tr class="student bottom-border bottom-border-radius">
+                                                  @if (reduireData.hasIssueDate) {
+                                                    <td class="name-col left-border">
+                                                    {{data.issueDate | date: 'dd-MM-yyyy'}}</td>
+                                                  }
+                                                  @if (reduireData.hasFromDate) {
+                                                    <td class="name-col left-border">
+                                                    {{data.fromDate | date: 'dd-MM-yyyy'}}</td>
+                                                  }
+                                                  @if (reduireData.hasExpiryDate) {
+                                                    <td class="name-col left-border">
+                                                    {{data.expiryDate| date: 'dd-MM-yyyy' }}</td>
+                                                  }
+                                                  @if (reduireData.hasIdentificationNumber) {
+                                                    <td class="name-col left-border">
+                                                    {{data.identificationNumber}}</td>
+                                                  }
+                                                  <td class="name-col left-border">
+                                                    <button type="button" class="btn btn-outline-primary btn-xs"
+                                                      (click)="view(data.attachment)">
+                                                      {{ 'View' | translate }}
+                                                    </button>
+                                                    {{ ' ' }}
+                                                  </td>
+                                                  <td class="name-col left-border">
+                                                  {{data.createdAt | date: 'dd-MM-yyyy'}}</td>
+                                                </tr>
+                                              }
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      }
+                                      @if (historyData.length == 0 ) {
+                                        <div>
+                                          <h3>No Data Found</h3>
+                                        </div>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>

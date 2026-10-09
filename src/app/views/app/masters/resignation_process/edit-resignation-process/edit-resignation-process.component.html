@@ -1,0 +1,134 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Clearance & Exit</h5>
+
+    <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      @if (resignProcessData != undefined) {
+        <div>
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectcompany($event)"
+                  [(ngModel)]="resignProcessData.companyMasterID" #company="ngModel" name="company" [readonly]="true"
+                  required>
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && editcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Select Department" [items]="alldepartment" bindLabel="departmentName"
+                  bindValue="departmentId" [(ngModel)]="resignProcessData.departmentID" name="department"
+                  #department="ngModel" required>
+                  @for (department of alldepartment; track department) {
+                    <ng-option [value]="department.departmentId">
+                      {{ department.departmentName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Department *</span>
+                @if (!department.valid && editcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Department is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" style="margin-bottom: 20px">
+              <button class="button" class="btn btn-success" type="button" (click)="addvalue()">
+                Add Process
+              </button>
+            </div>
+            <br />
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12"
+                [ngClass]="{'d-none': value.deleted === true,'col-md-12 my-2': true}">
+                <div class="row">
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Select Branch" ngModel (change)="selectbranch($event, i)"
+                        [(ngModel)]="value.branch" #branch="ngModel" name="branch{{ i }}">
+                        @for (item of allbranch; track item) {
+                          <ng-option [value]="item.branchMasterID">
+                            {{ item.branchName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Branch</span>
+                    </label>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel [required]="!value.deleted"
+                        [(ngModel)]="value.userMasterID" #userMasterID="ngModel" name="userMasterID{{ i }}">
+                        @for (ownerList of value.ownerList; track ownerList) {
+                          <ng-option [value]="ownerList.userMasterID">
+                            {{ ownerList.displayName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Assigned Person *</span>
+                      @if (!userMasterID.valid && editcomp.submitted  && !value.deleted) {
+                        <div class="invalid-tooltip">
+                          Assigned Person is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-5">
+                    <label class="form-group has-float-label">
+                      <textarea class="form-control" type="text" [required]="!value.deleted" ngModel
+                      [(ngModel)]="value.description" #description="ngModel" name="description{{ i }}"></textarea>
+                      <span>Description *</span>
+                      @if (!description.valid && editcomp.submitted  && !value.deleted) {
+                        <div class="invalid-tooltip">
+                          Description is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-1" style="top: 13px">
+                    @if (values.length > 1) {
+                      <span class="button" class="btn btn-danger btn-xs" style="cursor: pointer" (click)="removevalue(i)"
+                        >
+                        Remove
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;&nbsp;
+            <buttton class="btn btn-danger btn-shadow mt-4" style="cursor: pointer" type="buttton"
+              [routerLink]="adminRoot + '/masters/clearance-and-exit'">
+              Cancel
+            </buttton>
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

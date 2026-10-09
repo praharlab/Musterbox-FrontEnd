@@ -1,0 +1,38 @@
+<div class="card mb-12">
+  <div class="card-header my-2" style="flex-direction: column">
+    <h3 class="card-header my-2">Subscription Plan Analytics</h3>
+
+    @if (showloader == 'true') {
+      <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+
+    @if (showloader == 'false') {
+      <div class="row p-2">
+        @for (item of rows; track item) {
+          <div class="col-md-3" style="margin-bottom: 2%">
+            <div class="card c-pointer">
+              <div class="card-body d-flex flex-lg-column flex-md-row flex-sm-row flex-column">
+                <a (click)="navigateToEditPage(item)">
+                  <div class="price-top-part">
+                    <i class="iconsminds-bag-items large-icon"></i>
+                    <p class="card-text  mb-0"><b>{{item.productMaster.productName }}</b></p>
+                    <p class="lead text-center m-0">{{ item.count }}</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

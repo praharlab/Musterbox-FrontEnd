@@ -1,0 +1,29 @@
+::ng-deep {
+  .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+    display: table;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: 10px !important;
+    padding-bottom: 0px;
+    padding-left: 3px;
+  }
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 7px;
+  }
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+/* Add this CSS in your styles or component's styles file */
+
+/* Highlighting the placeholder text color */
+.ng-select .ng-placeholder {
+  color: red; /* You can change the color as desired */
+}
+
+/* Highlighting the placeholder border color when focused */
+.ng-select.ng-focused .ng-placeholder {
+  color: green; /* You can change the color as desired */
+}

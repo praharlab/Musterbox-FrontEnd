@@ -1,0 +1,247 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editvisitdata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Next Visit Schedule</h5>
+      <form #editvisit="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #customerID="ngModel"
+                [(ngModel)]="editvisitdata.customerID" name="customerID" required>
+                @for (allcustomers of allcustomer; track allcustomers) {
+                  <ng-option [value]="allcustomers.customerID">
+                    {{ allcustomers.customerName }} ({{ allcustomers.companyName }})
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Customer *</span>
+              @if (!customerID.valid && editvisit.submitted) {
+                <div class="invalid-tooltip">
+                  Customer is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #assignID="ngModel" [(ngModel)]="editvisitdata.assignID"
+                name="assignID" required>
+                @for (empLists of empList; track empLists) {
+                  <ng-option [value]="empLists.userMasterID">
+                    {{ empLists.firstName }} {{ empLists.lastName }} - {{ empLists.userNumber }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Assign Person *</span>
+              @if (!assignID.valid && editvisit.submitted) {
+                <div class="invalid-tooltip">
+                  Assign Person is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select [items]="empList" [multiple]="true" bindLabel="name" groupBy="selectedAllGroup"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                [(ngModel)]="selected" ngModel #coPersonID="ngModel" name="coPersonID">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Co-Person</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #visitPurposeID="ngModel"
+                [(ngModel)]="editvisitdata.visitPurposeID" name="visitPurposeID">
+                @for (getallvisitpurposes of getallvisitpurpose; track getallvisitpurposes) {
+                  <ng-option
+                    [value]="getallvisitpurposes.visitPurposeID">
+                    {{ getallvisitpurposes.visitPurpose }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Visit Purpose *</span>
+              @if (!visitPurposeID.valid && editvisit.submitted) {
+                <div class="invalid-tooltip">
+                  Visit Purpose is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #productID="ngModel"
+                [(ngModel)]="editvisitdata.productID" name="productID">
+                @for (products of product; track products) {
+                  <ng-option [value]="products.productID">
+                    {{ products.productName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Product *</span>
+              @if (!productID.valid && editvisit.submitted) {
+                <div class="invalid-tooltip">
+                  Product is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="Date" ngModel #visitDate="ngModel" name="visitDate" required />
+              <span>Select Visit Date *</span>
+              @if (!visitDate.valid && editvisit.submitted) {
+                <div class="invalid-tooltip">
+                  Visit Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input [ngxTimepicker]="visitpicker" class="form-control" placeholder="Enter Visit Time" ngModel
+                #visitTime="ngModel" name="visitTime" required />
+                <ngx-material-timepicker #visitpicker></ngx-material-timepicker>
+                <span>Select Visit Time *</span>
+                @if (!visitTime.valid && editvisit.submitted) {
+                  <div class="invalid-tooltip">
+                    Visit Time is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+                  [ngModel]="editvisitdata.companyMasterID">
+                  @for (company of company; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company</span>
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            @for (fields of field; track fields) {
+              <div class="col-md-6">
+                @if (fields.inputType == 'number' && fields.isRequired == false) {
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" ngModel #{{fields.fieldLabel}}="ngModel"
+                      name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue" />
+                      <span>{{ fields.fieldLabel }}</span>
+                    </label>
+                  }
+                  @if (fields.inputType == 'text' && fields.isRequired == false) {
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                        name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue" />
+                        <span>{{ fields.fieldLabel }}</span>
+                      </label>
+                    }
+                    @if (fields.inputType == 'textarea' && fields.isRequired == false) {
+                      <label class="form-group has-float-label"
+                        >
+                        <textarea class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                        name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue"></textarea>
+                        <span>{{ fields.fieldLabel }}</span>
+                      </label>
+                    }
+                    @if (fields.inputType == 'radio' && fields.isRequired == false) {
+                      <div class="row"
+                        style="margin-left: 1%; margin-bottom: 2%">
+                        <label style="margin-right: 30px">
+                          <b>{{ fields.fieldLabel }}</b>
+                        </label>
+                        @for (values of fields.value; track values) {
+                          <div>
+                            <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                              [value]="values" style="margin-right: 10px" [(ngModel)]="fields.fieldvalue" />
+                              <label for="value" style="margin-right: 25px">{{ values }}</label>
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (fields.inputType == 'dropdown' && fields.isRequired == false) {
+                        <label class="form-group has-float-label"
+                          >
+                          <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                            name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue">
+                            @for (values of fields.value; track values) {
+                              <ng-option [value]="values">
+                                {{ values }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>{{ fields.fieldLabel }}</span>
+                        </label>
+                      }
+                      @if (fields.inputType == 'number' && fields.isRequired == true) {
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" ngModel #{{fields.fieldLabel}}="ngModel"
+                            name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue" required />
+                            <span>{{ fields.fieldLabel }}</span>
+                          </label>
+                        }
+                        @if (fields.inputType == 'text' && fields.isRequired == true) {
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue" required />
+                              <span>{{ fields.fieldLabel }}</span>
+                            </label>
+                          }
+                          @if (fields.inputType == 'textarea' && fields.isRequired == true) {
+                            <label class="form-group has-float-label">
+                              <textarea class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue" required></textarea>
+                              <span>{{ fields.fieldLabel }}</span>
+                            </label>
+                          }
+                          @if (fields.inputType == 'radio' && fields.isRequired == true) {
+                            <div class="row"
+                              style="margin-left: 1%; margin-bottom: 2%">
+                              <label style="margin-right: 30px">
+                                <b>{{ fields.fieldLabel }}</b>
+                              </label>
+                              @for (values of fields.value; track values) {
+                                <div>
+                                  <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    [value]="values" style="margin-right: 10px" [(ngModel)]="fields.fieldvalue" required />
+                                    <label for="value" style="margin-right: 25px">{{ values }}</label>
+                                  </div>
+                                }
+                              </div>
+                            }
+                            @if (fields.inputType == 'dropdown' && fields.isRequired == true) {
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                                  name="{{ fields.fieldLabel }}" [(ngModel)]="fields.fieldvalue" required>
+                                  @for (values of fields.value; track values) {
+                                    <ng-option [value]="values">
+                                      {{ values }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>{{ fields.fieldLabel }}</span>
+                              </label>
+                            }
+                          </div>
+                        }
+                      </div>
+                      <br />
+                      <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                    </form>
+                  </div>
+                </div>
+              }
+
+              <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

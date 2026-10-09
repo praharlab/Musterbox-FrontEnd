@@ -1,0 +1,149 @@
+@if (attendancedata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #Editdata="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #company="ngModel"
+                name="company" [(ngModel)]="companyName"
+                [attr.disabled]="true" />
+                <span>Company *</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #attendanceBonusPolicyName="ngModel"
+                  name="attendanceBonusPolicyName" [(ngModel)]="attendancedata.attendanceBonusPolicyName"
+                  [attr.disabled]="true" />
+                  <span>Attendance Bonus Policy Name *</span>
+                  @if (!attendanceBonusPolicyName.valid && Editdata.submitted) {
+                    <div class="invalid-tooltip">
+                      Attendance Bonus Policy Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-12">
+                <div class="form-check form-check-inline" style="margin-bottom: 20px;">
+                  <input class="form-check-input" type="checkbox" ngModel #nobonus="ngModel" name="nobonus"
+                    (change)="isNobonus($event)" [checked]="isNoAttendancebonus"
+                    [(ngModel)]="attendancedata.setNoattendanceBonusPolicy" [attr.disabled]="true" />
+                    <label class="form-check-label" for="nobonus"> <b>No Attendance Bonus Policy</b></label>
+                  </div>
+                </div>
+                @if (!isNoAttendancebonus) {
+                  <div class="col-md-6">
+                    <span class="d-block" style="margin-top: -6px;">Presents Require For Attendance Bonus *</span>
+                    @if (attendancedata.setPresentDay === 'Fix') {
+                      <div class="form-check form-check-inline" style="margin-bottom: 14px;"
+                        >
+                        <input class="form-check-input" type="radio" id="fixRadio" name="setpresentday" value="Fix"
+                          [(ngModel)]="selectedOption"  [checked]="isChecked"
+                          [(ngModel)]="attendancedata.setPresentDay" [attr.disabled]="true">
+                          <label class="form-check-label" for="fixRadio">Set Minimum Present</label>
+                        </div>
+                      }
+                      <span> &nbsp;&nbsp; </span>
+                      @if (attendancedata.setPresentDay === 'Full') {
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="fullRadio" name="setpresentday" value="Full"
+                            [(ngModel)]="selectedOption"  [checked]="isChecked1"
+                            [(ngModel)]="attendancedata.setPresentDay" [attr.disabled]="true">
+                            <label class="form-check-label" for="fullRadio">Full Present</label>
+                          </div>
+                        }
+                        <span> &nbsp;&nbsp; </span>
+                        @if (attendancedata.setPresentDay === 'Half') {
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="halfRadio" name="setpresentday" value="Half"
+                              [(ngModel)]="selectedOption"  [checked]="isChecked7"
+                              [(ngModel)]="attendancedata.setPresentDay" [attr.disabled]="true">
+                              <label class="form-check-label" for="fullRadio">Half Month Present</label>
+                              @if (!attendancedata.setpresentday && Editdata.submitted) {
+                                <div class="invalid-tooltip">
+                                  Present Require For Attendance Bonus is required!
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                      <span> &nbsp;&nbsp; </span>
+                      @if (!isNoAttendancebonus && attendancedata.setPresentDay === 'Fix') {
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="number" ngModel #days="ngModel" required name="days"
+                              [(ngModel)]="attendancedata.noofPrentDay" [checked]="isChecked2" [attr.disabled]="true" />
+                              <span>Minimum No Of Present *</span>
+                              @if (!days.valid && Editdata.submitted) {
+                                <div class="invalid-tooltip">
+                                  Minimum No Of Present is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                        }
+                      </div>
+                      &nbsp;&nbsp;
+                      <div class="row">
+                        @if (!isNoAttendancebonus) {
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" ngModel #bonustypes="ngModel" name="bonustypes"
+                                (change)="onBonusTypeChange(bonustypes.value)" [checked]="isChecked4" required
+                                [(ngModel)]="attendancedata.attendanceBonustype" disabled>
+                                <ng-option value="Fix">Fix Amount</ng-option>
+                                <ng-option value="Full">On Gross</ng-option>
+                              </ng-select>
+                              <span>Attendance Bonus Types *</span>
+                              @if (!bonustypes.valid && Editdata.submitted) {
+                                <div class="invalid-tooltip">
+                                  Attendance Bonus Types is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                        }
+                        @if (!isNoAttendancebonus && attendancedata.attendanceBonustype === 'Fix') {
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="number" ngModel #amount="ngModel" required name="amount"
+                                [checked]="isChecked5" [(ngModel)]="attendancedata.attendanceBonusAmount" [attr.disabled]="true" />
+                                <span>Bonus Amount *</span>
+                                @if (!amount.valid && Editdata.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Bonus Amount is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          }
+                          @if (!isNoAttendancebonus && attendancedata.attendanceBonustype === 'Full') {
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #amount="ngModel" name="amount" [checked]="isChecked6"
+                                  required [(ngModel)]="attendancedata.attendanceBonusAmount" disabled>
+                                  <ng-option value="0.5">0.5</ng-option>
+                                  <ng-option value="1">1</ng-option>
+                                  <ng-option value="1.5">1.5</ng-option>
+                                  <ng-option value="2">2</ng-option>
+                                  <ng-option value="2.5">2.5</ng-option>
+                                  <ng-option value="3">3</ng-option>
+                                </ng-select>
+                                <span>Bonus Amount *</span>
+                                @if (!amount.valid && Editdata.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Bonus Amount is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          }
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                }
+
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

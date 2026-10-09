@@ -1,0 +1,44 @@
+
+.table th,
+.table td {
+  border-color: rgb(171, 170, 170) !important;
+}
+
+.border {
+  border: 1px solid rgb(171, 170, 170) !important;
+}
+.col-md-3.border {
+  padding: 10px;
+}
+
+span.fw-bold {
+  font-size: 17px;
+}
+.d-flex.flex-column {
+  font-size: 17px;
+}
+.fw-bolder {
+  font-size: 15px;
+}
+
+h6.fw-bold {
+  font-size: 20px;
+}
+
+span.fw-normal {
+  font-size: 15px;
+}
+
+.container.mt-5.mb-5 {
+  padding: 0% 10% 10% 10%;
+}
+
+button.btn.btn-primary.pull-right {
+  margin-left: 55%;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
+}

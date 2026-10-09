@@ -1,0 +1,110 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Set Performance Review </h5>
+
+    @if (comp && value && employee && reviewrs) {
+      <form #addEmployeePerformanceReview="ngForm" novalidate>
+        <div class=" row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" #companyMasterID="ngModel"
+                [(ngModel)]="value.companyMasterID" name="companyMasterID" required
+                (change)="selectcompany($event)" [readonly]="true">
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addEmployeePerformanceReview.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" #performanceReviewId="ngModel"
+                [(ngModel)]="value.performanceReviewId" name="performanceReviewId" ngModel required>
+                @for (performaceReview of performaceReviewFData; track performaceReview) {
+                  <ng-option
+                    [value]="performaceReview.id">
+                    {{ performaceReview.title }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Review Form*</span>
+              @if (!performanceReviewId.valid && addEmployeePerformanceReview.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Review Form is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" #revieweeId="ngModel" [(ngModel)]="value.revieweeId"
+                name="revieweeId" ngModel required>
+                @for (user of employee; track user) {
+                  <ng-option [value]="user.userMasterID">
+                    {{ user.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Reviewee *</span>
+              @if (!revieweeId.valid && addEmployeePerformanceReview.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Reviewee is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" #reviewerId="ngModel" [(ngModel)]="value.reviewerId"
+                name="reviewerId" ngModel required>
+                @for (reviewer of reviewrs; track reviewer) {
+                  <ng-option [value]="reviewer.userMasterID">
+                    {{ reviewer.displayName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Reviewer *</span>
+              @if (!reviewerId.valid && addEmployeePerformanceReview.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Reviewer is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #notes="ngModel" [(ngModel)]="value.notes"
+              name="notes{{i}}"></textarea>
+              <span>Notes </span>
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary  btn-shadow mt-4" type="submit" (click)="onSubmit()">
+          Submit
+        </button>
+        &nbsp;
+        <button class="btn btn-danger  btn-shadow mt-4" type="button"
+          [routerLink]="adminRoot + '/pms/setPerformanceReview'">
+          Cancel
+        </button>
+      </form>
+    }
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

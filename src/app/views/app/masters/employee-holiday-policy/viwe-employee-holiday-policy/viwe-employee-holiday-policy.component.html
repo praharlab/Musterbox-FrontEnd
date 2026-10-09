@@ -1,0 +1,95 @@
+<form #addcomp="ngForm" novalidate>
+  @if (editbyid) {
+    <div class="row">
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="text" ngModel #holidayPolicyName="ngModel" disabled
+            [(ngModel)]="editbyid.holidayPolicyName" name="holidayPolicyName" required />
+            <span>Holiday Policy Name *</span>
+            @if (!holidayPolicyName.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Holiday Policy Name is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #holidayYear="ngModel" [readonly]="true"
+              [(ngModel)]="editbyid.holidayYear" name="holidayYear">
+              <ng-option [value]="2020">2020</ng-option>
+              <ng-option [value]="2021">2021</ng-option>
+              <ng-option [value]="2022">2022</ng-option>
+              <ng-option [value]="2023">2023</ng-option>
+              <ng-option [value]="2024">2024</ng-option>
+              <ng-option [value]="2025">2025</ng-option>
+              <ng-option [value]="2026">2026</ng-option>
+              <ng-option [value]="2027">2027</ng-option>
+              <ng-option [value]="2028">2028</ng-option>
+              <ng-option [value]="2029">2029</ng-option>
+              <ng-option [value]="2030">2030</ng-option>
+              <ng-option [value]="2031">2031</ng-option>
+              <ng-option [value]="2032">2032</ng-option>
+            </ng-select>
+            <span>Select Year *</span>
+            @if (!holidayYear.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Holiday Year is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" [readonly]="true"
+              [(ngModel)]="editbyid.companyMasterID" name="companyMasterID">
+              @for (product of product; track product) {
+                <ng-option [value]="product.companyMasterID">
+                  {{ product.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+    }
+    <div class="row">
+
+      @for (value of values; track value; let i = $index) {
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" [(ngModel)]="value.name" #holidayListName="ngModel"
+                  disabled name="name{{ i }}" />
+                  <span>Name *</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" [(ngModel)]="value.date" #holidayDate="ngModel" disabled
+                    name="date{{ i }}" />
+                    <span>Date *</span>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <span> &nbsp;&nbsp;&nbsp;&nbsp; </span>
+                  @if (value.optionalHoliday !== null) {
+                    <div>
+                      <span><b>Optional Holiday </b>: {{ value.optionalHoliday ==
+                    1 ? 'Yes' : 'No' }}</span>
+                  </div>
+                }
+                <span> &nbsp;&nbsp; </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </form>

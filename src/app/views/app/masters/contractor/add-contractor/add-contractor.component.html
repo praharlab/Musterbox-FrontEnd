@@ -1,0 +1,253 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Contractor</h5>
+
+    <form #adddata="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel [closeOnSelect]="true" #company="ngModel" name="company"
+              required>
+              @for (company of comp; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+          </label>
+          @if (!company.valid && adddata.submitted) {
+            <div class="invalid-tooltip">
+              Company is required!
+            </div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #OrgName="ngModel" required name="OrgName" />
+            <span>Contractor Name *</span>
+            @if (!OrgName.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Contractor Name is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #website="ngModel" name="website" />
+            <span>Website </span>
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #short="ngModel" required name="short" />
+            <span>Short Name *</span>
+            @if (!short.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Short Name is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #cpn="ngModel" name="cpn" />
+            <span>Contact Person Name*</span>
+            @if (!cpn.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Contact Person Name is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #orgcode="ngModel" required name="orgcode" />
+            <span>Contractor Code *</span>
+            @if (!orgcode.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Contractor Code is required!
+              </div>
+            }
+          </label>
+        </div>
+
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #cno="ngModel" required name="cno" />
+            <span>Contact Number*</span>
+            @if (!cno.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Contact Number is required!
+              </div>
+            }
+          </label>
+        </div>
+
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #email="ngModel" required name="email" />
+            <span> Email* </span>
+            @if (!email.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Email is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <textarea class="form-control" type="text" ngModel #contractorAddress="ngModel" name="contractorAddress"></textarea>
+            <span>Contractor Address</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectcountry($event)" ngModel #country1="ngModel"
+              name="country1" required>
+              @for (countrys of country; track countrys) {
+                <ng-option [value]="countrys">
+                  {{ countrys.countryName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Country *</span>
+            @if (!country1.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Country is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectstate($event)" [(ngModel)]="selectedstate"
+              ngModel #state1="ngModel" name="state1" required>
+              @for (states of state; track states) {
+                <ng-option [value]="states">
+                  {{ states.stateName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select State*</span>
+            @if (!state1.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                State Code is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectcity($event)" [(ngModel)]="selectedcity" ngModel
+              #city1="ngModel" name="city1" required>
+              @for (citys of city; track citys) {
+                <ng-option [value]="citys">
+                  {{ citys.cityName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select City*</span>
+            @if (!city1.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                City is required!
+              </div>
+            }
+          </label>
+        </div>
+
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #doi="ngModel" required name="doi" />
+            <span> Date of Incorporation*</span>
+            @if (!doi.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                Date of Incorporation is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel" name="bankMasterID">
+              @for (bankdata of bankdata; track bankdata; let i = $index) {
+                <ng-option [value]="bankdata.bankMasterID">
+                  {{ bankdata.bankName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Bank</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #bankIFSC="ngModel" name="bankIFSC" />
+            <span>{{bankIfscCodeLabel}}</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" ngModel #bankAccountNo="ngModel" name="bankAccountNo" />
+            <span>Bank Account No</span>
+          </label>
+        </div>
+
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #pancard="ngModel" name="pancard" />
+            <span>Pan Card No</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" placeholder="" ngModel #gstNumber="ngModel" name="gstNumber" />
+            <span>GST No.</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #RegistrationNo="ngModel" name="RegistrationNo" />
+            <span> Registration Number</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <textarea class="form-control" type="text" ngModel #aboutorg="ngModel" name="aboutorg"></textarea>
+            <span>About Contractor</span>
+          </label>
+        </div>
+
+      </div>
+      <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+        [isDisabled]="buttonDisabled" (onClick)="onSubmit()">
+        {{ 'forms.submit' | translate }}
+      </app-state-button>
+      <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/cotractor'"
+        style="margin-left: 2%">
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

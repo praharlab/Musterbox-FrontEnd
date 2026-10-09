@@ -1,0 +1,311 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="filterData.search" (itemsPerPageChange)="onLimitChange($event)" (searchKeyUp)="updateFilter($event)"
+  [itemsPerPage]="filterData.limit" [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()"
+name="Auto Mail Setup"></app-list-page-header>
+@if (allcomp.length!=0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                [(ngModel)]="filterData.companyMasterID" required>
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #mailType="ngModel" name="mailType">
+                <ng-option value="attendanceReport">Attendance Report</ng-option>
+                <ng-option value="leaveReport">Leave Report</ng-option>
+                <ng-option value="dailypuncinoutReport">Daily PunchIn-Out Report</ng-option>
+                <ng-option value="dailyleaveReport">Daily Leave Report</ng-option>
+                <ng-option value="visitReport">Visit Report</ng-option>
+                <ng-option value="shiftdepartmentwiseDailyattendancecountReport">Shift Department Wise Report</ng-option>
+                <ng-option value="FYleaveReport">FY-Leave Report</ng-option>
+                <ng-option value="lateComeEarlyGoReport">Late-Come Early-Go Report</ng-option>
+                <ng-option value="departmentwiseDailyCostReport">Department Wise Daily Cost Report</ng-option>
+              </ng-select>
+              <span>Mail Type</span>
+            </label>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+<br />
+<div class="row">
+  <!-- <div class="row" *ngIf="rows && permissionview.length != 0"> -->
+  <div class="col-12 mb-4 data-table-rows">
+    <ngx-datatable [rows]="rows" [scrollbarH]="true" [rowHeight]="50" [footerHeight]="100" [columnMode]="'force'"
+      [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+      (page)="onChange($event)">
+
+      <ngx-datatable-column name="Company Name" prop="companyMaster.companyName" [flexGrow]="1.2"
+      [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Mail Type" prop="mailType" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Mail Mode" prop="mailMode" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Day" prop="day" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+      <ngx-datatable-column name="Time" prop="time" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Action" [sortable]="true" [width]="150">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <a (click)="navigateToEditPage(row)">
+            <span tooltip="Edit Mail Setup" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+            style="padding-right: 6px; font-size: 18px"></span>
+            {{ ' ' }}
+          </a>
+          <a (click)="alertConfirmation(row.id)">
+            <span tooltip="Delete Mail Setup" [class]="'glyph-icon simple-icon-trash tool_tip'"
+            style="padding-right: 6px; font-size: 18px"></span>
+            {{ ' ' }}
+          </a>
+        </ng-template>
+      </ngx-datatable-column>
+      @if (true) {
+        <ngx-datatable-footer>
+          <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+            let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+            <div class="w-100 d-flex justify-content-center">
+              <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+            </div>
+          </ng-template>
+        </ngx-datatable-footer>
+      }
+    </ngx-datatable>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Submitted Task</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          @if (authdata) {
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th>Description</th>
+                  <td>{{ authdata.description }}</td>
+                </tr>
+                @if (authdata.attachment != null && authdata.attachment != '') {
+                  <tr>
+                    <th>Image</th>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+          <br />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Submitted Task</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          @if (authdata) {
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th>Description</th>
+                  <td>{{ authdata.description }}</td>
+                </tr>
+                @if (authdata.attachment != null && authdata.attachment != '') {
+                  <tr>
+                    <th>Image</th>
+                    <img src="http://localhost:3000/uploads/submit/attachment/{{ authdata.attachment }}" height="400"
+                      width="500" />
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+            <br />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+  <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Show Task Details</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+            @if (TaskINFO) {
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <th>Task Name</th>
+                    <td>{{ TaskINFO.TaskName }}</td>
+                  </tr>
+                  <tr>
+                    <th>Task Description</th>
+                    <td>{{ TaskINFO.TaskDesc }}</td>
+                  </tr>
+                  <tr>
+                    <th>Current Stage</th>
+                    <td>{{ TaskINFO['tasks_stage.TaskStage'] }}</td>
+                  </tr>
+                  <tr>
+                    <th>Start Date</th>
+                    <td>{{ TaskINFO.startDate | date: 'dd-MM-yyyy' }}</td>
+                  </tr>
+                  <tr>
+                    <th>End Date</th>
+                    <td>{{ TaskINFO.endDate | date: 'dd-MM-yyyy' }}</td>
+                  </tr>
+                  <tr>
+                    <th>Priority</th>
+                    <td>{{ TaskINFO.priority }}</td>
+                  </tr>
+                  <tr>
+                    <th>Assigned by</th>
+                    <td>{{ TaskINFO.createByUser }}</td>
+                  </tr>
+                  <tr>
+                    <th>Status</th>
+                    <td>
+                      @if (TaskINFO.taskStatus == '0') {
+                        <button type="button" class="btn btn-warning">
+                          Pending
+                        </button>
+                      }
+                      {{
+                      '
+                      '
+                      }}
+                      @if (TaskINFO.taskStatus == '1') {
+                        <button type="button" class="btn btn-success">
+                          Accepted
+                        </button>
+                      }
+                      {{
+                      '
+                      '
+                      }}
+                      @if (TaskINFO.taskStatus == '2') {
+                        <button type="button" class="btn btn-danger">
+                          Rejected
+                        </button>
+                      }
+                      {{
+                      '
+                      '
+                      }}
+                      @if (TaskINFO.taskStatus == '3') {
+                        <button type="button" class="btn btn-primary">
+                          Completed
+                        </button>
+                      }
+                      {{
+                      '
+                      '
+                      }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            }
+            <br />
+            @if (TaskRemarks.length > 0) {
+              <h3>Task History</h3>
+            }
+            @if (TaskRemarks.length > 0) {
+              <table class="table table-striped">
+                <tr>
+                  <th>Task Stage</th>
+                  <th>Remarks</th>
+                  <th>Start Date Time</th>
+                  <th>End Date Time</th>
+                </tr>
+                @for (items of TaskRemarks; track items) {
+                  <tbody>
+                    <tr>
+                      <th>{{ items.stage.TaskStage }}</th>
+                      <th>{{ items.remark }}</th>
+                      <td>
+                        {{ items.createdAt | date: 'dd-MM-yyyy' }}
+                      </td>
+                      <td>
+                        {{ items.updatedAt | date: 'dd-MM-yyyy' }}
+                      </td>
+                    </tr>
+                  </tbody>
+                }
+              </table>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

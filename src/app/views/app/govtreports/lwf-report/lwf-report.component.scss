@@ -1,0 +1,32 @@
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+@media print {
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+}
+
+.row1 {
+  display: flex;
+}
+
+.row1 > div {
+  flex: 1;
+}
+
+.col-md1-5 {
+  flex: 0 0 50%;
+}
+
+.col-md1-7 {
+  flex: 0 0 50%;
+  font-weight: 700;
+}

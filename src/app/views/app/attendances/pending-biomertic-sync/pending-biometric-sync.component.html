@@ -1,0 +1,194 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showSearch]="false" [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage" name="Pending Attendance Sync"></app-list-page-header>
+
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="BiometricSerial($event)" required>
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #SerialNo="ngModel" name="SerialNo"
+                [(ngModel)]="selectedSerial" required>
+                @for (biometricSerialNum of biometricSerialNo; track biometricSerialNum) {
+                  <ng-option [value]="biometricSerialNum">
+                    {{ biometricSerialNum }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Serial Number*</span>
+              @if (!SerialNo.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Serial Number is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="choose your option" ngModel #Biometricstatus="ngModel" required
+                name="Biometricstatus">
+                <ng-option value="all">All</ng-option>
+                <ng-option value="pending">Pending</ng-option>
+              </ng-select>
+              <span>Biometric status *</span>
+              @if (!Biometricstatus.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Biometric status required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" required />
+              <span>From Date *</span>
+              @if (!startdate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" required />
+              <span>To Date *</span>
+              @if (!enddate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  To Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-11">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+              Clear
+            </button>
+          </div>
+          @if (rows && rows.length != 0) {
+            <div class="col-md-1" style="text-align: right">
+              <div class="float-right float-none-xs mt-2">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Export" ngModel #cid2="ngModel" name="cid2" [(ngModel)]="selectedValue"
+                    (ngModelChange)="download()">
+                    <ng-option value="csv">CSV</ng-option>
+                    <ng-option value="xlsx">XLSX</ng-option>
+                  </ng-select>
+                </label>
+              </div>
+            </div>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (rows.length > 0 && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Employee Code" prop="EmployeeCode" [flexGrow]="1.2"
+        [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="Serial No" prop="Serialnumber" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column name="Log Date Time" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.logdatetime | date: 'dd-MM-yyyy HH:mm' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Data Uploaded" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.DataUploaded != 1) {
+              <p>NO</p>
+            }
+            @if (row.DataUploaded == 1) {
+              <p>YES</p>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Photo" [flexGrow]="1.2" [width]="130">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.Image64 != '' || row.Image64 != null) {
+              <img src="data:image/jpeg;base64,{{ row.Image64 }}" (click)="lgModal.show(); editimage(row.Image64)"
+                height="50px" width="50px" />
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Image</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center">
+          <img src="data:image/jpeg;base64,{{ image }}" height="350px" width="350px" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

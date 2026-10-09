@@ -1,0 +1,194 @@
+@if (rows.length > 0 && permissionview.length != 0 && permissioncreate.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #tableForm="ngForm" novalidate>
+        <div class="row">
+          <div class="col mb-2">
+            @if (rows.length > 0) {
+              <button class="btn btn-primary" type="submit" (click)="saveData()">
+                Save
+              </button>
+            }
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table id="editable-table" class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Employee Details</th>
+                @for (item of dateRange; track item) {
+                  <th>{{item | date: 'dd-MM-yyyy'}}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of rows; track item; let i = $index) {
+                <tr>
+                  <td>
+                    <div style="width: 250px">
+                      Name - {{ item.displayName }} @if (item.employeeCode) {
+                      <span>
+                        ({{ item.employeeCode }})
+                      </span>
+                    }
+                    <br />
+                    Contact Number - {{ item.userNumber }}
+                    <br />
+                    Branch - {{ item.branchName }}
+                    <br />
+                    Department - {{ item.departmentName }}
+                    <br />
+                    Designation - {{ item.designationName }}
+                    <br />
+                  </div>
+                </td>
+                @for (date of item.rosterData; track date; let j = $index) {
+                  <td>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel #shiftID="ngModel"
+                            appendTo="body" [(ngModel)]="date.shiftID" [append]="'body'"
+                            name="shiftID_{{i}}_{{j}}" [required]="date.isWeekOff == false">
+                            @for (shift of allshift; track shift) {
+                              <ng-option [value]="shift.shiftID">
+                                {{ shift.shiftName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Shift @if (date.isWeekOff == false) {
+                            <span>*</span>
+                          }</span>
+                          @if (!shiftID.valid && tableForm.submitted && date.isWeekOff == false) {
+                            <div
+                              class="invalid-tooltip">
+                              Shift is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-12">
+                        <div style="display: flex; align-items: center;">
+                          <input type="checkbox" ngModel #isWeekOff="ngModel"
+                            name="amountType1_{{i}}_{{j}}" [(ngModel)]="date.isWeekOff"
+                            (change)="onChange(date,item)" />
+                            &nbsp;&nbsp;
+                            <label style="margin: 0;">Week Off</label>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!--Week Offf-->
+<div bsModal #weekOffShuffleModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title pull-left">
+          Week Off
+        </h5>
+        <button type="button" class="btn-close close pull-right"
+          (click)="weekOffShuffleModal.hide();resetForm()" aria-label="Close" #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #weekOffShuffleForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+
+            <div class="col-md-6">
+              <label><b>Week Off *</b></label>
+              &nbsp;&nbsp;
+              <br>
+                <input type="radio" name="samAsMainTask1" ngModel #samAsMainTask1="ngModel"
+                  (change)="onaddsamAsMainTaskChange($event)" value="true" [(ngModel)]="showShuffle" />
+                  &nbsp;
+                  <label for="html">Yes, I would like to Shuffle Week-Off.</label>
+                  &nbsp;&nbsp;
+                  <br>
+                    <input type="radio" name="samAsMainTask1" ngModel #samAsMainTask1="ngModel"
+                      (change)="onaddsamAsMainTaskChange($event)" value="false" [(ngModel)]="showShuffle" />
+                      &nbsp;
+                      <label for="html">No, I would like to Give/Remove Week-Off.</label>
+                      <!-- <div *ngIf="!samAsMainTask1.valid && addtask.submitted" class="invalid-tooltip">
+                      Same As Main Task is required!
+                    </div> -->
+                  </div>
+                  <div class="col-md-6">
+                  </div>
+                  <div class="col-md-12">
+                    <hr>
+                    </div>
+                  </div>
+                  @if (showShuffleFields == 'true') {
+                    <div class="row">
+                      <div class="col-md-12">
+                        <br>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="date" ngModel #weekoffshuffled="ngModel"
+                              [readOnly]="!weekOffShuffleForm.value.isWeekOff" name="weekoffshuffled" required />
+                              <span>Week Off Shuffle Date *</span>
+                              @if (!weekoffshuffled.valid && weekOffShuffleForm.submitted) {
+                                <div
+                                  class="invalid-tooltip">
+                                  Week Off Shuffle is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" ngModel #shuffled="ngModel" name="shuffled"
+                                [readOnly]="weekOffShuffleForm.value.isWeekOff" required />
+                                <span>New Week Off Shuffled Date*</span>
+                                @if (!shuffled.valid && weekOffShuffleForm.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Shuffled is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <textarea class="form-control" ngModel #remarks="ngModel" name="remarks"
+                                required></textarea>
+                                <span>Remarks *</span>
+                                @if (!remarks.valid && weekOffShuffleForm.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Remarks is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-12">
+                              <hr>
+                              </div>
+                            </div>
+                          }
+
+                          <input type="hidden" ngModel name="userMasterID" />
+                          <input type="hidden" ngModel name="isWeekOff" />
+                          <input type="hidden" ngModel name="currentDate" />
+
+                          <div class="col-md-12">
+                            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate}}</button>
+                          </div>
+                        </form>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>

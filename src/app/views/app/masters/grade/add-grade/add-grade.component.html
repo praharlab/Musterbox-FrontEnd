@@ -1,0 +1,793 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Salary Grade</h5>
+
+    <form #addgrade="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="col-md-12 row">
+        <div class="col-md-7 row">
+          <div class="col-md-12 mb-3">
+            <span><b>Do you want to set salary grade for contractor employees * :</b></span>
+            &nbsp;&nbsp;
+
+            <input
+              type="radio"
+              name="contractorgrade"
+              [value]="true"
+              [(ngModel)]="isContractorGrade"
+              (change)="getContractor('1'); changeEvent()"
+              #contractorgrade="ngModel"
+              style="margin-right: 1%"
+              required
+              />
+            <label for="yes" style="margin-right: 1%">Yes</label>
+
+            <input
+              type="radio"
+              name="contractorgrade"
+              [value]="false"
+              [(ngModel)]="isContractorGrade"
+              (change)="getContractor('1'); changeEvent()"
+              style="margin-right: 1%"
+              required
+              />
+            <label for="no">No</label>
+
+            @if (contractorgrade.invalid && addgrade.submitted) {
+              <div class="invalid-tooltip">
+                This field is required!
+              </div>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #companyMasterID="ngModel"
+                name="companyMasterID"
+                (change)="changePayhead($event); getContractor('1')"
+                [(ngModel)]="selectedCompany"
+                required
+                >
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addgrade.submitted) {
+                <div class="invalid-tooltip">
+                  Company Name Selection is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          @if (isContractorGrade) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #contractorId="ngModel"
+                  name="contractorId"
+                  [(ngModel)]="selectedContractor"
+                  required
+                  >
+                  @for (cont of allContractor; track cont) {
+                    <ng-option [value]="cont.contractorId">
+                      {{ cont.contractorName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Contractor *</span>
+                @if (!contractorId.valid && addgrade.submitted) {
+                  <div class="invalid-tooltip">
+                    Contractor is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+
+          @if (isContractorGrade) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #category="ngModel"
+                  name="category"
+                  [(ngModel)]="gradedata.skillCategory"
+                  required
+                  >
+                  <ng-option value="skilled">Skilled</ng-option>
+                  <ng-option value="semiskilled">SemiSkilled</ng-option>
+                  <ng-option value="unskilled">UnSkilled</ng-option>
+                </ng-select>
+                <span>Select Skill Category *</span>
+              </label>
+              @if (!category.valid && addgrade.submitted) {
+                <div class="invalid-tooltip">
+                  Skill Category is required!
+                </div>
+              }
+            </div>
+          }
+
+          @if (isContractorGrade) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="month"
+                  required
+                  ngModel
+                  #YearMM="ngModel"
+                  name="YearMM"
+                  [(ngModel)]="selectedMonth"
+                  required
+                  />
+                <span>Applicable YearMonth *</span>
+                @if (!YearMM.valid && addgrade.submitted) {
+                  <div class="invalid-tooltip">
+                    Applicable YearMonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #gradeName="ngModel"
+                name="gradeName"
+                />
+              <span>Grade Name *</span>
+              @if (!gradeName.valid && addgrade.submitted) {
+                <div class="invalid-tooltip">
+                  Grade Name is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #baseOnCalculation="ngModel"
+                name="baseOnCalculation"
+                required
+                [(ngModel)]="selectedSalaryOption"
+                >
+                @for (option of salaryOptions; track option) {
+                  <ng-option
+                    [value]="option.value"
+                    [title]="option.title"
+                    >
+                    {{ option.label }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Salary Field Group *</span>
+              @if (!baseOnCalculation.valid && addgrade.submitted) {
+                <div class="invalid-tooltip">
+                  Salary Field Group is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #gradeFrom="ngModel"
+                name="gradeFrom"
+                [(ngModel)]="gradedata.gradeFrom"
+                />
+              <span>Grade From *</span>
+              @if (!gradeFrom.valid && addgrade.submitted) {
+                <div class="invalid-tooltip">
+                  Grade From is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #gradeTo="ngModel"
+                name="gradeTo"
+                [(ngModel)]="gradedata.gradeTo"
+                />
+              <span>Grade To *</span>
+              @if (!gradeTo.valid && addgrade.submitted) {
+                <div class="invalid-tooltip">
+                  Grade To is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-12">
+            <hr />
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #salaryFieldId="ngModel"
+                name="salaryFieldId"
+                [(ngModel)]="salaryFieldId1"
+                (change)="changeSalary($event)"
+                >
+                @for (data of payhead; track data) {
+                  <ng-option [value]="data.salaryFieldID">
+                    {{ data.Payheadmaster.payheadName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>SalaryFields</span>
+            </label>
+          </div>
+
+          @for (formulaList of formulaListData; track formulaList; let i = $index) {
+            <div class="col-md-12 row">
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    #Cal_on="ngModel"
+                    name="Cal_on{{ i }}"
+                    ngModel
+                    [(ngModel)]="formulaList.calculationType"
+                    (change)="selectCalType(i)"
+                    [readonly]="formulaList.editbuttonFlag"
+                    >
+                    @for (option of calculatonTypes; track option) {
+                      <ng-option [value]="option.value">
+                        {{ option.label }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Calculation</span>
+                </label>
+              </div>
+              @if (formulaList.calculationType == 'F') {
+                <div class="col-md-5">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="number"
+                      ngModel
+                      #fieldFixAmount="ngModel"
+                      [(ngModel)]="formulaList.fixAmount"
+                      name="fieldFixAmount{{ i }}"
+                      [readonly]="formulaList.editbuttonFlag"
+                      />
+                    <span>Default Fix Amount</span>
+                  </label>
+                </div>
+              }
+              @if (formulaList.calculationType == 'FO') {
+                <div class="col-md-5">
+                  <label class="form-group has-float-label">
+                    <textarea
+                      class="form-control"
+                      type="text"
+                      ngModel
+                      #formula="ngModel"
+                      [(ngModel)]="formulaList.formula"
+                      name="formula{{ i }}"
+                      readonly
+                    ></textarea>
+                    <span>Formula</span>
+                  </label>
+                </div>
+              }
+              <div class="col-md-3">
+                <button
+                  class="btn btn-xs btn-primary"
+                  type="button"
+                  (click)="editFormula(i)"
+                  [disabled]="!formulaList.editbuttonFlag"
+                  >
+                  Edit
+                </button>
+                <span> &nbsp; </span>
+                @if (i == 0 && formulaListData.length == 1) {
+                  <button
+                    class="btn btn-xs btn-success"
+                    type="button"
+                    (click)="addFormula()"
+                    >
+                    +
+                  </button>
+                }
+                @if (i != 0) {
+                  <button
+                    class="btn btn-xs btn-danger"
+                    type="button"
+                    (click)="removeFormula()"
+                    >
+                    -
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          @if (formulaListData.length > 1) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  #formulaPreferencedata="ngModel"
+                  name="formulaPreferencedata"
+                  ngModel
+                  [(ngModel)]="formulaPreference"
+                  >
+                  <ng-option value="higher">Higher Of</ng-option>
+                  <ng-option value="lower">Lower Of</ng-option>
+                </ng-select>
+                <span>Formula Preference *</span>
+              </label>
+            </div>
+          }
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="number"
+                ngModel
+                #salaryFieldMaxRange="ngModel"
+                name="salaryFieldMaxRange"
+                [ngModel]="null"
+                [(ngModel)]="salaryFieldMaxRange1"
+                />
+              <span>Payhead Max Range</span>
+            </label>
+          </div>
+
+          @if (calculatorFlag || calculatorFlag1) {
+            <div class="col-md-12">
+              @for (item of effpayhead1; track item) {
+                <button
+                  type="button"
+              style="
+                padding: 1%;
+                margin: 1%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 4px;
+              "
+                  (click)="addpayhead(item.Payheadmaster.payheadName)"
+                  >
+                  {{ item.Payheadmaster.payheadName }}
+                </button>
+              }
+              <button
+                type="button"
+              style="
+                padding: 1%;
+                margin: 1%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 4px;
+              "
+                (click)="addpayhead('Minimum Wages')"
+                >
+                Minimum Wages
+              </button>
+            </div>
+          }
+
+          @if (calculatorFlag || calculatorFlag1) {
+            <div class="col-md-12">
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('0')"
+                >
+                0
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('1')"
+                >
+                1
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('2')"
+                >
+                2
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('3')"
+                >
+                3
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('4')"
+                >
+                4
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('5')"
+                >
+                5
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('6')"
+                >
+                6
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('7')"
+                >
+                7
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('8')"
+                >
+                8
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('9')"
+                >
+                9
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                class="decimal"
+                (click)="addpayhead('.')"
+                >
+                .
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('*')"
+                >
+                *
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('/')"
+                >
+                /
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('+')"
+                >
+                +
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('-')"
+                >
+                -
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead('(')"
+                >
+                (
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="addpayhead(')')"
+                >
+                )
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="clearAll()"
+                >
+                AC
+              </button>
+              <button
+              style="
+                margin: 1%;
+                padding: 1.5%;
+                background-color: var(--m-primary);
+                color: white;
+                border-radius: 10px;
+              "
+                type="button"
+                (click)="clearText()"
+                >
+                C
+              </button>
+            </div>
+          }
+
+          @if (buttonValue == 0) {
+            <div class="col-md-12" style="margin: 2%">
+              <span class="button" class="btn btn-success" (click)="addButton()">Add Payhead</span>
+            </div>
+          }
+          @if (buttonValue == 1) {
+            <div class="col-md-12" style="margin: 2%">
+              <span class="button" class="btn btn-success" (click)="updateButton1()">
+                Update Payhead
+              </span>
+            </div>
+          }
+        </div>
+
+        <div class="col-md-5" style="margin-bottom: 20px">
+          <table border="1" width="100%">
+            <tr>
+              <th colspan="7" style="text-align: center">Grade Structure</th>
+            </tr>
+            <tr>
+              <th style="text-align: center">Sr. No.</th>
+              <th style="text-align: center">Payhead Name</th>
+              <th style="text-align: center">Group</th>
+              <th style="text-align: center">Fix Amount</th>
+              <th style="text-align: center">Formula</th>
+              <th style="text-align: center">Preference</th>
+              <th style="text-align: center">Action</th>
+            </tr>
+            @for (value of gradeSalaryArry; track value; let i = $index) {
+              <tr>
+                <th style="text-align: center">{{ i + 1 }}</th>
+                <td style="text-align: center">{{ value.salayFieldName }}</td>
+                <td style="text-align: center">
+                  {{ value.salaryFieldSrNo }}
+                </td>
+                <td style="text-align: center">
+                  <div>
+                    @if (value.fieldFixAmount) {
+                      <p class="mb-0">{{ value.fieldFixAmount }}</p>
+                    }
+                    @if (!value.fieldFixAmount || value.fieldFixAmount == '') {
+                      <p class="mb-0">
+                        &nbsp;
+                      </p>
+                    }
+                    @if (value.fieldFixAmount1 || value.formula1) {
+                      <div
+                        class="mb-0"
+                        [class]="value.fieldFixAmount1 || value.formula1 ? 'bt-1' : ''"
+                        >
+                        @if (value.fieldFixAmount1) {
+                          <p class="mb-0">{{ value.fieldFixAmount1 }}</p>
+                        }
+                        @if (!value.fieldFixAmount1) {
+                          <p class="mb-0">&nbsp;</p>
+                        }
+                      </div>
+                    }
+                  </div>
+                </td>
+                <td style="text-align: center">
+                  <div>
+                    @if (value.formula) {
+                      <p class="mb-0">{{ value.formula }}</p>
+                    }
+                    @if (!value.formula || value.formula == '') {
+                      <p class="mb-0">&nbsp;</p>
+                    }
+                    @if (value.formula1 || value.fieldFixAmount1) {
+                      <div
+                        class="mb-0"
+                        [class]="value.formula1 || value.fieldFixAmount1 ? 'bt-1' : ''"
+                        >
+                        @if (value.formula1) {
+                          <p class="mb-0">{{ value.formula1 }}</p>
+                        }
+                        @if (!value.formula1) {
+                          <p class="mb-0">&nbsp;</p>
+                        }
+                      </div>
+                    }
+                  </div>
+                </td>
+                <td style="text-align: center">{{ value.formulaPreference }}</td>
+                <td style="text-align: center">
+                  <a (click)="removeButton(i)">
+                    <span [class]="'glyph-icon simple-icon-trash tool_tip'"></span>
+                    {{ ' ' }}
+                  </a>
+                  <a (click)="updateButton(i)">
+                    <span
+                      tooltip="Update Selected Payhead."
+                      [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                    ></span>
+                    {{ ' ' }}
+                  </a>
+                </td>
+              </tr>
+            }
+          </table>
+          <br />
+          <br />
+        </div>
+        <div class="col-md-12">
+          <br />
+          <hr />
+          <div class="float-right row col-md-4">
+            <app-state-button
+              [btnClass]="'btn btn-primary btn-lg btn-shadow'"
+              [currentState]="buttonState"
+              [isDisabled]="buttonDisabled"
+              click="onLoginClick()"
+              >
+              {{ 'forms.submit' | translate }}
+            </app-state-button>
+            <button
+              class="btn btn-danger btn-lg btn-shadow"
+              [routerLink]="adminRoot + '/masters/grade'"
+              style="margin-left: 2%"
+              >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

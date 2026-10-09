@@ -1,0 +1,106 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Designation Wise Document</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+              (change)="selectcompany($event)" [(ngModel)]="company_id" name="companyMasterID" required>
+              @for (comp of comp; track comp) {
+                <ng-option [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!companyMasterID.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Comapny is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #designationId="ngModel"
+              [(ngModel)]="selecteddesig" name="designationId" required>
+              @for (designation of alldesignation; track designation) {
+                <ng-option [value]="designation.designationId">
+                  {{ designation.designationName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Designation *</span>
+            @if (!designationId.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Designation is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <br>
+        <div class="row">
+          @if (showMyContainer) {
+            <div class="col-md-12">
+              @for (formdatas of documentType; track formdatas; let i = $index) {
+                <div class="row">
+                  <div class="col-md-2">
+                    <input type="checkbox" #add="ngModel" [(ngModel)]="formdatas.add" [value]="true"
+                      name="add{{i}}" (change)="onChange('add',formdatas,i)" />
+                      &nbsp;&nbsp;
+                      <label>{{ formdatas.documentName }}</label>
+                    </div>
+                    <div class="col-md-1">
+                      <input type="checkbox" #isRequired="ngModel" [(ngModel)]="formdatas.isRequired"
+                        [value]="true" [disabled]="!formdatas.add" name="isRequired{{i}}"
+                        (change)="onChange('isRequired',formdatas,i)" />
+                        &nbsp;&nbsp;
+                        <span>is Required</span>
+                      </div>
+                      <div class="col-md-4">
+                        <span><b>Required User Type :-</b> </span>
+                        &nbsp;&nbsp;
+                        <input type="radio" name="requiredUserType{{i}}" value="1" ngModel
+                          #requiredUserType="ngModel" style="margin-right: 2%" required
+                          [(ngModel)]="formdatas.requiredUserType" />
+                          <label for="national" style="margin-right: 2%">National</label>
+                          <input type="radio" name="requiredUserType{{i}}" value="2" ngModel
+                            #requiredUserType="ngModel" style="margin-right: 2%" required
+                            [(ngModel)]="formdatas.requiredUserType" />
+                            <label for="false" style="margin-right: 2%">Expat</label>
+                            <input type="radio" name="requiredUserType{{i}}" value="3" ngModel
+                              #requiredUserType="ngModel" style="margin-right: 2%" required
+                              [(ngModel)]="formdatas.requiredUserType" />
+                              <label for="other">Both</label>
+                              @if (!requiredUserType.valid && addcomp.submitted) {
+                                <div class="invalid-tooltip">
+                                  requiredUserType is required!
+                                </div>
+                              }
+                            </div>
+                            <div class="col-md-12">
+                              <hr>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-12">
+                      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                      <button class="btn btn-danger btn-shadow mt-4"
+                        [routerLink]="adminRoot + '/masters/designationWiseDocument'" style="margin-left: 2%">
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

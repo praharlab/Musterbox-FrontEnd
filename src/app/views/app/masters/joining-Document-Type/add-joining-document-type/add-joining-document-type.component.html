@@ -1,0 +1,209 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Joining Document Type</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+              [(ngModel)]="company_id" name="companyMasterID" required>
+              @for (comp of comp; track comp) {
+                <ng-option [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!companyMasterID.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Comapny is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #documentName="ngModel"
+              name="documentName" />
+              <span>Document Name *</span>
+              @if (!documentName.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Document Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #documentFileType="ngModel" multiple="true"
+                [(ngModel)]="selectedDocumentType" [closeOnSelect]="false" name="documentFileType" required>
+                @for (item of documentType; track item) {
+                  <ng-option [value]="item">
+                    {{ item }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Document File Type *</span>
+              @if (!documentFileType.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Document File Type is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #description="ngModel" name="description"
+              required></textarea>
+              @if (!description.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Description is required!
+                </div>
+              }
+              <span>Document Description *</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <span><b>Document Has From Date? *</b></span>
+            @if (!hasFromDate.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                This field is required!
+              </div>
+            }
+            <span> &nbsp;&nbsp; </span>
+            <input type="radio" id="hasFromDate" name="hasFromDate" [value]="true" ngModel
+              #hasFromDate="ngModel" required />
+              &nbsp;&nbsp;
+              <label for="true">Yes</label>
+              &nbsp;&nbsp;
+              <input type="radio" id="hasFromDate" name="hasFromDate" [value]="false" ngModel
+                #hasFromDate="ngModel" required />
+                &nbsp;&nbsp;
+                <label for="false">No</label>
+              </div>
+              <div class="col-md-4">
+                <span><b>Document Has Issue Date? *</b></span>
+                @if (!hasIssueDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    This field is required!
+                  </div>
+                }
+                <span> &nbsp;&nbsp; </span>
+                <input type="radio" id="hasIssueDate" name="hasIssueDate" [value]="true" ngModel
+                  #hasIssueDate="ngModel" required />
+                  &nbsp;&nbsp;
+                  <label for="true">Yes</label>
+                  &nbsp;&nbsp;
+                  <input type="radio" id="hasIssueDate" name="hasIssueDate" [value]="false" ngModel
+                    #hasIssueDate="ngModel" required />
+                    &nbsp;&nbsp;
+                    <label for="false">No</label>
+                  </div>
+                  <div class="col-md-4">
+                    <span><b>Document Has Identification Number? *</b></span>
+                    @if (!hasIdentificationNumber.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        This field is required!
+                      </div>
+                    }
+                    <span> &nbsp;&nbsp; </span>
+                    <input type="radio" id="hasIdentificationNumber" name="hasIdentificationNumber" [value]="true"
+                      ngModel #hasIdentificationNumber="ngModel" required />
+                      &nbsp;&nbsp;
+                      <label for="true">Yes</label>
+                      &nbsp;&nbsp;
+                      <input type="radio" id="hasIdentificationNumber" name="hasIdentificationNumber" [value]="false"
+                        ngModel #hasIdentificationNumber="ngModel" required />
+                        &nbsp;&nbsp;
+                        <label for="false">No</label>
+                      </div>
+                      <div class="col-md-4">
+                        <span><b>Document Has Expiry Date? *</b></span>
+                        @if (!hasExpiryDate.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            This field is required!
+                          </div>
+                        }
+                        <span> &nbsp;&nbsp; </span>
+                        <input type="radio" id="hasExpiryDate" name="hasExpiryDate" [value]="true" ngModel
+                          #hasExpiryDate="ngModel" required [(ngModel)]="isExpiry" />
+                          &nbsp;&nbsp;
+                          <label for="true">Yes</label>
+                          &nbsp;&nbsp;
+                          <input type="radio" id="hasExpiryDate" name="hasExpiryDate" [value]="false" ngModel
+                            #hasExpiryDate="ngModel" required [(ngModel)]="isExpiry" />
+                            &nbsp;&nbsp;
+                            <label for="false">No</label>
+                          </div>
+
+                          @if (isExpiry) {
+                            <div class="col-md-4">
+                              <span><b>Set Reminder for Document Expiry *</b></span>
+                              @if (!setReminderForExpiry.valid && addcomp.submitted) {
+                                <div class="invalid-tooltip">
+                                  Remainder is Required!!!
+                                </div>
+                              }
+                              <span> &nbsp;&nbsp; </span>
+                              <input type="radio" id="setReminderForExpiry" name="setReminderForExpiry" [value]="true" ngModel
+                                #setReminderForExpiry="ngModel" required [(ngModel)]="reminderForExpiry" />
+                                &nbsp;&nbsp;
+                                <label for="true">Yes</label>
+                                &nbsp;&nbsp;
+                                <input type="radio" id="setReminderForExpiry" name="setReminderForExpiry" [value]="false" ngModel
+                                  #setReminderForExpiry="ngModel" required [(ngModel)]="reminderForExpiry" />
+                                  &nbsp;&nbsp;
+                                  <label for="false">No</label>
+                                </div>
+                              }
+                              @if (reminderForExpiry) {
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="number" required ngModel #reminderBeforeDays="ngModel"
+                                      name="reminderBeforeDays" />
+                                      <span>Reminder Start Before Days *</span>
+                                      @if (!reminderBeforeDays.valid && addcomp.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Days is is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <ng-select placeholder="Choose your option" ngModel #reminderFrequency="ngModel"
+                                        name="reminderFrequency" required>
+                                        @for (item of frequencyTypes; track item) {
+                                          <ng-option [value]="item">
+                                            {{ item | uppercase }}
+                                          </ng-option>
+                                        }
+                                      </ng-select>
+                                      <span>Reminder Frequency *</span>
+                                      @if (!reminderFrequency.valid && addcomp.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Reminder Frequency is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                }
+
+
+                              </div>
+                              <div class="col-md-12">
+                                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                                <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/joiningDocumentType'"
+                                  style="margin-left: 2%">
+                                  Cancel
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

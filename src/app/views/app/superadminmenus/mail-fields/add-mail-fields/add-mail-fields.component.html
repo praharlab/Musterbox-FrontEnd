@@ -1,0 +1,96 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Mail Fields</h5>
+
+    <form #addfields="ngForm" novalidate>
+      <div class="row">
+        @if (!childfields) {
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #mailtype="ngModel" name="mailtype" required>
+                @for (mail of mail; track mail) {
+                  <ng-option [value]="mail.mailTypeID">
+                    {{ mail.mailTypename }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Mail Template Type *</span>
+              @if (!mailtype.valid && addfields.submitted) {
+                <div class="invalid-tooltip">
+                  Mail Template Type is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select required ngModel name="fields">
+              <ng-option value="AcceptedBy">AcceptedBy</ng-option>
+              <ng-option value="Amount">Amount</ng-option>
+              <ng-option value="Branch">Branch</ng-option>
+              <ng-option value="CandidateAddress">CandidateAddress</ng-option>
+              <ng-option value="CandidateDOB">CandidateDOB</ng-option>
+              <ng-option value="CandidateEmail">CandidateEmail</ng-option>
+              <ng-option value="CandidateJoiningDate">CandidateJoiningDate</ng-option>
+              <ng-option value="CandidateName">CandidateName</ng-option>
+              <ng-option value="CandidateNumber">CandidateNumber</ng-option>
+              <ng-option value="CompanyName">CompanyName</ng-option>
+              <ng-option value="Department">Department</ng-option>
+              <ng-option value="Designation">Designation</ng-option>
+              <ng-option value="EmployeeCode">EmployeeCode</ng-option>
+              <ng-option value="EmployeeName">EmployeeName</ng-option>
+              <ng-option value="EmployeeNumber">EmployeeNumber</ng-option>
+              <ng-option value="EmployeeType">EmployeeType</ng-option>
+              <ng-option value="EmployeementType">EmployeementType</ng-option>
+              <ng-option value="ExpenseCategory">ExpenseCategory</ng-option>
+              <ng-option value="ExpenseDate">ExpenseDate</ng-option>
+              <ng-option value="ExpenseDescription">ExpenseDescription</ng-option>
+              <ng-option value="ExpenseHead">ExpenseHead</ng-option>
+              <ng-option value="ExpenseType">ExpenseType</ng-option>
+              <ng-option value="FromDate">FromDate</ng-option>
+              <ng-option value="InterViewAddress">InterViewAddress</ng-option>
+              <ng-option value="InterViewLink">InterViewLink</ng-option>
+              <ng-option value="InterviewDate">InterviewDate</ng-option>
+              <ng-option value="InterviewTime">InterviewTime</ng-option>
+              <ng-option value="InterviewType">InterviewType</ng-option>
+              <ng-option value="JobAppliedDateTime">JobAppliedDateTime</ng-option>
+              <ng-option value="JobLocation">JobLocation</ng-option>
+              <ng-option value="LeaveType">LeaveType</ng-option>
+              <ng-option value="Nationality">Nationality</ng-option>
+              <ng-option value="NoOfDays">NoOfDays</ng-option>
+              <ng-option value="OfferedCTC">OfferedCTC</ng-option>
+              <ng-option value="PendingBy">PendingBy</ng-option>
+              <ng-option value="PreBoardingFormLink">PreBoardingFormLink</ng-option>
+              <ng-option value="Reason">Reason</ng-option>
+              <ng-option value="RejectedBy">RejectedBy</ng-option>
+              <ng-option value="RejectedReason">RejectedReason</ng-option>
+              <ng-option value="Remarks">Remarks</ng-option>
+              <ng-option value="ToDate">ToDate</ng-option>
+            </ng-select>
+            <span>Mail Fields *</span>
+            @if (!addfields.controls.fields?.valid && addfields.submitted) {
+              <div class="invalid-tooltip">
+                Mail Fields is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button class="btn btn-primary mt-4" (click)="onSubmit()" type="submit">{{ 'forms.submit' | translate
+        }}</button>
+        <button class="btn btn-danger btn-shadow mt-4" type="button"
+          [routerLink]="adminRoot + '/superadminmenus/mail_fields'" style="margin-left: 2%">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

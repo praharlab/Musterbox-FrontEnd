@@ -1,0 +1,415 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal4.show()">Add New</button>
+</div>
+<div class="row">
+  @for (item of rows9; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <p class="list-item-heading mb-1 truncate">
+                  {{ item.documentList.documentName }}
+                </p>
+                @if (item.expiryDate) {
+                  <p class="list-item mb-1 truncate">
+                    Expiry Date: {{ item.expiryDate | date:'dd-MM-yyyy' }}
+                  </p>
+                }
+                @if (item.createBy) {
+                  <p class="list-item mb-1 truncate">
+                    Created by : {{ item.createBy }}
+                  </p>
+                }
+                @if (item.verifyBy) {
+                  <p class="list-item mb-1 truncate">
+                    Verified by : {{ item.verifyBy }}
+                  </p>
+                }
+                @if (+item.documentListID == 1 && item.documentNumber) {
+                  <p class="list-item mb-1 truncate">
+                    Aadhar No : {{ item.documentNumber }}
+                  </p>
+                }
+                @if (+item.documentListID == 1 && item.nameOnDocument) {
+                  <p class="list-item mb-1 truncate">
+                    Name on Aadhar : {{ item.nameOnDocument }}
+                  </p>
+                }
+                @if (+item.documentListID == 2 && item.documentNumber) {
+                  <p class="list-item mb-1 truncate">
+                    Pan No : {{ item.documentNumber }}
+                  </p>
+                }
+                @if (item.rejectionRemarks && item.verifyStatus != '1') {
+                  <p class="list-item mb-1">
+                    Rejection Reason : {{ item.rejectionRemarks }}
+                  </p>
+                }
+                <div class="min-width-zero">
+                  <a href="javascript:;">
+                    <!-- <button type="button" class="btn btn-success" *ngIf="item.status == '1'"  style="margin-top: 10%;">{{'Active' | translate}}</button>{{" "}}
+                    <button type="button" class="btn btn-danger" *ngIf="item.status == '0'"  style="margin-top: 10%;">{{'Deactive' | translate}}</button>{{" "}} -->
+                    @if (item.verifyStatus != '1') {
+                      <button type="button" class="btn btn-xs btn-primary" style="margin-top: 10%"
+                      (click)="documentslgModal.show(); editDocuments(item)">EDIT</button>
+                    }
+                    {{ ' ' }}
+                    @if (item.verifyStatus== '0' && !item.rejectionRemarks) {
+                      <button type="button"
+                        class="btn btn-xs btn-danger" style="margin-top: 10%" (click)="deleteDoc(item)">
+                        Delete
+                      </button>
+                    }
+                    {{ ' ' }}
+                  </a>
+                  <br>
+                    <a href="javascript:;">
+                      @if (item.verifyStatus == '0') {
+                        <button type="button" class="btn btn-outline-warning btn-xs"
+                          style="margin-top: 10%">
+                          {{ 'Pending' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (item.verifyStatus == '1') {
+                        <button type="button" class="btn btn-outline-success btn-xs"
+                          style="margin-top: 10%">
+                          {{ 'Verified' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (item.verifyStatus == '2') {
+                        <button type="button" class="btn btn-outline-danger btn-xs"
+                          style="margin-top: 10%">
+                          {{ 'Rejected' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      <span> &nbsp; </span>
+                      @if (item.document) {
+                        <button type="button" class="btn btn-outline-primary btn-xs"
+                          style="margin-top: 10%" (click)="download1(item)">
+                          View
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </a>
+                  </div>
+                </a>
+              </div>
+              <!-- <div style="margin-top: 14px;">
+              <a class="btn btn-outline-primary btn-xs"     (click)="lgModal1.show();edit(item)">EDIT</a><br>
+              <a class="btn btn-outline-primary btn-xs"    (click)="alertConfirmation(item.userDocumentID)" style="margin-top: 10%;">DELETE</a>
+            </div> -->
+            <!-- <div class="min-width-zero" style="margin-top: 14px;">
+            <a href="javascript:;">
+              <button type="button" class="btn btn-outline-warning btn-xs"
+                *ngIf="item.verifyStatus == '0'" style="margin-top: 10%;">{{'Pending' |
+              translate}}</button>{{" "}}
+              <button type="button" class="btn btn-outline-success btn-xs"
+                *ngIf="item.verifyStatus == '1'" style="margin-top: 10%;">{{'Verified' |
+              translate}}</button>{{" "}}
+              <button type="button" class="btn btn-outline-danger btn-xs"
+                *ngIf="item.verifyStatus == '2'" style="margin-top: 10%;">{{'Rejected' |
+              translate}}</button>{{" "}}
+            </a>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
+
+<div bsModal #lgModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Document</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal4.hide()" aria-label="Close"
+          #closeModal4>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp4="ngForm" novalidate (ngSubmit)="onSubmit4()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #documentListID="ngModel"
+                  name="documentListID" required>
+                  @for (item of alldocumenttypedata; track item) {
+                    <ng-option [value]="item.documentListID">
+                      {{ item.documentName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Document Type *</span>
+              </label>
+              @if (!documentListID.valid && addcomp4.submitted) {
+                <div class="invalid-tooltip">
+                  Document Type is required!
+                </div>
+              }
+            </div>
+            @if (addcomp4.value.documentListID == 1 || addcomp4.value.documentListID == 2) {
+              <div class="col-md-6"
+                >
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" ngModel #document="ngModel" name="document"
+                    accept="image/*,application/pdf" required (change)="onSelectFilee($event)" />
+                    <span>Document *</span>
+                    @if (!document.valid && addcomp4.submitted) {
+                      <div class="invalid-tooltip">
+                        Document is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (addcomp4.value.documentListID != 1 && addcomp4.value.documentListID != 2) {
+                <div class="col-md-6"
+                  >
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="file" ngModel #document="ngModel" name="document"
+                      required (change)="onSelectFilee($event)" />
+                      <span>Document *</span>
+                      @if (!document.valid && addcomp4.submitted) {
+                        <div class="invalid-tooltip">
+                          Document is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+
+
+
+                @if (addcomp4.value.documentListID == 1) {
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" ngModel #documentNumber="ngModel"
+                        (change)="validateadharNumber($event.target.value)" name="documentNumber"
+                        required />
+                        <span>Aadhar Card No *</span>
+                        @if ((!documentNumber.valid && addcomp4.submitted) || (adharNumberError && addcomp4.submitted)) {
+                          <div
+                            class="invalid-tooltip">
+                            Please enter valid Aadhar No!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  @if (addcomp4.value.documentListID == 2) {
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #documentNumber="ngModel"
+                          (change)="validatePanCardNumber($event.target.value)" name="documentNumber"
+                          required />
+                          <span>Pan Card No *</span>
+                          @if ((!documentNumber.valid && addcomp4.submitted) || (panCardError && addcomp4.submitted)) {
+                            <div
+                              class="invalid-tooltip">
+                              Please enter valid Pan No!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    @if (addcomp4.value.documentListID == 1) {
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #nameOnDocument="ngModel"
+                            name="nameOnDocument" required />
+                            <span>Name (As On Aadhar Card ) *</span>
+                            @if (!nameOnDocument.valid && addcomp4.submitted) {
+                              <div class="invalid-tooltip">
+                                Name (As On Aadhar Card ) is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+
+
+
+                      <div class="col-md-6">
+                        <p class="text-muted text-small mb-2 top">Set Expiry Date *</p>
+                        <div>
+                          <input type="radio" id="yes" name="setExpiryDate" value="yes"
+                            [(ngModel)]="companydata1.showdate1" (change)="toggleExpiryDateField(true)" />
+                            <label for="yes" style="margin-left: 1%">Yes</label>
+
+                            <input type="radio" id="no" name="setExpiryDate" value="no"
+                              [(ngModel)]="companydata1.showdate1" (change)="toggleExpiryDateField(false)"
+                              style="margin-left: 1%" />
+                              <label for="no" style="margin-left: 1%">No</label>
+                            </div>
+                          </div>
+
+                          @if (showExpiryDate) {
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="date" [(ngModel)]="expiryDate" name="expiryDate"
+                                  required />
+                                  <span>Expiry Date *</span>
+                                  <!-- <div *ngIf="!expiryDate.valid && addcomp4.submitted" class="invalid-tooltip">
+                                  Expiry Date is required!
+                                </div> -->
+                              </label>
+                            </div>
+                          }
+
+
+
+                        </div>
+                        <button class="btn btn-primary" type="submit">
+                          {{ 'forms.submit' | translate }}
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div bsModal #documentslgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+                aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title pull-left">Edit Employee Document</h4>
+                      <button type="button" class="btn-close close pull-right" (click)="documentslgModal.hide()"
+                        aria-label="Close" #closeEdutDocModal1>
+                        <span aria-hidden="true" class="visually-hidden">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      @if (editbyid) {
+                        <form #editcompdoc="ngForm" novalidate (ngSubmit)="onDocumentsEditSubmit1()">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #documentListID="ngModel"
+                                  [(ngModel)]="editbyid.documentListID" name="documentListID" required disabled>
+                                  @for (item of alldocumenttypedata; track item) {
+                                    <ng-option [value]="item.documentListID">
+                                      {{ item.documentName }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>Select Document Type *</span>
+                              </label>
+                            </div>
+                            @if (editcompdoc.value.documentListID == 1 || editcompdoc.value.documentListID == 2) {
+                              <div class="col-md-6"
+                                >
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="file" ngModel #document="ngModel" name="document"
+                                    accept="image/*,application/pdf" (change)="onSelectFilee($event)" />
+                                    <span>Document</span>
+                                  </label>
+                                </div>
+                              }
+                              @if (editcompdoc.value.documentListID != 1 && editcompdoc.value.documentListID != 2) {
+                                <div class="col-md-6"
+                                  >
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="file" ngModel #document="ngModel" name="document"
+                                      (change)="onSelectFilee($event)" />
+                                      <span>Document</span>
+                                    </label>
+                                  </div>
+                                }
+                                @if (editbyid.documentListID == 1) {
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="number" ngModel #documentNumber="ngModel"
+                                        (change)="validateadharNumber($event.target.value)"
+                                        [(ngModel)]="editbyid.documentNumber" name="documentNumber" required />
+                                        <span>Aadhar Card No *</span>
+                                        @if ((!documentNumber.valid && editcompdoc.submitted) || (adharNumberError && editcompdoc.submitted)) {
+                                          <div
+                                            class="invalid-tooltip">
+                                            Please enter valid Aadhar No!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                  }
+                                  @if (editbyid.documentListID == 2) {
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="text" ngModel #documentNumber="ngModel"
+                                          (change)="validatePanCardNumber($event.target.value)"
+                                          [(ngModel)]="editbyid.documentNumber" name="documentNumber" required />
+                                          <span>Pan Card No *</span>
+                                          @if ((!documentNumber.valid && editcompdoc.submitted) || (panCardError && editcompdoc.submitted)) {
+                                            <div
+                                              class="invalid-tooltip">
+                                              Please enter valid Pan No!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                    @if (editbyid.documentListID == 1) {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="text" ngModel #nameOnDocument="ngModel"
+                                            [(ngModel)]="editbyid.nameOnDocument" name="nameOnDocument" required />
+                                            <span>Name (As On Aadhar Card ) *</span>
+                                            @if (!nameOnDocument.valid && editcompdoc.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Name (As On Aadhar Card ) is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                      }
+                                      <div class="col-md-6">
+                                        <p class="text-muted text-small mb-2 top">Set Expiry Date *</p>
+                                        <div>
+                                          <input type="radio" id="yesEdit" name="setExpiryDateEdit" [value]="true"
+                                            [(ngModel)]="showExpiryDate" (change)="toggleExpiryDateFieldEdit(true)" />
+                                            <label for="yesEdit" style="margin-left: 1%">Yes</label>
+                                            <input type="radio" id="noEdit" name="setExpiryDateEdit" [value]="false"
+                                              [(ngModel)]="showExpiryDate" (change)="toggleExpiryDateFieldEdit(false)"
+                                              style="margin-left: 1%" />
+                                              <label for="noEdit" style="margin-left: 1%">No</label>
+                                            </div>
+                                          </div>
+                                          @if (showExpiryDate) {
+                                            <div class="col-md-6">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="date" [(ngModel)]="editbyid.expiryDate"
+                                                  name="expiryDate" />
+                                                  <span>Expiry Date *</span>
+                                                  @if (!expiryDate && editcompdoc.Submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      Expiry Date is required!
+                                                    </div>
+                                                  }
+                                                </label>
+                                              </div>
+                                            }
+                                            <div class="col-md-6"></div>
+                                            @if (editbyid.document) {
+                                              <div class="col-md-6"> <button type="button"
+                                                class="btn btn-outline-primary btn-xs" style="margin-bottom: 5%"
+                                                (click)="download1(editbyid)">
+                                                View
+                                              </button></div>
+                                            }
+                                          </div>
+                                          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                                        </form>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>

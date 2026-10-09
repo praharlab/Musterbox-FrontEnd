@@ -1,0 +1,43 @@
+<div class="card mb-4">
+  <div class="card-body card-height">
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <div class="row pb-1">
+          <div class="col-md-7">
+            <h5 class="font-size-15 pt-1">Monthly-Yearly</h5>
+          </div>
+          <div class="col-md-5">
+            <form #monthYearFilter="ngForm" novalidate (change)="onMonthYearSelect($event)">
+              <div class="float-right float-none-xs mt-2">
+                <input
+                  class="btn btn-outline-primary btn-xs float-right"
+                  type="month"
+                  ngModel
+                  #monthYear="ngModel"
+                  name="monthYear"
+                  max="{{ maxYearMonth }}"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      @if (showloader == 'true') {
+        <div
+          style="color: #17a2b8; left: 50%"
+          class="la-ball-spin-clockwise"
+          >
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+      <div [class]="'chart-container1'"><canvas #chart></canvas></div>
+    </div>
+  </div>

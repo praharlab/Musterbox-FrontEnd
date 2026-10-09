@@ -1,0 +1,63 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Job Role Type</h5>
+
+    <form #adddesignation="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (company.length > 0) {
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" [(ngModel)]="company_id" required>
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && adddesignation.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #jobRoleClassificationName="ngModel"
+              name="jobRoleClassificationName" />
+              <span>Job Role Type Name*</span>
+              @if (!jobRoleClassificationName.valid && adddesignation.submitted) {
+                <div class="invalid-tooltip">
+                  Job Role Type Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" type="text" style="height: 300px" ngModel #jobRoleClassificationDescription="ngModel"
+              name="jobRoleClassificationDescription"></textarea>
+              <span>Job Role Type Description</span>
+              <!-- <div *ngIf="!Description.valid && adddesignation.submitted" class="invalid-tooltip">Description is required!</div> -->
+            </label>
+          </div>
+        </div>
+        <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+          [isDisabled]="buttonDisabled" click="onLoginClick()">
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/jobRoleClassification'"
+          style="margin-left: 2%">
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

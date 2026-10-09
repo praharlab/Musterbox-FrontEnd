@@ -1,0 +1,174 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+
+    <form #datefilter="ngForm" novalidate>
+      <div class="row">
+        <!-- <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+            name="company" [(ngModel)]="company_id" required>
+            <ng-option *ngFor="let company of company1" [value]="company.companyMasterID">
+              {{ company.companyName }}
+            </ng-option>
+          </ng-select>
+          <span>Company *</span>
+          <div *ngIf="!company.valid && datefilter.submitted" class="invalid-tooltip">
+            Company is required!
+          </div>
+        </label>
+      </div> -->
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" (change)="selectbranch($event)" ngModel #branch="ngModel"
+            name="branch" [(ngModel)]="selectedbranch">
+            @for (allbranch of allbranch; track allbranch) {
+              <ng-option [value]="allbranch.branchMasterID">
+                {{ allbranch.branchName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Branch</span>
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" (change)="selectdepart($event)" ngModel #department="ngModel"
+            name="department" [(ngModel)]="selecteddept">
+            @for (item of alldepartment; track item) {
+              <ng-option [value]="item.departmentId">
+                {{ item.departmentName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Department</span>
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" (change)="selectdesig($event)" ngModel #designation="ngModel"
+            name="designation" [(ngModel)]="selecteddesig">
+            @for (item of alldesignation; track item) {
+              <ng-option [value]="item.designationId">
+                {{ item.designationName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Designation</span>
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" (change)="selectWorkingArea($event)" ngModel
+            #workingArea="ngModel" name="workingArea" [(ngModel)]="selectedWorkingArea">
+            @for (item of allWorkingArea; track item) {
+              <ng-option [value]="item.id">
+                {{ item.workingAreaName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Working Area</span>
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" (change)="selectdivision($event)" ngModel #division="ngModel"
+            name="division" [(ngModel)]="selectedDivision">
+            @for (item of allDivision; track item) {
+              <ng-option [value]="item.id">
+                {{ item.divisionName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Division</span>
+        </label>
+      </div>
+
+      <!-- <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #user="ngModel" name="user" [(ngModel)]="UserID"
+          required>
+          <ng-option *ngFor="let item of employee" [value]="item.userMasterID">
+            {{ item.displayName }}
+          </ng-option>
+        </ng-select>
+        <span>Employee *</span>
+        <div *ngIf="!user.valid && datefilter.submitted" class="invalid-tooltip">
+          Employee is required!
+        </div>
+      </label>
+    </div> -->
+
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #user="ngModel" name="user" [(ngModel)]="UserID"
+          (change)="onSubmit($event)" required>
+          @for (item of employee; track item) {
+            <ng-option [value]="item.userMasterID">
+              {{ item.displayName }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Employee *</span>
+        @if (!user.valid && datefilter.submitted) {
+          <div class="invalid-tooltip">
+            Employee is required!
+          </div>
+        }
+      </label>
+    </div>
+
+
+    <!-- <div class="col-md-4" style="text-align: left">
+    <button class="btn btn-primary form-group" type="submit">{{ 'forms.submit' | translate }}</button>&nbsp;&nbsp; -->
+    <!-- <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>&nbsp;&nbsp; -->
+    <!-- <button class="btn btn-info form-group" type="button" (click)="download()">Export</button> -->
+  <!-- </div> -->
+
+</div>
+
+</form>
+
+
+</div>
+
+
+</div>
+
+@if (UserID) {
+  <div>
+    @if (permissioncreate.length != 0) {
+      <div class="row">
+        <div class="col-md-12" style="text-align: right">
+          <button class="btn btn-primary btn-shadow" (click)="lgModal2.show()" style="margin-bottom: 22px">
+            Add Leave
+          </button>
+        </div>
+      </div>
+    }
+    <div style="display: none">
+      <app-calendar></app-calendar>
+    </div>
+    <app-attendace-calendar [id]="UserID" [companyId]="CompanyID"></app-attendace-calendar>
+    <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"   [config]="{backdrop: 'static', keyboard: false}"
+      >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Add Leave</h4>
+            <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+              #closeModal2>
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-addmanual-leave [showCancel]="false" [showImport]="false"></app-addmanual-leave>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

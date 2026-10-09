@@ -1,0 +1,95 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (moduleDetailsData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Module Details</h5>
+      <form #EditModuleDetails="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #moduleId="ngModel"
+                name="moduleId"
+                (change)="selectmodule($event)"
+                [(ngModel)]="moduleDetailsData.moduleId"
+                required
+                >
+                @for (moduleId of allmodulename; track moduleId) {
+                  <ng-option [value]="moduleId.moduleId">
+                    {{ moduleId.moduleName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Module*</span>
+              @if (!moduleId.valid && EditModuleDetails.submitted) {
+                <div class="invalid-tooltip">
+                  Module Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #FAQs="ngModel"
+                name="FAQs"
+                [(ngModel)]="moduleDetailsData.FAQs"
+                />
+                <span>FAQs*</span>
+                @if (!FAQs.valid && EditModuleDetails.submitted) {
+                  <div class="invalid-tooltip">
+                    FAQs is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-12">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #Description="ngModel"
+                  name="Description"
+                  [(ngModel)]="moduleDetailsData.Description"
+                  />
+                  <span>Description*</span>
+                  @if (!Description.valid && EditModuleDetails.submitted) {
+                    <div class="invalid-tooltip">
+                      Description is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <app-state-button
+              [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+              [currentState]="buttonState"
+              [isDisabled]="buttonDisabled"
+              >
+              {{ 'forms.submit' | translate }}
+            </app-state-button>
+            <button
+              class="btn btn-danger btn-lg btn-shadow mt-4"
+              [routerLink]="adminRoot + '/superadminmenus/Module_details'"
+              style="margin-left: 2%"
+              >
+              Cancel
+            </button>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

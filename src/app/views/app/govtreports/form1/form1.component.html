@@ -1,0 +1,715 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 1"></app-heading>
+    <app-breadcrumb title="Form 1"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              (change)="selectcompany($event)"
+              required
+              >
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #branchName="ngModel"
+              name="branch"
+              required
+              >
+              @for (item of branch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch*</span>
+            @if (!branchName.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Branch is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="month"
+              ngModel
+              #fromyearmonth="ngModel"
+              name="fromyearmonth"
+              required
+              />
+              <span>From yearmonth*</span>
+              @if (!fromyearmonth.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  From yearmonth is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                ngModel
+                #toyearmonth="ngModel"
+                name="toyearmonth"
+                required
+                />
+                <span>To yearmonth*</span>
+                @if (!toyearmonth.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    To yearmonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-5">
+              <button class="btn btn-primary form-group" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+              <span> &nbsp;&nbsp; </span>
+              @if (finaldata == true) {
+                <button
+                  class="btn btn-success form-group"
+                  type="button"
+                  (click)="savePdf()"
+                  >
+                  Download As PDF
+                </button>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- <!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+      <head>
+        <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
+        <title>file_1668147911545</title>
+        <style type="text/css">
+          * {
+          /* margin: 0;
+          padding: 0; */
+          text-indent: 0;
+        }
+
+        h1 {
+        color: black;
+
+        font-style: normal;
+        text-decoration: none;
+        font-size: 12pt;
+      }
+
+      p {
+      color: black;
+      font-family: 'Times New Roman', serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 12pt;
+      margin: 0pt;
+    }
+
+    .s1 {
+    color: black;
+    font-family: 'Times New Roman', serif;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 14px !important;
+  }
+
+  table,
+  tbody {
+  vertical-align: top;
+  overflow: visible;
+}
+</style>
+</head>
+@if (rows.length > 0) {
+  <div>
+    <body>
+      <!-- <div style="text-align: center;">
+        <h1 style="    font-weight: 900;
+      font-size: 42px;">FORM NO. 1</h1>
+    </div>
+    <div style="text-align: center;">
+      <p
+      style="
+        text-indent: 0pt;
+        line-height: 14pt;
+        text-align: center;
+      "
+        >
+        [Rule-21(4)]
+      </p>
+    </div>
+    <div style="text-align: center;">
+      <h1 style="    font-size: 22px;">  Register of Fines Employer</h1>
+    </div> -->
+    <div>
+      <!-- <div style="text-align: center;">
+        <h1 style="    font-weight: 900;
+        font-size: 42px;">FORM NO. 1</h1>
+    </div>
+    <p class="MsoNormal" align="center" style="text-align: center;">
+      [Rule-21(4)]
+    </p>
+    <p class="MsoNormal" align="center" style="text-align: center;">
+      <b>&nbsp;</b>
+    </p>
+    <div class="MsoNormal" align="center" style="text-align: center;">
+      <h1 style="    font-size: 22px;">Register of Fines Employer</h1>
+    </div>
+    <p class="MsoNormal" align="center" style="text-align: center;">
+      <b>&nbsp;</b>
+      <table class="MsoNormalTable" cellspacing="0" cellpadding="0" width="691"
+        style="width: 10.2in; border-collapse: collapse; border: none;">
+      </table> -->
+      <br />
+      <div style="overflow-x: auto">
+        <table
+          style="border-collapse: collapse; margin-left: 5.60952pt; width: 100%"
+          cellspacing="0"
+          >
+          <tr>
+            <td colspan="11" style="border: none; text-align: center">
+              <h1 style="font-weight: 900; font-size: 42px">FORM NO. 1</h1>
+            </td>
+          </tr>
+          <br />
+          <tr>
+            <td colspan="11" class="MsoNormal" style="border: none; text-align: center">
+              [Rule-21(4)]
+            </td>
+          </tr>
+          <br />
+          <tr>
+            <td colspan="11" class="MsoNormal" style="border: none; text-align: center">
+              <h1 style="font-size: 22px">Register of Fines Employer</h1>
+            </td>
+          </tr>
+          @if (companyData) {
+            <tr style="page-break-inside: avoid">
+              <td class="MsoNormal" colspan="11">
+                Name of the Company:
+                <b>{{ companyData.companyName }}</b>
+              </td>
+            </tr>
+          }
+          <tr>
+            <td class="MsoNormal" colspan="11">
+              Address of Company :
+              <b>{{ branch1?.branchAddress }}</b>
+            </td>
+          </tr>
+        </table>
+        <table
+          style="border-collapse: collapse; margin-left: 5.60952pt; width: 100%"
+          cellspacing="0"
+          id="form1-content"
+          >
+          <tr style="height: 83pt">
+            <td
+                style="
+                  width: 23pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 5pt;
+                    padding-right: 4pt;
+                    text-indent: 0pt;
+                    line-height: 10pt;
+                    text-align: center;
+                  "
+                >
+                S. No
+              </p>
+              <p class="s1" style="text-indent: 0pt; text-align: center">.</p>
+            </td>
+            <td
+                style="
+                  width: 36pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 6pt;
+                    padding-right: 6pt;
+                    text-indent: 0pt;
+                    line-height: 10pt;
+                    text-align: center;
+                  "
+                >
+                Name
+              </p>
+            </td>
+            <td
+                style="
+                  width: 54pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 7pt;
+                    padding-right: 7pt;
+                    text-indent: 0pt;
+                    text-align: center;
+                  "
+                >
+                Father’s/ Husband’s Name
+              </p>
+            </td>
+            <td
+                style="
+                  width: 27pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 6pt;
+                    padding-right: 5pt;
+                    text-indent: 0pt;
+                    line-height: 10pt;
+                    text-align: center;
+                  "
+                >
+                Sex
+              </p>
+            </td>
+            <td
+                style="
+                  width: 54pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 5pt;
+                    padding-right: 4pt;
+                    text-indent: 0pt;
+                    line-height: 10pt;
+                    text-align: center;
+                  "
+                >
+                Department
+              </p>
+            </td>
+            <td
+                style="
+                  width: 54pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 5pt;
+                    padding-right: 4pt;
+                    text-indent: 0pt;
+                    text-align: justify;
+                  "
+                >
+                Nature and date of the offence for which fine imposed
+              </p>
+            </td>
+            <td
+                style="
+                  width: 54pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                style="padding-left: 5pt; padding-right: 5pt; text-indent: 0pt; text-align: left"
+                >
+                Whether workman showed cause against fine or not, if so, enter
+              </p>
+              <p
+                class="s1"
+                style="padding-left: 5pt; text-indent: 0pt; line-height: 10pt; text-align: left"
+                >
+                date
+              </p>
+            </td>
+            <td
+                style="
+                  width: 36pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                style="padding-left: 5pt; padding-right: 5pt; text-indent: 0pt; text-align: left"
+                >
+                Rate of Wages
+              </p>
+            </td>
+            <td
+                style="
+                  width: 45pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 5pt;
+                    padding-right: 6pt;
+                    text-indent: 0pt;
+                    text-align: center;
+                  "
+                >
+                Date and amount of fine imposed
+              </p>
+            </td>
+            <td
+                style="
+                  width: 45pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 6pt;
+                    padding-right: 6pt;
+                    text-indent: 0pt;
+                    text-align: center;
+                  "
+                >
+                Date on which fine realised
+              </p>
+            </td>
+            <td
+                style="
+                  width: 45pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p
+                class="s1"
+                  style="
+                    padding-left: 5pt;
+                    padding-right: 5pt;
+                    text-indent: 0pt;
+                    line-height: 10pt;
+                    text-align: center;
+                  "
+                >
+                Remarks
+              </p>
+            </td>
+          </tr>
+          @for (item of rows; track item; let i = $index) {
+            <tr style="height: 100pt">
+              <td
+                style="
+                  width: 23pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+                >
+                <p
+                  class="s1"
+                  style="text-indent: 0pt; line-height: 9pt; text-align: center; font-size: 20px"
+                  >
+                  <b>{{ i + 1 }}</b>
+                </p>
+              </td>
+              <td
+                colspan="6"
+                style="
+                  width: 36pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+                >
+                <p style="text-indent: 0pt; text-align: left; font-size: 20px">
+                  <b>No any Fine for the month of {{ item.month }} {{ item.year }}</b>
+                  <br />
+                </p>
+              </td>
+              <!-- <td
+            style="
+              width: 54pt;
+              border-top-style: solid;
+              border-top-width: 1pt;
+              border-left-style: solid;
+              border-left-width: 1pt;
+              border-bottom-style: solid;
+              border-bottom-width: 1pt;
+              border-right-style: solid;
+              border-right-width: 1pt;
+            "
+              >
+              <p style="text-indent: 0pt; text-align: left;"><br /></p>
+            </td>
+            <td
+            style="
+              width: 27pt;
+              border-top-style: solid;
+              border-top-width: 1pt;
+              border-left-style: solid;
+              border-left-width: 1pt;
+              border-bottom-style: solid;
+              border-bottom-width: 1pt;
+              border-right-style: solid;
+              border-right-width: 1pt;
+            "
+              >
+              <p style="text-indent: 0pt; text-align: left;"><br /></p>
+            </td>
+            <td
+            style="
+              width: 54pt;
+              border-top-style: solid;
+              border-top-width: 1pt;
+              border-left-style: solid;
+              border-left-width: 1pt;
+              border-bottom-style: solid;
+              border-bottom-width: 1pt;
+              border-right-style: solid;
+              border-right-width: 1pt;
+            "
+              >
+              <p style="text-indent: 0pt; text-align: left;"><br /></p>
+            </td>
+            <td
+            style="
+              width: 54pt;
+              border-top-style: solid;
+              border-top-width: 1pt;
+              border-left-style: solid;
+              border-left-width: 1pt;
+              border-bottom-style: solid;
+              border-bottom-width: 1pt;
+              border-right-style: solid;
+              border-right-width: 1pt;
+            "
+              >
+              <p style="text-indent: 0pt; text-align: left;"><br /></p>
+            </td>
+            <td
+            style="
+              width: 54pt;
+              border-top-style: solid;
+              border-top-width: 1pt;
+              border-left-style: solid;
+              border-left-width: 1pt;
+              border-bottom-style: solid;
+              border-bottom-width: 1pt;
+              border-right-style: solid;
+              border-right-width: 1pt;
+            "
+              >
+              <p style="text-indent: 0pt; text-align: left;"><br /></p>
+            </td> -->
+            <td
+                style="
+                  width: 36pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p style="text-indent: 0pt; text-align: left"><br /></p>
+            </td>
+            <td
+                style="
+                  width: 45pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p style="text-indent: 0pt; text-align: left"><br /></p>
+            </td>
+            <td
+                style="
+                  width: 45pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p style="text-indent: 0pt; text-align: left"><br /></p>
+            </td>
+            <td
+                style="
+                  width: 45pt;
+                  border-top-style: solid;
+                  border-top-width: 1pt;
+                  border-left-style: solid;
+                  border-left-width: 1pt;
+                  border-bottom-style: solid;
+                  border-bottom-width: 1pt;
+                  border-right-style: solid;
+                  border-right-width: 1pt;
+                "
+              >
+              <p style="text-indent: 0pt; text-align: left"><br /></p>
+            </td>
+          </tr>
+        }
+      </table>
+    </div>
+  </div>
+</body>
+</div>
+}
+</html>

@@ -1,0 +1,35 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+<app-list-page-header name="Attendance Register-3" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+[showItemsPerPage]="false"></app-list-page-header>
+
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate" required />
+        <span>From Date *</span>
+        @if (!fromdate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            From Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" required />
+        <span>To Date *</span>
+        @if (!todate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            To Date is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}

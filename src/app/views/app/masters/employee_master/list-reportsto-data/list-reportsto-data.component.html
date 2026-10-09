@@ -1,0 +1,221 @@
+<router-outlet></router-outlet>
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (userReportToData) {
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 col-sm-12 col-lg-12 col-xl-12">
+        <div class="card d-flex flex-row mb-4">
+          @if (
+            userReportToData && userReportToData.child && userReportToData.child.length > 0) {
+            <div
+              class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero left-margin"
+              >
+              <div class="min-width-zero">
+                <p class="list-item-heading mb-1 truncate">REPORTEE</p>
+                <p class="text-muted mb-0">REPORTEE Count :- {{ this.page.totalCount }}</p>
+              </div>
+              <div style="margin-top: 14px">
+                @if (this.page.totalCount > 0) {
+                  <button type="button" style="margin: 5px" class="btn btn-success btn-xs mr-1" (click)="lgModal.show()"
+                    >
+                    View
+                  </button>
+                }
+                @if (this.page.totalCount > 0) {
+                  <button type="button" class="btn btn-primary btn-xs mx-1" (click)="lgModal1.show()"
+                    >
+                    Replace
+                  </button>
+                }
+                @if (this.page.totalCount > 0) {
+                  <button type="button" class="btn btn-danger btn-xs ml-1" (click)="alertConfirmation()"
+                    >
+                    Delete
+                  </button>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="no-records-message">No Reportee Found</div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Report To</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (userReportToData) {
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-12 p-4">
+                <div class="mb-4">
+                  @if (
+                    userReportToData && userReportToData.child && userReportToData.child.length > 0) {
+                    <div>
+                      <div class="table-style mb-2">
+                        <div style="color: var(--m-primary); left: 50%; top: 50%" class="la-ball-spin-clockwise">
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                        </div>
+                        <table style="width: 100%">
+                          <thead>
+                            <tr>
+                              <th class="name-col name-col-shadow" style="width: 20%">Employee Code</th>
+                              <th class="name-col name-col-shadow" style="width: 15%; border-radius: 10px 0px 0px 0px">
+                                Employee Name
+                              </th>
+                              <th class="name-col name-col-shadow" style="width: 20%">Company</th>
+                              <th class="name-col name-col-shadow" style="width: 20%">Branch</th>
+                              <th class="name-col name-col-shadow" style="width: 20%">Department</th>
+                              <th class="name-col name-col-shadow sticky"
+                                style="border-radius: 0px 10px 0px 0px; width: 15%; position: sticky">
+                                Designation
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody class="text-black" style="font-weight: 600">
+                            @for (reportToData of userReportToData.child; track reportToData) {
+                              <tr class="student bottom-border bottom-border-radius"
+                                >
+                                <td class="name-col left-border">
+                                  {{ reportToData.employee.employeeJoiningDetails[0].employeeCode }}
+                                </td>
+                                <td class="name-col left-border">
+                                  {{ reportToData.employee.displayName }}
+                                </td>
+                                <td class="name-col left-border">
+                                  {{ reportToData.employee.companyMaster.companyName }}
+                                </td>
+                                <td class="name-col left-border">
+                                  {{ reportToData.employee.employeeBranches[0].branchMaster.branchName }}
+                                </td>
+                                <td class="name-col left-border">
+                                  {{
+                                  reportToData.employee.employeeDepartments[0].department.departmentName
+                                  }}
+                                </td>
+                                <td class="name-col left-border">
+                                  {{
+                                  reportToData.employee.employeeDesignations[0].designation
+                                  .designationName
+                                  }}
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                      <pagination class="pagination-sm justify-content-center" [totalItems]="page.totalCount"
+                        [itemsPerPage]="body.limit" [(ngModel)]="body.page" (pageChanged)="pageChanged($event)"
+                      [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+                    </div>
+                  } @else {
+                    <div class="no-records-message">No Reportee Found</div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Replace Report To</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+                  name="company" [(ngModel)]="filterData.companyMasterID" required>
+                  @for (company of comp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectbranch($event)" ngModel #branch="ngModel"
+                  name="branch" [(ngModel)]="filterData.branchMasterID">
+                  @for (allbranch of allbranch; track allbranch) {
+                    <ng-option [value]="allbranch.branchMasterID">
+                      {{ allbranch.branchName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Branch</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #userMasterID="ngModel" name="userMasterID"
+                  [(ngModel)]="filterData.userMasterID" required>
+                  @for (user of getAllUser; track user) {
+                    <ng-option [value]="user.userMasterID">
+                      {{ user.displayName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Employee</span>
+                @if (!userMasterID.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Employee is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+
+          <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow'" [currentState]="buttonState"
+            [isDisabled]="buttonDisabled" click="onLoginClick()">
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

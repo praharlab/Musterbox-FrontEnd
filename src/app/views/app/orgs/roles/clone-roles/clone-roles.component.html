@@ -1,0 +1,118 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Clone Role</h5>
+
+    @if (editData) {
+      <form #addform="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" (change)="selectCompany()"
+                [(ngModel)]="editData.companyMasterID" name="companyMasterID" required>
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Company selection is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #rolename="ngModel" name="rolename" />
+              <span>Role Name *</span>
+              @if (!rolename.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Role Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          @if (addform.value.companyMasterID) {
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel [(ngModel)]="selectedRoleType" #roleType="ngModel"
+                  name="roleType" (change)="changeRoleType($event)" required>
+                  <ng-option value="companyWise">Company Wise</ng-option>
+                  <ng-option value="branchWise">Branch Wise</ng-option>
+                </ng-select>
+                <span>Select Role Type *</span>
+                @if (!roleType.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    Role Type is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          @if (addform.value.roleType && addform.value.roleType=='companyWise') {
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #companyAccessType="ngModel" name="companyAccessType"
+                  required>
+                  <ng-option value="ownCompany">Own Company</ng-option>
+                  <ng-option value="ownPlusChildCompany">Own + Child Company</ng-option>
+                </ng-select>
+                <span>Select Company Access Type *</span>
+                @if (!companyAccessType.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    Company Access Type is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          @if (addform.value.roleType && addform.value.roleType=='branchWise') {
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName" groupBy="selectedAllGroup"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="branchMasterID"
+                  [closeOnSelect]="false" [(ngModel)]="selected" ngModel required #branchMasterIDs="ngModel"
+                  name="branchMasterIDs">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{ standalone: true }" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Branch *</span>
+                </label>
+                @if (!branchMasterIDs.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    Branch is required!
+                  </div>
+                }
+              </div>
+            }
+            <div class="col-md-4"></div>
+          </div>
+          @if (showMyContainer) {
+            <div>
+              <app-permission-view [formdata]="formdata" [action]="'clone'"
+                (parentform)="parentform($event.form, $event.checked)" (childform)="childform($event.child, $event.checked)"
+                (operations)="operations($event.parent, $event.child, $event.operation, $event.checked)">
+              </app-permission-view>
+            </div>
+          }
+          <button class="btn btn-primary" type="submit" (click)="onSubmit()">
+            {{ 'forms.submit' | translate }}
+          </button>
+          &nbsp;&nbsp;
+          <button class="btn btn-danger" type="button" [routerLink]="adminRoot + '/orgs/roles'">
+            Cancel
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

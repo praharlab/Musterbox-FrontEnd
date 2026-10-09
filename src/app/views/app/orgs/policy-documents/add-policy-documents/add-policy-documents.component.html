@@ -1,0 +1,117 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Policy Document</h5>
+
+    <form #addPolicyDocument="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #companyMasterID="ngModel"
+              name="companyMasterID"
+              required
+              >
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addPolicyDocument.submitted) {
+              <div
+                class="invalid-tooltip"
+                >
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #policyDocumentName="ngModel"
+              name="policyDocumentName"
+              />
+              <span>Policy Documenet Name *</span>
+              @if (!policyDocumentName.valid && addPolicyDocument.submitted) {
+                <div
+                  class="invalid-tooltip"
+                  >
+                  Policy Documenet Name is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <textarea
+                class="form-control"
+                ngModel
+                #description="ngModel"
+                name="description"
+                required
+              ></textarea>
+              <span>Description *</span>
+              @if (!description.valid && addPolicyDocument.submitted) {
+                <div class="invalid-tooltip">
+                  Description is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="file"
+                ngModel
+                #file="ngModel"
+                [(ngModel)]="file1"
+                (change)="onSelectFile($event)"
+                accept=".pdf,.doc,.docx"
+                name="file"
+                required
+                />
+                <span>Policy Document *</span>
+                @if (!file.valid && addPolicyDocument.submitted) {
+                  <div class="invalid-tooltip">
+                    Policy Document is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-lg btn-shadow mt-4"
+            [routerLink]="adminRoot + '/orgs/listPolicyDocuments'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

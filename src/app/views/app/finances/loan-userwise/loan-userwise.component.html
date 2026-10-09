@@ -1,0 +1,264 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showreq]="permissioncreate"
+  (searchKeyUp)="updateFilter($event)" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage" (reqNewItem)="showAddNewModal()" name="My Loan"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <div class="row">
+        <div class="col-md-12">
+          <label class="form-group has-float-label">
+            <ng-select class="form-group" [items]="tabledata" [multiple]="true" [closeOnSelect]="false"
+              placeholder="Select To Show Fields In Table" [(ngModel)]="selected"
+            (change)="changeshowfields()"></ng-select>
+            <span>Show Fields In Table</span>
+          </label>
+        </div>
+      </div>
+    }
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" required />
+              <span>From Date *</span>
+              @if (!startdate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" required />
+              <span>To Date *</span>
+              @if (!enddate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  To Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+          <div class="col-md-3" style="text-align: right">
+            <span class="btn btn-info mb-1" (click)="downloadFile()">Export</span>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+@if (rows && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        @if (selected.includes('UserName')) {
+          <ngx-datatable-column name="User Name" prop="userMaster.displayName" [flexGrow]="1.2" [width]="180"
+          ></ngx-datatable-column>
+        }
+        @if (selected.includes('LoanRemark')) {
+          <ngx-datatable-column name="Loan Remark" prop="LoanRemark" [flexGrow]="1.2" [width]="180"
+          ></ngx-datatable-column>
+        }
+        @if (selected.includes('LoanAmount')) {
+          <ngx-datatable-column name="Amount" prop="LoanAmount" [flexGrow]="1.2" [width]="150"
+          ></ngx-datatable-column>
+        }
+        @if (selected.includes('givenDate')) {
+          <ngx-datatable-column name="Date Of Loan" prop="givenDate" [flexGrow]="1.2" [width]="140"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.givenDate | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (selected.includes('paymentmode')) {
+          <ngx-datatable-column name="Payment Mode" prop="paymentmode" [flexGrow]="1.2" [width]="120"
+          ></ngx-datatable-column>
+        }
+        <ngx-datatable-column name="Action" prop="loanstatus">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.loanstatus == '0') {
+              <button class="btn btn-warning">Pending</button>
+            }
+            @if (row.loanstatus == '1') {
+              <button (click)="lgModal.show(); editdata(row.LoanID)" class="btn btn-primary">
+                Check EMI {{ ' ' }}
+              </button>
+            }
+            @if (row.loanstatus == '2') {
+              <button class="btn btn-danger" (click)="lgModal1.show(); showRemark(row)">
+                Rejected {{ '' }}
+              </button>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        @if (selected.includes('Status')) {
+          <ngx-datatable-column name="Status" prop="status" [flexGrow]="1.2" [width]="100"
+          ></ngx-datatable-column>
+        }
+        @if (selected.includes('CreateBy')) {
+          <ngx-datatable-column name="Create By" prop="createBy" [flexGrow]="1.2" [width]="160"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.createBy }}
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (selected.includes('CreateByIp')) {
+          <ngx-datatable-column name="Create By IP" prop="createByIp" [flexGrow]="1.2" [width]="160"
+          ></ngx-datatable-column>
+        }
+        @if (selected.includes('CreatedAt')) {
+          <ngx-datatable-column name="Created Date" prop="createdAt" [flexGrow]="1.2" [width]="160"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.createdAt | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (selected.includes('updateBy')) {
+          <ngx-datatable-column name="Update By" prop="updateBy" [flexGrow]="1.2" [width]="160"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.updateBy }}
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (selected.includes('UpdateByIp')) {
+          <ngx-datatable-column name="Update By IP" prop="updateByIp" [flexGrow]="1.2" [width]="160"
+          ></ngx-datatable-column>
+        }
+        @if (selected.includes('UpdatedAt')) {
+          <ngx-datatable-column name="Updated Date" prop="updatedAt" [flexGrow]="1.2" [width]="160"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.updatedAt | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">EMI</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table border="1" style="width: 100%">
+          <thead>
+            <tr align="center">
+              <th>EMI Month</th>
+              <th>Loan Installment</th>
+              <th>Principle Amount</th>
+              <th>Intrest Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (data of datearr; track data; let i = $index) {
+              <tr>
+                @if (data.RefrenceId == null) {
+                  <td>
+                    <input style="text-align: center" class="form-control" type="month" [(ngModel)]="data.EMIMonth"
+                      [name]="'EMIMonth_' + i" disabled />
+                    </td>
+                  }
+                  @if (data.RefrenceId != null) {
+                    <td>
+                      <input style="text-align: center" class="form-control" type="month" [(ngModel)]="data.EMIMonth"
+                        [name]="'EMIMonth_' + i" disabled />
+                      </td>
+                    }
+                    <td style="text-align: center">{{ data.EMIAmount }}</td>
+                    <td style="text-align: center">{{ data.monthlyPrinciple }}</td>
+                    <td style="text-align: center">{{ data.monthlyInterest }}</td>
+                    @if (data.RefrenceId == null) {
+                      <td style="color: red; text-align: center">
+                        Pending
+                      </td>
+                    }
+                    @if (data.RefrenceId != null) {
+                      <td style="color: green; text-align: center">Paid</td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Rejected</h4>
+            <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            @if (rejectionRemark) {
+              <div class="remark-section">
+                {{ rejectionRemark }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>

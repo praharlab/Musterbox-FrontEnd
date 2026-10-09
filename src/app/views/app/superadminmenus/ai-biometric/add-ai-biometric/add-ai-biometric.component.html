@@ -1,0 +1,45 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Ai Biometric</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #serialNo="ngModel"
+              name="serialNo"
+              />
+              <span>Serial No *</span>
+              @if (!serialNo.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Serial No is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/superadminmenus/ai_biometric'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

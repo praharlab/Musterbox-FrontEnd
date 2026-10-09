@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 400" width="480" height="400" role="img" aria-labelledby="lhTitle lhDesc">
+  <title id="lhTitle">Payroll dashboard illustration</title>
+  <desc id="lhDesc">A stack of translucent cards showing a payslip, an approval badge and a bar chart of monthly payroll.</desc>
+  <defs>
+    <linearGradient id="lhGlass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".07"/>
+    </linearGradient>
+    <linearGradient id="lhBar" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#5eead4"/>
+    </linearGradient>
+    <linearGradient id="lhAccent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <filter id="lhShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#021a19" flood-opacity=".38"/>
+    </filter>
+  </defs>
+
+  <!-- ambient glow -->
+  <circle cx="352" cy="92" r="76" fill="#2dd4bf" opacity=".12"/>
+  <circle cx="108" cy="318" r="92" fill="#14b8a6" opacity=".09"/>
+
+  <!-- back card: payslip -->
+  <g filter="url(#lhShadow)" transform="rotate(-8 168 176)">
+    <rect x="58" y="74" width="196" height="216" rx="18" fill="url(#lhGlass)" stroke="#ffffff" stroke-opacity=".26"/>
+    <rect x="80" y="100" width="70" height="8" rx="4" fill="#ffffff" fill-opacity=".62"/>
+    <rect x="80" y="118" width="110" height="6" rx="3" fill="#ffffff" fill-opacity=".3"/>
+    <line x1="80" y1="142" x2="232" y2="142" stroke="#ffffff" stroke-opacity=".18"/>
+    <g fill="#ffffff" fill-opacity=".34">
+      <rect x="80" y="158" width="64" height="6" rx="3"/>
+      <rect x="188" y="158" width="44" height="6" rx="3" fill-opacity=".55"/>
+      <rect x="80" y="180" width="80" height="6" rx="3"/>
+      <rect x="196" y="180" width="36" height="6" rx="3" fill-opacity=".55"/>
+      <rect x="80" y="202" width="56" height="6" rx="3"/>
+      <rect x="192" y="202" width="40" height="6" rx="3" fill-opacity=".55"/>
+    </g>
+    <line x1="80" y1="226" x2="232" y2="226" stroke="#ffffff" stroke-opacity=".18"/>
+    <rect x="80" y="242" width="58" height="9" rx="4.5" fill="#5eead4"/>
+    <rect x="178" y="242" width="54" height="9" rx="4.5" fill="#5eead4"/>
+  </g>
+
+  <!-- front card: payroll chart -->
+  <g filter="url(#lhShadow)">
+    <rect x="196" y="150" width="228" height="188" rx="20" fill="url(#lhGlass)" stroke="#ffffff" stroke-opacity=".3"/>
+    <rect x="220" y="176" width="86" height="8" rx="4" fill="#ffffff" fill-opacity=".62"/>
+    <rect x="220" y="192" width="54" height="6" rx="3" fill="#ffffff" fill-opacity=".28"/>
+
+    <!-- baseline -->
+    <line x1="220" y1="302" x2="400" y2="302" stroke="#ffffff" stroke-opacity=".22"/>
+
+    <!-- bars -->
+    <g>
+      <rect x="224" y="268" width="18" height="34" rx="5" fill="url(#lhBar)" opacity=".55"/>
+      <rect x="254" y="248" width="18" height="54" rx="5" fill="url(#lhBar)" opacity=".7"/>
+      <rect x="284" y="256" width="18" height="46" rx="5" fill="url(#lhBar)" opacity=".62"/>
+      <rect x="314" y="226" width="18" height="76" rx="5" fill="url(#lhBar)"/>
+      <rect x="344" y="238" width="18" height="64" rx="5" fill="url(#lhBar)" opacity=".8"/>
+      <rect x="374" y="214" width="18" height="88" rx="5" fill="url(#lhBar)"/>
+    </g>
+
+    <!-- trend line -->
+    <polyline points="233,262 263,242 293,250 323,220 353,232 383,208"
+      fill="none" stroke="#ffffff" stroke-opacity=".7" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="383" cy="208" r="4.5" fill="#ffffff"/>
+  </g>
+
+  <!-- approved badge -->
+  <g filter="url(#lhShadow)" transform="translate(96 214)">
+    <rect x="0" y="0" width="150" height="54" rx="16" fill="url(#lhGlass)" stroke="#ffffff" stroke-opacity=".3"/>
+    <circle cx="30" cy="27" r="15" fill="url(#lhAccent)"/>
+    <path d="M23 27.5l4.8 4.8L38 22" fill="none" stroke="#ffffff" stroke-width="2.6"
+      stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="56" y="18" width="66" height="7" rx="3.5" fill="#ffffff" fill-opacity=".62"/>
+    <rect x="56" y="32" width="44" height="6" rx="3" fill="#ffffff" fill-opacity=".28"/>
+  </g>
+
+  <!-- floating team avatars -->
+  <g>
+    <circle cx="332" cy="98" r="24" fill="url(#lhAccent)" opacity=".9"/>
+    <circle cx="332" cy="91" r="8" fill="#ffffff" fill-opacity=".85"/>
+    <path d="M320 114a12 12 0 0124 0z" fill="#ffffff" fill-opacity=".85"/>
+
+    <circle cx="386" cy="126" r="17" fill="#ffffff" fill-opacity=".2" stroke="#ffffff" stroke-opacity=".32"/>
+    <circle cx="386" cy="121" r="5.5" fill="#ffffff" fill-opacity=".7"/>
+    <path d="M377.5 137a8.5 8.5 0 0117 0z" fill="#ffffff" fill-opacity=".7"/>
+
+    <circle cx="282" cy="120" r="13" fill="#ffffff" fill-opacity=".16" stroke="#ffffff" stroke-opacity=".28"/>
+    <circle cx="282" cy="116" r="4.2" fill="#ffffff" fill-opacity=".6"/>
+    <path d="M275.5 129a6.5 6.5 0 0113 0z" fill="#ffffff" fill-opacity=".6"/>
+  </g>
+
+  <!-- sparkles -->
+  <g fill="#5eead4">
+    <circle cx="60" cy="140" r="3.5" opacity=".7"/>
+    <circle cx="438" cy="188" r="2.8" opacity=".55"/>
+    <circle cx="164" cy="330" r="3" opacity=".5"/>
+  </g>
+</svg>

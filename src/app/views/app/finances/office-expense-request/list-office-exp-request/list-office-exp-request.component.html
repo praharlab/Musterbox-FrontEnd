@@ -1,0 +1,198 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Office Expense Request" [showOrderBy]="false" [showSearch]="false" [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit" [showadd]="permissioncreate"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #listOfcExpRequest="ngForm" novalidate>
+      <ng-container>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allBranch" [multiple]="false" bindLabel="branchName"
+                bindValue="branchMasterID" [closeOnSelect]="true" ngModel #branch="ngModel"
+                name="branch" placeholder="Choose your option">
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allSites" [multiple]="false" bindLabel="siteName" bindValue="siteID"
+                [closeOnSelect]="true" ngModel #siteID="ngModel" name="siteID"
+                placeholder="Choose your option">
+              </ng-select>
+              <span>Select Site</span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" type="button" (click)="onSubmit()">Submit</button>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+</div>
+
+@if (rows && rows.length != 0 && permissionview.length != 0) {
+  <div class="row mt-5">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="$safeNavigationMigration(page?.totalCount)" [offset]="$safeNavigationMigration(page?.offset)"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Expense Date" prop="expense_date" [flexGrow]="1.2" [width]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ $safeNavigationMigration(row?.expense_date) | date: 'dd-MM-yyyy' || "" }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Branch" prop="branchMaster.branchName" [flexGrow]="1.2" [width]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.branchMaster?.branchName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Site" prop="site.siteName" [flexGrow]="1.2" [width]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row?.site?.siteName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Details" [flexGrow]="1.2" [width]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button type="button" class="btn btn-primary btn-xs" (click)="showExpenseData(row)">
+              View
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Reference Number" prop="officeExpenseID" [flexGrow]="1.2"
+        [width]="100"></ngx-datatable-column>
+        <ngx-datatable-column name="Total" prop="expenseSummary.totalExpenseAmount" [flexGrow]="1.2" [width]="140">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <table>
+              <tr>
+                <td>Total :</td>
+                <td><b>{{ row?.expenseSummary.total }}</b></td>
+              </tr>
+              <tr>
+                <td>Amount :</td>
+                <td><b>{{ row?.expenseSummary.totalExpenseAmount }}</b></td>
+              </tr>
+            </table>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Pending" prop="expenseSummary.pendingAmount" [flexGrow]="1.2" [width]="140">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <table>
+              <tr>
+                <td>Pending :</td>
+                <td>
+                  <p class="mb-0 btn-warning btn btn-xxs text-center bor-rad-0">{{ row?.expenseSummary.pending }}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>Amount :</td>
+                <td><b>{{ row?.expenseSummary.pendingAmount }}</b></td>
+              </tr>
+            </table>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Rejected" prop="expenseSummary.rejectedAmount" [flexGrow]="1.2" [width]="140">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <table>
+              <tr>
+                <td>Rejected :</td>
+                <td>
+                  <p class="mb-0 btn-danger btn btn-xxs text-center bor-rad-0">{{ row?.expenseSummary.rejected }}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>Amount :</td>
+                <td><b>{{ row?.expenseSummary.rejectedAmount }}</b></td>
+              </tr>
+            </table>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Approved" prop="expenseSummary.approvedAmount" [flexGrow]="1.2" [width]="140">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <table>
+              <tr>
+                <td>Approved :</td>
+                <td>
+                  <p class="mb-0 btn-success btn btn-xxs text-center bor-rad-0">{{ row?.expenseSummary.approved }}</p>
+                </td>
+              </tr>
+              <tr>
+                <td>Amount :</td>
+                <td><b>{{ row?.expenseSummary.approvedAmount }}</b></td>
+              </tr>
+            </table>
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- <ngx-datatable-column name="Paid" prop="expenseSummary.paidAmount" [flexGrow]="1.2" [width]="140">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <table>
+            <tr>
+              <td>Paid :</td>
+              <td>
+                <p class="mb-0 btn-info btn btn-xxs text-center bor-rad-0">{{ row?.expenseSummary.paid }}</p>
+              </td>
+            </tr>
+            <tr>
+              <td>Amount :</td>
+              <td><b>{{ row?.expenseSummary.paidAmount }}</b></td>
+            </tr>
+          </table>
+        </ng-template>
+      </ngx-datatable-column> -->
+      @if (permissionedit.length != 0 || permissiondelete.length != 0) {
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="80"
+          >
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (permissionedit.length > 0) {
+              <a (click)="navigateToEditPage(row)">
+                <span tooltip="edit expense details" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                style="padding-right: 6px; font-size: 18px"></span>
+                {{ ' ' }}
+              </a>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+      }
+      @if (true) {
+        <ngx-datatable-footer>
+          <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+            let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+            <div class="w-100 d-flex justify-content-center">
+              <pagination [totalItems]="$safeNavigationMigration(page?.totalCount)" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+            </div>
+          </ng-template>
+        </ngx-datatable-footer>
+      }
+    </ngx-datatable>
+  </div>
+</div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+@if (showOfficeExpenseData) {
+  <app-view-office-expense-common #ViewOfficeExpenseCommonComponent (close)="onModalClose()"
+  [row]="row" [showCheckbox]="true"></app-view-office-expense-common>
+}

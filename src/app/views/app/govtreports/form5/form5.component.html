@@ -1,0 +1,570 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 5"></app-heading>
+    <app-breadcrumb title="Form 5"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              (change)="selectcompany($event)"
+              required
+              >
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <!-- <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+            (change)="selectbranch($event)">
+            <ng-option [value]="item.branchMasterID" *ngFor="let item of allbranch">
+              {{ item.branchName }}
+            </ng-option>
+          </ng-select>
+          <span>Select Branch*</span>
+        </label>
+      </div> -->
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select
+            placeholder="Choose your option"
+            ngModel
+            #state1="ngModel"
+            (change)="selectstate($event)"
+            required
+            name="state1"
+            >
+            @for (states of state; track states) {
+              <ng-option [value]="states.stateMasterID">
+                {{ states.stateName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select State *</span>
+          @if (!state1.valid && datefilter.submitted) {
+            <div class="invalid-tooltip">
+              State is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-2">
+        <label class="form-group has-float-label">
+          <input
+            class="form-control"
+            type="month"
+            ngModel
+            #fromyearmonth="ngModel"
+            name="fromyearmonth"
+            (change)="selectfromyearmonth($event)"
+            required
+            />
+            <span>Yearmonth*</span>
+            @if (!fromyearmonth.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                From yearmonth is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-5">
+          <button class="btn btn-primary form-group" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+          &nbsp;&nbsp;
+          <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          <span> &nbsp;&nbsp; </span>
+          @if (finaldata == true) {
+            <button
+              class="btn btn-success form-group"
+              type="button"
+              onclick="window.print()"
+              >
+              Download As PDF
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="Generator" content="Microsoft Word 15 (filtered)" />
+    <title>FORM 11</title>
+    <style type="text/css">
+      * {
+      box-sizing: border-box;
+    }
+
+    /* body {
+    font-family: "Montserrat", sans-serif;
+    } */
+
+    page[size='A4'] {
+    width: 790px;
+    height: 1000px;
+  }
+
+  page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+}
+
+p {
+margin: 0;
+padding: 0;
+}
+</style>
+</head>
+<div>
+  <body lang="EN-US" style="word-wrap: break-word; padding-bottom: 0px">
+    @if (display) {
+      <div id="example">
+        <div>
+          <div
+            class="MsoNormalTable"
+            style="margin-left: 0.9pt; border-collapse: collapse; border: none"
+            >
+            <div style="size: a4">
+              <header>
+                <div
+                  class="text-center"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                  "
+                  >
+                  <h3>
+                    <u><b>FORM 5</b></u>
+                  </h3>
+                  <div class="sub-Font">
+                    Return of tax payable by employer under Sub-section (1) of Section 6 of the
+                    <br />
+                    {{ stateName }} State , Tax on Professions , Trades , Callings and Employments
+                    ACT , 1976
+                    <br />
+                    (See Rule 11)
+                  </div>
+                </div>
+              </header>
+              <section class="sub-Font">
+                <table style="width: 100%; margin-top: 3px; border-collapse: collapse">
+                  <tr>
+                    <td style="width: 40%">
+                      <b>AMC-RC NO</b>
+                    </td>
+                    @if (branchPTNumber.length == 0) {
+                      <td style="width: 60%"></td>
+                    }
+                    @if (branchPTNumber.length > 0) {
+                      <td style="width: 60%">
+                        {{ branchPTNumber }}
+                      </td>
+                    }
+                  </tr>
+                  <tr>
+                    <td style="width: 40%">
+                      <b>Return of tax payable for the month ending on :-</b>
+                    </td>
+                    <td style="width: 60%">
+                      {{ monthYearOfReport }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 40%">
+                      <b>Name of the Employer :-</b>
+                    </td>
+                    <td style="width: 60%">
+                      {{ companyName_address.companyName }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 40%">
+                      <b>Address :</b>
+                    </td>
+                    <td style="width: 60%">
+                      {{ companyName_address.companyAddress }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="padding: 4px 4px 4px 4px">
+                      <div style="display: none">{{ companyName_address.companyAddress }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="padding: 4px 4px 4px 4px">
+                      Details of employes during the month in respect of whom tax is payable are as
+                      under :
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="padding: 4px 4px 4px 4px">
+                      Details For tax calculation for tax payable in respect pf salaries for the
+                      month ending on {{ monthYearOfReport }}
+                    </td>
+                  </tr>
+                </table>
+              </section>
+              <section>
+                <table
+                  border="1"
+                  class="sub-Font"
+                  style="
+                    width: 100%;
+                    border: 1px solid black;
+                    margin-top: 3px;
+                    border-collapse: collapse;
+                    text-align: center;
+                  "
+                  >
+                  <tr>
+                    <th>
+                      Employees whose
+                      <br />
+                      monthly salaries or
+                      <br />
+                      wages are
+                    </th>
+                    <th>
+                      No of
+                      <br />
+                      employess
+                    </th>
+                    <th>
+                      Number of
+                      <br />
+                      emloyees for whom
+                      <br />
+                      no tax is payable
+                      <br />
+                      under provision to
+                      <br />
+                      section 4
+                    </th>
+                    <th>
+                      Number of
+                      <br />
+                      employees in
+                      <br />
+                      respect of whom
+                      <br />
+                      tax is payable
+                      <br />
+                      (i.e. Col.2 minus)
+                    </th>
+                    <th>
+                      Rate of tax per
+                      <br />
+                      month per
+                      <br />
+                      employees
+                    </th>
+                    <th>
+                      Amount of
+                      <br />
+                      tax
+                      <br />
+                      deducted
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>6</td>
+                  </tr>
+                  @for (item of calculated_data; track item; let i = $index) {
+                    <tr>
+                      <td>Rs.&nbsp;{{ item.fromAmount }}&nbsp;to&nbsp;{{ item.toAmount }}</td>
+                      <td>{{ item.male + item.female }}</td>
+                      <td></td>
+                      <td>{{ item.male + item.female }}</td>
+                      @if (item.maleTax != item.femaleTax) {
+                        <td>
+                          {{ item.maleTax }},{{ item.femaleTax }}
+                        </td>
+                      }
+                      @if (item.maleTax == item.femaleTax) {
+                        <td>{{ item.maleTax }}</td>
+                      }
+                      <td>{{ item.totalmale + item.totalfemale }}</td>
+                    </tr>
+                  }
+                  <!--<tr>
+                  <td>Rs. 0 to 5999</td>
+                  <td>198</td>
+                  <td></td>
+                  <td>198</td>
+                  <td>0</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>Rs. 6000 to 8999</td>
+                  <td>198</td>
+                  <td></td>
+                  <td>198</td>
+                  <td>0</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>Rs. 9000 to 11999 </td>
+                  <td>198</td>
+                  <td></td>
+                  <td>198</td>
+                  <td>0</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>Rs. 12000 to 10000000 </td>
+                  <td>383</td>
+                  <td></td>
+                  <td>383</td>
+                  <td>200</td>
+                  <td>76600</td>
+                </tr> -->
+                <tr>
+                  <td><b>Total A Rs</b></td>
+                  <td>
+                    <b>{{ totalData[0].totalEmployee }}</b>
+                  </td>
+                  <td><b></b></td>
+                  <td>
+                    <b>{{ totalData[0].totalEmployee }}</b>
+                  </td>
+                  <td><b></b></td>
+                  <td>
+                    <b>{{ totalData[0].totalTaxDeducted }}</b>
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top: 10px" class="sub-Font">
+                11. Details of employees in respect of whom tax is payable at the enhanced rate
+                for previous period on account of arrears salaries or wages paid during the month.
+              </div>
+            </section>
+            <section class="sub-Font">
+              <table
+                border="1"
+                  style="
+                    width: 100%;
+                    border: 1px solid black;
+                    margin-top: 3px;
+                    border-collapse: collapse;
+                    text-align: center;
+                  "
+                >
+                <tr>
+                  <th rowspan="2">
+                    Number of employees
+                    <br />
+                    liable to tax at
+                    <br />
+                    enhanced rate to be
+                    <br />
+                    shown seprately
+                    <br />
+                    according to column 4
+                    <br />
+                    and column 5
+                  </th>
+                  <th colspan="2"><b>RATE OF TAX</b></th>
+                  <th rowspan="2">
+                    Difference of Rate
+                    <br />
+                    (Col.2 minus Col.3)
+                  </th>
+                  <th rowspan="2">
+                    No. of
+                    <br />
+                    month for
+                    <br />
+                    which arrears
+                    <br />
+                    is paid
+                    <br />
+                    (Col.5)
+                  </th>
+                  <th rowspan="2">
+                    Additional tax
+                    <br />
+                    payable
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    Payable on
+                    <br />
+                    account of
+                    <br />
+                    arrears salaries
+                    <br />
+                    and wages
+                  </td>
+                  <td>
+                    At which tax
+                    <br />
+                    was paid
+                  </td>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>2</td>
+                  <td>3</td>
+                  <td>4</td>
+                  <td>5</td>
+                  <td>6</td>
+                </tr>
+                <tr style="height: 100px">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr style="text-align: left">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td colspan="2">Total B Rs</td>
+                </tr>
+              </table>
+            </section>
+            <section class="sub-Font">
+              <table style="width: 100%; margin-top: 3px; border-collapse: collapse">
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">
+                    <b>Total Tax payable i.e. Total A+B</b>
+                  </td>
+                  <td style="width: 20%; padding: 6px; text-align: left">Rs</td>
+                  <td style="width: 20%; padding: 6px; text-align: center">
+                    <!-- {{totalData[0].totalTaxDeducted}} -->
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">
+                    Add Simple interest payable (if any)
+                    <br />
+                    on the above amount at * [one and a half percent] per
+                    <br />
+                    month or part there of (vide section 9(2) of the Act.)
+                  </td>
+                  <td style="width: 20%; padding: 6px; text-align: left">Rs</td>
+                  <td style="width: 20%; padding: 6px; text-align: center"></td>
+                </tr>
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">
+                    Total tax and Intrest Payable
+                  </td>
+                  <td style="width: 20%; padding: 6px; text-align: left">Rs</td>
+                  <td style="width: 20%; padding: 6px; text-align: center">
+                    <!-- {{totalData[0].totalTaxDeducted}} -->
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">
+                    Amount paid by Receipt No :-
+                  </td>
+                  <td style="width: 20%; padding: 6px; text-align: left"></td>
+                  <td style="width: 20%; padding: 6px; text-align: center"></td>
+                </tr>
+              </table>
+            </section>
+            <section class="sub-Font">
+              <table style="width: 100%; margin-top: 3px; border-collapse: collapse">
+                <tr>
+                  <td style="width: 40%; padding: 6px; text-align: left">Bank Name:-</td>
+                  <td style="width: 60%; padding: 6px; text-align: left">Chq.No & Dt :-</td>
+                </tr>
+              </table>
+            </section>
+            <section class="sub-Font">
+              <table style="width: 100%; margin-top: 3px; border-collapse: collapse">
+                <tr>
+                  <td style="padding: 6px">
+                    I certify that all the employees who as liable to pay the tax in my employee
+                    during the period of return have been converted by the foregoing particulars.
+                    i also certify that the tax deductable from the salary or wages of the
+                    employees on account of veriation in the salary or wages by them has been made
+                    where necessary.
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px">
+                    Shri
+                    .............................................................................................................................................................
+                  </td>
+                </tr>
+              </table>
+            </section>
+            <footer class="sub-Font">
+              <table style="width: 100%; margin-top: 3px; border-collapse: collapse">
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">
+                    Declare that the above statements are true to the best of my knowledge
+                  </td>
+                  <td style="width: 40%; padding: 6px; text-align: left">Signature :-</td>
+                </tr>
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">
+                    Place :- {{ this.companyName_place }}
+                  </td>
+                  <td style="width: 40%; padding: 6px; text-align: left">
+                    <b>For , {{ companyName_address.companyName }}</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">Date :-</td>
+                  <td style="width: 40%; padding: 6px; text-align: left"></td>
+                </tr>
+                <tr>
+                  <td style="width: 60%; padding: 6px; text-align: left">Stamp</td>
+                  <td style="width: 40%; padding: 6px; text-align: left">
+                    Authorize Signature :-
+                  </td>
+                </tr>
+              </table>
+            </footer>
+            <!-- PDF CONTENT END -->
+          </div>
+        </div>
+      </div>
+      <div class="box wide hidden-on-narrow"></div>
+    </div>
+  }
+</body>
+</div>
+</html>

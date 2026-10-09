@@ -1,0 +1,146 @@
+<div style="text-align: right">
+  @if (rows.length == 0) {
+    <button class="btn btn-primary mb-1" (click)="lgModal.show()">
+      Add
+    </button>
+  }
+</div>
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero w-100">
+              <a href="javascript:;">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <table>
+                      <tr>
+                        <td>Shirt Size</td>
+                        <td>: {{ item.shirtSize }}</td>
+                      </tr>
+                      <tr>
+                        <td>Pant Size</td>
+                        <td>: {{ item.pantSize }}</td>
+                      </tr>
+                      <tr>
+                        <td>Shoes Size</td>
+                        <td>: {{ item.shoeSize }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div>
+                    <div class="rows">
+                      <a class="btn btn-outline-primary btn-xs" (click)="lgModal1.show(); edit(item.uniformDetailID)">EDIT</a>
+                      <a class="btn btn-outline-danger btn-xs" (click)="alertConfirmation(item.uniformDetailID)">
+                        DELETE
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                  <p class="text-muted mb-0 text-small">
+                    <strong>Created</strong> by {{ item.createdByUserDetails.displayName}}, at {{
+                    item.createdAt
+                    | date: 'dd-MM-yyyy hh:mm a' }}
+                  </p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Employee Uniform Details</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addUniformDetail="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #shirtSize="ngModel" name="shirtSize" />
+                  <span>Shirt Size</span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #pantSize="ngModel" name="pantSize" />
+                  <span>Pant Size</span>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #shoeSize="ngModel" name="shoeSize" />
+                  <span>Shoe Size</span>
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Edit Employee Uniform Details</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+            #closeModal1>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (editbyid) {
+            <form #editUniformDetail="ngForm" novalidate (ngSubmit)="onSubmit1()">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #shirtSize="ngModel" [(ngModel)]="editbyid.shirtSize"
+                      name="shirtSize" />
+                      <span>Shirt Size</span>
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #pantSize="ngModel" [(ngModel)]="editbyid.pantSize"
+                        name="pantSize" />
+                        <span>Pant Size</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #shoeSize="ngModel" [(ngModel)]="editbyid.shoeSize"
+                          name="shoeSize" />
+                          <span>Shoe Size</span>
+                        </label>
+                      </div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                  </form>
+                }
+              </div>
+            </div>
+          </div>
+        </div>

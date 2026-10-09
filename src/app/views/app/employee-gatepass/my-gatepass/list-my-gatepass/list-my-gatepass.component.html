@@ -1,0 +1,583 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="true" [showDisplayMode]="false" [showSearch]="false"
+  (changeOrderBy)="onChangeOrderBy($event)" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="body.limit"
+  [itemOrder]="Order" [itemOptionsOrders]="changeOrderBy" [itemOptionsPerPage]="itemOptionsPerPage"
+(addNewItem)="showAddNewModal()" name="My Gate Pass"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #companyfilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select ngModel #status="ngModel" [(ngModel)]="body.status" name="status" required>
+                <ng-option value="Pending">PENDING</ng-option>
+                <ng-option value="Approved">APPROVED</ng-option>
+                <ng-option value="Reject">REJECT</ng-option>
+              </ng-select>
+              <span>Status *</span>
+              @if (!status.valid && companyfilter.submitted) {
+                <div class="invalid-tooltip">
+                  Status is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel [(ngModel)]="body.startdate" #startdate="ngModel"
+                name="startdate" required />
+                <span>From Date *</span>
+                @if (!startdate.valid && companyfilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel [(ngModel)]="body.enddate" #enddate="ngModel" name="enddate"
+                  required />
+                  <span>To Date *</span>
+                  @if (!enddate.valid && companyfilter.submitted) {
+                    <div class="invalid-tooltip">
+                      To Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary form-group" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+                <!-- &nbsp;&nbsp;
+                <div class="float-right float-none-xs mt-2">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Export" ngModel #cid2="ngModel" name="cid2"
+                      [(ngModel)]="selectedValue" (ngModelChange)="onOptionSelect()">
+                      <ng-option value="csv">CSV</ng-option>
+                      <ng-option value="xlsx">XLSX</ng-option>
+                    </ng-select>
+                  </label>
+                </div> -->
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    @if (rows && permissionview.length != 0) {
+      <div class="row">
+        <div class="col-12 mb-4 data-table-rows">
+          <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+            [limit]="body.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+            (page)="onChange($event)">
+            <ngx-datatable-column name="Type" [sortable]="true" [width]="220">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (row.authorizationStatus === 3) {
+                  <div>
+                    @if (row.lastCheck.length == 0) {
+                      <button class="btn btn-primary btn-xs" style="margin-right: 3px"
+                        (click)="checkoutModal.show(); resetForm('checkoutModal'); employeeGatepassData(row)"
+                        >
+                        Check-Out
+                        {{ ' ' }}
+                      </button>
+                    }
+                    @if (row.lastCheck.length != 0 && row.lastCheck[0].type == 'Checkin') {
+                      <button class="btn btn-primary btn-xs" style="margin-right: 3px"
+                        (click)="checkoutModal.show(); resetForm('checkoutModal'); employeeGatepassData(row)"
+                        >
+                        Check-Out
+                        {{ ' ' }}
+                      </button>
+                    }
+                    @if (row.lastCheck.length != 0 && row.lastCheck[0].type == 'Checkout') {
+                      <button class="btn btn-primary btn-xs" style="margin-right: 3px"
+                        (click)="checkinModal.show(); resetForm('checkinModal'); employeeGatepassData(row)"
+                        >
+                        Check-In
+                        {{ ' ' }}
+                      </button>
+                    }
+                    @if (row.lastCheck.length != 0 && row.lastCheck[0].type == 'Checkout') {
+<button class="btn btn-primary btn-xs" style="margin-right: 3px" (click)="
+                finalCheckinModal.show(); resetForm('finalCheckinModal'); employeeGatepassData(row)
+              ">
+                        Final Check-In
+                        {{ ' ' }}
+                      </button>
+                    }
+                  </div>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Check-In/Out Details" [width]="150">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (row.lastCheck && row.lastCheck.length > 0) {
+                  <button class="btn btn-outline-primary btn-xs"
+                    (click)="lgModal4.show(); showdata(row)">
+                    {{ 'Show Data' | translate }}
+                  </button>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Status" [width]="120">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (
+                  row.authorizationStatus == '0' ||
+                  row.authorizationStatus == '1' ||
+                  row.authorizationStatus == '2'
+                  ) {
+                  <button type="button" class="btn btn-outline-warning btn-xs">
+                    Pending
+                  </button>
+                }
+                {{ ' ' }}
+                @if (row.authorizationStatus == '3') {
+                  <button type="button" class="btn btn-outline-success btn-xs">
+                    Approved
+                  </button>
+                }
+                {{ ' ' }}
+                @if (row.authorizationStatus == '4') {
+                  <button type="button" class="btn btn-outline-danger btn-xs">
+                    Rejected
+                  </button>
+                }
+                {{ ' ' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <button type="button" class="btn btn-primary" (click)="lgModal.show(); showdataForm(row)">
+                  {{ 'Show Data' | translate }}
+                </button>
+                {{ ' ' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <!-- <ngx-datatable-column name="Company Name" prop="companyMaster.companyName" [flexGrow]="1.2" [width]="150">
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Employee Name" prop="employee.displayName" [flexGrow]="1.2" [width]="150">
+          </ngx-datatable-column> -->
+          <ngx-datatable-column name="Description" prop="description" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+          <ngx-datatable-column name="Date" prop="date" [flexGrow]="1.2" [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.date | date : 'dd-MM-yyyy ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="From Time" prop="fromTime" [flexGrow]="1.2" [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-center">
+                {{ convertTo12HourFormat(row.fromTime) }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="To Time" prop="toTime" [flexGrow]="1.2" [width]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-center">
+                {{ convertTo12HourFormat(row.toTime) }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Purpose" prop="purposeFor" [flexGrow]="1.2" [width]="140">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.purposeFor }} Work
+            </ng-template>
+          </ngx-datatable-column>
+          @if (permissionedit.length != 0 || permissiondelete.length != 0) {
+            <ngx-datatable-column name="Action" [sortable]="true" [width]="150"
+              >
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (
+                  permissionedit.length != 0 &&
+                  (row.authorizationStatus == 0 ||
+                  row.authorizationStatus == 1 ||
+                  row.authorizationStatus == 2) &&
+                  (row.lastCheck.length == 0 ||
+                  (row.lastCheck.length != 0 && row.lastCheck[0].type != 'FinalCheckin'))
+                  ) {
+                  <button class="btn btn-primary btn-xs form-group m-0" type="submit" (click)="navigateToEditPage(row)">
+                    Edit
+                  </button>
+                }
+                <span> &nbsp;&nbsp; </span>
+                @if (
+                  permissiondelete.length != 0 &&
+                  (row.authorizationStatus == 0 ||
+                  row.authorizationStatus == 1 ||
+                  row.authorizationStatus == 2) &&
+                  row.lastCheck.length === 0
+                  ) {
+                  <button class="btn btn-danger btn-xs form-group m-0" type="button" (click)="alertConfirmation(row.id)">
+                    Delete
+                  </button>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+          }
+          <ngx-datatable-column name="Created Date" prop="createdAt" [flexGrow]="1.2" [width]="130">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-center">
+                {{ row.createdAt | date : 'dd-MM-yyyy' }}
+                <br />
+                {{ row.createdAt | date : 'h:mm a' }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          @if (true) {
+            <ngx-datatable-footer>
+              <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                <div class="w-100 d-flex justify-content-center">
+                  <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                    [customLastTemplate]="lastTemplate" [itemsPerPage]="body.limit" [maxSize]="5" [(ngModel)]="currentPage"
+                    (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                  [customPreviousTemplate]="prevTemplate"></pagination>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
+          }
+        </ngx-datatable>
+      </div>
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+
+  <!-- check out modal -->
+  <div bsModal #checkoutModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Check-Out</h4>
+          <button type="button" class="btn-close close pull-right" (click)="checkoutModal.hide()" aria-label="Close"
+            #closeCheckoutModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form #checkOutForm="ngForm" novalidate (ngSubmit)="checkOutSubmit()">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="time" ngModel required #time="ngModel" name="outTime" />
+                <span>Out Time *</span>
+                @if (!time.valid && checkOutForm.submitted) {
+                  <div class="invalid-tooltip">
+                    Out Time is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="file" accept=".png, .jpg, .jpeg" ngModel #attachment="ngModel"
+                  name="attachment" (change)="onSelectFile($event)" />
+                  <span>Attachment</span>
+                </label>
+              </div>
+
+              <button class="btn btn-primary" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- show data modal -->
+
+    <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+      [config]="{backdrop: 'static', keyboard: false}">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Show Data</h4>
+            <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div>
+              @if (referencedata) {
+                <table class="table table-striped">
+                  <tbody>
+                    <tr>
+                      <td style="text-align: left !important">Description</td>
+                      <td style="text-align: left !important">{{ referencedata?.description }}</td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important">Date</td>
+                      <td style="text-align: left !important">{{ referencedata?.date }}</td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important">From Time</td>
+                      <td style="text-align: left !important">
+                        {{ convertTo12HourFormat($safeNavigationMigration(referencedata?.fromTime)) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important">To Time</td>
+                      <td style="text-align: left !important">
+                        {{ convertTo12HourFormat($safeNavigationMigration(referencedata?.toTime)) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important">Authorization Status</td>
+                      <td style="text-align: left !important">
+                        @if (referencedata.authorizationStatus == 3) {
+                          <button class="btn btn-outline-success btn-xs">
+                            Approved
+                          </button>
+                        }
+                        @if (referencedata.authorizationStatus == 4) {
+                          <button class="btn btn-outline-danger btn-xs">
+                            Rejected
+                          </button>
+                        }
+                        @if (
+                          referencedata.authorizationStatus == 0 ||
+                          referencedata.authorizationStatus == 1 ||
+                          referencedata.authorizationStatus == 2
+                          ) {
+                          <button class="btn btn-outline-warning btn-xs">
+                            Pending
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important">Person Name</td>
+                      <td style="text-align: left !important">{{ referencedata?.displayName }}</td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important">Authorization Criteria</td>
+                      <td style="text-align: left !important">
+                        {{ referencedata?.AuthorizationCriteria }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              }
+
+              @if (referencedata?.authUserStatus?.length) {
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Display Name</th>
+                      <th class="text-left">Status</th>
+                      <th class="text-left">Updated At</th>
+                      <th class="text-left">Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (user of referencedata.authUserStatus; track user) {
+                      <tr>
+                        <td class="text-left">{{ user.displayName }}</td>
+                        <td class="text-left">
+                          @if (user.authstatus == 1) {
+                            <button class="btn btn-outline-success btn-xs">
+                              Approved
+                            </button>
+                          }
+                          @if (user.authstatus == 0) {
+                            <button class="btn btn-outline-danger btn-xs">
+                              Rejected
+                            </button>
+                          }
+                          @if (user.authstatus == 2) {
+                            <button class="btn btn-outline-warning btn-xs">
+                              Pending
+                            </button>
+                          }
+                        </td>
+                        <td>
+                          @if (user.authstatus != 2) {
+                            <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+                          }
+                        </td>
+                        <td class="text-left">{{ user.remarks }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- check in modal -->
+    <div bsModal #checkinModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+      aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Check-In</h4>
+            <button type="button" class="btn-close close pull-right" (click)="checkinModal.hide()" aria-label="Close"
+              #closeCheckinModal>
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <form #checkInForm="ngForm" novalidate (ngSubmit)="checkInSubmit()">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="time" ngModel required #time="ngModel" name="inTime" />
+                  <span>In Time *</span>
+                  @if (!time.valid && checkInForm.submitted) {
+                    <div class="invalid-tooltip">
+                      In Time is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" accept=".png, .jpg, .jpeg" ngModel #attachment="ngModel"
+                    name="attachment" (change)="onSelectFile($event)" />
+                    <span>Attachment</span>
+                  </label>
+                </div>
+
+                <button class="btn btn-primary" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- final check in modal -->
+      <div bsModal #finalCheckinModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+        aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Final Check-In</h4>
+              <button type="button" class="btn-close close pull-right" (click)="finalCheckinModal.hide()" aria-label="Close"
+                #closeFinalCheckinModal>
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <form #finalCheckInForm="ngForm" novalidate (ngSubmit)="finalCheckInSubmit()">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="time" ngModel required #finalinTime="ngModel" name="finalinTime" />
+                    <span>In Time *</span>
+                    @if (!finalinTime.valid && finalCheckInForm.submitted) {
+                      <div class="invalid-tooltip">
+                        In Time is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="file" accept=".png, .jpg, .jpeg" ngModel #attachment="ngModel"
+                      name="attachment" (change)="onSelectFile($event)" />
+                      <span>Attachment</span>
+                    </label>
+                  </div>
+
+                  <button class="btn btn-primary" type="submit">
+                    {{ 'forms.submit' | translate }}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- show data modal -->
+        <div bsModal #lgModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+          [config]="{backdrop: 'static', keyboard: false}">
+          <div class="modal-dialog modal-lg">
+            @if (referencedata) {
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title pull-left">
+                    {{ referencedata?.employee?.displayName }} Gatepass Data
+                  </h4>
+                  <button type="button" class="btn-close close pull-right" (click)="lgModal4.hide()" aria-label="Close">
+                    <span aria-hidden="true" class="visually-hidden">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row" style="padding: 0 0 0 15px">
+                    <div class="table-style mb-2;" style="width: -webkit-fill-available">
+                      <table style="width: -webkit-fill-available">
+                        <thead>
+                          <tr>
+                            <th class="name-col name-col-shadow">DATE</th>
+                            <th class="name-col name-col-shadow">TIME</th>
+                            <th class="name-col name-col-shadow">TYPE</th>
+                            <th class="name-col name-col-shadow">ADDRESS</th>
+                            <th class="name-col name-col-shadow">ATTACHMENT</th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-black" style="font-weight: 600">
+                          @for (item of referencedata.lastCheck; track item) {
+                            <tr class="student bottom-border bottom-border-radius">
+                              <td class="name-col left-border">
+                                {{ item.date | date : 'dd-MM-yyyy' }}
+                              </td>
+                              <td class="name-col">
+                                {{ item.time != 'undefined' ? convertTo12HourFormat(item.time) : '' }}
+                              </td>
+                              <td class="name-col">
+                                {{ item.type | uppercase }}
+                              </td>
+                              <td class="name-col">
+                                {{ item.address }}
+                              </td>
+                              <td class="name-col">
+                                @if (item.attachment) {
+                                  <button class="btn btn-xs btn-outline-primary"
+                                    (click)="openLightbox(apiURL + item.attachment)">
+                                    View
+                                  </button>
+                                }
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

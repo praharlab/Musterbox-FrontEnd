@@ -1,0 +1,41 @@
+:host ::ng-deep {
+    datatable-footer.datatable-footer {
+        overflow: visible !important;
+        margin-top: 18px;
+    }
+
+    ngx-datatable.ngx-datatable.fixed-header.fixed-row.virtualized.scroll-horz {
+        margin-top: 19px;
+    }
+
+    .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+        display: table;
+        padding: 3px 15px 3px 15px;
+    }
+
+    .data-table-rows .ngx-datatable.fixed-row .datatable-scroll .datatable-body-row {
+        height: fit-content !important;
+    }
+
+    .datatable-row-center{
+        align-items: center !important;
+    }
+
+    .data-table-rows .ngx-datatable.fixed-row .datatable-scroll .datatable-body-row .datatable-body-cell,
+    .data-table-rows .ngx-datatable.fixed-row .datatable-scroll .datatable-body-row .datatable-body-group-cell {
+        padding-left: 1.2rem;
+        display: flex;
+        align-items: center;
+        height: fit-content !important;
+    }
+}
+
+.datatable-footer{
+    display: none !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

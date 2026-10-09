@@ -1,0 +1,211 @@
+<!-- First Card -->
+@if (showPunchIn) {
+  <div>
+    <app-employee-punch-in-list #EmployeePunchInListComponent [date]="filterData.date" [type]="filterData.type"
+      [branchId]="filterData.branchId" [companyId]="filterData.companyId" [reportHeading]="reportHeading"
+      (close)="close()" [workingAreaId]="body1.workingAreaId" [designationID]="body1.designationID"
+    [departmentID]="body1.departmentID" [divisionId]="body1.divisionId"></app-employee-punch-in-list>
+  </div>
+}
+@if (defaultValue) {
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title">PUNCH IN & PUNCH OUT</h5>
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allBranches" [multiple]="true" bindLabel="branchName" groupBy="selectedAllGroup"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="branchMasterID"
+                [closeOnSelect]="false" ngModel #branch="ngModel" name="branch" placeholder="Choose your option">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{ standalone: true }" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Branch</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select [items]="allDepartments" [multiple]="true" bindLabel="departmentName" groupBy="selectedAllGroup"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="departmentId" [closeOnSelect]="false"
+                  ngModel #department="ngModel" name="department" placeholder="Choose your option">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{standalone: true}" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Department</span>
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="allDesignations" [multiple]="true" bindLabel="designationName"
+                    groupBy="selectedAllGroup" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                    bindValue="designationId" [closeOnSelect]="false" ngModel #designation="ngModel" name="designation"
+                    placeholder="Choose your option">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Designation</span>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="allDivisions" [multiple]="true" bindLabel="divisionName" [selectableGroup]="true"
+                      groupBy="selectedAllGroup" [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel
+                      #division="ngModel" placeholder="Choose your option" name="division">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Division</span>
+                    </label>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="allWorkingAreas" [multiple]="true" bindLabel="workingAreaName"
+                        groupBy="selectedAllGroup" [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="id"
+                        [closeOnSelect]="false" ngModel #workingArea="ngModel" name="workingArea"
+                        placeholder="Choose your option">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                            [ngModelOptions]="{standalone: true}" />
+                            Select All
+                          </ng-template>
+                        </ng-select>
+                        <span>Select Working Area</span>
+                      </label>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" placeholder="today" type="date" [(ngModel)]="defaultValue.tDate" ngModel
+                          #startdate="ngModel" name="startdate" required />
+                          <span>Date *</span>
+                          @if (!startdate.valid && datefilter.submitted) {
+                            <div class="invalid-tooltip">
+                              Date is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-3">
+                        <button class="btn btn-primary form-group" type="submit">
+                          {{ 'forms.submit' | translate }}
+                        </button>
+                        &nbsp;&nbsp;
+                      </div>
+                    </div>
+                  </form>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="icon-row-item" style="width: inherit">
+                        <div class="card cursor-pointer" style="margin-bottom: 27px" (click)="showPunchInOutData('')">
+                          <div class="card-body text-center iconsminds-business-man iconsminds icon">
+                            <p class="card-text font-weight-semibold mb-0">Total Active Employee</p>
+                            @if (rows.length != 0) {
+                              <p class="lead text-center">{{ rows[0].total_active }}</p>
+                            }
+                            @if (rows.length == 0) {
+                              <p class="lead text-center">{{ ' ' }}</p>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="icon-row-item" style="width: inherit">
+                        <div class="card cursor-pointer" style="margin-bottom: 27px" (click)="showPunchInOutData('in')">
+                          <div class="card-body text-center iconsminds icon">
+                            <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                                class="bi bi-person-up" viewBox="0 0 16 16">
+                                <path
+                                  d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                                  <path
+                                    d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                                  </svg>
+                                </span>
+                                <p class="card-text font-weight-semibold mb-0">Punched-In</p>
+                                @if (rows.length != 0) {
+                                  <p class="lead text-center">{{ rows[0].total_punchin }}</p>
+                                }
+                                @if (rows.length == 0) {
+                                  <p class="lead text-center">{{ ' ' }}</p>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="icon-row-item" style="width: inherit">
+                            <div class="card cursor-pointer" style="margin-bottom: 27px" (click)="showPunchInOutData('out')">
+                              <div class="card-body text-center iconsminds icon">
+                                <span>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                                    class="bi bi-person-down" viewBox="0 0 16 16">
+                                    <path
+                                      d="M12.5 9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Zm.354 5.854 1.5-1.5a.5.5 0 0 0-.708-.708l-.646.647V10.5a.5.5 0 0 0-1 0v2.793l-.646-.647a.5.5 0 0 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                                      <path
+                                        d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                                      </svg>
+                                    </span>
+                                    <p class="card-text font-weight-semibold mb-0">Punched-Out</p>
+                                    @if (rows.length != 0) {
+                                      <p class="lead text-center">{{ rows[0].total_punchout }}</p>
+                                    }
+                                    @if (rows.length == 0) {
+                                      <p class="lead text-center">{{ ' ' }}</p>
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="icon-row-item" style="width: inherit">
+                                <div class="card cursor-pointer" style="margin-bottom: 27px" (click)="showPunchInOutData('notIn')">
+                                  <div class="card-body text-center iconsminds icon">
+                                    <span>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                                        class="bi bi-person-slash" viewBox="0 0 16 16">
+                                        <path
+                                          d="M13.879 10.414a2.501 2.501 0 0 0-3.465 3.465l3.465-3.465Zm.707.707-3.465 3.465a2.501 2.501 0 0 0 3.465-3.465Zm-4.56-1.096a3.5 3.5 0 1 1 4.949 4.95 3.5 3.5 0 0 1-4.95-4.95ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
+                                        </svg>
+                                      </span>
+                                      <p class="card-text font-weight-semibold mb-0">Not Punched-In</p>
+                                      @if (rows.length != 0) {
+                                        <p class="lead text-center">
+                                          {{ rows[0].total_not_punchin }}
+                                        </p>
+                                      }
+                                      @if (rows.length == 0) {
+                                        <p class="lead text-center">{{ ' ' }}</p>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            @if (this.showloader == 'true') {
+                              <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }

@@ -1,0 +1,1170 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Attendance Policy</h5>
+
+    @if (attendancepolicydata) {
+      <form #addattendancepolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Company -->
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                [(ngModel)]="attendancepolicydata.companyMasterID" (change)="selectCompany($event)" required>
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && addattendancepolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <!-- Attendance Policy Name -->
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #attendancePolicyName="ngModel"
+                name="attendancePolicyName" />
+                <span>Attendance Policy Name *</span>
+                @if (!attendancePolicyName.valid && addattendancepolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Attendance Policy Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <!-- Selfie Attendance Permission -->
+          <div class="row">
+            <div class="col-md-6">
+              <span><b>Selfie Attendance Permission *</b></span>
+              &nbsp;&nbsp;
+              <input type="radio" name="selfieAttendance" value="1" ngModel #defaultselfieAttendanceRight="ngModel"
+                (change)="getselfiePermission($event)" style="margin-right: 1%"
+                [(ngModel)]="attendancepolicydata.selfieAttendance" required />
+                <label for="true" style="margin-right: 1%">Yes</label>
+                <input type="radio" name="selfieAttendance" value="0" ngModel #selfieAttendance="ngModel"
+                  (change)="getselfiePermission($event)" style="margin-right: 1%"
+                  [(ngModel)]="attendancepolicydata.selfieAttendance" required />
+                  <label for="false">No</label>
+                  @if (!selfieAttendance.valid && addattendancepolicy.submitted) {
+                    <div class="invalid-tooltip">
+                      Selfie Attendance Permission is required!
+                    </div>
+                  }
+                </div>
+                @if (showSelfieWithFaceDetection) {
+                  <div class="col-md-6">
+                    <span><b>Selfie with *</b></span>
+                    &nbsp;&nbsp;
+                    <input type="radio" name="selfieAttendancewithFaceDetection" value="1" ngModel
+                      #selfieAttendancewithFaceDetection="ngModel" style="margin-right: 1%"
+                      [(ngModel)]="attendancepolicydata.selfieWithFaceDetection" required />
+                      <label for="true" style="margin-right: 1%">Face Detection</label>
+                      <input type="radio" name="selfieAttendancewithFaceDetection" value="2" ngModel
+                        #selfieAttendancewithFaceDetection="ngModel" style="margin-right: 1%"
+                        [(ngModel)]="attendancepolicydata.selfieWithFaceDetection" required />
+                        <label for="false" style="margin-right: 1%">Face Recognization</label>
+                        <input type="radio" name="selfieAttendancewithFaceDetection" value="0" ngModel
+                          #selfieAttendancewithFaceDetection="ngModel" style="margin-right: 1%"
+                          [(ngModel)]="attendancepolicydata.selfieWithFaceDetection" required />
+                          <label for="false">Only Selfie</label>
+                          @if (!selfieAttendancewithFaceDetection.valid && addattendancepolicy.submitted) {
+                            <div
+                              class="invalid-tooltip">
+                              Selfie with is required!
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <!-- Outside Punch-In Punch-Out Permission -->
+                    <div class="row">
+                      <div class="col-md-12">
+                        <span><b>Outside Punch-In Punch-Out Permission *</b></span>
+                        &nbsp;&nbsp;
+                        <input type="radio" name="outsidePunchInPunchOut" value="1" ngModel #outsidePunchInPunchOut="ngModel"
+                          style="margin-right: 1%" [(ngModel)]="attendancepolicydata.outsidePunchInPunchOut" required />
+                          <label for="true" style="margin-right: 1%">Yes</label>
+                          <input type="radio" name="outsidePunchInPunchOut" value="0" ngModel #outsidePunchInPunchOut="ngModel"
+                            style="margin-right: 1%" [(ngModel)]="attendancepolicydata.outsidePunchInPunchOut" required />
+                            <label for="false">No</label>
+                            @if (!outsidePunchInPunchOut.valid && addattendancepolicy.submitted) {
+                              <div class="invalid-tooltip">
+                                Outside Punch In Punch Out Permission is required!
+                              </div>
+                            }
+                          </div>
+                        </div>
+                        <!-- Punch-In Punch-Out Rule -->
+                        <div class="row">
+                          <div class="col-md-12">
+                            <span><b>Punch-In/Punch-Out Rule for Mobile and Web Users *</b></span>
+                            &nbsp;&nbsp;
+                            <input type="radio" name="singleMultiplePunchInPunchOut" value="Single" ngModel
+                              #singleMultiplePunchInPunchOut="ngModel" style="margin-right: 1%"
+                              [(ngModel)]="attendancepolicydata.singleMultiplePunchInPunchOut" required />
+                              <label for="true" style="margin-right: 1%">
+                                An employee can punch in and out only once
+                              </label>
+                              <input type="radio" name="singleMultiplePunchInPunchOut" value="Multiple" ngModel
+                                #singleMultiplePunchInPunchOut="ngModel" style="margin-right: 1%"
+                                [(ngModel)]="attendancepolicydata.singleMultiplePunchInPunchOut" required />
+                                <label for="false">An employee can perform multiple punch-ins and punch-outs</label>
+                                @if (!singleMultiplePunchInPunchOut.valid && addattendancepolicy.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Punch-In Punch-Out Rule is required!
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                            <!-- Punch-In Punch-Out Branch -->
+                            <div class="row">
+                              <div class="col-md-12">
+                                <span><b>An Employee Can Punch-In/Punch-Out from *</b></span>
+                                &nbsp;&nbsp;
+                                <input type="radio" name="attBrType" [attr.value]="attendanceBranchTypeRuleData.ALL"
+                                  [value]="attendanceBranchTypeRuleData.ALL" ngModel #attBrType="ngModel" style="margin-right: 1%"
+                                  (change)="punchInPunchOutBranch($event)" [(ngModel)]="attendancepolicydata.attBrType" required />
+                                  <label for="true" style="margin-right: 1%">
+                                    Company's All Branches
+                                  </label>
+                                  <input type="radio" name="attBrType" [attr.value]="attendanceBranchTypeRuleData.SELECTED"
+                                    [value]="attendanceBranchTypeRuleData.SELECTED" ngModel #attBrType="ngModel" style="margin-right: 1%"
+                                    (change)="punchInPunchOutBranch($event)" [(ngModel)]="attendancepolicydata.attBrType" required />
+                                    <label for="false" style="margin-right: 1%">Selected Branches</label>
+                                    <input type="radio" name="attBrType" [attr.value]="attendanceBranchTypeRuleData.ASSIGNED"
+                                      [value]="attendanceBranchTypeRuleData.ASSIGNED" ngModel #attBrType="ngModel" style="margin-right: 1%"
+                                      (change)="punchInPunchOutBranch($event)" [(ngModel)]="attendancepolicydata.attBrType" required />
+                                      <label for="false">Assigned Branch</label>
+                                      @if (!attBrType.valid && addattendancepolicy.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Punch-In Punch-Out Branch Rule is required!
+                                        </div>
+                                      }
+                                    </div>
+                                  </div>
+                                  <!-- Select Punch-in Punch-out Branch -->
+                                  @if (attendancepolicydata.attBrType == attendanceBranchTypeRuleData.SELECTED) {
+                                    <div class="row">
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select [items]="allBranches" [multiple]="true" bindLabel="branchName" groupBy="selectedAllGroup"
+                                            [(ngModel)]="attendancepolicydata.attBranch" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                                            bindValue="branchMasterID" [closeOnSelect]="false" ngModel #attBranch="ngModel" name="attBranch"
+                                            placeholder="Choose your option" required>
+                                            <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                                              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                                                [ngModelOptions]="{ standalone: true }" />
+                                                Select All
+                                              </ng-template>
+                                            </ng-select>
+                                            <span>Select Branch *</span>
+                                            @if (!attBranch.valid && addattendancepolicy.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Punch-In Punch-Out Branch is required!
+                                              </div>
+                                            }
+                                          </label>
+                                        </div>
+                                      </div>
+                                    }
+                                    <!-- Assign Shift Automatically Based on Punch In Time -->
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <span><b>Assign Shift Automatically Based on Punch In Time *</b></span>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" name="automaticAssignShift" value="1" ngModel #automaticAssignShift="ngModel"
+                                          style="margin-right: 1%" [(ngModel)]="attendancepolicydata.automaticAssignShift" required />
+                                          <label for="true" style="margin-right: 1%">Yes</label>
+                                          <input type="radio" name="automaticAssignShift" value="0" ngModel #automaticAssignShift="ngModel"
+                                            style="margin-right: 1%" [(ngModel)]="attendancepolicydata.automaticAssignShift" required />
+                                            <label for="false">No</label>
+                                            @if (!automaticAssignShift.valid && addattendancepolicy.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Assign Shift Automate Depend On Punch-In is required!
+                                              </div>
+                                            }
+                                          </div>
+                                        </div>
+                                        <!-- Attendance In Mobile -->
+                                        <div class="row">
+                                          <div class="col-md-12">
+                                            <span><b>Attendance In Mobile *</b></span>
+                                            &nbsp;&nbsp;
+                                            <input type="radio" name="attendanceInMobile" value="PA" ngModel #attendanceInMobile="ngModel"
+                                              [(ngModel)]="attendancepolicydata.attendanceInMobile" style="margin-right: 1%" required />
+                                              <label for="true" style="margin-right: 1%">Present-Absent Report</label>
+                                              <input type="radio" name="attendanceInMobile" value="InOut" ngModel #attendanceInMobile="ngModel"
+                                                [(ngModel)]="attendancepolicydata.attendanceInMobile" style="margin-right: 1%" required />
+                                                <label for="false">InTime-OutTime Report</label>
+                                                @if (!attendanceInMobile.valid && addattendancepolicy.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Attendance In Mobile is Required!
+                                                  </div>
+                                                }
+                                              </div>
+                                            </div>
+                                            <!-- Show Shift In Calender -->
+                                            <div class="row">
+                                              <div class="col-md-12">
+                                                <span><b>Do You want to Show Shift In Calender *</b></span>
+                                                &nbsp;&nbsp;
+                                                <input type="radio" name="showShift" [value]="true" ngModel #showShift="ngModel" style="margin-right: 1%"
+                                                  [(ngModel)]="attendancepolicydata.showShift" required />
+                                                  <label for="true" style="margin-right: 1%">Yes</label>
+                                                  <input type="radio" name="showShift" [value]="false" ngModel #showShift="ngModel" style="margin-right: 1%"
+                                                    [(ngModel)]="attendancepolicydata.showShift" required />
+                                                    <label for="false">No</label>
+                                                    @if (!showShift.valid && addattendancepolicy.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Show Shift is required!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                </div>
+                                                <!-- Restrict user for late Punch-Out -->
+                                                <div class="row">
+                                                  <div class="col-md-6">
+                                                    <span><b>Restrict user for late Punch-Out *</b></span>
+                                                    &nbsp;&nbsp;
+                                                    <input type="radio" (click)="miss_punch($event.target.value)" name="misspunch" value="1" ngModel
+                                                      #misspunch="ngModel" style="margin-right: 1%" [(ngModel)]="seletedmisspunchradio" required />
+                                                      <label for="true" style="margin-right: 1%">Yes</label>
+                                                      <input type="radio" (click)="miss_punch($event.target.value)" name="misspunch" value="0" ngModel
+                                                        #misspunch="ngModel" style="margin-right: 1%" [(ngModel)]="seletedmisspunchradio" required />
+                                                        <label for="false">No</label>
+                                                        @if (!misspunch.valid && addattendancepolicy.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Restrict user for late Punch-Out is required!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      <div class="col-md-6"></div>
+                                                      @if (showMissPunch == true) {
+                                                        <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px">
+                                                          <span>Punch-Out will be automatically skipped after</span>
+                                                        </div>
+                                                      }
+                                                      @if (showMissPunch == true) {
+                                                        <div class="col-md-2">
+                                                          <label class="form-group has-float-label">
+                                                            <input class="form-control" type="number" [min]="0" [max]="1320" ngModel #missPunchMinutes="ngModel"
+                                                              name="missPunchMinutes" [(ngModel)]="attendancepolicydata.missPunchMinutes" required />
+                                                            </label>
+                                                            @if (!missPunchMinutes.valid && addattendancepolicy.submitted) {
+                                                              <div class="invalid-tooltip">
+                                                                Minutes are required!
+                                                              </div>
+                                                            }
+                                                          </div>
+                                                        }
+                                                        @if (showMissPunch == true) {
+                                                          <div class="col-md-0" style="margin-top: 10px">
+                                                            <span>minutes from shift In-time *</span>
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      <!-- Set Attendance Correction Request Limit -->
+                                                      <div class="row">
+                                                        <div class="col-md-12">
+                                                          <span><b>Set Attendance Correction Request Limit *</b></span>
+                                                          &nbsp;&nbsp;
+                                                          <input type="radio" name="setCorrLimit" [value]="true" ngModel #setCorrLimit="ngModel"
+                                                            style="margin-right: 1%" [(ngModel)]="attendancepolicydata.setCorrLimit" required />
+                                                            <label for="true" style="margin-right: 1%">Yes</label>
+                                                            <input type="radio" name="setCorrLimit" [value]="false" ngModel #setCorrLimit="ngModel"
+                                                              style="margin-right: 1%" [(ngModel)]="attendancepolicydata.setCorrLimit" required />
+                                                              <label for="false">No</label>
+                                                              @if (!setCorrLimit.valid && addattendancepolicy.submitted) {
+                                                                <div class="invalid-tooltip">
+                                                                  Set Attendance Correction Request Limit
+                                                                </div>
+                                                              }
+                                                            </div>
+                                                            @if (attendancepolicydata.setCorrLimit) {
+                                                              <div class="col-md-4">
+                                                                <label class="form-group has-float-label">
+                                                                  <input class="form-control" type="number" [min]="0" ngModel required #attCorrLimit="ngModel"
+                                                                    name="attCorrLimit" [(ngModel)]="attendancepolicydata.attCorrLimit" />
+                                                                    <span>Attendance Correction Limit *</span>
+                                                                  </label>
+                                                                  @if (!attCorrLimit.valid && addattendancepolicy.submitted) {
+                                                                    <div class="invalid-tooltip">
+                                                                      Attendance Correction Limit is required!
+                                                                    </div>
+                                                                  }
+                                                                </div>
+                                                                <div class="col-md-8" style="margin-top: 10px">
+                                                                  <span>Requests</span>
+                                                                </div>
+                                                              }
+                                                            </div>
+                                                            <!-- Weekoff Holiday Priority -->
+                                                            <div class="row">
+                                                              <div class="col-md-12">
+                                                                <span><b>If a holiday and a week off fall on the same day *</b></span>
+                                                                &nbsp;&nbsp;
+                                                                <input type="radio" name="WHPHPriority" value="WH" ngModel #WHPHPriority="ngModel" style="margin-right: 1%"
+                                                                  [(ngModel)]="attendancepolicydata.WHPHPriority" required />
+                                                                  <label for="WH" style="margin-right: 1%">Consider As week off</label>
+                                                                  <input type="radio" name="WHPHPriority" value="PH" ngModel #WHPHPriority="ngModel" style="margin-right: 1%"
+                                                                    [(ngModel)]="attendancepolicydata.WHPHPriority" required />
+                                                                    <label for="PH">Consider As Holiday</label>
+                                                                    @if (!WHPHPriority.valid && addattendancepolicy.submitted) {
+                                                                      <div class="invalid-tooltip">
+                                                                        WeekOff Holiday Priority is required!
+                                                                      </div>
+                                                                    }
+                                                                  </div>
+                                                                </div>
+                                                                <!-- Sandwich Leave Applicable -->
+                                                                <div class="row">
+                                                                  <div class="col-md-2" style="margin-left: 2%">
+                                                                    <input class="form-check-input" type="checkbox" ngModel name="sandwichLeave" #sandwichLeave="ngModel"
+                                                                      (change)="sandwich($event)" [(ngModel)]="attendancepolicydata.sandwichLeave" />
+                                                                      <label class="form-check-label" for="inlineCheckbox3"><b>Sandwich Leave Applicable</b></label>
+                                                                    </div>
+                                                                    @if (sandwichleave == true) {
+                                                                      <div class="col-md-9">
+                                                                        <div style="margin-left: 4%;">
+                                                                          <input class="form-check-input" type="checkbox" ngModel name="weekoffsandwichLeave"
+                                                                            #weekoffsandwichLeave="ngModel" [(ngModel)]="attendancepolicydata.weekoffsandwichLeave"
+                                                                            [required]="!attendancepolicydata.holidaysandwichLeave" />
+                                                                            <label class="form-check-label" for="inlineCheckbox3">Applicable On Weekoff</label>
+                                                                          </div>
+                                                                        </div>
+                                                                        <div class="col-md-2" style="margin-left: 2%"></div>
+                                                                        <div class="col-md-9">
+                                                                          <div style="margin-left: 4%;">
+                                                                            <input class="form-check-input" type="checkbox" ngModel name="holidaysandwichLeave"
+                                                                              #holidaysandwichLeave="ngModel" [(ngModel)]="attendancepolicydata.holidaysandwichLeave"
+                                                                              [required]="!attendancepolicydata.weekoffsandwichLeave" />
+                                                                              <label class="form-check-label" for="inlineCheckbox3">Applicable On Holiday</label>
+                                                                              @if ((!holidaysandwichLeave.valid && !weekoffsandwichLeave.valid) && addattendancepolicy.submitted) {
+                                                                                <div
+                                                                                  class="invalid-tooltip">
+                                                                                  Weekoff Sandwich Or Holiday Sandwich is Required!!
+                                                                                </div>
+                                                                              }
+                                                                            </div>
+                                                                          </div>
+                                                                          <div class="col-md-2" style="margin-left: 2%"></div>
+                                                                          <div class="col-md-9">
+                                                                            <div style="margin-left: 4%;">
+                                                                              <input class="form-check-input" type="checkbox" ngModel name="BeforeAfterLeave"
+                                                                                #BeforeAfterLeave="ngModel" [(ngModel)]="attendancepolicydata.BeforeAfterLeave" />
+                                                                                <label class="form-check-label" for="inlineCheckbox3">
+                                                                                  Applicable if an employee takes leave either before or after a week off or a
+                                                                                  holiday.
+                                                                                </label>
+                                                                                <br>
+                                                                                </div>
+                                                                              </div>
+                                                                              <div class="col-md-2" style="margin-left: 2%"></div>
+                                                                              <div class="col-md-9">
+                                                                                <div style="margin-left: 4%;">
+                                                                                  <input class="form-check-input" type="checkbox" ngModel name="HFDBeforeAfterLeave"
+                                                                                    #HFDBeforeAfterLeave="ngModel" [(ngModel)]="attendancepolicydata.HFDBeforeAfterLeave" />
+                                                                                    <label class="form-check-label" for="inlineCheckbox3">
+                                                                                      Applicable if an employee is absent in the second half before a week off or holiday and in the first
+                                                                                      half
+                                                                                      after week off or holiday.
+                                                                                    </label>
+                                                                                  </div>
+                                                                                </div>
+                                                                              }
+                                                                            </div>
+                                                                            <!--  Overtime Setup -->
+                                                                            <div class="row">
+                                                                              <div class="col-md-12">
+                                                                                <hr />
+                                                                                <h4><b>Overtime Setup:</b></h4>
+                                                                              </div>
+                                                                              <br />
+                                                                            </div>
+                                                                            <!-- Consider Working Hours -->
+                                                                            <div class="row">
+                                                                              <div class="col-md-12">
+                                                                                <span><b>Consider Working Hours *</b></span>
+                                                                                &nbsp;&nbsp;
+                                                                                <input type="radio" name="considerWorkingHours" value="notincludingouthours" ngModel
+                                                                                  (click)="calltoshow($event)" #considerWorkingHours="ngModel" style="margin-right: 1%"
+                                                                                  [(ngModel)]="attendancepolicydata.considerWorkingHours" required />
+                                                                                  <label for="true" style="margin-right: 1%">Not Including Out Hours</label>
+                                                                                  <input type="radio" name="considerWorkingHours" value="includingouthours" ngModel (click)="calltoshow($event)"
+                                                                                    #considerWorkingHours="ngModel" style="margin-right: 1%"
+                                                                                    [(ngModel)]="attendancepolicydata.considerWorkingHours" required />
+                                                                                    <label for="false">Including Out Hours</label>
+                                                                                    @if (!considerWorkingHours.valid && addattendancepolicy.submitted) {
+                                                                                      <div class="invalid-tooltip">
+                                                                                        Consider Working Hours is required!
+                                                                                      </div>
+                                                                                    }
+                                                                                  </div>
+                                                                                </div>
+                                                                                <!-- Consider Overtime After -->
+                                                                                @if (datashow == false) {
+                                                                                  <div class="row">
+                                                                                    <div class="col-md-12">
+                                                                                      <span><b>Consider Overtime After *</b></span>
+                                                                                      &nbsp;&nbsp;
+                                                                                      <input type="radio" name="considerOvertimeAfter" value="shifthours" ngModel #considerOvertimeAfter="ngModel"
+                                                                                        style="margin-right: 1%" [(ngModel)]="attendancepolicydata.considerOvertimeAfter" required />
+                                                                                        <label for="true" style="margin-right: 1%">Shift Out Time</label>
+                                                                                        <input type="radio" name="considerOvertimeAfter" value="totalworkinghours" ngModel
+                                                                                          #considerOvertimeAfter="ngModel" style="margin-right: 1%"
+                                                                                          [(ngModel)]="attendancepolicydata.considerOvertimeAfter" required />
+                                                                                          <label for="false">Total Working Hours</label>
+                                                                                          @if (!considerOvertimeAfter.valid && addattendancepolicy.submitted) {
+                                                                                            <div class="invalid-tooltip">
+                                                                                              Consider Working Hours is required!
+                                                                                            </div>
+                                                                                          }
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    }
+                                                                                    <!-- Consider Overtime After -->
+                                                                                    @if (datashow == true) {
+                                                                                      <div class="row">
+                                                                                        <div class="col-md-12">
+                                                                                          <span><b>Consider Overtime After *</b></span>
+                                                                                          &nbsp;&nbsp;
+                                                                                          <input type="radio" name="considerOvertimeAfter" value="totalworkinghours" ngModel
+                                                                                            [ngModel]="'totalworkinghours'" #considerOvertimeAfter="ngModel" style="margin-right: 1%" required />
+                                                                                            <label for="false">Total Working Hours</label>
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      }
+                                                                                      <!-- Pre-Shift Hours Consideration -->
+                                                                                      @if (addattendancepolicy.value.considerOvertimeAfter == 'totalworkinghours') {
+                                                                                        <div class="row">
+                                                                                          <div class="col-md-12">
+                                                                                            <span><b>Pre-Shift Hours Consideration *</b></span>
+                                                                                            &nbsp;&nbsp;
+                                                                                            <input type="radio" name="preShiftConsideration" [value]="1" ngModel
+                                                                                              [(ngModel)]="attendancepolicydata.preShiftHrsConsideration" #preShiftConsideration="ngModel"
+                                                                                              style="margin-right: 1%" required />
+                                                                                              <label for="true" style="margin-right: 1%">Yes</label>
+                                                                                              <input type="radio" name="preShiftConsideration" [value]="0" ngModel
+                                                                                                [(ngModel)]="attendancepolicydata.preShiftHrsConsideration" #preShiftConsideration="ngModel"
+                                                                                                style="margin-right: 1%" required />
+                                                                                                <label for="false">No</label>
+                                                                                                @if (!preShiftConsideration.valid && addattendancepolicy.submitted) {
+                                                                                                  <div class="invalid-tooltip">
+                                                                                                    Pre-Shift Hours Consideration is required!
+                                                                                                  </div>
+                                                                                                }
+                                                                                              </div>
+                                                                                              @if (attendancepolicydata.preShiftHrsConsideration) {
+                                                                                                <div class="col-md-4">
+                                                                                                  <label class="form-group has-float-label">
+                                                                                                    <input class="form-control" type="number" min="0" ngModel #preShiftMin="ngModel" name="preShiftMin"
+                                                                                                      [(ngModel)]="attendancepolicydata.preShiftMin" />
+                                                                                                      <span>Minimum Minutes to Consider as Pre-Shift Work</span>
+                                                                                                    </label>
+                                                                                                  </div>
+                                                                                                  <div class="col-md-2" style="margin-top: 10px">
+                                                                                                    <span>Minutes</span>
+                                                                                                  </div>
+                                                                                                }
+                                                                                              </div>
+                                                                                            }
+                                                                                            @if (datashow == true || datashow == false) {
+                                                                                              <!-- Minimum Minutes To Consider For Over Time -->
+                                                                                              <div class="row">
+                                                                                                <div class="col-md-6">
+                                                                                                  <label class="form-group has-float-label">
+                                                                                                    <input class="form-control" type="number" min="0" ngModel required #overtimeEntryAfterMin="ngModel"
+                                                                                                      name="overtimeEntryAfterMin" [(ngModel)]="attendancepolicydata.overtimeEntryAfterMin" />
+                                                                                                      <span>Minimum Minutes To Consider For Over Time *</span>
+                                                                                                    </label>
+                                                                                                    @if (!overtimeEntryAfterMin.valid && addattendancepolicy.submitted) {
+                                                                                                      <div class="invalid-tooltip">
+                                                                                                        Minimum Minutes To Consider For Over Time is required!
+                                                                                                      </div>
+                                                                                                    }
+                                                                                                  </div>
+                                                                                                  <div class="col-md-6" style="margin-top: 10px">
+                                                                                                    <span>Minutes</span>
+                                                                                                  </div>
+                                                                                                  <div class="col-md-6">
+                                                                                                    <label class="form-group has-float-label">
+                                                                                                      <input class="form-control" type="number" [min]="0" ngModel required #skipMinutesInOvertime="ngModel"
+                                                                                                        name="skipMinutesInOvertime" [(ngModel)]="attendancepolicydata.skipMinutesInOvertime" />
+                                                                                                        <span>Skip Minutes In Overtime *</span>
+                                                                                                      </label>
+                                                                                                      @if (!skipMinutesInOvertime.valid && addattendancepolicy.submitted) {
+                                                                                                        <div class="invalid-tooltip">
+                                                                                                          Skip Minutes In Overtime is required!
+                                                                                                        </div>
+                                                                                                      }
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6" style="margin-top: 10px">
+                                                                                                      <span>Minutes</span>
+                                                                                                    </div>
+                                                                                                  </div>
+                                                                                                  <!-- Set Extra Overtime -->
+                                                                                                  <div class="row">
+                                                                                                    <div class="col-md-12">
+                                                                                                      <span><b>Set Extra Overtime *</b></span>
+                                                                                                      &nbsp;&nbsp;
+                                                                                                      <input type="radio" name="extraOt" [value]="true" ngModel [(ngModel)]="extraOtValue" #extraOt="ngModel"
+                                                                                                        style="margin-right: 1%" required />
+                                                                                                        <label for="true" style="margin-right: 1%">Yes</label>
+                                                                                                        <input type="radio" name="extraOt" [value]="false" ngModel [(ngModel)]="extraOtValue" #extraOt="ngModel"
+                                                                                                          style="margin-right: 1%" required />
+                                                                                                          <label for="false">No</label>
+                                                                                                          @if (!extraOt.valid && addattendancepolicy.submitted) {
+                                                                                                            <div class="invalid-tooltip">
+                                                                                                              Set Extra Overtime is required!
+                                                                                                            </div>
+                                                                                                          }
+                                                                                                        </div>
+                                                                                                      </div>
+                                                                                                    }
+                                                                                                    <!-- Minimum Minutes To Add Extra Overtime -->
+                                                                                                    @if (extraOtValue) {
+                                                                                                      <div class="row">
+                                                                                                        <div class="col-md-6">
+                                                                                                          <label class="form-group has-float-label">
+                                                                                                            <input class="form-control" type="number" [min]="0" ngModel required #minMinutes="ngModel" name="minMinutes"
+                                                                                                              [(ngModel)]="attendancepolicydata.min_extra_ot_mins" />
+                                                                                                              <span>Minimum Minutes To Add Extra Overtime *</span>
+                                                                                                            </label>
+                                                                                                            @if (!minMinutes.valid && addattendancepolicy.submitted) {
+                                                                                                              <div class="invalid-tooltip">
+                                                                                                                Minimum Minutes To Add Extra Overtime is required!
+                                                                                                              </div>
+                                                                                                            }
+                                                                                                          </div>
+                                                                                                          <div class="col-md-6" style="margin-top: 10px">
+                                                                                                            <span>Minutes</span>
+                                                                                                          </div>
+                                                                                                          <div class="col-md-6">
+                                                                                                            <label class="form-group has-float-label">
+                                                                                                              <input class="form-control" type="number" [min]="0" ngModel required #otMinutes="ngModel" name="otMinutes"
+                                                                                                                [(ngModel)]="attendancepolicydata.extra_ot_mins" />
+                                                                                                                <span>Extra Overtime Minutes *</span>
+                                                                                                              </label>
+                                                                                                              @if (!otMinutes.valid && addattendancepolicy.submitted) {
+                                                                                                                <div class="invalid-tooltip">
+                                                                                                                  Extra Overtime Minutes is required!
+                                                                                                                </div>
+                                                                                                              }
+                                                                                                            </div>
+                                                                                                            <div class="col-md-6" style="margin-top: 10px">
+                                                                                                              <span>Minutes</span>
+                                                                                                            </div>
+                                                                                                          </div>
+                                                                                                        }
+                                                                                                        @if (datashow == true || datashow == false) {
+                                                                                                          <!-- Overtime Type -->
+                                                                                                          <div class="row">
+                                                                                                            <div class="col-md-12">
+                                                                                                              <span><b>Overtime *</b></span>
+                                                                                                              &nbsp;&nbsp;
+                                                                                                              <input type="radio" name="overtimeType" value="actual" ngModel #overtimeType="ngModel"
+                                                                                                                (change)="callOvertimeType($event)" [(ngModel)]="attendancepolicydata.overtimeType"
+                                                                                                                style="margin-right: 1%" required />
+                                                                                                                <label for="true" style="margin-right: 1%">Actual</label>
+                                                                                                                <input type="radio" name="overtimeType" value="slotwise" ngModel #overtimeType="ngModel"
+                                                                                                                  (change)="callOvertimeType($event)" [(ngModel)]="attendancepolicydata.overtimeType"
+                                                                                                                  style="margin-right: 1%" required />
+                                                                                                                  <label for="false" style="margin-right: 1%">Slot Wise</label>
+                                                                                                                  <input type="radio" name="overtimeType" value="roundoff" ngModel #overtimeType="ngModel"
+                                                                                                                    (change)="callOvertimeType($event)" [(ngModel)]="attendancepolicydata.overtimeType"
+                                                                                                                    style="margin-right: 1%" required />
+                                                                                                                    <label for="false1">Round Off</label>
+                                                                                                                    @if (!overtimeType.valid && addattendancepolicy.submitted) {
+                                                                                                                      <div class="invalid-tooltip">
+                                                                                                                        Overtime is required!
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                  </div>
+                                                                                                                  <!-- Slot -->
+                                                                                                                  @if (attendancepolicydata.overtimeType == 'slotwise') {
+                                                                                                                    <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px"
+                                                                                                                      >
+                                                                                                                      <span>Slot * :</span>
+                                                                                                                    </div>
+                                                                                                                  }
+                                                                                                                  <!-- Slot -->
+                                                                                                                  @if (attendancepolicydata.overtimeType == 'slotwise') {
+                                                                                                                    <div class="col-md-2">
+                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                        <input class="form-control" type="number" min="1" ngModel #typeValue="ngModel" name="typeValue"
+                                                                                                                          [(ngModel)]="attendancepolicydata.typeValue" required />
+                                                                                                                        </label>
+                                                                                                                        @if (!typeValue.valid && addattendancepolicy.submitted) {
+                                                                                                                          <div class="invalid-tooltip">
+                                                                                                                            Slot Minutes is required!
+                                                                                                                          </div>
+                                                                                                                        }
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                    <!-- Slot -->
+                                                                                                                    @if (attendancepolicydata.overtimeType == 'slotwise') {
+                                                                                                                      <div class="col-md-0" style="margin-top: 10px">
+                                                                                                                        <span>Minutes</span>
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                    <!-- RoundOff After -->
+                                                                                                                    @if (attendancepolicydata.overtimeType == 'roundoff') {
+                                                                                                                      <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px"
+                                                                                                                        >
+                                                                                                                        <span>RoundOff After * :</span>
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                    <!-- RoundOff After -->
+                                                                                                                    @if (attendancepolicydata.overtimeType == 'roundoff') {
+                                                                                                                      <div class="col-md-2">
+                                                                                                                        <label class="form-group has-float-label">
+                                                                                                                          <input class="form-control" type="number" min="1" ngModel #typeValue="ngModel" name="typeValue"
+                                                                                                                            [(ngModel)]="attendancepolicydata.typeValue" required />
+                                                                                                                          </label>
+                                                                                                                          @if (!typeValue.valid && addattendancepolicy.submitted) {
+                                                                                                                            <div class="invalid-tooltip">
+                                                                                                                              RoundOff Minutes is required!
+                                                                                                                            </div>
+                                                                                                                          }
+                                                                                                                        </div>
+                                                                                                                      }
+                                                                                                                      <!-- RoundOff After -->
+                                                                                                                      @if (attendancepolicydata.overtimeType == 'roundoff') {
+                                                                                                                        <div class="col-md-0" style="margin-top: 10px">
+                                                                                                                          <span>Minutes</span>
+                                                                                                                        </div>
+                                                                                                                      }
+                                                                                                                      @if (
+                                                                                                                        attendancepolicydata.overtimeType == 'roundoff' ||
+                                                                                                                        attendancepolicydata.overtimeType == 'slotwise'
+                                                                                                                        ) {
+                                                                                                                        <div class="col-md-10"></div>
+                                                                                                                      }
+                                                                                                                    </div>
+                                                                                                                    <!-- Overtime Applicable  -->
+                                                                                                                    <div class="row">
+                                                                                                                      <div class="col-md-6">
+                                                                                                                        <span><b>Give Overtime As *</b></span>
+                                                                                                                        &nbsp;&nbsp;
+                                                                                                                        <input type="radio" name="giveOTAs" value="Overtime" ngModel required #giveOTAs="ngModel"
+                                                                                                                          [(ngModel)]="attendancepolicydata.giveOTAs" (change)="overtimeCheck($event)" style="margin-right: 1%" />
+                                                                                                                          <label for="true" style="margin-right: 1%">Overtime</label>
+                                                                                                                          <input type="radio" name="giveOTAs" value="AddLeave" ngModel required #giveOTAs="ngModel"
+                                                                                                                            [(ngModel)]="attendancepolicydata.giveOTAs" (change)="overtimeCheck($event)" style="margin-right: 1%" />
+                                                                                                                            <label style="margin-right: 1%">Compensatory Off</label>
+                                                                                                                            <input type="radio" name="giveOTAs" value="AddExtraDays" ngModel required #giveOTAs="ngModel"
+                                                                                                                              [(ngModel)]="attendancepolicydata.giveOTAs" (change)="overtimeCheck($event)" style="margin-right: 1%" />
+                                                                                                                              <label>Extra Days</label>
+                                                                                                                              @if (!giveOTAs.valid && addattendancepolicy.submitted) {
+                                                                                                                                <div class="invalid-tooltip">
+                                                                                                                                  Give Overtime As is required!
+                                                                                                                                </div>
+                                                                                                                              }
+                                                                                                                            </div>
+                                                                                                                          </div>
+                                                                                                                          <!-- Overtime Applicable  -->
+                                                                                                                          @if (normalDayOvertimeShow == true) {
+                                                                                                                            <div class="row" style="margin-left: 2% ;margin-top: 1%">
+                                                                                                                              <!-- Half Day -->
+                                                                                                                              <div class="col-md-5">
+                                                                                                                                <span>
+                                                                                                                                  <b>How Many Minutes Consider To Give 0.5
+                                                                                                                                    {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off' : 'Extra Day'}}
+                                                                                                                                  ? </b>
+                                                                                                                                </span>
+                                                                                                                              </div>
+                                                                                                                              <!-- Half Day -->
+                                                                                                                              <div class="col-md-5">
+                                                                                                                                <label class="form-group has-float-label">
+                                                                                                                                  <input class="form-control" type="number" step="0.1" required ngModel #halfdayCoffEday="ngModel"
+                                                                                                                                    [(ngModel)]="attendancepolicydata.halfdayCoffEday" name="halfdayCoffEday" />
+                                                                                                                                    <span>Minutes To Give 0.5 {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off' :
+                                                                                                                                    'Extra Day'}} *</span>
+                                                                                                                                    @if (!halfdayCoffEday.valid && addattendancepolicy.submitted) {
+                                                                                                                                      <div class="invalid-tooltip">
+                                                                                                                                        Minutes To Give 0.5
+                                                                                                                                        {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off' : 'Extra Day'}}
+                                                                                                                                        is Required!
+                                                                                                                                      </div>
+                                                                                                                                    }
+                                                                                                                                  </label>
+                                                                                                                                </div>
+                                                                                                                                <!-- Full Day -->
+                                                                                                                                <div class="col-md-5">
+                                                                                                                                  <span>
+                                                                                                                                    <b>How Many Minutes Consider To Give 1 {{attendancepolicydata.giveOTAs == 'AddLeave' ?
+                                                                                                                                    'Compensatory Off' : 'Extra Day'}}?</b>
+                                                                                                                                  </span>
+                                                                                                                                </div>
+                                                                                                                                <!-- Full Day -->
+                                                                                                                                <div class="col-md-5">
+                                                                                                                                  <label class="form-group has-float-label">
+                                                                                                                                    <input class="form-control" type="number" step="0.1" required ngModel #fulldayCoffEday="ngModel"
+                                                                                                                                      [(ngModel)]="attendancepolicydata.fulldayCoffEday" name="fulldayCoffEday" />
+                                                                                                                                      <span>Minutes To Give 1 {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off' :
+                                                                                                                                      'Extra Day'}} *</span>
+                                                                                                                                      @if (!fulldayCoffEday.valid && addattendancepolicy.submitted) {
+                                                                                                                                        <div class="invalid-tooltip">
+                                                                                                                                          Minutes To Give 1
+                                                                                                                                          {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off' : 'Extra Day'}} is Required!
+                                                                                                                                        </div>
+                                                                                                                                      }
+                                                                                                                                    </label>
+                                                                                                                                  </div>
+                                                                                                                                  <!-- one and a half day -->
+                                                                                                                                  <div class="col-md-5">
+                                                                                                                                    <span>
+                                                                                                                                      <b>How many Minutes Consider to Give 1.5 {{attendancepolicydata.giveOTAs ==
+                                                                                                                                      'AddLeave' ?'Compensatory Off' : 'Extra Days'}}?</b>
+                                                                                                                                    </span>
+                                                                                                                                  </div>
+                                                                                                                                  <!-- one and a half day -->
+                                                                                                                                  <div class="col-md-5">
+                                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                                      <input class="form-control" type="number" step="0.1" ngModel #oneAndHalfDayCoffEday="ngModel"
+                                                                                                                                        [(ngModel)]="attendancepolicydata.oneAndHalfDayCoffEday" name="oneAndHalfDayCoffEday" />
+                                                                                                                                        <span>Minutes To Give 1.5
+                                                                                                                                          {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off' : 'Extra Days'}}
+                                                                                                                                        </span>
+                                                                                                                                      </label>
+                                                                                                                                    </div>
+                                                                                                                                    <!-- Two days -->
+                                                                                                                                    <div class="col-md-5">
+                                                                                                                                      <span>
+                                                                                                                                        <b>How many Minutes Consider to Give 2 {{attendancepolicydata.giveOTAs == 'AddLeave'
+                                                                                                                                        ?'Compensatory Off' : 'Extra Days'}}?</b>
+                                                                                                                                      </span>
+                                                                                                                                    </div>
+                                                                                                                                    <!-- Two days -->
+                                                                                                                                    <div class="col-md-5">
+                                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                                        <input class="form-control" type="number" step="0.1" ngModel #twoDayCoffEday="ngModel"
+                                                                                                                                          [(ngModel)]="attendancepolicydata.twoDayCoffEday" name="twoDayCoffEday" />
+                                                                                                                                          <span>Minutes To Give 2 {{attendancepolicydata.giveOTAs == 'AddLeave' ?'Compensatory Off'
+                                                                                                                                          : 'Extra Days'}}</span>
+                                                                                                                                        </label>
+                                                                                                                                      </div>
+                                                                                                                                    </div>
+                                                                                                                                  }
+                                                                                                                                  @if (normalDayOvertimeShow == false) {
+                                                                                                                                    <!-- Select Pay Type -->
+                                                                                                                                    <div class="row">
+                                                                                                                                      <!-- Select Pay Type -->
+                                                                                                                                      <div class="col-md-4" style="margin-top: 10px">
+                                                                                                                                        <label class="form-group has-float-label">
+                                                                                                                                          <ng-select placeholder="Choose your option" ngModel #payType="ngModel" name="payType"
+                                                                                                                                            (change)="callPayType($event)" [(ngModel)]="attendancepolicydata.payType" required>
+                                                                                                                                            <ng-option value="ctcSalary">CTC Salary</ng-option>
+                                                                                                                                            <ng-option value="grossSalary">Gross Salary</ng-option>
+                                                                                                                                            <ng-option value="basicSalary">Basic Salary</ng-option>
+                                                                                                                                            <ng-option value="fixedAmount">Fixed Amount</ng-option>
+                                                                                                                                          </ng-select>
+                                                                                                                                          <span>Select Pay Type *</span>
+                                                                                                                                        </label>
+                                                                                                                                        @if (!payType.valid && addattendancepolicy.submitted) {
+                                                                                                                                          <div class="invalid-tooltip">
+                                                                                                                                            Pay Type is required!
+                                                                                                                                          </div>
+                                                                                                                                        }
+                                                                                                                                      </div>
+                                                                                                                                    </div>
+                                                                                                                                    @if ((attendancepolicydata.payType == 'grossSalary' ||attendancepolicydata.payType == 'basicSalary' || attendancepolicydata.payType == 'ctcSalary')) {
+                                                                                                                                      <div class="row"
+                                                                                                                                        >
+                                                                                                                                        <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px">
+                                                                                                                                          <span>
+                                                                                                                                            Divide Monthly
+                                                                                                                                            {{
+                                                                                                                                            attendancepolicydata.payType == 'grossSalary'
+                                                                                                                                            ? 'Gross'
+                                                                                                                                            : attendancepolicydata.payType == 'ctcSalary'
+                                                                                                                                            ? 'CTC'
+                                                                                                                                            : 'Basic'
+                                                                                                                                            }}
+                                                                                                                                            by
+                                                                                                                                          </span>
+                                                                                                                                        </div>
+                                                                                                                                        <div class="col-md-2">
+                                                                                                                                          <label class="form-group has-float-label">
+                                                                                                                                            <input class="form-control" type="number" min="1" ngModel #monthDays="ngModel" name="monthDays"
+                                                                                                                                              [(ngModel)]="attendancepolicydata.monthDays" />
+                                                                                                                                            </label>
+                                                                                                                                          </div>
+                                                                                                                                          <div class="col-md-0" style="margin-top: 10px">
+                                                                                                                                            <span>
+                                                                                                                                              days to calculate per day
+                                                                                                                                              {{
+                                                                                                                                              attendancepolicydata.payType == 'grossSalary'
+                                                                                                                                              ? 'Gross'
+                                                                                                                                              : attendancepolicydata.payType == 'ctcSalary'
+                                                                                                                                              ? 'CTC'
+                                                                                                                                              : 'Basic'
+                                                                                                                                              }}
+                                                                                                                                            </span>
+                                                                                                                                          </div>
+                                                                                                                                          <div class="col-md-12" style="margin-top: -3px; margin-bottom: 15px">
+                                                                                                                                            <span style="color: red">
+                                                                                                                                              <b>Note ** :</b>
+                                                                                                                                              If you not enter days, By default monthly
+                                                                                                                                              {{
+                                                                                                                                              attendancepolicydata.payType == 'grossSalary'
+                                                                                                                                              ? 'Gross'
+                                                                                                                                              : attendancepolicydata.payType == 'ctcSalary'
+                                                                                                                                              ? 'CTC'
+                                                                                                                                              : 'Basic'
+                                                                                                                                              }}
+                                                                                                                                              is divide by month days to calculate per day
+                                                                                                                                              {{
+                                                                                                                                              attendancepolicydata.payType == 'grossSalary'
+                                                                                                                                              ? 'Gross'
+                                                                                                                                              : attendancepolicydata.payType == 'ctcSalary'
+                                                                                                                                              ? 'CTC'
+                                                                                                                                              : 'Basic'
+                                                                                                                                              }}.
+                                                                                                                                            </span>
+                                                                                                                                          </div>
+                                                                                                                                          <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px">
+                                                                                                                                            <span>
+                                                                                                                                              Divide per day
+                                                                                                                                              {{
+                                                                                                                                              attendancepolicydata.payType == 'grossSalary'
+                                                                                                                                              ? 'Gross'
+                                                                                                                                              : attendancepolicydata.payType == 'ctcSalary'
+                                                                                                                                              ? 'CTC'
+                                                                                                                                              : 'Basic'
+                                                                                                                                              }}
+                                                                                                                                              by
+                                                                                                                                            </span>
+                                                                                                                                          </div>
+                                                                                                                                          <div class="col-md-2">
+                                                                                                                                            <label class="form-group has-float-label">
+                                                                                                                                              <input class="form-control" type="number" min="0" ngModel #overtimeHrs="ngModel" name="overtimeHrs" />
+                                                                                                                                            </label>
+                                                                                                                                          </div>
+                                                                                                                                          <div class="col-md-0" style="margin-top: 10px">
+                                                                                                                                            <span>minutes to calculate overtime per minute</span>
+                                                                                                                                          </div>
+                                                                                                                                          <div class=" col-md-12" style="margin-top: -3px; margin-bottom: 15px">
+                                                                                                                                            <span style="color: red">
+                                                                                                                                              <b>Note ** :</b>
+                                                                                                                                              If you not enter minutes, By default per day
+                                                                                                                                              {{
+                                                                                                                                              attendancepolicydata.payType == 'grossSalary'
+                                                                                                                                              ? 'Gross'
+                                                                                                                                              : attendancepolicydata.payType == 'ctcSalary'
+                                                                                                                                              ? 'CTC'
+                                                                                                                                              : 'Basic'
+                                                                                                                                              }}
+                                                                                                                                              is divide by 480 minutes to calculate overtime per minute.
+                                                                                                                                            </span>
+                                                                                                                                          </div>
+                                                                                                                                        </div>
+                                                                                                                                      }
+                                                                                                                                      @if (attendancepolicydata.payType == 'fixedAmount') {
+                                                                                                                                        <div class="row">
+                                                                                                                                          <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px">
+                                                                                                                                            <span>Pay Amount * :</span>
+                                                                                                                                          </div>
+                                                                                                                                          <div class="col-md-2">
+                                                                                                                                            <label class="form-group has-float-label">
+                                                                                                                                              <input class="form-control" type="number" min="1" ngModel #payAmount="ngModel" name="payAmount"
+                                                                                                                                                [(ngModel)]="attendancepolicydata.payAmount" required />
+                                                                                                                                              </label>
+                                                                                                                                              @if (!payAmount.valid && addattendancepolicy.submitted) {
+                                                                                                                                                <div class="invalid-tooltip">
+                                                                                                                                                  Pay Amount is required!
+                                                                                                                                                </div>
+                                                                                                                                              }
+                                                                                                                                            </div>
+                                                                                                                                            <div class="col-md-0" style="margin-top: 10px">
+                                                                                                                                              <span>Per Hour</span>
+                                                                                                                                            </div>
+                                                                                                                                          </div>
+                                                                                                                                        }
+                                                                                                                                        <!-- Show in salary slip -->
+                                                                                                                                        <div class="row">
+                                                                                                                                          <div class="col-md-12">
+                                                                                                                                            <label for="yes">
+                                                                                                                                              <input type="checkbox" ngModel (change)="salaryovertime($event)" #showinsalaryslip="ngModel"
+                                                                                                                                                [(ngModel)]="toShowInSalarySlip" name="showinsalaryslip" />
+                                                                                                                                                <span>&nbsp;Show in salary slip</span>
+                                                                                                                                              </label>
+                                                                                                                                            </div>
+                                                                                                                                            @if (toShowInSalarySlip) {
+                                                                                                                                              <div class="col-md-12" style="margin-bottom: 10px">
+                                                                                                                                                <input type="radio" name="toShowOT" value="asOT" ngModel #toShowOT="ngModel" style="margin-right: 1%"
+                                                                                                                                                  required [(ngModel)]="attendancepolicydata.toShowOT" (click)="selectShowOT($event)" />
+                                                                                                                                                  <label for="consider" style="margin-right: 2%">Show As Overtime</label>
+                                                                                                                                                  <input type="radio" name="toShowOT" value="addInPayhead" ngModel #toShowOT="ngModel"
+                                                                                                                                                    style="margin-right: 1%" required [(ngModel)]="attendancepolicydata.toShowOT"
+                                                                                                                                                    (click)="selectShowOT($event)" />
+                                                                                                                                                    <label for="netsalary">Add in Earning Payhead</label>
+                                                                                                                                                    @if (!toShowOT.valid && addattendancepolicy.submitted) {
+                                                                                                                                                      <div class="invalid-tooltip">
+                                                                                                                                                        Please Select One!
+                                                                                                                                                      </div>
+                                                                                                                                                    }
+                                                                                                                                                  </div>
+                                                                                                                                                }
+                                                                                                                                                @if (toShowInSalarySlip && attendancepolicydata.toShowOT == 'asOT') {
+                                                                                                                                                  <div class="col-md-12"
+                                                                                                                                                    style="margin-bottom: 10px">
+                                                                                                                                                    <input type="radio" name="show" value="gross" ngModel #show="ngModel" style="margin-right: 1%" required
+                                                                                                                                                      [(ngModel)]="attendancepolicydata.consider" (click)="applicablePFESIC($event)" />
+                                                                                                                                                      <label for="consider" style="margin-right: 2%">Consider in gross salary</label>
+                                                                                                                                                      <input type="radio" name="show" value="net" ngModel #show="ngModel" style="margin-right: 1%" required
+                                                                                                                                                        [(ngModel)]="attendancepolicydata.consider" (click)="applicablePFESIC($event)" />
+                                                                                                                                                        <label for="netsalary">Not Consider in gross salary</label>
+                                                                                                                                                        @if (!show.valid && addattendancepolicy.submitted) {
+                                                                                                                                                          <div class="invalid-tooltip">
+                                                                                                                                                            Please Select One!
+                                                                                                                                                          </div>
+                                                                                                                                                        }
+                                                                                                                                                      </div>
+                                                                                                                                                    }
+                                                                                                                                                    @if (attendancepolicydata.toShowOT == 'addInPayhead') {
+                                                                                                                                                      <div class="col-md-4">
+                                                                                                                                                        <label class="form-group has-float-label">
+                                                                                                                                                          <ng-select placeholder="Choose your option" ngModel #payheadId="ngModel" name="payheadId"
+                                                                                                                                                            [(ngModel)]="selectedPayhead" required>
+                                                                                                                                                            @for (payhead of Allpayhead; track payhead) {
+                                                                                                                                                              <ng-option [value]="payhead.payheadMasterID">
+                                                                                                                                                                {{ payhead.payheadName }}
+                                                                                                                                                              </ng-option>
+                                                                                                                                                            }
+                                                                                                                                                          </ng-select>
+                                                                                                                                                          <span>Select Payhead *</span>
+                                                                                                                                                          @if (!payheadId.valid && addattendancepolicy.submitted) {
+                                                                                                                                                            <div class="invalid-tooltip">
+                                                                                                                                                              Payhead is required!
+                                                                                                                                                            </div>
+                                                                                                                                                          }
+                                                                                                                                                        </label>
+                                                                                                                                                      </div>
+                                                                                                                                                    }
+                                                                                                                                                  </div>
+                                                                                                                                                  @if (showPFESIC == true) {
+                                                                                                                                                    <div class="row">
+                                                                                                                                                      <div class="col-md-12">
+                                                                                                                                                        <label for="yes">
+                                                                                                                                                          <input type="checkbox" ngModel #pfApplicable="ngModel" name="pfApplicable"
+                                                                                                                                                            [(ngModel)]="attendancepolicydata.pfApplicable" />
+                                                                                                                                                            <span>&nbsp;PF Applicable</span>
+                                                                                                                                                          </label>
+                                                                                                                                                        </div>
+                                                                                                                                                        <div class="col-md-12">
+                                                                                                                                                          <label for="yes">
+                                                                                                                                                            <input type="checkbox" ngModel #esicApplicable="ngModel" name="esicApplicable"
+                                                                                                                                                              [(ngModel)]="attendancepolicydata.esicApplicable" />
+                                                                                                                                                              <span>&nbsp;ESIC Applicable</span>
+                                                                                                                                                            </label>
+                                                                                                                                                          </div>
+                                                                                                                                                          @if (attendancepolicydata.esicApplicable == true) {
+                                                                                                                                                            <div class="col-md-12 row">
+                                                                                                                                                              <div class="col-md-4">
+                                                                                                                                                                <label class="form-group has-float-label">
+                                                                                                                                                                  <input class="form-control" type="number" ngModel #employeeESICPer="ngModel" name="employeeESICPer"
+                                                                                                                                                                    [(ngModel)]="employeeESICPercentage" />
+                                                                                                                                                                    <span>&nbsp;Employee Side ESIC Percentage *</span>
+                                                                                                                                                                  </label>
+                                                                                                                                                                  @if (!employeeESICPer.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                    <div class="invalid-tooltip">
+                                                                                                                                                                      Employee Side ESIC Percentage is required!
+                                                                                                                                                                    </div>
+                                                                                                                                                                  }
+                                                                                                                                                                </div>
+                                                                                                                                                                <div class="col-md-4">
+                                                                                                                                                                  <label class="form-group has-float-label">
+                                                                                                                                                                    <input class="form-control" type="number" ngModel #EmployerESICPer="ngModel" name="EmployerESICPer"
+                                                                                                                                                                      [(ngModel)]="employerESICPercentage" />
+                                                                                                                                                                      <span>&nbsp;Employer Side ESIC Percentage *</span>
+                                                                                                                                                                    </label>
+                                                                                                                                                                    @if (!EmployerESICPer.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                      <div class="invalid-tooltip">
+                                                                                                                                                                        Employer Side ESIC Percentage is required!
+                                                                                                                                                                      </div>
+                                                                                                                                                                    }
+                                                                                                                                                                  </div>
+                                                                                                                                                                </div>
+                                                                                                                                                              }
+                                                                                                                                                            </div>
+                                                                                                                                                          }
+                                                                                                                                                          <!-- Auto Approve Overtime -->
+                                                                                                                                                          <div class="row">
+                                                                                                                                                            <div class="col-md-12">
+                                                                                                                                                              <span><b>Auto Approve Overtime *</b></span>
+                                                                                                                                                              &nbsp;&nbsp;
+                                                                                                                                                              <input type="radio" name="autoApprove" value="1" ngModel (change)="changeAUtoApprove($event.target.value)"
+                                                                                                                                                                [(ngModel)]="autoApproveOT" #autoApprove="ngModel" style="margin-right: 1%" required />
+                                                                                                                                                                <label for="true" style="margin-right: 1%">Yes</label>
+                                                                                                                                                                <input type="radio" name="autoApprove" value="0" ngModel (change)="changeAUtoApprove($event.target.value)"
+                                                                                                                                                                  [(ngModel)]="autoApproveOT" #autoApprove="ngModel" style="margin-right: 1%" required />
+                                                                                                                                                                  <label for="false">No</label>
+                                                                                                                                                                  @if (!autoApprove.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                    <div class="invalid-tooltip">
+                                                                                                                                                                      Auto Approve Overtime is required!
+                                                                                                                                                                    </div>
+                                                                                                                                                                  }
+                                                                                                                                                                </div>
+                                                                                                                                                                @if (showAutoAppOT) {
+                                                                                                                                                                  <div class="col-md-4">
+                                                                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                                                                      <input class="form-control" type="number" min="0" ngModel required #autoAppOT="ngModel" name="autoAppOT"
+                                                                                                                                                                        [(ngModel)]="attendancepolicydata.autoApprove" />
+                                                                                                                                                                        <span>Maximum Minutes For AutoApprove Overtime *</span>
+                                                                                                                                                                      </label>
+                                                                                                                                                                      @if (!autoAppOT.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                        <div class="invalid-tooltip">
+                                                                                                                                                                          Maximum Minutes For AutoApprove Overtime is required!
+                                                                                                                                                                        </div>
+                                                                                                                                                                      }
+                                                                                                                                                                    </div>
+                                                                                                                                                                  }
+                                                                                                                                                                  @if (showAutoAppOT) {
+                                                                                                                                                                    <div class="col-md-2" style="margin-top: 10px">
+                                                                                                                                                                      <span>Minutes</span>
+                                                                                                                                                                    </div>
+                                                                                                                                                                  }
+                                                                                                                                                                </div>
+                                                                                                                                                              }
+                                                                                                                                                            }
+                                                                                                                                                            <!-- Compensatory Off Setup -->
+                                                                                                                                                            <div class="row">
+                                                                                                                                                              <div class="col-md-12">
+                                                                                                                                                                <hr />
+                                                                                                                                                                <h4><b>Compensatory Off Setup:</b></h4>
+                                                                                                                                                              </div>
+                                                                                                                                                              <br />
+                                                                                                                                                            </div>
+                                                                                                                                                            <!-- Compensatory Off Applicable -->
+                                                                                                                                                            <div class="row">
+                                                                                                                                                              <div class="col-md-12" style="margin-left: 2%">
+                                                                                                                                                                <input class="form-check-input" type="checkbox" ngModel name="coff" #coff="ngModel"
+                                                                                                                                                                  (change)="coffcheck1($event)" [(ngModel)]="coffvaluecheck" />
+                                                                                                                                                                  <label class="form-check-label" for="inlineCheckbox3">Compensatory Off Applicable</label>
+                                                                                                                                                                  @if (coffvaluecheck == true) {
+                                                                                                                                                                    <div>
+                                                                                                                                                                      <input type="radio" name="coff1" value="Overtime" ngModel required #coff1="ngModel"
+                                                                                                                                                                        [(ngModel)]="attendancepolicydata.coff" (change)="leavecheck($event)" style="margin-right: 1%" />
+                                                                                                                                                                        <label style="margin-right: 1%">Overtime</label>
+                                                                                                                                                                        <input type="radio" name="coff1" value="AddLeave" ngModel required #coff1="ngModel"
+                                                                                                                                                                          [(ngModel)]="attendancepolicydata.coff" (change)="leavecheck($event)" style="margin-right: 1%" />
+                                                                                                                                                                          <label style="margin-right: 1%">Compensatory Off</label>
+                                                                                                                                                                          <input type="radio" name="coff1" value="AddExtraDays" ngModel required #coff1="ngModel"
+                                                                                                                                                                            [(ngModel)]="attendancepolicydata.coff" (change)="leavecheck($event)" style="margin-right: 1%" />
+                                                                                                                                                                            <label>Extra Days</label>
+                                                                                                                                                                            @if (!coff1.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                              <div class="invalid-tooltip">
+                                                                                                                                                                                Compensatory Off Applicable type is required!
+                                                                                                                                                                              </div>
+                                                                                                                                                                            }
+                                                                                                                                                                          </div>
+                                                                                                                                                                        }
+                                                                                                                                                                        @if (leaveshow == true && coffvaluecheck == true) {
+                                                                                                                                                                          <div class="row">
+                                                                                                                                                                            <!-- Half Day -->
+                                                                                                                                                                            <div class="col-md-5">
+                                                                                                                                                                              <span>
+                                                                                                                                                                                <b>How Many Minutes Consider To Give o.5
+                                                                                                                                                                                  {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off' : 'Extra Day'}}
+                                                                                                                                                                                ? </b>
+                                                                                                                                                                              </span>
+                                                                                                                                                                            </div>
+                                                                                                                                                                            <!-- Half Day -->
+                                                                                                                                                                            <div class="col-md-5">
+                                                                                                                                                                              <label class="form-group has-float-label">
+                                                                                                                                                                                <input class="form-control" type="number" step="0.1" required ngModel #coffhalf="ngModel"
+                                                                                                                                                                                  [(ngModel)]="attendancepolicydata.coffhalfday" name="coffhalf" />
+                                                                                                                                                                                  <span>Minutes To Give 0.5 {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off' :
+                                                                                                                                                                                  'Extra Day'}} *</span>
+                                                                                                                                                                                  @if (!coffhalf.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                                    <div class="invalid-tooltip">
+                                                                                                                                                                                      Minutes To Give 0.5
+                                                                                                                                                                                      {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off' : 'Extra Day'}}
+                                                                                                                                                                                      is Required!
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                  }
+                                                                                                                                                                                </label>
+                                                                                                                                                                              </div>
+                                                                                                                                                                              <!-- Full Day -->
+                                                                                                                                                                              <div class="col-md-5">
+                                                                                                                                                                                <span>
+                                                                                                                                                                                  <b>How Many Minutes Consider To Give 1 {{attendancepolicydata.coff == 'AddLeave' ?
+                                                                                                                                                                                  'Compensatory Off' : 'Extra Day'}}?</b>
+                                                                                                                                                                                </span>
+                                                                                                                                                                              </div>
+                                                                                                                                                                              <!-- Full Day -->
+                                                                                                                                                                              <div class="col-md-5">
+                                                                                                                                                                                <label class="form-group has-float-label">
+                                                                                                                                                                                  <input class="form-control" type="number" step="0.1" required ngModel #coffFull="ngModel"
+                                                                                                                                                                                    [(ngModel)]="attendancepolicydata.cofffullday" name="coffFull" />
+                                                                                                                                                                                    <span>Minutes To Give 1 {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off' :
+                                                                                                                                                                                    'Extra Day'}} *</span>
+                                                                                                                                                                                    @if (!coffFull.valid && addattendancepolicy.submitted) {
+                                                                                                                                                                                      <div class="invalid-tooltip">
+                                                                                                                                                                                        Minutes To Give 1
+                                                                                                                                                                                        {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off' : 'Extra Day'}} is Required!
+                                                                                                                                                                                      </div>
+                                                                                                                                                                                    }
+                                                                                                                                                                                  </label>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                <!-- one and a half day -->
+                                                                                                                                                                                <div class="col-md-5">
+                                                                                                                                                                                  <span>
+                                                                                                                                                                                    <b>How many Minutes Consider to Give 1.5 {{attendancepolicydata.coff ==
+                                                                                                                                                                                    'AddLeave' ?'Compensatory Off' : 'Extra Days'}}?</b>
+                                                                                                                                                                                  </span>
+                                                                                                                                                                                </div>
+                                                                                                                                                                                <!-- one and a half day -->
+                                                                                                                                                                                <div class="col-md-5">
+                                                                                                                                                                                  <label class="form-group has-float-label">
+                                                                                                                                                                                    <input class="form-control" type="number" step="0.1" ngModel #coffOneAndHalfDay="ngModel"
+                                                                                                                                                                                      [(ngModel)]="attendancepolicydata.coffOneAndHalfDay" name="coffOneAndHalfDay" />
+                                                                                                                                                                                      <span>Minutes To Give 1.5 {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off' :
+                                                                                                                                                                                      'Extra Days'}} </span>
+                                                                                                                                                                                    </label>
+                                                                                                                                                                                  </div>
+                                                                                                                                                                                  <!-- Two days -->
+                                                                                                                                                                                  <div class="col-md-5">
+                                                                                                                                                                                    <span>
+                                                                                                                                                                                      <b>How many Minutes Consider to Give 2 {{attendancepolicydata.coff == 'AddLeave'
+                                                                                                                                                                                      ?'Compensatory Off' : 'Extra Days'}}?</b>
+                                                                                                                                                                                    </span>
+                                                                                                                                                                                  </div>
+                                                                                                                                                                                  <!-- Two days -->
+                                                                                                                                                                                  <div class="col-md-5">
+                                                                                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                                                                                      <input class="form-control" type="number" step="0.1" ngModel #coffTwoFullDay="ngModel"
+                                                                                                                                                                                        [(ngModel)]="attendancepolicydata.coffTwoFullDay" name="coffTwoFullDay" />
+                                                                                                                                                                                        <span>Minutes To Give 2 {{attendancepolicydata.coff == 'AddLeave' ?'Compensatory Off'
+                                                                                                                                                                                        : 'Extra Days'}}</span>
+                                                                                                                                                                                      </label>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                  </div>
+                                                                                                                                                                                }
+                                                                                                                                                                              </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                            <div class="row">
+                                                                                                                                                                              <div class="col-md-12">
+                                                                                                                                                                                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                                                                                                                                                                                <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/attendance_policy'"
+                                                                                                                                                                                  style="margin-left: 2%">
+                                                                                                                                                                                  Cancel
+                                                                                                                                                                                </button>
+                                                                                                                                                                              </div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                          </form>
+                                                                                                                                                                        }
+                                                                                                                                                                      </div>
+                                                                                                                                                                    </div>
+
+                                                                                                                                                                    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

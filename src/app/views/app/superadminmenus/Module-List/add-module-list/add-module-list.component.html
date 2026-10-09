@@ -1,0 +1,62 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Module</h5>
+
+    @if (moduleNameExistsError) {
+      <div class="alert alert-danger">
+        Module with the same name already exists.
+      </div>
+    }
+
+    <form #addModule="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #moduleName="ngModel"
+              name="moduleName"
+              />
+              <span>Module Name*</span>
+              @if (!moduleName.valid && addModule.submitted) {
+                <div class="invalid-tooltip">
+                  Module Name is required!
+                </div>
+              }
+              <!-- <div
+              *ngIf="moduleNameExistsError"
+              class="text-danger"
+              >
+              Module with the same name already exists.
+            </div> -->
+          </label>
+        </div>
+      </div>
+      <app-state-button
+        [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+        [currentState]="buttonState"
+        [isDisabled]="buttonDisabled"
+        click="onLoginClick()"
+        >
+        {{ 'forms.submit' | translate }}
+      </app-state-button>
+      <button
+        class="btn btn-danger btn-lg btn-shadow mt-4"
+        [routerLink]="adminRoot + '/superadminmenus/Module_list'"
+        style="margin-left: 2%"
+        >
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

@@ -1,0 +1,77 @@
+.user-avatar img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 4rem;
+      object-fit: cover;
+      object-position: top;
+    }
+    
+    .user-avatar {
+      position: relative;
+      margin-bottom: 0;
+      display: inline-block;
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 3rem;
+      vertical-align: middle;
+      border-radius: 4rem;
+    }
+    
+    .fixed-size-image {
+      width: 130px;
+      height: 80px;
+    }
+    
+    .profile-photo-container {
+      position: relative;
+      display: inline-block;
+      overflow: hidden; /* Ensure the overlay doesn't overflow */
+    }
+    
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      display: none; /* Initially hidden */
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      z-index: 10; /* Ensure overlay is above the image */
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.3s ease; /* Smooth transition for opacity */
+    }
+    
+    .overlay-text {
+      color: black;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .image-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .profile-photo-container.locked .overlay {
+      display: flex; /* Show overlay only when locked */
+    }
+    
+    .profile-photo-container.locked:hover .overlay {
+      opacity: 1; /* Show overlay on hover */
+    }
+    
+    ::ng-deep .tool_tip ~ .tooltip .tooltip-inner {
+      max-width: 150px;
+      font-size: 10px;
+    }
+    .form-control {
+      width: 100%;
+    }
+    

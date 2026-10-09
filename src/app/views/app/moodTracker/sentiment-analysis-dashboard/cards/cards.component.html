@@ -1,0 +1,27 @@
+<div [class]="class">
+  <div class="row">
+    @for (item of cardsData; track item) {
+      <div class="col-md-4" cursor="none">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card" style="margin-bottom: 27px; cursor: default">
+            <div class="card-body text-center">
+              @if (item.mood == 'Positive') {
+                <i class="simple-icon-like text-info"></i>
+              }
+              @if (item.mood == 'Negative') {
+                <i class="simple-icon-dislike text-danger"></i>
+              }
+              @if (item.mood == 'Neutral') {
+                <i class="iconsminds-pointer text-warning" style="transform: scaleX(-1)"></i>
+              }
+              <p class="card-text font-weight-semibold mb-0">{{ item.mood }}</p>
+              <p class="lead text-center" style="font-weight: 500">
+                {{ item.count ? ((item.count / totalCount) * 100).toFixed(0) : 0 }}%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

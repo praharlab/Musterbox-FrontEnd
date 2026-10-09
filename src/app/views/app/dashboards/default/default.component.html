@@ -1,0 +1,362 @@
+<style>
+  /* ===== Dashboard Styles ===== */
+  .dashboard-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Stat Cards */
+.stat-card {
+background: var(--m-surface);
+border-radius: 14px;
+border: 1px solid var(--m-border-subtle);
+transition: all 0.25s ease;
+overflow: hidden;
+cursor: pointer;
+text-decoration: none !important;
+display: block;
+}
+
+.stat-card:hover {
+transform: translateY(-3px);
+box-shadow: 0 12px 32px rgba(15, 23, 42, 0.10) !important;
+border-color: transparent;
+text-decoration: none;
+}
+
+.stat-card-body {
+padding: 22px 24px;
+display: flex;
+align-items: center;
+gap: 18px;
+}
+
+.stat-icon-wrap {
+width: 54px;
+height: 54px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+.stat-icon-wrap svg {
+width: 26px;
+height: 26px;
+}
+
+.stat-icon-wrap.blue {
+background: #e0f2fe;
+color: #0284c7;
+}
+
+.stat-icon-wrap.green {
+background: #dcfce7;
+color: #16a34a;
+}
+
+.stat-icon-wrap.slate {
+background: var(--m-surface-sunken);
+color: var(--m-text-muted);
+}
+
+.stat-icon-wrap.orange {
+background: #ffedd5;
+color: #ea580c;
+}
+
+.stat-icon-wrap.red {
+background: #fee2e2;
+color: #dc2626;
+}
+
+.stat-info {
+flex: 1;
+min-width: 0;
+}
+
+.stat-label {
+font-size: 0.78rem;
+color: var(--m-text-muted);
+font-weight: 500;
+margin-bottom: 6px;
+font-family: 'Inter', sans-serif;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.stat-value {
+font-size: 2rem;
+font-weight: 800;
+color: var(--m-text);
+line-height: 1;
+font-family: 'Inter', sans-serif;
+}
+
+.stat-card-accent {
+height: 4px;
+background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+}
+
+.accent-blue {
+--accent-from: #0ea5e9;
+--accent-to: #38bdf8;
+}
+
+.accent-green {
+--accent-from: #10b981;
+--accent-to: #34d399;
+}
+
+.accent-slate {
+--accent-from: #64748b;
+--accent-to: #94a3b8;
+}
+
+.accent-orange {
+--accent-from: #f59e0b;
+--accent-to: #fbbf24;
+}
+
+.accent-red {
+--accent-from: #ef4444;
+--accent-to: #f87171;
+}
+
+/* Section Headers */
+.section-title {
+font-size: 1rem;
+font-weight: 700;
+color: var(--m-text);
+font-family: 'Inter', sans-serif;
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.section-title::before {
+content: '';
+display: block;
+width: 4px;
+height: 18px;
+background: var(--m-gradient);
+border-radius: 2px;
+flex-shrink: 0;
+}
+
+/* Modern Card */
+.modern-card {
+background: var(--m-surface);
+border-radius: 14px;
+border: 1px solid var(--m-border-subtle);
+overflow: hidden;
+box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+margin-bottom: 24px;
+}
+
+.modern-card-header {
+padding: 18px 24px;
+border-bottom: 1px solid var(--m-border-subtle);
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.modern-card-title {
+font-size: 0.95rem;
+font-weight: 700;
+color: var(--m-text);
+font-family: 'Inter', sans-serif;
+}
+
+.modern-card-body {
+padding: 4px 0;
+}
+
+/* Analytics container layout */
+.analytics-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+gap: 16px;
+margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+.analytics-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+
+.stat-value {
+font-size: 1.5rem;
+}
+}
+
+@media (max-width: 480px) {
+.analytics-grid {
+grid-template-columns: 1fr 1fr;
+}
+}
+</style>
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header name="Dashboard" [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [showItemsPerPage]="false" [showSearch]="false" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="limit" [itemOptionsPerPage]="itemOptionsPerPage"
+  (addNewItem)="showAddNewModal()">
+</app-list-page-header>
+
+<!-- Super Admin / Company Admin Dashboard -->
+@if (usertype == 2 || usertype == 3) {
+  <div class="dashboard-page">
+    <!-- Company Analytics Section -->
+    <div class="modern-card mb-4">
+      <div class="modern-card-header">
+        <span class="modern-card-title">
+          <i class="iconsminds-statistic" style="margin-right:8px; color:var(--m-primary);"></i>
+          Company Analytics
+        </span>
+      </div>
+      <div style="padding: 20px 20px 4px;">
+        <div class="analytics-grid">
+          <!-- Total Company -->
+          <a class="stat-card" routerLink="{{ adminRoot }}/superadminmenus/subadmincompanylist/{{ name[0] }}">
+            <div class="stat-card-accent accent-blue"></div>
+            <div class="stat-card-body">
+              <div class="stat-icon-wrap blue">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" />
+                  <path
+                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1Zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3V1Z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">Total Company</div>
+                <div class="stat-value">{{ dashboardRows.totalcount }}</div>
+              </div>
+            </div>
+          </a>
+          <!-- Active Company -->
+          <a class="stat-card" routerLink="{{ adminRoot }}/superadminmenus/subadmincompanylist/{{ name[1] }}">
+            <div class="stat-card-accent accent-green"></div>
+            <div class="stat-card-body">
+              <div class="stat-icon-wrap green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514Z" />
+                  <path
+                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z" />
+                  <path
+                    d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">Active Company</div>
+                <div class="stat-value">{{ dashboardRows.totalactivecount }}</div>
+              </div>
+            </div>
+          </a>
+          <!-- Deactive Company -->
+          <a class="stat-card" routerLink="{{ adminRoot }}/superadminmenus/subadmincompanylist/{{ name[2] }}">
+            <div class="stat-card-accent accent-slate"></div>
+            <div class="stat-card-body">
+              <div class="stat-icon-wrap slate">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M13.879 10.414a2.501 2.501 0 0 0-3.465 3.465l3.465-3.465Zm.707.707-3.465 3.465a2.501 2.501 0 0 0 3.465-3.465Zm-4.56-1.096a3.5 3.5 0 1 1 4.949 4.95 3.5 3.5 0 0 1-4.95-4.95Z" />
+                  <path
+                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z" />
+                  <path
+                    d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">Inactive Company</div>
+                <div class="stat-value">{{ dashboardRows.totaldeactivecount }}</div>
+              </div>
+            </div>
+          </a>
+          <!-- Current Month Renewal -->
+          <a class="stat-card" routerLink="{{ adminRoot }}/superadminmenus/subadmincompanylist/{{ name[3] }}">
+            <div class="stat-card-accent accent-orange"></div>
+            <div class="stat-card-body">
+              <div class="stat-icon-wrap orange">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z" />
+                  <path
+                    d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm8.5 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm-3.5-2a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 1 0V11a.5.5 0 0 0-.5-.5Zm0 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">Renewal This Month</div>
+                <div class="stat-value">{{ dashboardRows.totalcurrentmonthrenewalcount }}</div>
+              </div>
+            </div>
+          </a>
+          <!-- Expired Plan -->
+          <a class="stat-card" routerLink="{{ adminRoot }}/superadminmenus/subadmincompanylist/{{ name[4] }}">
+            <div class="stat-card-accent accent-red"></div>
+            <div class="stat-card-body">
+              <div class="stat-icon-wrap red">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                </svg>
+              </div>
+              <div class="stat-info">
+                <div class="stat-label">Expired Plans</div>
+                <div class="stat-value">{{ dashboardRows.totalexpiredCount }}</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Subscription Plan Analytics -->
+    <div class="modern-card mb-4">
+      <div class="modern-card-header">
+        <span class="modern-card-title">
+          <i class="iconsminds-pie-chart" style="margin-right:8px; color:var(--m-primary);"></i>
+          Subscription Plan Analytics
+        </span>
+      </div>
+      <div class="modern-card-body">
+        <app-subscription-plan-analyticts></app-subscription-plan-analyticts>
+      </div>
+    </div>
+    <!-- Today's Punch In -->
+    <div class="modern-card mb-4">
+      <div class="modern-card-header">
+        <span class="modern-card-title">
+          <i class="iconsminds-clock" style="margin-right:8px; color:var(--m-primary);"></i>
+          Today's Attendance
+        </span>
+      </div>
+      <div class="modern-card-body">
+        <app-punch-in-today></app-punch-in-today>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Safety net: every block above is gated on usertype 2 or 3, so any other
+role used to get a completely empty page here. DashboardsComponent now
+redirects those roles to /dashboards/analytics, but if that redirect is
+ever bypassed (deep link, changed routing) this keeps the screen readable
+instead of blank. -->
+@if (usertype != 2 && usertype != 3) {
+  <div class="m-empty">
+    <img src="assets/img/modern/empty-no-data.svg" alt="" />
+    <div class="m-empty-title">No dashboard for your role</div>
+    <p class="m-empty-text">
+      This board is only configured for administrator accounts. Use the menu to
+      open the sections you have access to, or contact your administrator to
+      request dashboard access.
+    </p>
+  </div>
+}

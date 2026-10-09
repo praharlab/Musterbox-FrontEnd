@@ -1,0 +1,136 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Employee Investment Details</h5>
+
+    <form #addform="ngForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="empList"
+              bindLabel="name"
+              groupBy="selectedAllGroup"
+              [selectableGroup]="true"
+              [selectableGroupAsModel]="false"
+              bindValue="userMasterID"
+              [closeOnSelect]="false"
+              [(ngModel)]="selecteddata"
+              ngModel
+              prop="userid"
+              #userid="ngModel"
+              name="userid"
+              >
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                Select All
+              </ng-template>
+            </ng-select>
+            <span>Select User</span>
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="form16list"
+              bindLabel="name"
+              groupBy="selectedAllGroup"
+              [selectableGroup]="true"
+              [selectableGroupAsModel]="false"
+              bindValue="Form16ChildID"
+              [closeOnSelect]="false"
+              [(ngModel)]="selectedform16"
+              ngModel
+              prop="form16"
+              #form16="ngModel"
+              name="form16"
+              >
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                Select All
+              </ng-template>
+            </ng-select>
+            <span>Select Form 16</span>
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #InvestmentName="ngModel"
+              name="InvestmentName"
+              value="Gross"
+              />
+              <span>Investment Name *</span>
+              @if (!InvestmentName.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Details are required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #InvestmentAmount="ngModel"
+                name="InvestmentAmount"
+                value="Gross"
+                />
+                <span>Investment Amount *</span>
+                @if (!InvestmentAmount.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    Details are required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="month"
+                  required
+                  ngModel
+                  #YearMonth="ngModel"
+                  name="YearMonth"
+                  value="Gross"
+                  />
+                  <span>Year Month *</span>
+                  @if (!YearMonth.valid && addform.submitted) {
+                    <div class="invalid-tooltip">
+                      Details are required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <br />
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button
+                class="btn btn-danger btn-shadow mt-4"
+                [routerLink]="adminRoot + '/form16s/employee_investment'"
+                style="margin-left: 2%"
+                >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <simple-notifications
+        [options]="{ position: ['top', 'center'], maxStack: 1 }"
+      ></simple-notifications>

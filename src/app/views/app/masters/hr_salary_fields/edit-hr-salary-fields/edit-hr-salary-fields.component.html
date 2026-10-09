@@ -1,0 +1,435 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (edithrsalaryfield) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit HR Salary Fields</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          @if (childcompany == 'false') {
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+                  (change)="changePayhead($event)" [(ngModel)]="edithrsalaryfield.companyMasterID" disabled>
+                  @for (product of product; track product) {
+                    <ng-option [value]="product.companyMasterID">
+                      {{ product.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company</span>
+                <!-- <div *ngIf="!companyMasterID.valid && addcomp.submitted" class="invalid-tooltip">Company Selection is
+              required!</div> -->
+            </label>
+          </div>
+        }
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #payheadMasterId="ngModel" name="payheadMasterId"
+              [(ngModel)]="edithrsalaryfield.payheadMasterId" required [disabled]="!editable">
+              @for (payhead of payhead; track payhead; let i = $index) {
+                <ng-option [value]="payhead.payheadMasterId">
+                  {{ payhead.payheadName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Payhead *</span>
+            @if (!payheadMasterId.valid && addcomp.submitted && editable) {
+              <div class="invalid-tooltip">
+                Payhead Master is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #payheadDisplayName="ngModel" name="payheadDisplayName"
+              [(ngModel)]="edithrsalaryfield.payheadDisplayName" />
+            <span>Payhead Display Name </span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <!-- <input class="form-control" type="text" ngModel #salaryFieldWhenMonth="ngModel"  name="salaryFieldWhenMonth"/> -->
+            <ng-select [items]="monthname" bindLabel="month" bindValue="number" name="salaryFieldWhenMonth"
+              placeholder="" appendTo="body" multiple="true" ngModel #salaryFieldWhenMonth="ngModel"
+            [(ngModel)]="payheadmonth" required [disabled]="!editable"></ng-select>
+            <span>Payhead Calculate in Month *</span>
+            @if (!salaryFieldWhenMonth.valid && addcomp.submitted && editable) {
+              <div class="invalid-tooltip">
+                Payhead Calculate in Month is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #salaryFieldAttanChk="ngModel"
+              name="salaryFieldAttanChk" [(ngModel)]="edithrsalaryfield.salaryFieldAttanChk" required
+              [disabled]="!editable">
+              <ng-option value="0">Fix</ng-option>
+              <ng-option value="1">Paid Days</ng-option>
+              <ng-option value="2">Physical Attendence</ng-option>
+            </ng-select>
+            <span>Select Depends On *</span>
+            @if (!salaryFieldAttanChk.valid && addcomp.submitted && editable) {
+              <div class="invalid-tooltip">
+                Depends On is required !
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #salaryFieldSrNo="ngModel" name="salaryFieldSrNo"
+              [(ngModel)]="edithrsalaryfield.salaryFieldSrNo" required (change)="grossConsider()"
+              [disabled]="!editable">
+              <ng-option value="A">A</ng-option>
+              <ng-option value="B">B</ng-option>
+              <ng-option value="C">C</ng-option>
+              <ng-option value="D">D</ng-option>
+            </ng-select>
+            <span>Select Salary Field Group *</span>
+            @if (!salaryFieldSrNo.valid && addcomp.submitted && editable) {
+              <div class="invalid-tooltip">
+                Select Salary Field Group is required!
+              </div>
+            }
+          </label>
+        </div>
+        <!-- <div class="col-md-4">
+        <label><b>Payhead Side *</b></label>
+        <div class="form-check form-check-inline">
+          <input type="radio" class="form-check-input" name="salaryFieldSide"
+            [(ngModel)]="edithrsalaryfield.salaryFieldSide" value="E" required [disabled]="!editable" />
+          <label class="form-check-label">EARNING</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" class="form-check-input" name="salaryFieldSide"
+            [(ngModel)]="edithrsalaryfield.salaryFieldSide" value="D" required [disabled]="!editable" />
+          <label class="form-check-label">DEDUCT</label>
+        </div>
+        <div *ngIf="!salaryFieldSide.valid && addcomp.submitted && editable" class="invalid-tooltip">
+          Salary Field Side is required!
+        </div>
+      </div> -->
+      <div class="col-md-4">
+        <label><b>Payhead Side *</b></label>
+        &nbsp;&nbsp;
+        <input type="radio" name="salaryFieldSide" ngModel #salaryFieldSide="ngModel"
+          [(ngModel)]="edithrsalaryfield.salaryFieldSide" value="E" required [disabled]="!editable" />
+        &nbsp;
+        <label for="html">EARNING</label>
+        &nbsp;&nbsp;
+        <input type="radio" name="salaryFieldSide" ngModel #salaryFieldSide="ngModel" value="D"
+          [(ngModel)]="edithrsalaryfield.salaryFieldSide" required [disabled]="!editable" />
+        &nbsp;
+        <label for="css">DEDUCT</label>
+        <br />
+        <br />
+        @if (!salaryFieldSide.valid && addcomp.submitted && editable) {
+          <div class="invalid-tooltip">
+            Salary Field Side is required!
+          </div>
+        }
+      </div>
+      <div class="col-md-4">
+        <label><b>Payhead Show *</b></label>
+        &nbsp;&nbsp;
+        <input type="radio" name="salaryFieldShow" ngModel #salaryFieldShow="ngModel" [ngModel]="null" value="Y"
+          [(ngModel)]="edithrsalaryfield.salaryFieldShow" (change)="grossConsider()" required />
+        &nbsp;
+        <label for="html">YES</label>
+        &nbsp;&nbsp;
+        <input type="radio" name="salaryFieldShow" ngModel #salaryFieldShow="ngModel" [ngModel]="null" value="N"
+          [(ngModel)]="edithrsalaryfield.salaryFieldShow" (change)="grossConsider()" required />
+        &nbsp;
+        <label for="css">NO</label>
+        <br />
+        <br />
+        @if (!salaryFieldShow.valid && addcomp.submitted) {
+          <div class="invalid-tooltip">
+            Payhead Show is required!
+          </div>
+        }
+      </div>
+      @if (toShowConsiderIn) {
+        <div class="col-md-4">
+          <label><b>Payhead Consider In *</b></label>
+          &nbsp;&nbsp;
+          <input type="radio" name="considerIn" ngModel #considerIn="ngModel" [(ngModel)]="considerInValue"
+            value="gross" required (change)="grossConsider()" />
+          &nbsp;
+          <label for="html">Gross Salary</label>
+          &nbsp;&nbsp;
+          <input type="radio" name="considerIn" ngModel #considerIn="ngModel" [(ngModel)]="considerInValue" value="net"
+            required (change)="grossConsider()" />
+          &nbsp;
+          <label for="css">NetPay</label>
+          <br />
+          <br />
+          @if (!considerIn.valid && addcomp.submitted) {
+            <div class="invalid-tooltip">
+              Payhead Consider In is required!
+            </div>
+          }
+        </div>
+      }
+      <div class="col-md-4">
+        <label><b>Round off in Salary *</b></label>
+        &nbsp;&nbsp;
+        <input type="radio" name="salaryFieldRound" ngModel #salaryFieldRound="ngModel" [ngModel]="null" value="Y"
+          [(ngModel)]="edithrsalaryfield.salaryFieldRound" required />
+        &nbsp;
+        <label for="html">YES</label>
+        &nbsp;&nbsp;
+        <input type="radio" name="salaryFieldRound" ngModel #salaryFieldRound="ngModel" [ngModel]="null" value="N"
+          [(ngModel)]="edithrsalaryfield.salaryFieldRound" required />
+        &nbsp;
+        <label for="css">NO</label>
+        <br />
+        <br />
+        @if (!salaryFieldRound.valid && addcomp.submitted) {
+          <div class="invalid-tooltip">
+            Round off in Salary is required!
+          </div>
+        }
+      </div>
+      @if (addcomp.value.salaryFieldRound == 'N') {
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" ngModel #salaryFieldRoundNo="ngModel" name="salaryFieldRoundNo"
+              [(ngModel)]="edithrsalaryfield.salaryFieldRoundNo" required />
+            <span>Show digit after decimal point *</span>
+            @if (!salaryFieldRoundNo.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                digit after decimal point is required!
+              </div>
+            }
+          </label>
+        </div>
+      }
+      @if (addcomp.value.salaryFieldRound == 'Y') {
+        <div class="col-md-6">
+          <label><b> Set Round off Type * : </b></label>
+          &nbsp;&nbsp;
+          <input type="radio" name="roundOffType" ngModel #roundOffType="ngModel"
+            [(ngModel)]="edithrsalaryfield.roundOffType" value="1" required />
+          &nbsp;
+          <label for="html">Regular RoundOff</label>
+          &nbsp;&nbsp;
+          <input type="radio" name="roundOffType" ngModel #roundOffType="ngModel"
+            [(ngModel)]="edithrsalaryfield.roundOffType" value="0" required />
+          &nbsp;
+          <label for="css">Ceiling Value</label>
+          <br />
+          <br />
+          @if (!roundOffType.valid && addcomp.submitted) {
+            <div class="invalid-tooltip">
+              Round off Type is required!
+            </div>
+          }
+        </div>
+      }
+    </div>
+    @if (calculation_on == 'FO') {
+      <div class="row">
+        @for (item of effpayhead; track item) {
+          <div style="padding: 1%">
+            <button type="button" style="background-color: var(--m-primary); color: white; border-radius: 4px"
+              (click)="addpayhead(item.Payheadmaster.payheadName, item.Payheadmaster.payheadMasterId)">
+              {{ item.Payheadmaster.payheadName }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+    @if (calculation_on == 'FO') {
+      <div class="row">
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('0', '0')">
+          0
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('1', '1')">
+          1
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('2', '2')">
+          2
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('3', '3')">
+          3
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('4', '4')">
+          4
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('5', '5')">
+          5
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('6', '6')">
+          6
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('7', '7')">
+          7
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('8', '8')">
+          8
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('9', '9')">
+          9
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" class="decimal" (click)="addpayhead('.', '.')">
+          .
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('*', '*')">
+          *
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('/', '/')">
+          /
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('+', '+')">
+          +
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('-', '-')">
+          -
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead('(', '(')">
+          (
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="addpayhead(')', ')')">
+          )
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="clearAll()">
+          AC
+        </button>
+        <button style="
+            margin: 1%;
+            padding: 1%;
+            background-color: var(--m-primary);
+            color: white;
+            border-radius: 10px;
+          " type="button" (click)="clearText()">
+          C
+        </button>
+      </div>
+    }
+    <button class="btn btn-primary" [disabled]="isdisebled" type="submit">
+      {{ 'forms.submit' | translate }}
+    </button>
+    <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/masters/hr_field_salary'"
+      style="margin-left: 2%">
+      Cancel
+    </button>
+  </form>
+</div>
+</div>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

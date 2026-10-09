@@ -1,0 +1,198 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Consolidated Report" [showOrderBy]="false" [showSearch]="false" [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)" (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields"
+    (onClear)="clear()" (export)="download('xlsx')" (exportCSV)="download('csv')" (clearData)="clear()">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate"
+          required />
+          <span>From Date *</span>
+          @if (!fromdate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              From Date is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" required />
+          <span>To Date * </span>
+          @if (!todate.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              To Date is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel #reprttype="ngModel" name="reprttype" required>
+            <ng-option value="dailyattendance">Present Absent + Intime Outtime Report</ng-option>
+          </ng-select>
+          <span>Attendance Report Type *</span>
+          @if (!reprttype.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Report Type is required!
+            </div>
+          }
+        </label>
+      </div>
+    </app-common-filter>
+  }
+  @if (attendancedata && attendancedata.length > 0) {
+    <div style="overflow-x: auto">
+      @if (filterData.reprttype == 'dailyattendance') {
+        <table>
+          <thead>
+            <tr>
+              <th class="name-col" style="width: 100%">Employee Code</th>
+              <th class="name-col" style="width: 100%">Employee Name</th>
+              <th class="name-col" style="width: 100%">Number</th>
+              <th class="name-col" style="width: 100%">Branch</th>
+              <th class="name-col" style="width: 100%">Department</th>
+              <th class="name-col" style="width: 100%">Designation</th>
+              @for (data of datesArray; track data) {
+                <th style="width: 100%">
+                  {{ data | date: 'dd-MM-yyyy' }}
+                </th>
+              }
+              <th style="width: 100%">Total Present Days</th>
+              <th style="width: 100%">Total Absent Days</th>
+              <th style="width: 100%">Total Half Days</th>
+              <th style="width: 100%">Total Weekoff / Holiday</th>
+              <th style="width: 100%">Total MissPunch</th>
+              <th style="width: 100%">Total Approved Leaves</th>
+              <th style="width: 100%">Total Pending Leaves</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (maindata of attendancedata; track maindata) {
+              <tr class="student">
+                <td class="name-col">{{ maindata.employeecode }}</td>
+                <td class="name-col">{{ maindata.userName }}</td>
+                <td class="name-col">{{ maindata.userNumber }}</td>
+                <td class="name-col">{{ maindata.attendancedata[0].branch}}</td>
+                <td class="name-col">{{ maindata.attendancedata[0].department}}</td>
+                <td class="name-col">{{ maindata.attendancedata[0].designation }}</td>
+                @for (attdata of maindata.attendancedata; track attdata) {
+                  <td class="attend-col">
+                    @if (attdata.intime == 'Holiday' && attdata.intime != 'Weekoff') {
+                      <div>
+                        @if (attdata.intime != '') {
+                          <span class="missed-col1">
+                            {{ attdata.intime }}
+                          </span>
+                        }
+                      </div>
+                    }
+                    @if (attdata.intime != 'Holiday' && attdata.intime == 'Weekoff') {
+                      <div>
+                        @if (attdata.intime != '') {
+                          <span class="missed-col1">
+                            {{ attdata.intime }}
+                          </span>
+                        }
+                      </div>
+                    }
+                    @if (attdata.intime != 'Holiday' && attdata.intime != 'Weekoff') {
+                      <div>
+                        <span class="missed-col3" [class]="checkColor(attdata)">
+                          {{ attdata.attendancetype }}
+                        </span>
+                        @if (attdata.intime == '') {
+                          <span class="missed-col1" style="width: 23% !important">
+                            {{ attdata.intime }}
+                          </span>
+                        }
+                        @if (attdata.intime == '-') {
+                          <span class="missed-col1" style="width: 23% !important">
+                            {{ attdata.intime }}
+                          </span>
+                        }
+                        @if (attdata.intime != '' && attdata.intime != '-') {
+                          <span class="missed-col1"
+                            style="width: 36% !important">
+                            {{ attdata.intime | date: 'short' }}
+                          </span>
+                        }
+                        @if (attdata.outtime == '-') {
+                          <span class="missed-col" style="width: 23% !important">
+                            {{ attdata.outtime }}
+                          </span>
+                        }
+                        @if (attdata.outtime == 'Not Punched Out') {
+                          <span class="missed-col" style="width: 40% !important">
+                            {{ attdata.outtime }}
+                          </span>
+                        }
+                        @if (attdata.outtime == '') {
+                          <span class="missed-col" style="width: 23% !important">
+                            {{ attdata.outtime }}
+                          </span>
+                        }
+                        @if (
+                          attdata.outtime != '' &&
+                          attdata.outtime != '-' &&
+                          attdata.outtime != 'Not Punched Out'
+                          ) {
+                          <span class="missed-col" style="width: 35% !important">
+                            {{ attdata.outtime | date: 'short' }}
+                          </span>
+                        }
+                        <span class="missed-col2" style="width: 23% !important">
+                          {{ attdata.minutes }}
+                          @if (attdata.minutes != '-') {
+                            <span>Hr</span>
+                          }
+                        </span>
+                      </div>
+                    }
+                  </td>
+                }
+                <td class="present1">{{ maindata.totalpresentday }}</td>
+                <td class="absent1">{{ maindata.totalabsentday }}</td>
+                <td class="halfday1">{{ maindata.totalhalfday }}</td>
+                <td class="weekoff1">{{ maindata.totalweekoffholiday }}</td>
+                <td class="notpunchout1">{{ maindata.totalmisspunch }}</td>
+                <td class="leave1">{{ maindata.totalapprovedleave }}</td>
+                <td class="holiday1">{{ maindata.totalpendingleave }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+      <div class="col-12">
+        <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+          [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit"
+          [maxSize]="5" [(ngModel)]="currentPage" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+        [customPreviousTemplate]="prevTemplate"></pagination>
+      </div>
+    </div>
+  }
+
+  @if (!attendancedata && attendancedata.length == 0) {
+    <div style="text-align: center">
+      <h5>No Data Found</h5>
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>

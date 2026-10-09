@@ -1,0 +1,174 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Quater Tax Challan</h5>
+
+    <form #editform="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="empList"
+              bindLabel="name"
+              groupBy="selectedAllGroup"
+              [selectableGroup]="true"
+              [selectableGroupAsModel]="false"
+              bindValue="userMasterID"
+              [closeOnSelect]="true"
+              [(ngModel)]="selecteddata"
+              ngModel
+              #userid="ngModel"
+              name="userid"
+              >
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                Select All
+              </ng-template>
+            </ng-select>
+            <span>Select User</span>
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #assessmentyear="ngModel"
+              name="assessmentyear"
+              [(ngModel)]="editformdata.AssessmentYear"
+              >
+              @for (assessmentYear of assessmentYear; track assessmentYear) {
+                <ng-option [value]="assessmentYear">
+                  {{ assessmentYear }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Assesment Year *</span>
+            @if (!assessmentyear.valid && editform.submitted) {
+              <div class="invalid-tooltip">
+                Assessment Year is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Select Quater"
+              ngModel
+              #Quarters="ngModel"
+              name="Quarters"
+              [(ngModel)]="editformdata.Quarters"
+              >
+              <ng-option value="Quater 1">Quater 1</ng-option>
+              <ng-option value="Quater 2">Quater 2</ng-option>
+              <ng-option value="Quater 3">Quater 3</ng-option>
+              <ng-option value="Quater 4">Quater 4</ng-option>
+            </ng-select>
+            <span>Quaters *</span>
+            @if (!Quarters.valid && editform.submitted) {
+              <div class="invalid-tooltip">
+                Quarter is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #TDSReceipt="ngModel"
+              name="TDSReceipt"
+              [(ngModel)]="editformdata.TDSReceipt"
+              />
+              <span>TDSReceipt *</span>
+              @if (!TDSReceipt.valid && editform.submitted) {
+                <div class="invalid-tooltip">
+                  TDSReceipt is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="number"
+                required
+                ngModel
+                #EmpAmtCredited="ngModel"
+                name="EmpAmtCredited"
+                [(ngModel)]="editformdata.EmpAmtCredited"
+                />
+                <span>EmpAmtCredited *</span>
+                @if (!EmpAmtCredited.valid && editform.submitted) {
+                  <div class="invalid-tooltip">
+                    EmpAmtCredited is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #EmpAmtTaxDeducted="ngModel"
+                  name="EmpAmtTaxDeducted"
+                  [(ngModel)]="editformdata.EmpAmtTaxDeducted"
+                  />
+                  <span>EmpAmtTaxDeducted *</span>
+                  @if (!EmpAmtTaxDeducted.valid && editform.submitted) {
+                    <div class="invalid-tooltip">
+                      EmpAmtTaxDeducted is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    required
+                    ngModel
+                    #EmpTaxDeposited="ngModel"
+                    name="EmpTaxDeposited"
+                    [(ngModel)]="editformdata.EmpTaxDeposited"
+                    />
+                    <span>EmpTaxDeposited *</span>
+                    @if (!EmpTaxDeposited.valid && editform.submitted) {
+                      <div class="invalid-tooltip">
+                        EmpTaxDeposited is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+
+              <br />
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                <button
+                  class="btn btn-danger btn-shadow mt-4"
+                  [routerLink]="adminRoot + '/form16s/quater_tax_challan'"
+                  style="margin-left: 2%"
+                  >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

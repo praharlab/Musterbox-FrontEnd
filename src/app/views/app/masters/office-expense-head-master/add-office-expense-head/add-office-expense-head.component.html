@@ -1,0 +1,41 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+@if (permissioncreate.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (getCompany)="getCompany($event)"
+    cancelRoute="/masters/officeExpenseHead" heading="Add Office Expense Head">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel required #officeExpenseCategoryID="ngModel" name="officeExpenseCategoryID"
+          [(ngModel)]="filterData.officeExpenseCategoryID">
+          <!-- disabled> -->
+          @for (category of expenseCategories; track category) {
+            <ng-option [value]="category.officeExpenseCategoryID">
+              {{ category.officeExpenseCategory }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Office Expense Category *</span>
+        @if (!officeExpenseCategoryID.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Office Expense Category is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="text" required ngModel #officeExpenseHead="ngModel"
+          name="officeExpenseHead" />
+          <span>Office Expense Head *</span>
+          @if (!officeExpenseHead.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Office Expense Head is required!
+            </div>
+          }
+        </label>
+      </div>
+    </app-common-filter>
+  }

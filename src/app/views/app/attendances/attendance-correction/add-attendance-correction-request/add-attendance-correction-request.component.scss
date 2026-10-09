@@ -1,0 +1,23 @@
+.radio-group {
+  display: flex;
+  align-items: center;
+}
+
+.radio-group .form-check {
+  margin-right: 15px;
+}
+
+.btn_remove {
+  width: 70px;
+  height: 24px;
+  padding: 0;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.ng-select.ng-select-disabled .ng-arrow-wrapper {
+  visibility: hidden;
+}

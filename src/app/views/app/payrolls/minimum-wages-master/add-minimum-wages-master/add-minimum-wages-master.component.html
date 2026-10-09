@@ -1,0 +1,140 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Minimum Wages Master</h5>
+
+    @if (permissioncreate.length) {
+      <form
+        #addminWagesMaster="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                required
+                ngModel
+                #companyMasterID="ngModel"
+                (change)="companydata($event)"
+                name="companyMasterID"
+                [(ngModel)]="company_id"
+                >
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addminWagesMaster.submitted) {
+                <div
+                  class="invalid-tooltip"
+                  >
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #stateName="ngModel"
+                name="stateName"
+                [(ngModel)]="selectedState"
+                (change)="getalldata($event)"
+                required
+                >
+                @for (state of states; track state) {
+                  <ng-option [value]="state.stateMasterID">
+                    {{ state.stateName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select State *</span>
+              @if (!stateName.valid && addminWagesMaster.submitted) {
+                <div class="invalid-tooltip">
+                  State is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                required
+                ngModel
+                #yearmonth="ngModel"
+                name="yearmonth"
+                [(ngModel)]="selectedYearMonth"
+                [attr.min]="rows.length ? previousMonth : null"
+                [attr.max]="rows.length ? futureMonth : null"
+                required
+                />
+                <span>Applicable YYYYMM *</span>
+                @if (!yearmonth.valid && addminWagesMaster.submitted) {
+                  <div class="invalid-tooltip">
+                    Applicable YYYYMM is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" ngModel #skilled="ngModel" name="skilled" />
+                <span>Skilled Amount</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  ngModel
+                  #semiskilled="ngModel"
+                  name="semiskilled"
+                  />
+                  <span>Semi-Skilled Amount</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    ngModel
+                    #unskilled="ngModel"
+                    name="unskilled"
+                    />
+                    <span>Un-Skilled Amount</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <button class="btn btn-primary form-group" type="submit">
+                    {{ 'forms.submit' | translate }}
+                  </button>
+                  &nbsp;&nbsp;
+                  <button
+                    class="btn btn-danger form-group"
+                    type="button"
+                    style="margin-left: 1%"
+                    [routerLink]="adminRoot + '/payrolls/minimumWagesMaster'"
+                    >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+      <simple-notifications
+        [options]="{ position: ['top', 'center'], maxStack: 1 }"
+      ></simple-notifications>

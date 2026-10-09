@@ -1,0 +1,699 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form ER-01"></app-heading>
+    <app-breadcrumb title="Form ER-01"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form
+        #datefilter="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #company="ngModel"
+                name="company"
+                [(ngModel)]="selectedCompany"
+                (change)="selectcompany($event)"
+                required
+                >
+                @for (company1 of company1; track company1) {
+                  <ng-option [value]="company1.companyMasterID">
+                    {{ company1.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #fromdate="ngModel"
+                name="fromdate"
+                (change)="selectFromdate($event)"
+                required
+                >
+                @for (item of Year; track item) {
+                  <ng-option [value]="item">
+                    {{ item }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select year *</span>
+              @if (!fromdate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Year is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                #quarter="ngModel"
+                name="quarter"
+                (change)="selectQuarter($event)"
+                ngModel
+                required
+                >
+                <ng-option value="1">Q1</ng-option>
+                <ng-option value="2">Q2</ng-option>
+                <ng-option value="3">Q3</ng-option>
+                <ng-option value="4">Q4</ng-option>
+              </ng-select>
+              <span>Select Quarter *</span>
+              @if (!quarter.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Quarter is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-5">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            <span> &nbsp;&nbsp; </span>
+            @if (display == true) {
+              <button
+                class="btn btn-success form-group"
+                onclick="window.print()"
+                type="button"
+                >
+                Download As PDF
+              </button>
+            }
+            <!-- <button class="btn btn-info form-group mb-1" type="button" printTitle="form-er-01 Report" *ngIf="rows.length > 0" printSectionId="content" ngxPrint layout="landscape">Save as PDF</button> -->
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+<div id="content">
+  @if (display == true) {
+    <div>
+      <table
+        border="1"
+      style="
+        width: 100%;
+        border-collapse: collapse;
+        height: 100vh;
+        border: 1px solid black;
+        margin-top: 20px;
+      "
+        >
+        <tr>
+          <td
+            colspan="11"
+            style="border: none; text-align: center; font-size: 22px; padding-top: 25px"
+            >
+            <b>FORM-ER-01</b>
+          </td>
+        </tr>
+        &nbsp; &nbsp;
+        <tr>
+          <td
+            colspan="11"
+            style="border: none; text-align: center; font-size: 20px; padding-bottom: 15px"
+            >
+            <b>
+              Quarterly return to be submitted to the Local Employment Exchange for the Quarter
+              <br />
+              ended
+            </b>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" colspan="11" style="padding: 0% 0% 0% 5%; border: none">
+            <p>
+              <b>
+                The following information is required under the Employment Exchange . (Compulsory
+                Notification of Vacancies Act -1959 ) Rules , 1960 to assist in evaluting trends in
+                Employment and for action to correct imbalances between labour supply and demand.
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" colspan="11" style="border: none; padding: 0% 0% 0% 5%">
+            <p class="row" style="padding-left: 1%">
+              <b>
+                <span>Name & Address of the Employer:</span>
+                <span style="font-size: 18px; padding-left: 30px">{{ companyData.companyName }}</span>
+                <br />
+                <span style="font-size: 18px; padding-left: 240px">
+                  {{ companyData.companyAddress }} , {{ companyData['cityMaster.cityName'] }},{{
+                  companyData['cityMaster.stateMaster.stateName']
+                  }}, {{ companyData['cityMaster.stateMaster.countryMaster.countryName'] }}
+                </span>
+              </b>
+            </p>
+            &nbsp; &nbsp;
+            <p><b>(Whether Head Office / Branch Office )</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" colspan="11" style="border: none; padding-left: 5%">
+            <p><b>Telephone No.(with STD code):</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" colspan="11" style="border: none; padding-left: 5%">
+            <p><b>Nature of Business/ Principal Activities:</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="11" class="msNormal" colspan="11" style="border: none; padding-left: 5%">
+            <p>
+              (a)
+              <b>Employment:</b>
+            </p>
+            <p>
+              <b>
+                Total number of persons including working proprietors / Partners / Commision Agent /
+                Contigent paid and contractual workers on the pay rolls of the establishment excluding
+                part - time workers and apprentices .(The figures should be included every person
+                whose wages of salary ispaid by the establishment).
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal">
+            <p>&nbsp;</p>
+          </td>
+          <td colspan="5" class="msNormal">
+            <p>
+              <b>
+                On the last , working day of the previous
+                <br />
+                quarter &nbsp;
+                <span style="font-size: 18px">{{ rows[0].privious_quarter }}</span>
+              </b>
+            </p>
+          </td>
+          <td colspan="5" class="msNormal">
+            <p>
+              <b>
+                On the last , working day of the current
+                <br />
+                quarter &nbsp;
+                <span style="font-size: 18px">{{ rows[0].current_quarter }}</span>
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr style="text-align: center">
+          <td class="msNormal">
+            <p>&nbsp;</p>
+          </td>
+          <td colspan="2" class="msNormal">
+            <p><b>Local</b></p>
+          </td>
+          <td colspan="2" class="msNormal">
+            <p><b>Non-Local</b></p>
+          </td>
+          <td class="msNormal">
+            <p>&nbsp;</p>
+          </td>
+          <td colspan="2" class="msNormal">
+            <p><b>Local</b></p>
+          </td>
+          <td colspan="2" class="msNormal">
+            <p><b>Non-Local</b></p>
+          </td>
+          <td class="msNormal">
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Super - Visior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 70p">
+            <p><b>Non - SuperVisior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Super - Visior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Non - SuperVisior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 10%">
+            <p><b>Total</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Super - Visior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Non - SuperVisior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Super - Visior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Non - SuperVisior</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 10%">
+            <p><b>Total</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Men</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>
+              <b>{{ rows[0].p_localmale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>
+              <b>{{ rows[0].p_nonlocalmale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>
+              <b>{{ rows[0].p_total_male }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].localmale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].nonlocalmale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].total_male }}</b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Women</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].p_localfemale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].p_nonlocalfemale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].p_total_female }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].localfemale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].nonlocalfemale }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].total_female }}</b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p><b>Total</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].p_total_local }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].p_total_nonlocal }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].p_total }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].total_local }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].total_nonlocal }}</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 9%">
+            <p style="font-size: 15px">
+              <b>{{ rows[0].total }}</b>
+            </p>
+          </td>
+        </tr>
+        <br />
+        <br />
+        <tr>
+          <td colspan="11" class="msNormal" style="border: none; padding-left: 5%">
+            <p>
+              <b>
+                (b) Please indicate the main reasons for any increase or decrease in Employment if the
+                increase or
+                <br />
+                decrease is more then 5% during the quarter..........................................
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="11" class="msNormal" style="border: none; padding-left: 5%">
+            <p>
+              <b>
+                NOTE : Establishment are reminded of their obligation under the employment exchange (
+                compulsory
+                <br />
+                Notification of Vacancied Act - 1959 ) for notifying to Employment Exchange details of
+                vacancies
+                <br />
+                specified under the Act, before they are filled.
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr style="height: 50px">
+          <td colspan="5" class="msNormal" style="border: none; padding-left: 5%">
+            <p style="padding-bottom: 40px">
+              <b>(2.) Particulars of Vacancies</b>
+            </p>
+          </td>
+          <td colspan="6" class="msNormal" style="border: none">
+            <p style="padding-bottom: 40px">
+              <b>
+                ( Vancies caring tatal
+                <br />
+                employment of Rs.60 over per month
+                <br />
+                and or over three month duration.)
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr style="height: 50px">
+          <td colspan="11">
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+      </table>
+      <table
+        border="1"
+        style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 20px"
+        >
+        <tr>
+          <td colspan="5" class="msNormal" style="padding-left: 5%; border: none">
+            <p>
+              <b>
+                (a) &nbsp; &nbsp; carrying total emoluments or Rs. 1400 /- or over per month and / or
+                over 3 month
+                <br />
+                duration.
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5" style="text-align: center; font-size: 15px; border: none">
+            <b>Number of Vacancies which come within the preview of the Act</b>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; width: 15%">
+            <p><b>Occurred</b></p>
+          </td>
+          <td colspan="2" class="msNormal" style="text-align: center; width: 30%">
+            <p>
+              <b>Notified</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 15%">
+            <p><b>&nbsp;</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 30%">
+            <p>
+              <b>
+                Source (Describe) the Source from which
+                <br />
+                field
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2" class="msNormal" style="text-align: center">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center">
+            <p><b>Local Emp.</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center">
+            <p>
+              <b>Central Emp.</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center">
+            <p><b>Filled</b></p>
+          </td>
+          <td rowspan="2" class="msNormal" style="text-align: center">
+            <p><b>&nbsp;</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; height: 80px">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; height: 80px">
+            <p>&nbsp;</p>
+          </td>
+          <td class="msNormal" style="text-align: center; height: 80px">
+            <p>&nbsp;</p>
+          </td>
+        </tr>
+        &nbsp;
+        <tr>
+          <td class="msNormal" colspan="5" style="border: none; padding-left: 5%">
+            <p>
+              <b>
+                (b) &nbsp; &nbsp; Reasons for not notifying all vacancies occurred during the quarter
+                under report
+                <br />
+                &nbsp; &nbsp;vide 2(a) above .
+              </b>
+            </p>
+          </td>
+        </tr>
+        &nbsp;
+        <tr>
+          <td class="msNormal" colspan="5" style="padding-left: 5%; border: none">
+            <p>
+              <b>
+                3 &nbsp; &nbsp;
+                <span style="font-size: 17px"><b>Manpower shortage:</b></span>
+                &nbsp; &nbsp; Vacancies / Post unfilled because of shortage of suitable applicants. at
+                the end of the quarter.
+              </b>
+            </p>
+          </td>
+        </tr>
+        &nbsp;
+        <tr>
+          <td rowspan="2" class="msNormal" style="text-align: center">
+            <p><b>Name of the Occupations or Designation of the posts</b></p>
+          </td>
+          <td colspan="4" class="msNormal" style="text-align: center">
+            <p><b>Number of unfilled vacancies posts</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="msNormal" style="text-align: center; width: 25%">
+            <p>
+              <b>Essential qualification Prescribed</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p>
+              <b>Essential Experience</b>
+            </p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p>
+              <b>Experience not necessary</b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p><b>1</b></p>
+          </td>
+          <td colspan="2" class="msNormal" style="text-align: center; width: 25%">
+            <p><b>2</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p><b>3</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p><b>4</b></p>
+          </td>
+        </tr>
+        <tr style="height: 150px">
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p><b>&nbsp;</b></p>
+          </td>
+          <td colspan="2" class="msNormal" style="text-align: center; width: 25%">
+            <p><b>&nbsp;</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p><b>&nbsp;</b></p>
+          </td>
+          <td class="msNormal" style="text-align: center; width: 25%">
+            <p><b>&nbsp;</b></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" colspan="5" style="padding-left: 5%; height: 100px; border: none">
+            <p>
+              <b>
+                Pleasse list any other occupation for which this establishment had recently any
+                difficulty in obtaining
+                <br />
+                suitable applicants.
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="msNormal"
+            colspan="2"
+            style="padding-left: 5%; height: 100px; border-top: none; border-right: none"
+            >
+            <p><b></b></p>
+          </td>
+          <td
+            class="msNormal"
+            colspan="3"
+            style="padding-left: 5%; height: 200px; border-top: none; border-left: none"
+            >
+            <p style="height: 100px; font-size: 18px">
+              <b>
+                <span>From :-</span>
+                <br />
+                <span style="font-size: 18px">{{ companyData.companyName }}</span>
+                <br />
+                <span style="font-size: 18px">
+                  {{ companyData.companyAddress }} , {{ companyData['cityMaster.cityName'] }},{{
+                  companyData['cityMaster.stateMaster.stateName']
+                  }}, {{ companyData['cityMaster.stateMaster.countryMaster.countryName'] }}
+                </span>
+              </b>
+            </p>
+            &nbsp; &nbsp; &nbsp; &nbsp;
+            <p>
+              <b>
+                Signature of Employer
+                <br />
+                With Rubber Stamp
+              </b>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="msNormal" colspan="5" style="padding-left: 5%; border-top: none">
+            <p>
+              <b>
+                &nbsp;NOTE : &nbsp; This return shall relate to quarter ending 31st March,30th June,
+                30th September and 31st December
+                <br />
+                and shall render to the Employment Exchange within 30 Days after the end of the
+                quarter concerned.
+              </b>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  }
+</div>

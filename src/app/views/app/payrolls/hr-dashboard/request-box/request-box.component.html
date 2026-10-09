@@ -1,0 +1,198 @@
+<div class="card mb-12" style="height: 490px !important">
+  <div class="card-header my-2" style="flex-direction: column">
+    <h3 class="card-header text-center my-2">Request Box</h3>
+
+    @if (this.showloader == 'true') {
+      <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+
+    @if (this.showloader == 'false') {
+      <div class="row p-2">
+        <!-- Leave Card -->
+        <div class="col-md-4 mb-2">
+          <div class="card h-100" style="cursor: default; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
+            <div class="card-body text-center">
+              <p class="card-text mb-4" style="font-size: 1.5em">Leave</p>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToLeavedataPage(1)">
+                    Approve
+                  </a>
+                  <span class="badge badge-success">{{ this.rows.pendingLeave }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToLeavedataPage(0)">
+                    Pending
+                  </a>
+                  <span class="badge btn-warning">{{ this.rows.pendingLeave }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToLeavedataPage(2)">
+                    Rejected
+                  </a>
+                  <span class="badge btn-danger">{{ this.rows.pendingLeave }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Advance Card -->
+        <div class="col-md-4 mb-2">
+          <div class="card h-100" style="cursor: default; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
+            <div class="card-body text-center">
+              <p class="card-text mb-4" style="font-size: 1.5em">Advance</p>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyAdvancedataPage(1)">
+                    Approve
+                  </a>
+                  <span class="badge btn-success">{{ this.rows.approvedAdvance }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyAdvancedataPage(0)">
+                    Pending
+                  </a>
+                  <span class="badge btn-warning">{{ this.rows.pendingAdvance }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyAdvancedataPage(2)">
+                    Rejected
+                  </a>
+                  <span class="badge btn-danger">{{ this.rows.rejectedAdvance }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Loan -->
+        <div class="col-md-4 mb-2">
+          <div class="card h-100" style="cursor: default; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
+            <div class="card-body text-center">
+              <p class="card-text mb-4" style="font-size: 1.5em">Loan</p>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyLoandataPage(1)">
+                    Approve
+                  </a>
+                  <span class="badge badge-success">{{ this.rows.approvedLoan }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyLoandataPage(0)">
+                    Pending
+                  </a>
+                  <span class="badge btn-warning">{{ this.rows.pendingLoan }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyLoandataPage(2)">
+                    Rejected
+                  </a>
+                  <span class="badge btn-danger">{{ this.rows.rejectedLoan }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Expense -->
+        <div class="col-md-4 mb-2">
+          <div class="card h-100" style="cursor: default; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
+            <div class="card-body text-center">
+              <p class="card-text mb-4" style="font-size: 1.5em">Expense</p>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyExpensedataPage(1)">
+                    Approve
+                  </a>
+                  <span class="badge badge-success">{{ this.rows.approvedExpense }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyExpensedataPage(0)">
+                    Pending
+                  </a>
+                  <span class="badge badge-warning">{{ this.rows.pendingExpense }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToCompanyExpensedataPage(2)">
+                    Rejected
+                  </a>
+                  <span class="badge badge-danger">{{ this.rows.rejectedExpense }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- OverTime -->
+        <div class="col-md-4 mb-2">
+          <div class="card h-100" style="cursor: default; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
+            <div class="card-body text-center">
+              <p class="card-text mb-4" style="font-size: 1.5em">Over Time</p>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToOvertimedataPage(1)">
+                    Approve
+                  </a>
+                  <span class="badge badge-success">{{ this.rows.approvedOvertime }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToOvertimedataPage(0)">
+                    Pending
+                  </a>
+                  <span class="badge btn-warning">{{ this.rows.pendingOvertime }}</span>
+                </div>
+              </div>
+              <div class="text-left mb-2">
+                <div class="text-left d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none text-primary text-small font-weight-medium"
+                    (click)="navigateToOvertimedataPage(2)">
+                    Rejected
+                  </a>
+                  <span class="badge btn-danger">{{ this.rows.rejectedOvertime }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

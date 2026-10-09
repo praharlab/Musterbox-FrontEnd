@@ -1,0 +1,103 @@
+<div style="position: relative">
+    <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <app-heading title="Verify Review Answer"></app-heading>
+        <app-breadcrumb title="Verify Review Answer"></app-breadcrumb>
+        <div class="separator mb-5"></div>
+    </div>
+</div>
+
+
+
+<div class="row" *ngIf="accordionGroups.length != 0">
+    <div class="col-12">
+        <accordion [isAnimated]="true">
+            <ng-container *ngFor="let group of accordionGroups; let i = index">
+                <accordion-group class="mb-2" [heading]="group.heading" [panelClass]="'border'" [isOpen]="group.isOpen">
+                    <form #groupForm="ngForm" [id]="group.reviewFormQuestionCategorieId">
+
+                        <div class="col-md-12 mb-4" style="padding-left: 25px !important;"
+                            *ngFor="let question of group.formQuestions; let j = index">
+                            <div *ngIf="question.responseType == 'Rating'">
+                                <div class="form-group">
+                                    <label class="text-justify">Q{{ j + 1 }}. {{ question.question }}</label>
+                                    <div class="d-flex align-items-center">
+                                        <rating [max]="5" [titles]='["1 star","2 star","3 star","4 star","5 star"]'
+                                            [(ngModel)]="question.ansrating" [customTemplate]="t" #rating="ngModel"
+                                            ngModel name="rating#{{question.reviewFormQuestionId}}"></rating>
+                                        <ng-template class="rating" #t let-index="index" let-value="value">
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="question.responseType == 'Text'">
+                                <div class="form-group">
+                                    <label class="text-justify">Q{{ j + 1 }}. {{ question.question }}</label>
+                                    <input class="form-control" type="text" placeholder="Please Enter Text" ngModel
+                                        [(ngModel)]="question.anstext" #text="ngModel"
+                                        name="text#{{question.reviewFormQuestionId}}" />
+                                </div>
+                            </div>
+                            <div *ngIf="question.responseType == 'Grade'">
+                                <div class="form-group">
+                                    <label class="text-justify">Q{{ j + 1 }}. {{ question.question }}</label>
+                                    <input class="form-control" type="text" placeholder="Please Enter Grade" ngModel
+                                        [(ngModel)]="question.ansgrade" #grade="ngModel"
+                                        name="grade#{{question.reviewFormQuestionId}}" />
+                                </div>
+                            </div>
+                            <div *ngIf="question.responseType == 'Rating and Text'">
+                                <div class="form-group">
+                                    <label class="text-justify">Q{{ j + 1 }}. {{ question.question }}</label>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <rating [max]="5" [titles]='["1 star","2 star","3 star","4 star","5 star"]'
+                                            [(ngModel)]="question.ansrating" [customTemplate]="t"
+                                            #ratingAndText_RateValue="ngModel" ngModel
+                                            name="ratingAndText_RateValue#{{question.reviewFormQuestionId}}">
+                                        </rating>
+                                        <ng-template class="rating" #t let-index="index" let-value="value">
+                                        </ng-template>
+                                    </div>
+                                    <textarea class="form-control" placeholder="Please Enter Text"
+                                        [(ngModel)]="question.anstext" #ratingAndText_TextValue="ngModel" ngModel
+                                        name="ratingAndText_TextValue#{{question.reviewFormQuestionId}}"></textarea>
+                                </div>
+                            </div>
+
+                            <div *ngIf="question.responseType == 'Grade and Text'">
+                                <div class="form-group">
+                                    <label class="text-justify">Q{{ j + 1 }}. {{ question.question }}</label>
+                                    <input class="form-control mb-2" type="text" placeholder="Please Enter Grade"
+                                        ngModel #gradeAndText_GradeValue="ngModel" [(ngModel)]="question.ansgrade"
+                                        name="gradeAndText_GradeValue#{{question.reviewFormQuestionId}}" />
+                                    <textarea class="form-control " placeholder="Please Enter Text" ngModel
+                                        [(ngModel)]="question.anstext" #gradeAndText_TextValue="ngModel"
+                                        name="gradeAndText_TextValue#{{question.reviewFormQuestionId}}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </accordion-group>
+            </ng-container>
+        </accordion>
+
+
+        <app-state-button class="btn btn-info btn-shadow cursor-pointer mt-4" [currentState]="saveAsDraftState"
+            [isDisabled]="saveAsDraftDisabled" (click)="onSaveAsDraftSubmit()">
+            Save As Draft
+        </app-state-button>
+        <app-state-button class="btn btn-primary btn-shadow cursor-pointer mt-4 ml-3" [currentState]="finalSubmitState"
+            [isDisabled]="finalSubmitDisabled" (click)="onFinalSubmit()">
+            Final Submit
+        </app-state-button>
+        <button class="btn btn-danger  btn-shadow mt-4 ml-3" [routerLink]="adminRoot + '/pms/reviewRequest'">
+            Back
+        </button>
+    </div>
+</div>
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

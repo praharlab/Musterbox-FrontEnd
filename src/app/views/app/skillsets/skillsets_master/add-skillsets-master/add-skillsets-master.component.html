@@ -1,0 +1,78 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Skillset</h5>
+
+    <form #addskillset="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #companyMasterID="ngModel"
+              (change)="companydata($event)"
+              name="companyMasterID"
+              required
+              >
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addskillset.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-group has-float-label">
+            <textarea
+              class="form-control"
+              ngModel
+              #Skillset="ngModel"
+              name="Skillset"
+              required
+            ></textarea>
+            <span>Skillset *</span>
+            @if (!Skillset.valid && addskillset.submitted) {
+              <div class="invalid-tooltip">
+                Skill set is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+
+      <br />
+      <div class="col-md-12">
+        <app-state-button
+          [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+          [currentState]="buttonState"
+          [isDisabled]="buttonDisabled"
+          click="onLoginClick()"
+          >
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button
+          class="btn btn-danger btn-shadow mt-4"
+          [routerLink]="adminRoot + '/skillsets/skillset'"
+          style="margin-left: 2%"
+          >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

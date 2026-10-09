@@ -1,0 +1,354 @@
+<div style="text-align: right; margin-bottom: 2%">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show(); add()">
+    Add New
+  </button>
+</div>
+<div class="row">
+  @for (item of rows1; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <!-- <div class="col-lg-2"></div> -->
+                <!-- <div class="col-lg-7"> -->
+                <p class="list-item-heading mb-1 truncate">
+                  {{ item.organization | uppercase }}
+                </p>
+              <!-- </div> -->
+              <table>
+                <!-- <tr>
+                <td>Organization  <span>  :   </span> </td>
+                <td> {{item.organization}} </td>
+              </tr> -->
+              <tr>
+                <td>
+                  Designation
+                </td>
+                <td>: {{ item.designation }}</td>
+              </tr>
+              <tr>
+                <td>
+                  FromDate
+                </td>
+                <td>: {{ item.fromDate | date: mediumDateFormat }}</td>
+              </tr>
+              <tr>
+                <td>
+                  ToDate
+                </td>
+                <td>: {{ item.toDate | date: mediumDateFormat }}</td>
+              </tr>
+              @if (item.roleRespo.length != 0) {
+                <tr>
+                  <td>
+                    Responsibilities
+                    <span>: &nbsp;</span>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-outline-primary btn-xs"
+                      (click)="setrespo(item.roleRespo); lgModalviewResp.show()"
+                      style="margin-bottom: 5%; margin-top: 5%">
+                      {{ 'View' | translate }}
+                    </button>
+                    {{ ' ' }}
+                  </td>
+                </tr>
+              }
+              @if (item.createBy) {
+                <tr>
+                  <td>
+                    Created by
+                  </td>
+                  <td>: {{ item.createBy }}</td>
+                </tr>
+              }
+              @if (item.verifyBy) {
+                <tr>
+                  <td>
+                    Verified by
+                  </td>
+                  <td>: {{ item.verifyBy }}</td>
+                </tr>
+              }
+              @if (item.rejectionRemarks && item.verifyStatus != '1') {
+                <tr>
+                  <td>Rejection Reason</td>
+                  <td>: {{ item.rejectionRemarks }}</td>
+                </tr>
+              }
+            </table>
+          </a>
+        </div>
+        <div style="margin-top: 14px; width: 25%">
+          @if (item.status == '1') {
+            <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%"
+              >
+              {{ 'Active' | translate }}
+            </button>
+          }
+          {{ ' ' }}
+          @if (item.status == '0') {
+            <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%"
+              >
+              {{ 'Deactive' | translate }}
+            </button>
+          }
+          {{ ' ' }}
+          @if (item.verifyStatus == '0') {
+            <button type="button" class="btn btn-outline-warning btn-xs" style="margin-bottom: 5%"
+              >
+              {{ 'Pending' | translate }}
+            </button>
+          }
+          {{ ' ' }}
+          @if (item.verifyStatus == '1') {
+            <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%"
+              >
+              {{ 'Verified' | translate }}
+            </button>
+          }
+          {{ ' ' }}
+          @if (item.verifyStatus == '2') {
+            <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%"
+              >
+              {{ 'Rejected' | translate }}
+            </button>
+          }
+          {{ ' ' }}
+          @if (item.verifyStatus != '1') {
+            <div class="min-width-zero" style="margin-top: 90%">
+              @if (item.verifyStatus != '1') {
+                <a class="btn btn-xs btn-primary"
+                (click)="lgModalexpedit.show(); editt(item)">EDIT</a>
+              }
+              <br />
+              @if (item.verifyStatus == '0' && !item.rejectionRemarks) {
+                <a class="btn btn-xs btn-danger"
+                  (click)="alertConfirmation(item.userExperienceID)" style="margin-top: 10%">
+                  DELETE
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}
+</div>
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Experience</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal2>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #organization="ngModel" required
+                  name="organization" />
+                  <span>Organization*</span>
+                  @if (!organization.valid && addcomp2.submitted) {
+                    <div class="invalid-tooltip">
+                      Organization is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #designation="ngModel" required
+                    name="designation" />
+                    <span>Designation*</span>
+                    @if (!designation.valid && addcomp2.submitted) {
+                      <div class="invalid-tooltip">
+                        Designation is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate" (change)="selectStartDate($event)"/>
+                    <span>From Date</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="date" [min]="minDate" ngModel #toDate="ngModel" name="toDate"/>
+                    <span>To Date</span>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 20px">
+                  <span class="button" class="btn btn-success" (click)="addvalue()">
+                    ADD Responsibilty
+                  </span>
+                </div>
+                <br />
+                @for (value of values1; track value; let i = $index) {
+                  <div class="col-md-12">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="value.value" #name="ngModel"
+                        required name="value{{ i }}" style="width: 50%" />
+                        @if (i >= 1) {
+                          <span (click)="removevalue(i)" class="btn btn-success btn-xs" style="margin-left: 3%">
+                            Remove
+                          </span>
+                        }
+                        <span>Responsibilty *</span>
+                        @if (!name.valid && addcomp2.submitted) {
+                          <div class="invalid-tooltip">
+                            Organization is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                </div>
+                <button class="btn btn-primary" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div bsModal #lgModalexpedit="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+        aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Edit Employee Experience</h4>
+              <button type="button" class="btn-close close pull-right" (click)="lgModalexpedit.hide()"
+                aria-label="Close" #closeModalexpedit>
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              @if (editUserExperience) {
+                <form #editcomp2="ngForm" novalidate (ngSubmit)="onSubmitexpedit()">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #organization="ngModel"
+                          [(ngModel)]="editUserExperience.organization" name="organization" required />
+                          <span>Organization*</span>
+                          @if (!organization.valid && editcomp2.submitted) {
+                            <div class="invalid-tooltip">
+                              Organization is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #designation="ngModel"
+                            [(ngModel)]="editUserExperience.designation" name="designation" required />
+                            <span>Designation*</span>
+                            @if (!designation.valid && editcomp2.submitted) {
+                              <div class="invalid-tooltip">
+                                Designation is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="date" ngModel #fromDate="ngModel"
+                              [ngModel]="editUserExperience.fromDate | date: 'yyyy-MM-dd'" name="fromDate" />
+                              <span>From Date</span>
+                              @if (!fromDate.valid && editcomp2.submitted) {
+                                <div class="invalid-tooltip">
+                                  From Date is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" ngModel #toDate="ngModel"
+                                [ngModel]="editUserExperience.toDate | date: 'yyyy-MM-dd'" name="toDate" />
+                                <span>To Date</span>
+                                @if (!toDate.valid && editcomp2.submitted) {
+                                  <div class="invalid-tooltip">
+                                    To Date is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12" style="margin-bottom: 20px">
+                              <span class="button" class="btn btn-success" (click)="addvalue()">
+                                ADD Responsibilty
+                              </span>
+                            </div>
+                            <br />
+                            @for (value of values1; track value; let i = $index) {
+                              <div class="col-md-12">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" [(ngModel)]="value.value" #name="ngModel"
+                                    name="value{{ i }}" style="width: 50%" />
+                                    @if (i >= 1) {
+                                      <span (click)="removevalue(i)" class="btn btn-success btn-xs"
+                                        style="margin-left: 1%;margin-top: 1%;">
+                                        Remove
+                                      </span>
+                                    }
+                                    <span>Responsibilty</span>
+                                  </label>
+                                </div>
+                              }
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                              {{ 'forms.submit' | translate }}
+                            </button>
+                          </form>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div bsModal #lgModalviewResp="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title pull-left">Responsibilities</h4>
+                        <button type="button" class="btn-close close pull-right" (click)="lgModalviewResp.hide()"
+                          aria-label="Close" #closeModalexpedit>
+                          <span aria-hidden="true" class="visually-hidden">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="table table-striped">
+                          @for (item of responsibilities; track item) {
+                            <tr>
+                              <td>{{ item }}</td>
+                            </tr>
+                          }
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>

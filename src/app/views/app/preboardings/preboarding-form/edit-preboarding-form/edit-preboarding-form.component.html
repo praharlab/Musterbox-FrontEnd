@@ -1,0 +1,358 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (preboardingMaster) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Preboarding Form</h5>
+      <form #editPreboardingForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          @if (company.length > 0) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                  (change)="selectCompany($event)" name="companyMasterID" [(ngModel)]="company_id" required>
+                  @for (company of company; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!companyMasterID.valid && editPreboardingForm.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #preBoardingFormName="ngModel"
+                [(ngModel)]="preboardingMaster.preboardingMasterName" name="preBoardingFormName" />
+                <span>Form Name *</span>
+                @if (!preBoardingFormName.valid && editPreboardingForm.submitted) {
+                  <div class="invalid-tooltip">
+                    Form Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <h5>Default Fields</h5>
+          <hr />
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="firstName" [readonly]="true" />
+                <span>First Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="middleName" [readonly]="true" />
+                <span>Middle Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="lastName" [readonly]="true" />
+                <span>Last Name</span>
+              </label>
+            </div>
+            <div class="col-md-1">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="countryCode" [readonly]="true" />
+                <span>Country Code</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required name="userNumber" [readonly]="true" />
+                <span>Phone Number</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" required name="dob" [readonly]="true" />
+                <span>DOB</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="email" required ngModel #email="ngModel" name="email" disabled />
+                <span>Email *</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #address="ngModel" name="address" required disabled></textarea>
+                <span>Address *</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" name="branch" [readonly]="true" required></ng-select>
+                <span>Select Branch</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" name="designation" [readonly]="true" required></ng-select>
+                <span>Select Designation</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label>Employee Type *</label>
+              &nbsp;&nbsp;
+              <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="national" id="national"
+                [(ngModel)]="employeeType1" disabled readonly />
+                &nbsp;
+                <label for="html">National</label>
+                &nbsp;&nbsp;
+                <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="expat" id="expat"
+                  [(ngModel)]="employeeType1" disabled readonly />
+                  &nbsp;
+                  <label for="html">Expat</label>
+                  &nbsp;&nbsp;
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #nationality="ngModel" [(ngModel)]="selectedNationality"
+                      name="nationality" disabled readonly>
+                      @for (nation of nationalityList; track nation; let i = $index) {
+                        <ng-option [value]="nation.name">
+                          {{ nation.name }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Nationality</span>
+                  </label>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-10">
+                  <h5>Customizable Fields</h5>
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-info btn-lg btn-shadow mt-4" style="margin-left: 2%; text-align: right" type="button"
+                    (click)="lgModal.show()">
+                    Add Fields
+                  </button>
+                </div>
+              </div>
+              <hr />
+              @for (fields of field; track fields; let i = $index) {
+                <div class="row" style="margin: 1% 0% 1% 0%">
+                  <h3 style="padding-left: 2%; padding-right: 1%">{{ fields.sortingindex }} )</h3>
+                  <div class="col-md-7">
+                    <div class="form-group">
+                      <span>
+                        {{ fields.fieldLabel }}
+                        @if (fields.isRequired == true) {
+                          <span>*</span>
+                        }
+                      </span>
+                      @if (
+                        fields.inputType != titleTypeLabel &&
+                        fields.inputType != textareaLabel &&
+                        fields.inputType != radioTypeLabel &&
+                        fields.inputType != dropDownLabel &&
+                        fields.inputType != signatureLabel &&
+                        fields.inputType != dateTypeLabel &&
+                        fields.inputType != monthTypeLabel
+                        ) {
+                        <input placeholder="{{ fields.mousehovermessage }}" class="form-control"
+                          [type]="getinputType(fields.inputType, i)" ngModel #{{fields.fieldLabel}}="ngModel"
+                          name="{{ fields.fieldLabel }}" [readonly]="true" />
+                        }
+                        @if (fields.inputType == textareaLabel) {
+                          <textarea title="{{ fields.mousehovermessage }}" class="form-control" rows="2" ngModel
+                            #{{fields.fieldLabel}}="ngModel" name="{{ fields.fieldLabel }}" type="text"
+                          [readonly]="true"></textarea>
+                        }
+                        @if (fields.inputType == radioTypeLabel) {
+                          @for (val of fields.value; track val) {
+                            <div class="custom-control custom-radio" class="row" style="margin-left: 1%; margin-bottom: 2%"
+                              >
+                              <label style="margin-right: 30px">
+                                <b>{{ fields.fieldLabel }}</b>
+                              </label>
+                              <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                [value]="val" style="margin-right: 10px" [readonly]="true" />
+                                <label for="value" style="margin-right: 25px">
+                                  {{ val }}
+                                </label>
+                              </div>
+                            }
+                          }
+                          @if (fields.inputType == dropDownLabel) {
+                            <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}">
+                              @for (val of fields.value; track val) {
+                                <ng-option [value]="val">
+                                  {{ val }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                          }
+                          @if (fields.inputType == signatureLabel) {
+                            <div class="container" [readonly]="true"></div>
+                          }
+                          @if (fields.inputType == dateTypeLabel) {
+                            <input class="form-control" type="dateTypeLabel" ngModel #{{fields.fieldLabel}}="ngModel"
+                              [readonly]="true" name="{{ fields.fieldLabel }}" />
+                            }
+                            @if (fields.inputType == monthTypeLabel) {
+                              <input class="form-control" type="month" ngModel #{{fields.fieldLabel}}="ngModel" [readonly]="true"
+                                name="{{ fields.fieldLabel }}" />
+                              }
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <button class="btn btn-danger" (click)="removefields(i)">Remove</button>
+                          </div>
+                        </div>
+                      }
+                      <br />
+                      <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                        [isDisabled]="buttonDisabled" click="onLoginClick()">
+                        {{ 'forms.submit' | translate }}
+                      </app-state-button>
+                      <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/preboardings/preboarding_form'"
+                        style="margin-left: 2%">
+                        Cancel
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              }
+
+              <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                [config]="{backdrop: 'static', keyboard: false}">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title pull-left">Add Customize Field For Preboarding Form</h4>
+                      <button type="button" #closeModal class="btn-close close pull-right" (click)="lgModal.hide()"
+                        aria-label="Close">
+                        <span aria-hidden="true" class="visually-hidden">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form #addpreboardingcustom="ngForm" novalidate (ngSubmit)="onSubmitFields()">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="number" required ngModel [(ngModel)]="addsortingIndex"
+                                #index="ngModel" name="index" />
+                                <span>Index *</span>
+                                @if (!index.valid && addpreboardingcustom.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Index is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" required ngModel #fieldLabel="ngModel" name="fieldLabel" />
+                                <span>Field Label *</span>
+                                @if (!fieldLabel.valid && addpreboardingcustom.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Filed Label is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #inputType="ngModel" name="inputType" required (change)="selectinput($event)">
+                                  @for (item of preboardingFormCustomizeFieldDropDownValues; track item) {
+                                    <ng-option [value]="item.value">
+                                      {{ item.name }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>Select Input Type *</span>
+                                @if (!inputType.valid && addpreboardingcustom.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Input Type is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #isRequired="ngModel" name="isRequired" required>
+                                  <ng-option value="1">Yes</ng-option>
+                                  <ng-option value="0">No</ng-option>
+                                </ng-select>
+                                <span>Field Required *</span>
+                                @if (!isRequired.valid && addpreboardingcustom.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Required selection is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <textarea type="text" class="form-control"
+                                  placeholder="write example message here for your customize field. eg. add your full name here ,like... John william"
+                                  ngModel #egMessage="ngModel" name="egMessage" [(ngModel)]="egDisplayMessage"
+                                maxlength="200"></textarea>
+                                <span>Message</span>
+                              </label>
+                            </div>
+                          </div>
+                          @if (valueshow == true) {
+                            <div class="row">
+                              <div class="col-md-12" style="margin-bottom: 20px">
+                                <span class="button" class="btn btn-success" (click)="addvalue()">
+                                  ADD Value For Dropdown / Radio
+                                </span>
+                              </div>
+                              <br />
+                              @for (value of values; track value; let i = $index) {
+                                <div class="col-md-12">
+                                  <label class="form-group has-float-label">
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <input type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}" required
+                                          class="form-control" />
+                                          @if (!name.valid && addpreboardingcustom.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Value is required!
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="col-md-6">
+                                          @if (i >= 1) {
+                                            <span (click)="removevalue(i)" style="margin-left: 3%">
+                                              Remove
+                                            </span>
+                                          }
+                                        </div>
+                                      </div>
+                                      <span>Value</span>
+                                    </label>
+                                  </div>
+                                }
+                              </div>
+                            }
+
+                            <button class="btn btn-primary" type="submit">
+                              {{ 'forms.submit' | translate }}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

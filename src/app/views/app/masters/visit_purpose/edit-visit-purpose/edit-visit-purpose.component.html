@@ -1,0 +1,71 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (companydata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Visit Purpose</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <textarea
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #visitPurpose="ngModel"
+                name="visitPurpose"
+                [(ngModel)]="companydata.visitPurpose"
+              ></textarea>
+              <span>Visit Purpose *</span>
+              @if (!visitPurpose.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Visit Purpose is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                required
+                #companyMasterID="ngModel"
+                name="companyMasterID"
+                [(ngModel)]="companydata.companyMasterID"
+                >
+                @for (product of product; track product) {
+                  <ng-option [value]="product.companyMasterID">
+                    {{ product.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/masters/visit_purpose'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

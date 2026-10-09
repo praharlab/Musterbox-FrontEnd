@@ -1,0 +1,59 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (true) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Tracking Outage Category Details</h5>
+      <form #trackingCategoryDetails="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #TrackingCategoryId="ngModel"
+                name="TrackingCategoryId" [(ngModel)]="trackingCatDetails.trackingCategoryID" disabled>
+                @for (category of trackingCategories; track category) {
+                  <ng-option [value]="category.trackingCategoryID">
+                    {{ category.categoryName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Tracking Outage Category *</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel [(ngModel)]="trackingCatDetails.title" #title="ngModel" name="title" />
+              <span>Title *</span>
+              @if (!title.valid && trackingCategoryDetails.submitted) {
+                <div class="invalid-tooltip">
+                  Title is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel [(ngModel)]="trackingCatDetails.description" #description="ngModel"
+                name="description" />
+                <span>Description Name *</span>
+                @if (!description.valid && trackingCategoryDetails.submitted) {
+                  <div class="invalid-tooltip">
+                    Description Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+            <button class="btn btn-danger btn-shadow mt-4"
+              [routerLink]="adminRoot + '/superadminmenus/tracking-outage-category'" style="margin-left: 2%">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,158 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/checklists/userCheckList'"
+  style="margin-bottom: 22px">
+  Back
+</button>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Fill CheckList</h5>
+
+    @if (!editData) {
+      <form #addchecklist="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #checklist="ngModel"
+                (change)="getAllChecklist($event);getbyUserAndDate()" name="checklist" required>
+                @for (checkList1 of checklist1; track checkList1) {
+                  <ng-option [value]="checkList1.checkListID">
+                    {{ checkList1.checkListName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select checkList *</span>
+              @if (!checklist.valid && addchecklist.submitted) {
+                <div class="invalid-tooltip">
+                  checkList is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #date="ngModel" [min]="date11" [max]="presentDate"
+                [(ngModel)]="checklistDate" (change)="getbyUserAndDate()" name="date" required />
+                <span>Date *</span>
+                @if (!date.valid && addchecklist.submitted) {
+                  <div class="invalid-tooltip">
+                    Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            @if (allChecklist.length != 0 && addchecklist.value.date) {
+              <div class="col-md-12">
+                <table class="table table-striped">
+                  <tr>
+                    <th>Action</th>
+                    <th>CheckList Name</th>
+                    <th>CheckList Date Time</th>
+                  </tr>
+                  @for (item of allChecklist; track item; let i = $index) {
+                    <tr>
+                      <td>
+                        <label for="yes">
+                          <input type="checkbox" #checklistQuestion="ngModel"
+                            (change)="changeQuestion($event.target.checked, i)" ngModel name="checklistQuestion{{ i }}" />
+                          </label>
+                        </td>
+                        <td>{{ item.checkListQuestion }}</td>
+                      </tr>
+                    }
+                  </table>
+                </div>
+              }
+            </div>
+            <!-- <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button> -->
+        </form>
+      }
+
+      @if (editData) {
+        <form #addchecklist="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #checklist="ngModel"
+                  (change)="getAllChecklist($event);getbyUserAndDate()" [(ngModel)]="editData.checkListID" name="checklist"
+                  required>
+                  @for (checkList1 of checklist1; track checkList1) {
+                    <ng-option [value]="checkList1.checkListID">
+                      {{ checkList1.checkListName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select checkList *</span>
+                @if (!checklist.valid && addchecklist.submitted) {
+                  <div class="invalid-tooltip">
+                    checkList is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #date="ngModel" [(ngModel)]="editData.date"
+                  (change)="getbyUserAndDate()" [min]="date11" [max]="presentDate" name="date" required />
+                  <span>Date *</span>
+                  @if (!date.valid && addchecklist.submitted) {
+                    <div class="invalid-tooltip">
+                      Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              @if (allChecklist.length != 0 && addchecklist.value.date) {
+                <div class="col-md-12">
+                  <table class="table table-striped">
+                    <tr>
+                      <th>Action</th>
+                      <th>CheckList Name</th>
+                      <th>CheckList Date Time</th>
+                    </tr>
+                    @for (item of allChecklist; track item; let i = $index) {
+                      <tr>
+                        <td>
+                          <label for="yes">
+                            <input type="checkbox" #checklistQuestion="ngModel"
+                              (change)="changeQuestion($event.target.checked, i)" [(ngModel)]="item.status" ngModel
+                              name="checklistQuestion{{ i }}" />
+                            </label>
+                          </td>
+                          <td>{{ item.checkListQuestion }}</td>
+                          <td>{{ item.createdAt | date: 'dd-MM-yyyy h:mm a' }}</td>
+                        </tr>
+                      }
+                    </table>
+                  </div>
+                }
+              </div>
+              <!-- <app-state-button
+              [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+              [currentState]="buttonState"
+              [isDisabled]="buttonDisabled"
+              click="onLoginClick()"
+              >
+              {{ 'forms.submit' | translate }}
+            </app-state-button>
+            <button
+              class="btn btn-danger btn-lg btn-shadow mt-4"
+              [routerLink]="adminRoot + '/checklists/userCheckList'"
+              style="margin-left: 2%"
+              >
+              Cancel
+            </button> -->
+          </form>
+        }
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

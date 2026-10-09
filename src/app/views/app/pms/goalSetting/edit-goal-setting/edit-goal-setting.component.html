@@ -1,0 +1,108 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Goal Setting</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" [(ngModel)]="editData.companyMasterId" (change)="company($event)">
+                @for (c of company; track c) {
+                  <ng-option [value]="c.companyMasterID">
+                    {{ c.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #title="ngModel" name="title"
+                [(ngModel)]="editData.title" />
+                <span>Title*</span>
+                @if (!title.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Title is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #description="ngModel" name="description"
+                [(ngModel)]="editData.description"></textarea>
+                <span>Description</span>
+              </label>
+            </div>
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12 my-2">
+                <div class="row">
+                  <div class="col-md-5">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel [name]="'gradeName' + i" required #gradeName="ngModel"
+                        placeholder="Grade Name {{ i + 1 }}" [(ngModel)]="value.grade" />
+                        <span>Grade Name*</span>
+                        @if (!gradeName.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Grade Name is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-5">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel [name]="'gradeRange' + i" required #gradeRange="ngModel"
+                          placeholder="Grade Range (e.g., 10-50)" [(ngModel)]="value.range" />
+                          <span>Grade Range*</span>
+                          @if (!gradeRange.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Grade Range is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-1">
+                        <span class="button btn btn-success" (click)="addGrade()"
+                          style="margin-left: 30%;font-size: medium; margin-top: 3%; color: white;">+
+                        </span>
+                      </div>
+                      <div class="col-md-1">
+                        @if (i >= 1) {
+                          <span class="button btn btn-danger" (click)="removeGrade(i)"
+                            style="margin-left: 3%; font-size: medium; margin-top: 3%; color: white;"
+                          >-</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+                <!-- <div class="col-md-12" style="margin-bottom: 20px">
+                <span class="button" class="btn btn-success"
+                (click)="addGrade()">ADD Grade List</span>
+              </div>
+              -->
+            </div>
+            <app-state-button [btnClass]="'btn btn-primary  btn-shadow mt-2'" [currentState]="buttonState"
+              [isDisabled]="buttonDisabled" click="onLoginClick()">
+              {{ 'forms.submit' | translate }}
+            </app-state-button>
+            <button class="btn btn-danger  btn-shadow mt-2" [routerLink]="adminRoot + '/pms/goalsetting'"
+              style="margin-left: 2%">
+              Cancel
+            </button>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,117 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()" [showadd]="permissioncreate"
+name="Income Tax Slabs"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+
+
+    @if (permissioncreate.length!=0) {
+      <form #filter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #incomeTaxSlabMasterID="ngModel"
+                name="incomeTaxSlabMasterID" [(ngModel)]="selectedIncomeTaxSlabMasterID" required>
+                @for (data of masterData; track data) {
+                  <ng-option [value]="data.incomeTaxSlabMasterID">
+                    {{ data.assessmentYear }}--{{data.gender}}({{data.regime}})
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Income Tax Slab Master *</span>
+              @if (!incomeTaxSlabMasterID.valid && filter.submitted) {
+                <div class="invalid-tooltip">
+                  Income Tax Slab Master is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+            &nbsp;
+            <button class="btn btn-primary" (click)="clear()" type="button">Clear</button>
+            <span> &nbsp; </span>
+            @if (rows.length>0) {
+              <button class="btn btn-primary" type="button"
+              (click)="Export()">Export</button>
+            }
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+@if (rows &&  permissioncreate.length!=0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Assessment Year" prop="assessmentYear" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="Gender" prop="gender" [flexGrow]="1.2" [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="Regime" prop="regime" [flexGrow]="1.2" [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="From Amount" prop="fromAmount" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="To Amount" prop="toAmount" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="Percentage" prop="percentage" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="120">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a (click)="navigateToEditPage(row)">
+              <span [class]="'glyph-icon simple-icon-pencil tool_tip'"
+              style="padding-right: 10px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+            <a (click)="alertConfirmation(row.incomeTaxSlabID)">
+              <span [class]="'glyph-icon simple-icon-trash tool_tip'"
+              style="padding-right: 6px; font-size: 18px"></span>
+              {{
+              '
+              '
+              }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

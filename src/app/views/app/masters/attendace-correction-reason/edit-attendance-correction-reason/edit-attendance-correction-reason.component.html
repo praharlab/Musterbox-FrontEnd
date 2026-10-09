@@ -1,0 +1,56 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Reason</h5>
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (company.length > 0) {
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" [(ngModel)]="editData.companyMasterID" required disabled>
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              <!-- <div *ngIf="!companyMasterID.valid" class="invalid-tooltip">
+              Company is required!
+            </div>  -->
+          </label>
+        </div>
+      }
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <textarea type="text" class="form-control" name="reason" #reason="ngModel" ngModel
+          required  [(ngModel)]="editData.reason"></textarea>
+          <span>Reason *</span>
+          @if (reason.invalid && (reason.dirty || reason.touched)) {
+            <div class="invalid-tooltip">
+              Reason is required!
+            </div>
+          }
+        </label>
+      </div>
+      <!-- <div class="col-md-6">
+      <label class="form-group has-float-label">
+        <input type="text" ngModel #reason="ngModel" class="form-control" name="reason"
+          [(ngModel)]="editData.reason" required>
+          <span>Reason *</span>
+          <div *ngIf="!reason.valid" class="invalid-tooltip">
+            Reason is required!
+          </div>
+        </label>
+      </div> -->
+      <div class="col-md-6">
+        <button class="btn btn-primary form-group" type="submit">
+          {{ 'Submit' | translate }}
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-primary form-group" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </div>
+  </form>
+</div>
+</div>

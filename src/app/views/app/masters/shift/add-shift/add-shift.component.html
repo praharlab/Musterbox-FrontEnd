@@ -1,0 +1,333 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Shift</h5>
+
+    <form #addshift="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+              (change)="getcompanyid($event)" required>
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addshift.submitted) {
+              <div class="invalid-tooltip">
+                Company selection is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #shiftName="ngModel" name="shiftName" />
+            <span>Shift Name *</span>
+            @if (!shiftName.valid && addshift.submitted) {
+              <div class="invalid-tooltip">
+                Shift Name is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #shiftCode="ngModel" name="shiftCode" />
+            <span>Shift Code *</span>
+            @if (!shiftCode.valid && addshift.submitted) {
+              <div class="invalid-tooltip">
+                Shift Code is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <textarea class="form-control" type="text" ngModel #shiftDesc="ngModel" name="shiftDesc"></textarea>
+            <span>Shift Description</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="number" ngModel #graceminutes="ngModel" required value="0" [min]="0"
+              (change)="check1()" name="graceminutes" [(ngModel)]="predefinedgrace" />
+              <span>Grace period for fullday *</span>
+              @if (!graceminutes.valid && addshift.submitted) {
+                <div class="invalid-tooltip">
+                  Grace period for fullday is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-2" style="margin-top: 10px">
+            <span>Minutes</span>
+          </div>
+
+          @if (show123) {
+            <div class="col-md-6">
+              <label>Shift by Branch and Department/Designation *</label>
+              <br />
+              <input type="radio" name="depdes" id="depdes" ngModel #depdes="ngModel" value="1" required
+                [(ngModel)]="predefined1" (change)="byBranch($event.target.value)" />
+                &nbsp;
+                <label for="yes">Yes</label>
+                &nbsp;&nbsp;
+                <input type="radio" name="depdes" id="depdes" ngModel #depdes="ngModel" value="0" required
+                  [(ngModel)]="predefined1" (change)="byBranch($event.target.value)" />
+                  &nbsp;
+                  <label for="no">No</label>
+                  @if (!depdes.valid && addshift.submitted) {
+                    <div class="invalid-tooltip">
+                      Shift by Branch and Department/Designation is required!
+                    </div>
+                  }
+                  <br />
+                  <br />
+                </div>
+              }
+              @if (by_Branch && allbranch && allbranch.length > 0) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #branchID="ngModel" name="branchID" required>
+                      @for (branch of allbranch; track branch) {
+                        <ng-option [value]="branch.branchMasterID">
+                          {{ branch.branchName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Branch *</span>
+                    @if (!branchID.valid && addshift.submitted) {
+                      <div class="invalid-tooltip">
+                        Branch is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (predefined1 == '1') {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #table="ngModel" name="table" required
+                      (change)="gettable($event)">
+                      <ng-option value="departments">Department</ng-option>
+                      <ng-option value="designations">Designation</ng-option>
+                    </ng-select>
+                    <span>Select Department/Designation *</span>
+                    @if (!table.valid && addshift.submitted) {
+                      <div class="invalid-tooltip">
+                        Department/Designation is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (alldepartment && alldepartment.length > 0) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #referenceId="ngModel" name="referenceId" required>
+                      @for (department of alldepartment; track department) {
+                        <ng-option [value]="department.departmentId">
+                          {{ department.departmentName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Department *</span>
+                    @if (!referenceId.valid && addshift.submitted) {
+                      <div class="invalid-tooltip">
+                        Department selection is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (alldesignation && alldesignation.length > 0) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #referenceId="ngModel" name="referenceId" required>
+                      @for (designation of alldesignation; track designation) {
+                        <ng-option [value]="designation.designationId">
+                          {{ designation.designationName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Designation *</span>
+                    @if (!referenceId.valid && addshift.submitted) {
+                      <div class="invalid-tooltip">
+                        Designation selection is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              <hr />
+            </div>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-12" style="margin-left: 2%; margin-bottom: 2%">
+                <input class="form-check-input" type="checkbox" (change)="selectcheck($event)" />
+                <label class="form-check-label" for="inlineCheckbox3">One Time For All Day</label>
+              </div>
+              <br />
+              @for (day of days; track day; let i = $index) {
+                <div class="margindown col-md-4">
+                  @if (selectedall == true) {
+                    <table style="width: 100%">
+                      <tr>
+                        <th colspan="3" style="text-align: center">{{ day }}</th>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <div>
+                            <label class="form-group has-float-label">
+                              @if (i == 0) {
+                                <input class="form-control" [ngxTimepicker]="starttime1" placeholder="Enter Start Time" ngModel
+                                  #{{day}}starttime="ngModel" required name="{{ day }}starttime" />
+                              }
+                              @if (i != 0) {
+                                <input class="form-control" type="text" ngModel #{{day}}starttime="ngModel" [(ngModel)]="starttime"
+                                  name="{{ day }}starttime" disabled />
+                              }
+                              <ngx-material-timepicker #starttime1 (timeSet)="funstarttime($event)"></ngx-material-timepicker>
+                              <span>Start Time *</span>
+                            </label>
+                            <!-- <div *ngIf="!{{ day }}starttime.valid && addshift.submitted" class="invalid-tooltip">Start Time is required!</div> -->
+                            <label class="form-group has-float-label">
+                              @if (i == 0) {
+                                <input class="form-control" type="text" [ngxTimepicker]="firsthalfend1" ngModel
+                                  #{{day}}firsthalfend="ngModel" (keyup)="funfirsthalftime($event)" [ngModel]="firsthalfstarttime"
+                                  required name="{{ day }}firsthalfend" />
+                              }
+                              @if (i != 0) {
+                                <input class="form-control" type="text" required ngModel #{{day}}firsthalfend="ngModel"
+                                  name="{{ day }}firsthalfend" [ngModel]="firsthalfstarttime" disabled />
+                              }
+                              <ngx-material-timepicker #firsthalfend1
+                              (timeSet)="funfirsthalftime($event)"></ngx-material-timepicker>
+                              <span>First half end time *</span>
+                            </label>
+                            <label class="form-group has-float-label">
+                              @if (i == 0) {
+                                <input class="form-control" type="text" [ngxTimepicker]="secondhalfstart1" ngModel
+                                  #{{day}}secondhalfstart="ngModel" (keyup)="funsecondhalftime($event)" required
+                                  [ngModel]="secondhalfstarttime" name="{{ day }}secondhalfstart" />
+                              }
+                              @if (i != 0) {
+                                <input class="form-control" type="text" ngModel #{{day}}secondhalfstart="ngModel"
+                                  name="{{ day }}secondhalfstart" [ngModel]="secondhalfstarttime" disabled />
+                              }
+                              <ngx-material-timepicker #secondhalfstart1
+                              (timeSet)="funsecondhalftime($event)"></ngx-material-timepicker>
+                              <span>Second half start time *</span>
+                            </label>
+                            <label class="form-group has-float-label">
+                              @if (i == 0) {
+                                <input class="form-control" type="text" [ngxTimepicker]="endtime1" ngModel #{{day}}endtime="ngModel"
+                                  (keyup)="funendtime($event)" required [ngModel]="endtime" name="{{ day }}endtime"
+                                  />
+                              }
+                              @if (i != 0) {
+                                <input class="form-control" type="text" ngModel #{{day}}endtime="ngModel" [ngModel]="endtime"
+                                  name="{{ day }}endtime" disabled />
+                              }
+                              <ngx-material-timepicker #endtime1 (timeSet)="funendtime($event)"></ngx-material-timepicker>
+                              <span>End Time *</span>
+                            </label>
+                            <label class="form-group has-float-label">
+                              @if (i == 0) {
+                                <input class="form-control" type="number" ngModel #{{day}}totalhourshalfday="ngModel"
+                                  (keyup)="funtotalhourshalfday($event)" required [ngModel]="totalhourshalfday"
+                                  name="{{ day }}totalhourshalfday" />
+                              }
+                              @if (i != 0) {
+                                <input class="form-control" type="number" ngModel #{{day}}totalhourshalfday="ngModel"
+                                  [ngModel]="totalhourshalfday" name="{{ day }}totalhourshalfday" disabled />
+                              }
+                              <span>Minimum minutes for halfday *</span>
+                            </label>
+                            <label class="form-group has-float-label">
+                              @if (i == 0) {
+                                <input class="form-control" type="number" ngModel #{{day}}totalhours="ngModel"
+                                  (keyup)="funtotalhours($event)" required [ngModel]="totalhours" name="{{ day }}totalhours"
+                                  />
+                              }
+                              @if (i != 0) {
+                                <input class="form-control" type="number" ngModel #{{day}}totalhours="ngModel"
+                                  [ngModel]="totalhours" name="{{ day }}totalhours" disabled />
+                              }
+                              <span>Minimum minutes for fullday *</span>
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  }
+                  @if (selectedall == false) {
+                    <table>
+                      <tr>
+                        <th colspan="3" style="text-align: center">{{ day }}</th>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <div>
+                            <label class="form-group has-float-label">
+                              <input class="form-control" [ngxTimepicker]="starttime2" type="text" required ngModel
+                                #{{day}}starttime="ngModel" name="{{ day }}starttime" />
+                                <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                <span>Start Time *</span>
+                              </label>
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2" required ngModel
+                                  #{{day}}firsthalfend="ngModel" name="{{ day }}firsthalfend" />
+                                  <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                  <span>First half end time *</span>
+                                </label>
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" [ngxTimepicker]="secondhalfstarttime2" required ngModel
+                                    #{{day}}secondhalfstart="ngModel" name="{{ day }}secondhalfstart" />
+                                    <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                    <span>Second half start time *</span>
+                                  </label>
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="text" [ngxTimepicker]="endtime2" required ngModel
+                                      #{{day}}endtime="ngModel" name="{{ day }}endtime" />
+                                      <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                      <span>End Time *</span>
+                                    </label>
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" required ngModel #{{day}}totalhourshalfday="ngModel"
+                                        name="{{ day }}totalhourshalfday" />
+                                        <span>Minimum minutes for halfday *</span>
+                                      </label>
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="text" required ngModel #{{day}}totalhours="ngModel"
+                                          name="{{ day }}totalhours" />
+                                          <span>Minimum minutes for fullday *</span>
+                                        </label>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              }
+                            </div>
+                          }
+                        </div>
+                        <div class="col-md-12">
+                          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                          <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/shift'"
+                            style="margin-left: 2%">
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

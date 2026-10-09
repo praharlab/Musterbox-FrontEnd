@@ -1,0 +1,172 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero w-100">
+              <a href="javascript:;">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    @if (item.attendanceBonusPolicyId) {
+                      <p class="list-item-heading mb-1 truncate">
+                        <a tooltip="Please click here to view Week Off Policy details" class="glyph-icon tool_tip"
+                          style="cursor: pointer"
+                          (click)="getAttendanceBonusDataModal(item); attendancebonuspolicyModel.show()">
+                          {{ item.attendanceBonusPolicy.attendanceBonusPolicyName | uppercase }}
+                        </a>
+                      </p>
+                    }
+                  </div>
+                </div>
+                @if (item.attendanceBonusPolicy.createdByUserDetails != null) {
+                  <div class="d-flex mt-2" style="margin-top: 5%"
+                    >
+                    <p class="text-muted mb-0 text-small">
+                      <strong>Policy Created</strong> by {{ item.attendanceBonusPolicy.createdByUserDetails.displayName }},
+                      at {{
+                      item.attendanceBonusPolicy.createdAt
+                      | date: 'dd-MM-yyyy hh:mm a' }}
+                    </p>
+                  </div>
+                }
+                @if (item.attendanceBonusPolicy.updatedByUserDetails != null) {
+                  <div class="d-flex mt-1" style="margin-top: 1px"
+                    >
+                    <p class="text-muted mb-0 text-small">
+                      <strong>Policy Updated</strong> by {{ item.attendanceBonusPolicy.updatedByUserDetails.displayName }},
+                      at {{
+                      item.attendanceBonusPolicy.updatedAt
+                      | date: 'dd-MM-yyyy hh:mm a' }}
+                    </p>
+                  </div>
+                }
+                <hr>
+                  <p class="text-muted mb-0 text-small">
+                    Start Date : {{ item.startDate | date: 'dd-MM-yyyy' }}
+                  </p>
+                  @if (item.endDate != null) {
+                    <p class="text-muted mb-0 text-small">
+                      End Date : {{ item.endDate | date: 'dd-MM-yyyy' }}
+                    </p>
+                  }
+                  <div style="margin-top: 2%;">
+                    <p class="text-muted mb-0 text-small">
+                      <strong>Assigned</strong> by {{ item.createdByUserDetails.displayName}}, at {{
+                      item.createdAt
+                      | date: 'dd-MM-yyyy hh:mm a' }}
+                    </p>
+                  </div>
+                  <div class="min-width-zero">
+                    <a href="javascript:;">
+                      @if (item.attendancebonuspolicystatus == 'active') {
+                        <button type="button" class="btn btn-success"
+                          style="margin-top: 10%">
+                          {{ 'Active' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (item.attendancebonuspolicystatus == 'deactive') {
+                        <button type="button" class="btn btn-danger"
+                          style="margin-top: 10%">
+                          {{ 'Deactive' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </a>
+                  </div>
+                </a>
+              </div>
+              <div style="margin-top: 14px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add Modal -->
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Employee Attendance Bonus Policy</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #attendanceBonusPolicyId="ngModel"
+                    name="attendanceBonusPolicyId" required>
+                    @for (item of allweekoff; track item) {
+                      <ng-option [value]="item.attendanceBonusPolicyId">
+                        {{ item.attendanceBonusPolicyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Attendance Bonus Policy *</span>
+                </label>
+                @if (!attendanceBonusPolicyId.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Attendance Bonus Policy is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel required #startDate="ngModel" name="startDate">
+                    <ng-option value="0">Past Month</ng-option>
+                    <ng-option value="1">Current Month</ng-option>
+                    <ng-option value="2">Upcoming Month</ng-option>
+                  </ng-select>
+                  <span>Applicable from *</span>
+                </label>
+                @if (!startDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Applicable Date is required!
+                  </div>
+                }
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div bsModal #attendancebonuspolicyModel="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">
+            {{ attendanceBonusPolicyName | uppercase }} - Attendance Bonus Details
+          </h4>
+          <button type="button" class="btn-close close pull-right" (click)="attendancebonuspolicyModel.hide()"
+            aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-view-attendance-bonus-policy
+          [attendanceBonusPolicyID]="attendanceBonusPolicyID"></app-view-attendance-bonus-policy>
+
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,128 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+@if (editData && showForm) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="companyLogo text-center mb-4">
+        @if (imgShow) {
+          <div>
+            <img class="img-responsive mb-2" width="150px" height="50px" style="object-fit: contain;"
+              src="{{ apiURL }}uploads/company/logo/{{ editData?.companyMaster?.companyLogo }}" />
+            </div>
+          }
+          <h3>{{editData?.companyMaster?.companyName}}</h3>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            @if (editData) {
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <tbody>
+                    <tr>
+                      <th>Branch</th>
+                      <td>
+                        {{editData.branchMaster.branchName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Department</th>
+                      <td>
+                        {{editData.department.departmentName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Designation</th>
+                      <td>
+                        {{editData.designation.designationName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Job Title</th>
+                      <td>
+                        {{editData.jobTitle}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Job Role Type</th>
+                      <td>
+                        {{editData.jobRoleClassification?.jobRoleClassificationName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Employment Type</th>
+                      <td>
+                        {{editData.employmentType}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Job Location</th>
+                      <td>
+                        {{editData.jobLocation}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Job Requirements</th>
+                      <td>
+                        {{editData.requirements}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Last Applicable Date</th>
+                      <td>
+                        {{editData.lastApplicableDate | date : 'dd-MM-yyyy'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Min Salary</th>
+                      <td>
+                        {{editData.minSalary}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Max Salary</th>
+                      <td>
+                        {{editData.maxSalary}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>No. of Position</th>
+                      <td>
+                        {{editData.noOfPosition}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Job Posting Date</th>
+                      <td>
+                        {{editData.createdAt | date : 'dd-MM-yyyy'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Job Description</th>
+                      <td>
+                        <div [innerHTML]="editData.jobDescription"></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br />
+              </div>
+            }
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <a href="{{appURL}}{{ editData.secretKey }}">
+              <button class="btn btn-primary btn-shadow" style="display: flex; justify-content: end"
+                style="margin-bottom: 22px">
+                Apply Now
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

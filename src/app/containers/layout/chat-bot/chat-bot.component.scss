@@ -1,0 +1,325 @@
+/* Chat assistant - floating widget, bottom-right.
+   Everything here is component-scoped, which outranks the stock .theme-colors2 /
+   .theme-button2 rules in _vien.style.scss without needing !important, because
+   all three elements live in this component's own template.
+
+   The stock behaviour translated the whole wrapper 400px off-screen and hung a
+   wide text tab off its left edge. That coupled the launcher to the panel and
+   left the tab straddling the viewport edge. Here the wrapper is just a fixed
+   anchor: the card fades in place and the launcher stays put. */
+
+.theme-colors2,
+.theme-colors2.shown,
+.theme-colors2.hidden {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  top: auto;
+  left: auto;
+  z-index: 1040;
+  width: auto !important;
+  max-width: none;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+  transition: none;
+  /* The closed card still occupies its box inside this fixed wrapper, so the
+     wrapper must let clicks through; only the launcher and the open card take
+     pointer events. Without this the invisible box blocked buttons and icons in
+     the bottom-right of every page. */
+  pointer-events: none;
+}
+
+/* ---------- the card ---------- */
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: calc(100vw - 40px);
+  height: 460px;
+  max-height: calc(100vh - 150px);
+  padding: 0;
+  overflow: hidden;
+  background: var(--m-surface);
+  border: 1px solid var(--m-border-subtle);
+  border-radius: var(--m-radius-xl);
+  box-shadow: var(--m-shadow-lg);
+  color: var(--m-text);
+  font-size: 0.84rem;
+
+  /* closed by default; `shown` on the wrapper reveals it */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.98);
+  transform-origin: bottom right;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.theme-colors2.shown .chat-container {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.chat-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--m-gradient);
+  color: #fff;
+}
+
+.chat-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.chat-title i {
+  font-size: 15px;
+}
+
+.chat-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  transition: background 0.16s ease;
+}
+
+.chat-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- history ---------- */
+
+.chat-history {
+  /* was height: calc(100vh - 60px), which made the panel as tall as the whole
+     viewport. It now flexes inside the fixed-height card. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: 14px;
+  background: var(--m-canvas);
+}
+
+.chat-history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-history::-webkit-scrollbar-thumb {
+  background-color: var(--m-border);
+  border-radius: 999px;
+}
+
+.chat-message {
+  padding: 8px 11px;
+  cursor: pointer;
+  font-size: 0.81rem;
+  line-height: 1.5;
+  max-width: 85%;
+  width: fit-content;
+  word-break: break-word;
+}
+
+.user-message {
+  margin: 8px 0 8px auto;
+  color: #fff;
+  background: var(--m-gradient);
+  border-radius: 12px 12px 3px 12px;
+  box-shadow: var(--m-shadow-xs);
+}
+
+.bot-message {
+  margin: 8px auto 8px 0;
+  color: var(--m-text);
+  background: var(--m-surface);
+  border: 1px solid var(--m-border-subtle);
+  border-radius: 3px 12px 12px 12px;
+  box-shadow: var(--m-shadow-xs);
+}
+
+/* ---------- composer ---------- */
+
+form {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px;
+  border-top: 1px solid var(--m-border-subtle);
+  background: var(--m-surface);
+}
+
+input[type='text'] {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+  padding: 8px 11px;
+  font-size: 0.81rem;
+  color: var(--m-text);
+  background: var(--m-surface);
+  border: 1px solid var(--m-border);
+  border-radius: var(--m-radius);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+input[type='text']::placeholder {
+  color: var(--m-text-subtle);
+}
+
+input[type='text']:focus {
+  outline: none;
+  border-color: var(--m-primary);
+  box-shadow: 0 0 0 3px var(--m-primary-ring);
+}
+
+button[type='submit'],
+button[type='button'] {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  background: var(--m-gradient);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.18s ease, transform 0.12s ease;
+
+  .font {
+    font-size: 15px;
+  }
+
+  .font2 {
+    font-size: 16px;
+  }
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+button[type='button'] {
+  background: var(--m-surface-sunken);
+  color: var(--m-text-muted);
+}
+
+button[type='button']:hover {
+  background: var(--m-border);
+  color: var(--m-text);
+}
+
+/* ---------- launcher ---------- */
+
+a.theme-button2 {
+  pointer-events: auto;
+  position: static;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--m-gradient);
+  color: #fff;
+  font-size: 21px;
+  font-weight: 400;
+  box-shadow: var(--m-shadow-brand);
+  transform: none;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+a.theme-button2:hover {
+  transform: scale(1.06);
+}
+
+a.theme-button2 .icon {
+  margin: 0;
+  line-height: 1;
+}
+
+/* the long label is a hover tooltip, not a permanent block of text */
+a.theme-button2 .icon-font-size {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.92);
+  padding: 5px 9px;
+  border-radius: var(--m-radius-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+a.theme-button2:hover .icon-font-size {
+  opacity: 1;
+}
+
+/* with the card open the header's X is the close affordance */
+.theme-colors2.shown a.theme-button2 {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 575px) {
+  .theme-colors2,
+  .theme-colors2.shown,
+  .theme-colors2.hidden {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .chat-container {
+    width: calc(100vw - 28px);
+    height: 60vh;
+  }
+
+  a.theme-button2 {
+    width: 48px;
+    height: 48px;
+    font-size: 19px;
+  }
+}

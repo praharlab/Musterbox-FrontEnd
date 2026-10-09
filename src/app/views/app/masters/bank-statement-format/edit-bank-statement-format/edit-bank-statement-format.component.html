@@ -1,0 +1,62 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="mb-5">Edit Bank Statement Format</h4>
+    <form #editForm="ngForm">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel required #company="ngModel" name="company"
+              [(ngModel)]="filterData.companyMasterID" disabled>
+              @for (format of bankStatementFormat; track format) {
+                <ng-option [value]="$safeNavigationMigration(format?.companyMasterID)">
+                  {{ format?.companyMaster?.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel" name="bankMasterID"
+              required [(ngModel)]="filterData.bankMasterID" disabled>
+              @for (format of bankStatementFormat; track format) {
+                <ng-option [value]="$safeNavigationMigration(format?.bankMasterID)">
+                  {{ format?.bankMaster?.bankName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Bank*</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="selectedFieldsList" [multiple]="true" groupBy="selectedAllGroup"
+              [selectableGroup]="true" [selectableGroupAsModel]="false" [closeOnSelect]="false" ngModel
+            #fields="ngModel" [(ngModel)]="selectedFields" name="fields"></ng-select>
+            <span>Select Fields *</span>
+            @if (!fields.valid && editForm?.submitted) {
+              <div class="invalid-tooltip">
+                Fields is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="d-flex gap-10">
+          <button class="btn btn-primary form-group ml-3" type="submit" (click)="onSubmit()">
+            Submit
+          </button>
+          <button class="btn btn-danger form-group" type="button" (click)="cancel()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

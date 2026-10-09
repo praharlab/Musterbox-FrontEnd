@@ -1,0 +1,107 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5>Attendance Calculation</h5>
+    <form #addattendance="ngForm" novalidate (ngSubmit)="alertConfirmation()">
+      <div class="col-md-12 row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" name="companyName" [(ngModel)]="companyName" disabled />
+            <span>Select Company *</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <!-- <ng-select placeholder="Choose your option" ngModel #AttnYearMon="ngModel"  name="AttnYearMon" (change)="getLeavetype()">
+            <ng-option  *ngFor="let data of yearMonth" [value]="data.fin">{{data.fin}}</ng-option>
+          </ng-select>   -->
+          <input
+            class="form-control"
+            type="month"
+            required
+            ngModel
+            #AttnYearMon="ngModel"
+            name="AttnYearMon"
+            [(ngModel)]="yearMonth"
+            disabled
+            />
+            <span>Attendance Year Month *</span>
+            <!-- <div *ngIf="!ctc.valid && addattendance.submitted" class="invalid-tooltip">CTC is required!</div> -->
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" name="userName" [(ngModel)]="userName" disabled />
+            <span>Select Employee</span>
+          </label>
+        </div>
+
+        @if (leavetypedata && leavetypedata.length != 0) {
+          <div class="col-md-6">
+            <table border="1" width="100%">
+              <tr style="background-color: lightblue; text-align: center">
+                <th>Name</th>
+                <th>MonthDays</th>
+                <th>Working Days</th>
+                <th>Attendance Value</th>
+              </tr>
+              @for (data of leavetypedata; track data; let i = $index) {
+                <tr style="text-align: center">
+                  <td>{{ data.leaveName }}</td>
+                  <td>{{ data.MonDays }}</td>
+                  <td>{{ data.MonWorkDays }}</td>
+                  <td>
+                    <span>
+                      <!-- <input *ngIf="data.Allow_field_entry == 'Y'" class="form-control" type="number" class="no-spinner" [(ngModel)]="data.AttnVal" [name]="'namee'+i" (keyup)="changeAttnVal()"/> -->
+                      @if (data.Allow_field_entry == 'Y') {
+                        <input
+                          class="form-control"
+                          type="number"
+                          [(ngModel)]="data.AttnVal"
+                          [name]="'namee' + i"
+                          (keyup)="changeAttnVal()"
+                          />
+                      }
+                    </span>
+                    <span>
+                      @if (data.Allow_field_entry == 'N') {
+                        <input
+                          class="form-control"
+                          type="number"
+                          [(ngModel)]="data.AttnVal"
+                          [name]="'namee' + i"
+                          readonly
+                          />
+                      }
+                    </span>
+                  </td>
+                </tr>
+              }
+            </table>
+          </div>
+        }
+        <hr width="100%" />
+        <div class="col-md-12">
+          <button class="btn btn-primary float-right" [disabled]="isdisebled" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+          <button
+            class="btn btn-danger float-right"
+            [routerLink]="adminRoot + '/payrolls/attendancecal'"
+            style="margin-right: 5px"
+            >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

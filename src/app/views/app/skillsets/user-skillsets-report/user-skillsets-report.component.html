@@ -1,0 +1,59 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="User Skillsets Report" [showOrderBy]="false" [showSearch]="false" [showItemsPerPage]="false"
+[showDisplayMode]="false"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onClear)="clear()"
+    (export)="download($event)" (clearData)="clear()">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" ngModel #fromyearmonth="ngModel" name="fromyearmonth"
+          (change)="selectToYearMonth($event)" required />
+          <span>From Yearmonth*</span>
+          @if (!fromyearmonth.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              From yearmonth is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-4">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="month" ngModel #toyearmonth="ngModel" name="toyearmonth"
+            min="{{ maxYearMonth }}" required />
+            <span>To YearMonth*</span>
+            @if (!toyearmonth.valid && commonFilter?.filterForm?.submitted) {
+              <div class="invalid-tooltip">
+                To yearmonth is required!
+              </div>
+            }
+          </label>
+        </div>
+      </app-common-filter>
+    }
+
+    <div class="row">
+      @if (notAssignedFormYearMonth && notAssignedFormYearMonth.length > 0) {
+        <div class="col-xl-12 col-lg-12 my-4">
+          <div class="card" style="height: 100%">
+            <div class="card-body d-flex justify-content-between align-items-start" style="flex-direction: column">
+              <h4>Form is Not Assigned Below Month.</h4>
+              <div style="height: 100%">
+                <p style="margin-bottom: 0px">
+                  @for (item of notAssignedFormYearMonth; track item) {
+                    <span
+                      class="badge badge-pill badge-outline-theme-2 mb-1 mr-2 ml-1">
+                      {{ item }}
+                    </span>
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

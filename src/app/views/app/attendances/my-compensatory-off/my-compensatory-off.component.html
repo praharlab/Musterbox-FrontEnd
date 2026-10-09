@@ -1,0 +1,278 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false" [itemsPerPage]="body.limit"
+  (itemsPerPageChange)="onpageSizeChange($event)" [itemOptionsPerPage]="itemOptionsPerPage"
+name="My Compensatory Off"></app-list-page-header>
+<br />
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select ngModel #authorizationStatus="ngModel" name="authorizationStatus">
+                <ng-option value="Pending">PENDING</ng-option>
+                <ng-option value="Approved">APPROVED</ng-option>
+                <ng-option value="Reject">REJECT</ng-option>
+              </ng-select>
+              <span>Authorization Status</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate"
+                (change)="onselectStartDate($event)" />
+                <span>From Date</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" />
+                <span>To Date</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary form-group" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+  @if (rows && rows.length > 0 && permissionview.length > 0) {
+    <div>
+      @if (rows) {
+        <div class="row">
+          <div class="col-12 data-table-rows">
+            <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+              [limit]="body.pageSize" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+              (page)="onChange($event)">
+              <ngx-datatable-column name="Status" prop="authorizationStatus" [flexGrow]="1.2" [width]="100">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (
+                    (row.authorizationStatus == '0' ||
+                    row.authorizationStatus == '1' ||
+                    row.authorizationStatus == '2')
+                    ) {
+                    <button type="button" class="btn btn-outline-warning btn-xs">
+                      Pending
+                    </button>
+                  }
+                  {{ ' ' }}
+                  @if ( row.authorizationStatus == '3') {
+                    <button type="button" class="btn btn-outline-success btn-xs">
+                      Approved
+                    </button>
+                  }
+                  {{ ' ' }}
+                  @if ( row.authorizationStatus == '4') {
+                    <button type="button" class="btn btn-outline-danger btn-xs">
+                      Rejected
+                    </button>
+                  }
+                  {{ ' ' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <button type="button" class="btn btn-primary" (click)="lgModal.show(); showdata(row)">
+                    {{ 'Show Data' | translate }}
+                  </button>
+                  {{ ' ' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="User Name" prop="userMaster.displayName" [flexGrow]="1.2"
+              [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="User Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+              [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Coff Created Date" prop="LeaveCreatedDate" [flexGrow]="1.2" [width]="100">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.LeaveCreatedDate != null) {
+                    <div>
+                      {{ row.LeaveCreatedDate | date : 'dd-MM-yyyy' }}
+                    </div>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="In Time" [flexGrow]="1.2" [width]="150">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.userMaster.attendanceTransactions && row.userMaster.attendanceTransactions.length > 0) {
+                    <div>{{
+                    row.userMaster.attendanceTransactions[0].InDatetime | date : 'dd-MM-yyyy HH:mm a' }}</div>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Out Time" [flexGrow]="1.2" [width]="150">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.userMaster.attendanceTransactions && row.userMaster.attendanceTransactions.length > 0) {
+                    <div>{{
+                    row.userMaster.attendanceTransactions[0].OutDateTime | date : 'dd-MM-yyyy HH:mm a' }}</div>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Balance" prop="LeaveAddNew" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+              <ngx-datatable-column name="Created By" prop="createdby" [flexGrow]="1.2" [width]="100">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.createdByUser) {
+                    <div>{{ row.createdByUser.displayName }}</div>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+              @if (true) {
+                <ngx-datatable-footer>
+                  <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                    let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                    <div class="w-100 d-flex justify-content-center">
+                      <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                        [customLastTemplate]="lastTemplate" [itemsPerPage]="body.pageSize" [maxSize]="5"
+                        (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                      [customPreviousTemplate]="prevTemplate"></pagination>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-footer>
+              }
+            </ngx-datatable>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Show Data</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+            @if (referencedata) {
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <th>Date</th>
+                    <td>{{ referencedata?.LeaveCreatedDate }}</td>
+                  </tr>
+                  <tr>
+                    <th>Created By</th>
+                    <td>{{ referencedata?.createdByUser }}</td>
+                  </tr>
+                  <tr>
+                    <th>Authorization Status</th>
+                    <td>
+                      @if (referencedata.authorizationStatus == 3) {
+                        <button class="btn btn-outline-success btn-xs">
+                          Approved
+                        </button>
+                      }
+                      @if (referencedata.authorizationStatus == 4) {
+                        <button class="btn btn-outline-danger btn-xs">
+                          Rejected
+                        </button>
+                      }
+                      @if (
+                        referencedata.authorizationStatus == 0 ||
+                        referencedata.authorizationStatus == 1 ||
+                        referencedata.authorizationStatus == 2
+                        ) {
+                        <button class="btn btn-outline-warning btn-xs">
+                          Pending
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Person Name</th>
+                    <td>{{ referencedata?.displayName }}</td>
+                  </tr>
+                  <tr>
+                    <th>Authorization Criteria</th>
+                    <td>{{ referencedata?.AuthorizationCriteria }}</td>
+                  </tr>
+                  <tr>
+                    <th>Requested Compensatory Off</th>
+                    <td>{{ referencedata?.LeaveAddNew }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            }
+
+            <!-- Add this table for authUserStatus -->
+            @if (referencedata?.authUserStatus?.length) {
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Display Name</th>
+                    <th>Status</th>
+                    <th>Updated At</th>
+                    <th>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (user of referencedata.authUserStatus; track user) {
+                    <tr>
+                      <td>{{ user.displayName }}</td>
+                      <td>
+                        @if (user.authstatus == 1) {
+                          <button class="btn btn-outline-success btn-xs">
+                            Approved
+                          </button>
+                        }
+                        @if (user.authstatus == 0) {
+                          <button class="btn btn-outline-danger btn-xs">
+                            Rejected
+                          </button>
+                        }
+                        @if (user.authstatus == 2) {
+                          <button class="btn btn-outline-warning btn-xs">
+                            Pending
+                          </button>
+                        }
+                      </td>
+                      <td>
+                        @if (user.authstatus != 2) {
+                          <p class="mb0">Updated At :</p>
+                        }
+                        @if (user.authstatus != 2) {
+                          <p class="mb0">{{user.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</p>
+                        }
+                      </td>
+                      <td>{{ user.remarks }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

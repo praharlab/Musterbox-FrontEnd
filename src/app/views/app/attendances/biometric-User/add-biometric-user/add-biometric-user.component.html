@@ -1,0 +1,110 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Biometric User </h5>
+
+    <form #adddata="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel [(ngModel)]="selectedDevice.biometricSerialNo" #biometricSerialNo="ngModel" name="biometricSerialNo">
+              @for (device of biometricList; track device) {
+                <ng-option [value]="device.serialno">
+                  {{ device.serialno }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Biometric Device</span>
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #enrollid="ngModel" [(ngModel)]="selectedUser.enrollid" required name="enrollid" />
+            <span>Biometric Code *</span>
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #short="ngModel" [(ngModel)]="selectedUser.firstName" required name="short" />
+            <span>First Name *</span>
+            @if (!short.valid && adddata.submitted) {
+              <div class="invalid-tooltip">
+                First Name is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel [(ngModel)]="selectedUser.lastName" #cpn="ngModel" name="cpn" />
+            <span>Last Name</span>
+
+          </label>
+        </div>
+
+
+        <div class="col-md-6">
+          <label>Admin *</label>
+          &nbsp;&nbsp;
+          <input type="radio" id="yes" name="isAdmin" ngModel #isAdmin="ngModel" [(ngModel)]="values" value="1" required />
+          &nbsp;
+          <label for="yes">Yes</label>
+          &nbsp;&nbsp;
+          <input type="radio" id="no" name="isAdmin" ngModel #isAdmin="ngModel" [(ngModel)]="values" value="0" required />
+          &nbsp;
+          <label for="no">No</label>
+          <span> &nbsp;&nbsp; </span>
+
+          @if (!isAdmin.valid && adddata.submitted) {
+            <div class="invalid-tooltip">
+              Admin is required!
+            </div>
+          }
+        </div>
+
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input type="file" class="form-control" ngModel id="faceImage" #face="ngModel" [required]="selectedUser.photo == ''" name="face"
+              accept=".png, .jpeg, .jpg" (change)="onFileChange($event)" />
+              <span>Image *</span>
+              @if (selectedUser.photo != '') {
+                <div>
+                  {{selectedUser.photo}}
+                </div>
+              }
+              @if (!face.valid && adddata.submitted) {
+                <div class="invalid-tooltip">
+                  Image is required!
+                </div>
+              }
+              <div class="text-danger mt-1">
+                The image size must not exceed 70kb.
+              </div>
+            </label>
+          </div>
+
+          <div class="col-md-6">
+            <img [src]="image ? image : apiURL + 'uploads/user/photo/' + selectedUser.photo" alt="Biometric Image" style="max-width: 150px"/>
+          </div>
+
+        </div>
+        <app-state-button [btnClass]="'btn btn-primary mt-4'" [currentState]="buttonState" [isDisabled]="buttonDisabled"
+          click="onLoginClick()">
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/edit_employee'"
+          style="margin-left: 2%">
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,118 @@
+<!-- Drawer styling lives in assets/css/sass/_modern.scss (section 07) so it
+follows the active light/dark theme. -->
+
+<div style="position: relative; margin-right: 92%">
+  <ngx-ui-loader [loaderId]="'loader-02'" [hasProgressBar]="false"></ngx-ui-loader>
+</div>
+<div ngxUiLoaderBlurred [loaderId]="'loader-02'">
+  <div class="menu" (click)="menuClicked($event)">
+    <!-- Main Icon Sidebar -->
+    <div class="main-menu">
+      <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true }">
+        <ul class="list-unstyled">
+          @for (item of filteredMenuItems(menuItems); track item) {
+<li [ngClass]="{
+              active:
+                (selectedParentMenu === item.to && viewingParentMenu === '') ||
+                viewingParentMenu === item.to
+            }">
+              @if (item.newWindow) {
+                <a [href]="item.to" rel="noopener noreferrer" target="_blank">
+                  <img [src]="item.icon" class="icon">
+                  {{ item.label | translate }}
+                </a>
+              }
+              @if (!item.newWindow && item.subs && item.subs.length > 0) {
+                <a (click)="openSubMenu($event, item); (false)"
+                  [href]="item.to">
+                  <img [src]="item.icon" class="icon">
+                  {{ item.label | translate }}
+                </a>
+              }
+              @if (!item.newWindow && (!item.subs || (item.subs && item.subs.length === 0))) {
+                <a class="text-center"
+                  (click)="changeSelectedParentHasNoSubmenu(item.to); (false); addMenuClick(item)" [routerLink]="item.to">
+                  <img [src]="item.icon" class="icon">
+                  <span class="px-1 mt-2" style="line-height: 1rem;">{{ item.label | translate }}</span>
+                </a>
+              }
+            </li>
+          }
+        </ul>
+      </perfect-scrollbar>
+    </div>
+
+    <!-- Sub Menu Panel -->
+    <div class="sub-menu">
+      <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true }">
+        @for (item of filteredMenuItems(menuItems); track item) {
+          <ul class="list-unstyled" [attr.data-parent]="item.to"
+          [ngClass]="{
+            'd-block':
+              (selectedParentMenu === item.to && viewingParentMenu === '') ||
+              viewingParentMenu === item.to
+          }">
+            <li class="sub-menu-header">
+              <span class="sub-menu-title">{{ item.label | translate }}</span>
+            </li>
+            @for (sub of filteredMenuItems(item.subs); track sub) {
+<li [ngClass]="{
+              active: currentUrl === sub.to,
+              'has-sub-item': sub.subs && sub.subs.length > 0
+            }">
+                @if (sub.newWindow) {
+                  <a [href]="sub.to" rel="noopener noreferrer" target="_blank">
+                    <i [ngClass]="sub.icon"></i>
+                    <span class="d-inline-block">{{ sub.label | translate }}</span>
+                  </a>
+                }
+                @if (!sub.newWindow && (!sub.subs || sub.subs.length <= 0)) {
+                  <a [routerLink]="[sub.to]"
+                    routerLinkActive="active">
+                    <i [ngClass]="sub.icon"></i>
+                    <span class="d-inline-block">{{ sub.label | translate }}</span>
+                  </a>
+                }
+                @if (sub.subs && sub.subs.length > 0) {
+<a (click)="toggleCollapse(sub.to)" [ngClass]="{
+                'rotate-arrow-icon opacity-50 c-pointer': true,
+                collapsed: closedCollapseList.includes(sub.to)
+              }">
+                    <i class="simple-icon-arrow-down"></i>
+                    <span class="d-inline-block">{{ sub.label | translate }}</span>
+                  </a>
+                }
+                <div [collapse]="closedCollapseList.includes(sub.to)" [isAnimated]="true">
+                  @if (sub.subs && sub.subs.length > 0) {
+                    <div>
+                      <ul class="list-unstyled inner-level-menu">
+                        @for (deepSub of filteredMenuItems(sub.subs); track deepSub) {
+                          <li
+                            [ngClass]="{ active: currentUrl === deepSub.to }">
+                            @if (deepSub.newWindow) {
+                              <a [href]="deepSub.to" rel="noopener noreferrer" target="_blank">
+                                <i [ngClass]="deepSub.icon"></i>
+                                <span class="d-inline-block">{{ deepSub.label | translate }}</span>
+                              </a>
+                            }
+                            @if (!deepSub.newWindow && (!deepSub.subs || deepSub.subs.length <= 0)) {
+                              <a
+                                [routerLink]="[deepSub.to]" routerLinkActive="active">
+                                <i [ngClass]="deepSub.icon"></i>
+                                <span class="d-inline-block">{{ deepSub.label | translate }}</span>
+                              </a>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </perfect-scrollbar>
+    </div>
+  </div>
+</div>

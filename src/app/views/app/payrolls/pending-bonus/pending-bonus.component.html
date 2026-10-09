@@ -1,0 +1,64 @@
+<div class="w-100 position-relative">
+  @if (showloader) {
+    <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  }
+</div>
+<div>
+  <h4 class="text-center">Pending Bonus</h4>
+  <div>
+    <table class="m-auto">
+      <thead>
+        <tr>
+          <th>
+            Bonus Amount
+          </th>
+          <th>
+            Bonus YYYYMM
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows; track row; let i = $index) {
+          <tr>
+            <td>
+              {{row.amount}}
+            </td>
+            <td>
+              {{row.bonusYYYYMM}}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="col-12">
+    <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+      [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit"
+      [maxSize]="5" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+    [customPreviousTemplate]="prevTemplate"></pagination>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

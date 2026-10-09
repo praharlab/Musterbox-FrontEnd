@@ -1,0 +1,17 @@
+<div class="card h-100">
+  <div class="card-body">
+    <h5 class="card-title">Ticket SubCategory</h5>
+    <div class="dashboard-quick-post">
+      <div class="datatable-container" style="max-height: 300px; overflow-y: auto">
+        <ngx-datatable [rows]="ticketSubCategoryData" [columnMode]="columnMode.flex">
+          <ngx-datatable-column
+            name="Name"
+            prop="ticketSubCategory.name"
+            [flexGrow]="2"
+          ></ngx-datatable-column>
+          <ngx-datatable-column name="Count" prop="count" [flexGrow]="1"></ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </div>
+  </div>
+</div>

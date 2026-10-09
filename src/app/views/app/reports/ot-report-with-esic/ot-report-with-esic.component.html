@@ -1,0 +1,111 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+<app-list-page-header name="Overtime Sheet With ESIC" [showOrderBy]="false" [showDisplayMode]="false"
+[showSearch]="false" [showItemsPerPage]="false"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #cid="ngModel" (change)="selectcompany($event)"
+                name="cid" required>
+                @for (data of company; track data) {
+                  <ng-option [value]="data.companyMasterID">
+                    {{ data.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!cid.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #YearMM="ngModel" name="YearMM" required />
+              <span>YearMonth *</span>
+              @if (!YearMM.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  YearMonth is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                [(ngModel)]="selectedBranch" (change)="selectbranch($event)">
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #department="ngModel" name="department"
+                [(ngModel)]="selectedDepart" (change)="selectdepart($event)">
+                @for (depart of alldepartment; track depart) {
+                  <ng-option [value]="depart.departmentId">
+                    {{ depart.departmentName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Department</span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #division="ngModel" name="division"
+                [(ngModel)]="selectedDivision" (change)="selectdivision($event)">
+                @for (item of allDivision; track item) {
+                  <ng-option [value]="item.id">
+                    {{ item.divisionName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Division</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alluser" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                ngModel #user="ngModel" [(ngModel)]="selectedEmployees" name="user" required>
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{standalone: true}" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select User *</span>
+                @if (!user.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    User is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-success form-group" type="submit" (click)="download()">
+                Export Excel
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>

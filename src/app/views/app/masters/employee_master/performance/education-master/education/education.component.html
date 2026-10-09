@@ -1,0 +1,317 @@
+<div style="text-align: right; margin-bottom: 2%">
+  <button class="btn btn-primary mb-1" (click)="lgModal3.show()">Add New</button>
+</div>
+<div class="row">
+  @for (item of rows3; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <p class="list-item-heading mb-1 truncate">
+                  {{ item.qualification | uppercase }}
+                </p>
+                <table>
+                  <tr>
+                    <td>
+                      Institute
+                    </td>
+                    <td>: {{ item.institute }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Year of Passing
+                    </td>
+                    <td>: {{ item.yearOfPassing }}</td>
+                  </tr>
+                  @if (item.createBy) {
+                    <tr>
+                      <td>
+                        Created by
+                      </td>
+                      <td>: {{ item.createBy }}</td>
+                    </tr>
+                  }
+                  @if (item.verifyBy) {
+                    <tr>
+                      <td>
+                        Verified by
+                      </td>
+                      <td>: {{ item.verifyBy }}</td>
+                    </tr>
+                  }
+                  @if (item.degree) {
+                    <tr>
+                      <td>
+                        Degree
+                      </td>
+                      <td>:
+                        <button type="button" class="btn btn-outline-primary btn-xs"
+                          (click)="view(item.degree)" style="margin-bottom: 5%; margin-top: 5%">
+                          {{ 'View' | translate }}
+                        </button>
+                        {{ ' ' }}
+                      </td>
+                    </tr>
+                  }
+                  @if (item.rejectionRemarks  && item.verifyStatus != '1') {
+                    <tr>
+                      <td>Rejection Reason</td>
+                      <td>: {{ item.rejectionRemarks }}</td>
+                    </tr>
+                  }
+                </table>
+              </a>
+            </div>
+            <div style="margin-top: 14px; width: 25%">
+              @if (item.status == '1') {
+                <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Active' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.status == '0') {
+                <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Deactive' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '0') {
+                <button type="button" class="btn btn-outline-warning btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Pending' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '1') {
+                <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Verified' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '2') {
+                <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 7%"
+                  >
+                  {{ 'Rejected' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus != '1') {
+                <div class="min-width-zero" style="margin-top: 90%">
+                  @if (item.verifyStatus != '1') {
+                    <a class="btn btn-xs btn-primary"
+                    (click)="lgModaleduedit.show(); editedu(item)">EDIT</a>
+                  }
+                  <br />
+                  @if (item.verifyStatus == '0' && !item.rejectionRemarks) {
+                    <a class="btn btn-xs btn-danger"
+                      (click)="alertConfirm(item.userEducationID)" style="margin-top: 10%">
+                      DELETE
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+<div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Education</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal3.hide()" aria-label="Close"
+          #closeModal3>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp3="ngForm" novalidate (ngSubmit)="onSubmit3()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #qualification="ngModel"
+                  name="qualification" required />
+                  <span>Qualification*</span>
+                  @if (!qualification.valid && addcomp3.submitted) {
+                    <div class="invalid-tooltip">
+                      Qualification is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #yearOfPassing="ngModel"
+                    name="yearOfPassing" required />
+                    <span>Year Of Passing*</span>
+                    @if (!yearOfPassing.valid && addcomp3.submitted) {
+                      <div class="invalid-tooltip">
+                        Year Of Passing is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #grade="ngModel" name="grade" />
+                    <span>Grade</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" ngModel #percentageObtained="ngModel"
+                      name="percentageObtained" />
+                      <span>Percentage Obtained</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #institute="ngModel" name="institute"
+                        required />
+                        <span>Institute*</span>
+                        @if (!institute.valid && addcomp3.submitted) {
+                          <div class="invalid-tooltip">
+                            Institute is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #university="ngModel"
+                          name="university" />
+                          <span>University</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="file" (change)="onSelectCertificate($event)" ngModel
+                            #certificate="ngModel" name="certificate" />
+                            <span>Certificate</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      <button class="btn btn-primary" type="submit">
+                        {{ 'forms.submit' | translate }}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div bsModal #lgModaleduedit="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+              aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Edit Employee Education</h4>
+                    <button type="button" class="btn-close close pull-right" (click)="lgModaleduedit.hide()"
+                      aria-label="Close" #closeModaledu>
+                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    @if (editbyidedu) {
+                      <form #editcompedu="ngForm" novalidate (ngSubmit)="onSubmitedu()">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" ngModel #qualification="ngModel"
+                                [(ngModel)]="editbyidedu.qualification" name="qualification" required />
+                                <span>Qualification*</span>
+                                @if (!qualification.valid && editcompedu.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Qualification is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" ngModel #yearOfPassing="ngModel"
+                                  [(ngModel)]="editbyidedu.yearOfPassing" name="yearOfPassing" required />
+                                  <span>Year Of Passing*</span>
+                                  @if (!yearOfPassing.valid && editcompedu.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Year Of Passing is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" ngModel #grade="ngModel"
+                                    [(ngModel)]="editbyidedu.grade" name="grade" />
+                                    <span>Grade</span>
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="number" ngModel #percentageObtained="ngModel"
+                                      [(ngModel)]="editbyidedu.percentageObtained" name="percentageObtained" />
+                                      <span>Percentage Obtained</span>
+                                    </label>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" ngModel #institute="ngModel"
+                                        [(ngModel)]="editbyidedu.institute" name="institute" required />
+                                        <span>Institute*</span>
+                                        @if (!institute.valid && editcompedu.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Institute is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <input class="form-control" type="text" ngModel #university="ngModel"
+                                          [(ngModel)]="editbyidedu.university" name="university" />
+                                          <span>University</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="file" (change)="onSelectCertificate($event)" ngModel
+                                            #certificate="ngModel" name="certificate" />
+                                            <span>Certificate</span>
+                                          </label>
+                                        </div>
+                                        @if (editbyidedu.degree) {
+                                          <div class="col-md-6">
+                                            <label class="form-group has-float-label">
+                                              <p>{{ editbyidedu.degree }}</p>
+                                            </label>
+                                          </div>
+                                        }
+                                      </div>
+                                      <button class="btn btn-primary" type="submit">
+                                        {{ 'forms.submit' | translate }}
+                                      </button>
+                                    </form>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          </div>

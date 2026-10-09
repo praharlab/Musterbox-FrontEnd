@@ -1,0 +1,131 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Employee Goal</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+              name="company" required>
+              @for (company of allcomp; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #goalMasterId="ngModel" name="goalMasterId" required>
+              @for (gl of goal; track gl) {
+                <ng-option [value]="gl.id">{{gl.title}}</ng-option>
+              }
+            </ng-select>
+            <span>Select Goal Name *</span>
+            @if (!goalMasterId.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Goal Name is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        @for (value of values; track value; let i = $index) {
+          <div class="col-md-12 my-2" style="margin-top: 10px;">
+            <div class="row"
+              style="background-color: #f5f5f5;  padding-top: 15px; padding-left: 10px; border-radius: 30px;">
+              <div class="col-md-5">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="employee" [multiple]="true" bindLabel="displayName" groupBy="selectedAllGroup"
+                    [(ngModel)]=" value.selectedUsers" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                    bindValue="userMasterID" [closeOnSelect]="false" ngModel #user="ngModel" name="user{{i}}" required>
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" required />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select User *</span>
+                  @if (!user.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      User is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-5">
+                <label class="form-group has-float-label">
+                  <select class="form-control" [(ngModel)]="value.evaluationPeriod" ngModel #evaluationPeriod="ngModel"
+                    name="evaluationPeriod{{i}}" required>
+                    <option value disabled selected>Select Evaluation
+                    Period</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Annually">Annually</option>
+                    <option value="Semi Annually">Semi Annually</option>
+                  </select>
+                  <span>Evaluation Period*</span>
+                  @if (!evaluationPeriod.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">Evaluation Period is
+                    required!</div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-2">
+                <span class="button btn btn-success" (click)="addMoreUsers()"
+                  style="margin-left: 3%; font-size: medium; margin-top: 3%; color: white;">+
+                </span>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" type="text" ngModel #remarks="ngModel" required
+                  [(ngModel)]="value.remarks" name="remarks{{i}}"></textarea>
+                  <span>Remarks *</span>
+                  @if (!remarks.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">Remarks is
+                    required!</div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="number" required ngModel #targetGiven="ngModel"
+                    [(ngModel)]="value.targetGiven" name="targetGiven{{i}}" min="0" max="100" />
+                    <span>Target Given *</span>
+                    @if (!targetGiven.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        TargetGiven is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-2">
+                  <button class="button btn btn-danger" (click)="removevalue(i)"
+                  style="margin-left: 3%; font-size: medium; margin-top: 3%; color: white;" [disabled]="i===0">-</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <app-state-button [btnClass]="'btn btn-primary  btn-shadow mt-2'" [currentState]="buttonState"
+          [isDisabled]="buttonDisabled" click="onLoginClick()">
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button class="btn btn-danger  btn-shadow mt-2" [routerLink]="adminRoot + '/pms/empgoal'" style="margin-left: 2%">
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+  <simple-notifications [options]="{position: ['top', 'center'],maxStack : 1}"></simple-notifications>

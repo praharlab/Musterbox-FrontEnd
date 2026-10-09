@@ -1,0 +1,51 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<h4 class="text-center">Lapse Leave</h4>
+<div class="row mt-2">
+  <div class="col-12 data-table-rows">
+    @if (rows) {
+      <table class="mb-3">
+        <thead>
+          <tr>
+            <th>Leave Name</th>
+            <th>Month</th>
+            <th>Days</th>
+          </tr>
+        </thead>
+        @for (row of rows; track row) {
+          <tr>
+            <td>{{row.LeaveName}}</td>
+            <td>{{row['YYYYMM']}}</td>
+            <td>{{row.days}}</td>
+          </tr>
+        }
+      </table>
+    }
+    @if (rows.length == 0) {
+      <div>
+        No Data Found!
+      </div>
+    }
+    <div class="col-12 mt-3">
+      <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+        [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit"
+        [maxSize]="5" (pageChanged)="onPageChange($event)" [customNextTemplate]="nextTemplate"
+      [customPreviousTemplate]="prevTemplate"></pagination>
+    </div>
+  </div>
+</div>
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

@@ -1,0 +1,150 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Upload Attendance"></app-heading>
+    <app-breadcrumb title="Upload Attendance"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<form #upload="ngForm" novalidate>
+  <div class="col-md-12">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="col-md-5" style="text-align: center">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              required
+              [(ngModel)]="company_id"
+              >
+              @for (company of allcomp; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && upload.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <hr />
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="container">
+                <h4 style="text-align: center; padding: 28px">
+                  <b>Attendance With Excel</b>
+                </h4>
+                <div style="text-align: center; padding-bottom: 15px; font-size: 14px">
+                  <button
+                    type="submit"
+                    class="btn btn-success"
+                    (click)="upload.value.company ? lgModal.show() : ''"
+                    >
+                    Upload Your Attendance
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="container">
+                <h4 style="text-align: center; padding: 28px">
+                  <b>Attendance With Excel Validator</b>
+                </h4>
+                <div style="text-align: center; padding-bottom: 15px; font-size: 14px">
+                  <button class="btn btn-success" type="submit" (click)="validate()">
+                    Validate Your Attendance
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div
+  bsModal
+  #lgModal="bs-modal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}"
+  >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Import Attendance Excel</h4>
+        <button
+          type="button"
+          class="btn-close close pull-right"
+          (click)="lgModal.hide()"
+          aria-label="Close"
+          >
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #importattendance="ngForm" novalidate (ngSubmit)="onSelectFile()">
+          <div class="row">
+            <!-- <div class="col-md-6" *ngIf="childcompany == 'false'">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                required>
+                <ng-option *ngFor="let comp of comp" [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              </ng-select>
+              <span>Select Company *</span>
+              <div *ngIf="!company.valid && importattendance.submitted" class="invalid-tooltip">
+              Company is required!</div>
+            </label>
+          </div> -->
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="file"
+                ngModel
+                #file="ngModel"
+                (change)="onSelectFiles($event)"
+                name="file"
+                required
+                />
+                <span>Import File *</span>
+              </label>
+              @if (!file.valid && importattendance.submitted) {
+                <div class="invalid-tooltip">
+                  File is required!
+                </div>
+              }
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

@@ -1,0 +1,241 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Biometric Integration</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel required #company="ngModel"
+              [(ngModel)]="selectedCompany" (change)="editdata($event)" name="company">
+              @for (comp of comp; track comp) {
+                <ng-option [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <span class="button" class="btn btn-success" style="cursor: pointer" (click)="addvalue()">
+            ADD Serial Number
+          </span>
+        </div>
+      </div>
+
+      @for (value of values; track value; let i = $index) {
+        <div class="row">
+          @if (!value.isdeleted) {
+            <div class="col-md-12 my-3">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel required #integrationType="ngModel"
+                      name="integrationType{{ i }}" [(ngModel)]="value.integrationType" [readonly]="value.readonly"
+                      (change)="onIntegrationTypeChange(i)">
+                      @for (item of value.integrationTypelist; track item) {
+                        <ng-option [value]="item.value">
+                          {{ item.name }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Interation Type *</span>
+                    @if (!integrationType.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Interation Type is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                @if (value.integrationType === 'parallelDatabase') {
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel [required]="value.requiredparallelDatabase"
+                        #dbname="ngModel" name="dbname{{ i }}" [(ngModel)]="value.database" [readonly]="value.readonly">
+                        @for (dbname1 of value.databaseList; track dbname1) {
+                          <ng-option [value]="dbname1.name">
+                            {{ dbname1.name }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Database *</span>
+                      @if (!dbname.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Database is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (value.integrationType === 'parallelDatabase') {
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel [required]="value.requiredparallelDatabase"
+                        #tablename="ngModel" name="tablename{{ i }}" [readonly]="value.readonly" [(ngModel)]="value.table">
+                        @for (tablename1 of value.tableList; track tablename1) {
+                          <ng-option [value]="tablename1.TABLE_NAME">
+                            {{ tablename1.TABLE_NAME }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Tablename *</span>
+                      @if (!tablename.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Tablename is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (value.integrationType === 'parallelDatabase') {
+                  <div class="col-md-2">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel [required]="value.requiredparallelDatabase"
+                        [(ngModel)]="value.serialno" #serialNo="ngModel" [readonly]="value.readonly" name="serialno{{ i }}">
+                        @for (serialNo1 of value.serialNoList; track serialNo1) {
+                          <ng-option [value]="serialNo1.Serialnumber">
+                            {{ serialNo1.Serialnumber }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>serialNo *</span>
+                      @if (!serialNo.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          serialNo is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (value.integrationType !== 'parallelDatabase') {
+                  <div class="col-md-2">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" [readonly]="value.readonly" type="text" [(ngModel)]="value.serialno"
+                        [required]="value.notrequiredparallelDatabase" ngModel #serialNo="ngModel" name="serialno{{ i }}" />
+                        <span>serialNo *</span>
+                        @if (
+                          !serialNo.valid &&
+                          addcomp.submitted &&
+                          value.integrationType !== 'parallelDatabase'
+                          ) {
+                          <div class="invalid-tooltip">
+                            serialNo is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  @if (value.integrationType !== 'parallelDatabase') {
+                    <div class="col-md-2">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" [(ngModel)]="value.serverIp"
+                          [required]="value.notrequiredparallelDatabase" ngModel #serverIp="ngModel" name="serverIp{{ i }}" />
+                          <span>Server IP *</span>
+                          @if (
+                            !serverIp.valid &&
+                            addcomp.submitted &&
+                            value.integrationType !== 'parallelDatabase'
+                            ) {
+                            <div class="invalid-tooltip">
+                              Server IP is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel required #algorithm="ngModel"
+                          [(ngModel)]="value.algorithm" name="algorithm{{ i }}" (change)="checkAlgorithm($event, i)">
+                          <ng-option [value]="2">Single Day Single Machine First IN Last Out</ng-option>
+                          <ng-option [value]="3">Single Day Multiple Machine First IN Last Out</ng-option>
+                          <ng-option [value]="4">Single Day Single Machine Multiple IN OUT</ng-option>
+                          <ng-option [value]="1">Multiple Day Single Machine Multiple IN OUT</ng-option>
+                          <ng-option [value]="5">Single Day Multiple Machine Multiple In Out</ng-option>
+                          <ng-option [value]="6">Multiple Day Multiple Machine Multiple In Out</ng-option>
+                          <ng-option [value]="7">Canteen</ng-option>
+                        </ng-select>
+                        <span>Select Algorithm *</span>
+                        @if (!algorithm.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Algorithm is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    @if (
+                      values[i].algorithm == 1 ||
+                      values[i].algorithm == 2 ||
+                      values[i].algorithm == 4 ||
+                      values[i].algorithm == 7
+                      ) {
+                      <div class="col-md-3">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel #direction="ngModel" [readonly]="true"
+                            [(ngModel)]="value.direction" name="direction{{ i }}">
+                            <ng-option [value]="'in'">In</ng-option>
+                            <ng-option [value]="'out'">Out</ng-option>
+                          </ng-select>
+                          <span>Select Direction</span>
+                        </label>
+                      </div>
+                    }
+                    @if (
+                      values[i].algorithm == 3 || values[i].algorithm == 5 || values[i].algorithm == 6
+                      ) {
+                      <div class="col-md-3">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel required #direction="ngModel" [readonly]="false"
+                            [(ngModel)]="value.direction" name="direction{{ i }}">
+                            <ng-option [value]="'in'">In</ng-option>
+                            <ng-option [value]="'out'">Out</ng-option>
+                          </ng-select>
+                          <span>Select Direction *</span>
+                          @if (!direction.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Direction is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-1">
+                      <!-- <button class="btn btn-danger btn-xs mb-1" style="margin-left: 3%; margin-top: 3%; cursor: pointer"
+                      type="button" (click)="removevalue(i);  removeInTimeValues(i)"
+                      *ngIf="value.length > 1">
+                      Remove
+                    </button> -->
+                    <button class="btn btn-danger btn-xs mb-1" style="margin-left: 3%; margin-top: 3%; cursor: pointer"
+                      type="button" (click)="removeInTimeValues(i)">
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          &nbsp;&nbsp;&nbsp;
+          <a class="btn btn-danger btn-shadow mt-4" style="cursor: pointer"
+            [routerLink]="adminRoot + '/attendances/biometric_list'">
+            Cancel
+          </a>
+          <br />
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

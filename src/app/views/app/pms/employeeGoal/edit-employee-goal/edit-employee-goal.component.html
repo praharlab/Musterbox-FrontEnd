@@ -1,0 +1,89 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Employee Goal</h5>
+      <form #editEmpGoal="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" readonly required ngModel #companyMasterID="ngModel"
+                name="companyMasterID" required
+                [(ngModel)]="editData.goalMaster.companyMaster.companyName" />
+                <span>Company*</span>
+                @if (!companyMasterID.valid && editEmpGoal.submitted) {
+                  <div class="invalid-tooltip">Company is
+                  required!</div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" readonly required ngModel #userMasterID="ngModel"
+                  name="userMasterID" required [(ngModel)]="editData.goalAssignedTo.displayName" />
+                  <span>User*</span>
+                  @if (!userMasterID.valid && editEmpGoal.submitted) {
+                    <div class="invalid-tooltip">user
+                    isrequired!</div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #goalMasterId="ngModel"
+                    [(ngModel)]="editData.goalMasterId" name="goalMasterId" required>
+                    @for (item of goal; track item) {
+                      <ng-option [value]="item.id">
+                        {{ item.title }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Goal*</span>
+                  @if (!goalMasterId.valid && editEmpGoal.submitted) {
+                    <div class="invalid-tooltip">
+                      Goal is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" type="number" ngModel #remarks="ngModel" name="remarks" required
+                  [(ngModel)]="editData.remarks"></textarea>
+                  <span>Remarks</span>
+                  @if (!remarks.valid && editEmpGoal.submitted) {
+                    <div class="invalid-tooltip">
+                      Remarks is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="number" required ngModel #targetGiven="ngModel" required
+                    [(ngModel)]="editData.targetGiven" name="targetGiven{{i}}" min="0" max="100" />
+                    <span>Target Given *</span>
+                    @if (!targetGiven.valid && editEmpGoal.submitted) {
+                      <div class="invalid-tooltip">
+                        TargetGiven is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <app-state-button [btnClass]="'btn btn-primary btn-shadow mt-2'" [currentState]="buttonState"
+                [isDisabled]="buttonDisabled" click="onLoginClick()">
+                {{ 'forms.submit' | translate }}
+              </app-state-button>
+              <button class="btn btn-danger btn-shadow mt-2" [routerLink]="adminRoot + '/pms/empgoal'"
+                style="margin-left: 2%">
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      }
+
+      <simple-notifications [options]="{position: ['top', 'center'],maxStack : 1}"></simple-notifications>

@@ -1,0 +1,76 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (skillsetData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Skillset</h5>
+      <form #editskillset="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                [(ngModel)]="editcompanyID"
+                ngModel
+                #company="ngModel"
+                [readonly]="true"
+                name="company"
+                required
+                >
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && editskillset.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <textarea
+                class="form-control"
+                ngModel
+                #Skillset="ngModel"
+                name="Skillset"
+                [(ngModel)]="skillsetData.skillSet"
+                required
+              ></textarea>
+              <span>Skillset *</span>
+              @if (!Skillset.valid && editskillset.submitted) {
+                <div class="invalid-tooltip">
+                  Skill set is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <app-state-button
+          [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+          [currentState]="buttonState"
+          [isDisabled]="buttonDisabled"
+          click="onLoginClick()"
+          >
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button
+          class="btn btn-danger btn-lg btn-shadow mt-4"
+          [routerLink]="adminRoot + '/skillsets/skillset'"
+          style="margin-left: 2%"
+          >
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+}
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

@@ -1,0 +1,231 @@
+@if (showButton) {
+  <div style="text-align: right">
+    <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+  </div>
+}
+<br />
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero w-100">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="list-item-heading mb-1 truncate" style="white-space: normal">
+                    @for (item12 of item.leavePolicy; track item12; let i = $index) {
+                      <span
+                        tooltip="Please click here to view Leave Policy details"
+                        [class]="'glyph-icon tool_tip'">
+                        @if ((item.leavePolicy.length-1) == i) {
+                          <a style="cursor: pointer"
+                            (click)="getShortLeavePolicy(item12.shortLeavePolicyID); lgModal2.show()">
+                            {{ item12.shortLeaveName }}
+                          </a>
+                        }
+                        @if ((item.leavePolicy.length-1) != i) {
+                          <a style="cursor: pointer"
+                            (click)="getShortLeavePolicy(item12.shortLeavePolicyID); lgModal2.show()">
+                            {{ item12.shortLeaveName }},
+                          </a>
+                        }
+                      </span>
+                    }
+                  </p>
+                </div>
+              </div>
+              @if (item.leavePolicy[0].createdByUserName != null) {
+                <div class="d-flex mt-2" style="margin-top: 5%"
+                  >
+                  <p class="text-muted mb-0 text-small">
+                    <strong>Policy Created</strong> by {{ item.leavePolicy[0].createdByUserName }}, at {{
+                    item.leavePolicy[0].createdAt
+                    | date: 'dd-MM-yyyy hh:mm a' }}
+                  </p>
+                </div>
+              }
+              @if (item.leavePolicy[0].updatedByUserName != null) {
+                <div class="d-flex mt-1" style="margin-top: 1px"
+                  >
+                  <p class="text-muted mb-0 text-small">
+                    <strong>Policy Updated</strong> by {{ item.leavePolicy[0].updatedByUserName }}, at {{
+                    item.leavePolicy[0].updatedAt
+                    | date: 'dd-MM-yyyy hh:mm a' }}
+                  </p>
+                </div>
+              }
+              <hr>
+                <p class="text-muted mb-0 text-small">
+                  Start Date : {{ item.applicableDate | date: 'dd-MM-yyyy' }}
+                </p>
+                @if (item.endDate != null) {
+                  <p class="text-muted mb-0 text-small">
+                    End Date : {{ item.endDate | date: 'dd-MM-yyyy' }}
+                  </p>
+                }
+                <div style="margin-top: 2%;">
+                  <p class="text-muted mb-0 text-small">
+                    <strong>Assigned</strong> by {{ item['createdByUser.displayName']}}, at {{
+                    item.createdAt
+                    | date: 'dd-MM-yyyy hh:mm a' }}
+                  </p>
+                </div>
+                <div class="min-width-zero">
+                  <a href="javascript:;">
+                    @if (item.leavePolicyStatus == 'active') {
+                      <button type="button" class="btn btn-success"
+                        style="margin-top: 10%">
+                        {{ 'Active' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                    @if (item.leavePolicyStatus == 'deactive') {
+                      <button type="button" class="btn btn-danger"
+                        style="margin-top: 10%">
+                        {{ 'Deactive' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Employee Short Leave Policy</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide();resetModel()"
+            aria-label="Close" #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addleavepolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select [closeOnSelect]="false" placeholder="Choose your option" ngModel
+                    #employeeShortLeavePolicyID="ngModel" name="employeeShortLeavePolicyID" required>
+                    @for (item of allLeavePolicy; track item) {
+                      <ng-option [value]="item.id">
+                        {{ item.shortLeaveName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Short Leave Policy *</span>
+                </label>
+                @if (!employeeShortLeavePolicyID.valid && addleavepolicy.submitted) {
+                  <div
+                    class="invalid-tooltip">
+                    Short Leave Policy is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel required #applicableDate="ngModel"
+                    name="applicableDate">
+                    <ng-option value="0">Past Month</ng-option>
+                    <ng-option value="1">Current Month</ng-option>
+                    <ng-option value="2">Upcoming Month</ng-option>
+                  </ng-select>
+                  <span>Applicable from *</span>
+                </label>
+                @if (!applicableDate.valid && addleavepolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Applicable Date is required!
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left"> Employee Short Leave Policy</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          @if (empleavedata) {
+            <form #addcomp="ngForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #emppolicyname="ngModel"
+                      name="emppolicyname" [(ngModel)]="empleavedata.shortLeaveName" readonly required />
+                      <span>Employee Short Leave Policy Name *</span>
+                      @if (!emppolicyname.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Employee Short Leave Policy Name is
+                        required!</div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                        [(ngModel)]="empleavedata.companyMasterID" required [readonly]="true">
+                        @for (comp of comp; track comp) {
+                          <ng-option [value]="comp.companyMasterID">
+                            {{ comp.companyName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Company *</span>
+                      @if (!company.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                        Company is required! </div>
+                      }
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" ngModel #minutesForShortLeave="ngModel"
+                        name="minutesForShortLeave" [(ngModel)]="empleavedata.minutesForShortLeave" readonly
+                        required />
+                        <span>Maximum minutes to apply short leave *</span>
+                      </label>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" ngModel #noOfShortLeave="ngModel"
+                          name="noOfShortLeave" [(ngModel)]="empleavedata.noOfShortLeave" readonly required />
+                          <span>Number of short leave (Monthly) *</span>
+                        </label>
+                      </div>
+                    </div>
+                  </form>
+                }
+              </div>
+            </div>
+          </div>
+        </div>

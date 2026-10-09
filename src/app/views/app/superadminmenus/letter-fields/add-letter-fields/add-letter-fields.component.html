@@ -1,0 +1,85 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Letter Fields</h5>
+
+    <form #addfields="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (!childfields) {
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #lettertype="ngModel"
+                name="lettertype"
+                >
+                @for (letter of letter; track letter) {
+                  <ng-option [value]="letter.letterTypeID">
+                    {{ letter.letterTypename }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Letter Template Type *</span>
+              @if (!lettertype.valid && addfields.submitted) {
+                <div class="invalid-tooltip">
+                  Letter Template Type is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <select class="form-control" required ngModel name="fields">
+              <option value="">Select Letter Fields</option>
+              <option value="CurrentDateTime">CurrentDateTime</option>
+              <option value="CurrentDate">CurrentDate</option>
+              <option value="EmployeeCode">EmployeeCode</option>
+              <option value="EmployeeName">EmployeeName</option>
+              <option value="EmployeeNumber">EmployeeNumber</option>
+              <option value="EmployeeEmailid">EmployeeEmailid</option>
+
+              <option value="Address">Address</option>
+              <option value="Department">Department</option>
+              <option value="Designation">Designation</option>
+              <option value="Branch">Branch</option>
+              <option value="BranchAddress">BranchAddress</option>
+              <option value="JoiningDate">JoiningDate</option>
+              <option value="ReportingPerson">ReportingPerson</option>
+              <option value="CTC">CTC</option>
+              <option value="NetSalary">NetSalary</option>
+
+              <!-- Add more options for Letter Fields as needed -->
+            </select>
+            <span>Letter Fields *</span>
+            @if (!addfields.controls.fields?.valid && addfields.submitted) {
+              <div
+                class="invalid-tooltip"
+                >
+                Letter Fields is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+        <button
+          class="btn btn-danger btn-shadow mt-4"
+          [routerLink]="adminRoot + '/superadminmenus/letter_fields'"
+          style="margin-left: 2%"
+          >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

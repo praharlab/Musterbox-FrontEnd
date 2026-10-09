@@ -1,0 +1,56 @@
+.mt20{
+    margin-top: 20px;
+}
+
+::ng-deep .panel {
+    border-radius: 5px !important;
+    border: 1px solid white;
+    transition: all 0.3s linear !important;
+}
+
+::ng-deep accordion-group:hover > .panel {
+    border-color: #A09DA7;
+    background: #FFF;
+}
+
+::ng-deep .panel-open{
+    border: 1px solid #A09DA7 !important;
+}
+
+::ng-deep .accordion-toggle .btn-link{
+    font-size: 14px !important;
+    font-weight: 600;
+    color: #423F4C !important;
+}
+
+::ng-deep .accordion-toggle{
+    padding-left: 15px;
+}
+
+.arrowIcon{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 999;
+    transition: all 200ms linear;
+}
+
+.completedIcon{
+    position: absolute;
+    left: 15px;
+    top: 18px;
+    z-index: 999;
+    transition: all 200ms linear;
+}
+
+.pendingIcon{
+    position: absolute;
+    left: 15px;
+    top: 18px;
+    z-index: 999;
+    transition: all 200ms linear;
+}
+
+.rotate{
+    transform: rotateX(180deg) ;
+}

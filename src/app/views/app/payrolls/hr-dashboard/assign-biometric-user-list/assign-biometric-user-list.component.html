@@ -1,0 +1,162 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              (change)="selectcompany($event)" required [(ngModel)]="body.companyMasterID">
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company?.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="allbranch" [multiple]="false" bindLabel="branchName"
+              [selectableGroup]="false" [selectableGroupAsModel]="false" bindValue="branchMasterID"
+              [closeOnSelect]="true" [(ngModel)]="body.branchID" #branch="ngModel" name="branch">
+            </ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="alldepartment" [multiple]="false" bindLabel="departmentName"
+              [(ngModel)]="body.departmentID" [selectableGroup]="false" [selectableGroupAsModel]="false"
+              bindValue="departmentId" [closeOnSelect]="true" ngModel #department="ngModel"
+              name="department">
+            </ng-select>
+            <span>Select Department</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="alldesignation" [multiple]="false" bindLabel="designationName"
+              [(ngModel)]="body.designationID" [selectableGroup]="false" [selectableGroupAsModel]="false"
+              bindValue="designationId" [closeOnSelect]="true" ngModel #designation="ngModel"
+              name="designation">
+            </ng-select>
+            <span>Select Designation</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <!-- <ng-select [items]="assignOption" [multiple]="false" bindLabel="type" bindValue="isAssigned"
+            [closeOnSelect]="true" [(ngModel)]="body.assigned" #isAssigned="ngModel" name="isAssigned">
+          </ng-select> -->
+          <ng-select [(ngModel)]="body.assigned" #isAssigned="ngModel" name="isAssigned" required>
+            <ng-option [value]="true">Assigned</ng-option>
+            <ng-option [value]="false">Not Assigned</ng-option>
+          </ng-select>
+          <span>Select Assign Type *</span>
+          @if (!isAssigned?.valid && datefilter.submitted) {
+            <div class="invalid-tooltip">
+              Type is required!
+            </div>
+          }
+        </label>
+      </div>
+
+      <div class="col-md-6">
+        <button class="btn btn-primary form-group" type="submit">
+          {{ 'Submit' | translate }}
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+        @if (userData.length > 0) {
+          <button class="btn btn-success form-group" type="button" (click)="fireEvent()"
+            style="margin-left: 10px">
+            Export
+          </button>
+        }
+      </div>
+    </div>
+  </form>
+</div>
+</div>
+
+@if (userData && userData.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="userData" [footerHeight]="100"
+        [columnMode]="'force'" [limit]="limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="Employee Code" prop="employeeCode" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Biometric Code" prop="biometricCode" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Biometric Serial Number" prop="biometricSerialNo" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Employee Name" prop="userMaster.displayName" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Branch" prop="userMaster.employeeBranches[0].branchMaster.branchName"
+          [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{userData[0]?.userMaster?.employeeBranches[0]?.branchMaster?.branchName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Department" prop="departmentName" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{userData[0]?.userMaster?.employeeDepartments[0]?.department?.departmentName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Designation" prop="designationName" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{userData[0]?.userMaster?.employeeDesignations[0]?.designation?.designationName}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Joining Date" prop="joiningDate" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{row.joiningDate | date: 'dd-MM-yyyy'}}
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="page.totalCount" [boundaryLinks]="true"
+                  [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate"
+                  [itemsPerPage]="page.offset" [maxSize]="5" [(ngModel)]="body.page"
+                  (pageChanged)="onPageChange($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

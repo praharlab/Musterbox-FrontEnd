@@ -1,0 +1,368 @@
+<div style="position: relative;">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="filterData.search"  (searchKeyUp)="updateFilter($event)" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()"
+name="Notification Setup"></app-list-page-header>
+
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel [multiple]="true" [closeOnSelect]="false"
+                #companyMasterID="ngModel" name="companyMasterID" [(ngModel)]="filterData.companyMasterID"
+                required>
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #notificationType="ngModel"
+                name="notificationType">
+                @for (notificationtype of notificationTypeArray; track notificationtype) {
+                  <ng-option
+                    [value]="notificationtype">
+                    {{notificationtype | uppercase }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Notification Type </span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+
+@if (rows && permissionview.length!=0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="scrollBarHorizontal" [rowHeight]="50" [rows]="rows" [footerHeight]="100"
+        [columnMode]="'force'" [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="Company Name" prop="companyMaster.companyName" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Notification Type" prop="notificationType" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>{{row.notificationType |
+          uppercase}}</ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Time" prop="time" [flexGrow]="1.2" [width]="80">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Time Type" prop="timeType" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>{{row.timeType | uppercase}}</ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Time Format" prop="timeFormat" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>{{row.timeFormat | uppercase}}</ng-template>
+        </ngx-datatable-column>
+        @if (permissionedit.length != 0 || permissiondelete.length != 0) {
+          <ngx-datatable-column name="Action" [sortable]="true" [width]="120"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a (click)="lgModal1.show(); edit(row)">
+                @if (permissionedit.length != 0) {
+                  <span [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                  style="padding-right: 10px; font-size: 18px;"></span>
+                }
+                {{ ' ' }}
+              </a>
+              <a (click)="alertConfirmation(row.id)">
+                @if (permissiondelete.length != 0) {
+                  <span [class]="'glyph-icon simple-icon-trash tool_tip'"
+                  style="padding-right: 6px; font-size: 18px;"></span>
+                }
+                {{ ' ' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Notification Setup</h4>
+        <button #closeModal type="button" class="btn-close close pull-right"
+          (click)="lgModal.hide();resetdata();" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onAdd()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #cid="ngModel"
+                  [(ngModel)]="companyId" name="cid" required>
+                  @for (addcompany of comp; track addcompany) {
+                    <ng-option [value]="addcompany.companyMasterID">
+                      {{ addcompany.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!cid.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #notificationType="ngModel"
+                  name="notificationType" (change)="selectNotificationtype($event)" required>
+                  @for (notificationtype of notificationTypeArray; track notificationtype) {
+                    <ng-option
+                      [value]="notificationtype">
+                      {{notificationtype | uppercase }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Notification Type *</span>
+                @if (!notificationType.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Notification Type is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #time="ngModel"
+                  name="time" />
+                  <span>Enter Time *</span>
+                  @if (!time.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Time is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              @if (notificationTypedata!='holiday') {
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #timeType="ngModel" name="timeType"
+                      required>
+                      <ng-option value="before">
+                        BEFORE
+                      </ng-option>
+                      <ng-option value="after">
+                        AFTER
+                      </ng-option>
+                    </ng-select>
+                    <span>Select Time Type *</span>
+                    @if (!timeType.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Time Type is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #timeFormat="ngModel"
+                    name="timeFormat" required>
+                    <ng-option value="days">
+                      DAYS
+                    </ng-option>
+
+                    <ng-option value="minutes">
+                      MINUTES
+                    </ng-option>
+                    <ng-option value="hours">
+                      HOURS
+                    </ng-option>
+
+                  </ng-select>
+                  <span>Select Time Format *</span>
+                  @if (!timeFormat.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Time Format is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary form-group" type="submit">{{ 'forms.submit' | translate }}</button>
+            &nbsp;
+            &nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="resetdata()">Clear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Update Notification Setup</h4>
+          <button #closeModal1 type="button" class="btn-close close pull-right" (click)="lgModal1.hide()"
+            aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        @if (toEditData) {
+          <div class="modal-body">
+            <form #editcomp="ngForm" novalidate (ngSubmit)="onUpdate()">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" required ngModel #company="ngModel"
+                      name="company" [(ngModel)]="toEditData['companyMaster.companyName']" readonly />
+                      <span> Select Company *</span>
+                      @if (!company.valid && editcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Company is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel #notificationType="ngModel"
+                        name="notificationType" (change)="selectNotificationtype($event)"
+                        [(ngModel)]="toEditData.notificationType" disabled required>
+                        @for (notificationtype of notificationTypeArray; track notificationtype) {
+                          <ng-option
+                            [value]="notificationtype">
+                            {{notificationtype | uppercase }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Notification Type *</span>
+                      @if (!notificationType.valid && editcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Notification Type is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" required ngModel #time="ngModel" name="time"
+                        [(ngModel)]="toEditData.time" />
+                        <span>Enter Time *</span>
+                        @if (!time.valid && editcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Time is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    @if (toEditData.notificationType != 'holiday') {
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel #timeType="ngModel" name="timeType"
+                            [(ngModel)]="toEditData.timeType" required>
+                            <ng-option value="before">
+                              BEFORE
+                            </ng-option>
+                            <ng-option value="after">
+                              AFTER
+                            </ng-option>
+                          </ng-select>
+                          <span>Select Time Type *</span>
+                          @if (!timeType.valid && editcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Time Type is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #timeFormat="ngModel"
+                          name="timeFormat" [(ngModel)]="toEditData.timeFormat" required>
+                          <ng-option value="days">
+                            DAYS
+                          </ng-option>
+                          <ng-option value="minutes">
+                            MINUTES
+                          </ng-option>
+                          <ng-option value="hours">
+                            HOURS
+                          </ng-option>
+                        </ng-select>
+                        <span>Select Time Format *</span>
+                        @if (!timeFormat.valid && editcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Time Format is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                </form>
+              </div>
+            }
+          </div>
+        </div>
+      </div>

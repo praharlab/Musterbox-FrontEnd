@@ -1,0 +1,158 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Visitor</h5>
+
+    @if (visitordata) {
+      <form #addvisitor="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #visitorsFirstName="ngModel"
+                name="visitorsFirstName"
+                [(ngModel)]="visitordata.visitorsFirstName"
+                />
+                <span>Visitor First Name *</span>
+                @if (!visitorsFirstName.valid && addvisitor.submitted) {
+                  <div class="invalid-tooltip">
+                    Visitor First Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #visitorsLastName="ngModel"
+                  name="visitorsLastName"
+                  [(ngModel)]="visitordata.visitorsLastName"
+                  />
+                  <span>Visitor Last Name *</span>
+                  @if (!visitorsLastName.valid && addvisitor.submitted) {
+                    <div class="invalid-tooltip">
+                      Visitor Last Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    required
+                    ngModel
+                    #visitorsPhone="ngModel"
+                    name="visitorsPhone"
+                    [(ngModel)]="visitordata.visitorsPhone"
+                    />
+                    <span>Visitor Phone *</span>
+                    @if (!visitorsPhone.valid && addvisitor.submitted) {
+                      <div class="invalid-tooltip">
+                        Visitor Phone is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="text"
+                      required
+                      ngModel
+                      #visitorsComapny="ngModel"
+                      name="visitorsComapny"
+                      [(ngModel)]="visitordata.visitorsComapny"
+                      />
+                      <span>Visitor Company *</span>
+                      @if (!visitorsComapny.valid && addvisitor.submitted) {
+                        <div class="invalid-tooltip">
+                          Visitor Company is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  @if (childcompany == 'false') {
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <ng-select
+                          placeholder="Choose your option"
+                          ngModel
+                          #companyMasterID="ngModel"
+                          name="companyMasterID"
+                          [(ngModel)]="visitordata.companyMasterID"
+                          required
+                          >
+                          @for (company of company; track company) {
+                            <ng-option [value]="company.companyMasterID">
+                              {{ company.companyName }}
+                            </ng-option>
+                          }
+                        </ng-select>
+                        <span>Select Company *</span>
+                        @if (!companyMasterID.valid && addvisitor.submitted) {
+                          <div class="invalid-tooltip">
+                            Company is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="file"
+                        accept=".png, .jpeg, .jpg"
+                        ngModel
+                        #visitorPhoto="ngModel"
+                        name="visitorPhoto"
+                        (change)="onFileChange($event)"
+                        />
+                        <span>Visitor Photo</span>
+                      </label>
+                      @if (oldImage !== null) {
+                        <img
+                          [src]="apiURL + oldImage"
+                          height="50px"
+                          width="50px"
+                          (click)="viewImage(oldImage)"
+                          />
+                      }
+                    </div>
+                  </div>
+                  <app-state-button
+                    [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+                    [currentState]="buttonState"
+                    [isDisabled]="buttonDisabled"
+                    click="onLoginClick()"
+                    >
+                    {{ 'forms.submit' | translate }}
+                  </app-state-button>
+                  <button
+                    class="btn btn-danger btn-lg btn-shadow mt-4"
+                    [routerLink]="adminRoot + '/masters/visitor'"
+                    style="margin-left: 2%"
+                    >
+                    Cancel
+                  </button>
+                </form>
+              }
+            </div>
+          </div>
+
+          <simple-notifications
+            [options]="{ position: ['top', 'center'], maxStack: 1 }"
+          ></simple-notifications>

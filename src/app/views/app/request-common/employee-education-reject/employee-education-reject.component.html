@@ -1,0 +1,31 @@
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Reject Education</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+          #closelgModal2>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #reject="ngForm" novalidate (ngSubmit)="rejectSubmit()">
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks" required></textarea>
+              <span>Remarks *</span>
+              @if (!remarks.valid && reject.submitted) {
+                <div class="invalid-tooltip">
+                  Remarks is required!
+                </div>
+              }
+            </label>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

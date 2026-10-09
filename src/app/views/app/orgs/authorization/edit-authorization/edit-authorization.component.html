@@ -1,0 +1,206 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Form Authorization</h5>
+    @if (formauthdata && flag == true) {
+      <form #editauthperson="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+                name="company" [(ngModel)]="formauthdata.companyMasterID" [readonly]="Disabled">
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              <!-- <div
+              *ngIf="!company.valid && editauthperson.submitted"
+              class="invalid-tooltip"
+              >
+              Company is required!
+            </div> -->
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select [items]="ownerList" bindLabel="name" bindValue="userMasterID"
+              [(ngModel)]="formauthdata.userMaster.userMasterID" ngModel #userMasterID="ngModel" name="userMasterID"
+            [readonly]="Disabled"></ng-select>
+            <span>Select Employee *</span>
+          </label>
+          <!-- <div
+          *ngIf="!userMasterID.valid && editauthperson.submitted"
+          class="invalid-tooltip"
+          >
+          Employee is required!
+        </div> -->
+      </div>
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel #AuthorizationCriteriaID="ngModel"
+            name="AuthorizationCriteriaID" (change)="selectedauthcritera($event)" required
+            [(ngModel)]="formauthdata.AuthorizationCriteriaID">
+            @for (authcritera of authcritera; track authcritera) {
+              <ng-option [value]="authcritera.AuthorizationCriteriaID">
+                {{ authcritera.AuthorizationCriteria }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Authorization Criteria *</span>
+          @if (!AuthorizationCriteriaID.valid && editauthperson.submitted) {
+            <div class="invalid-tooltip">
+              Authorization Criteria is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel #AuthorizationMasterID="ngModel"
+            name="AuthorizationMasterID" [(ngModel)]="formauthdata.authorizationMaster.authorizationMasterID"
+            [readonly]="Disabled">
+            @for (authdata of authdata; track authdata) {
+              <ng-option [value]="authdata.authorizationMasterID">
+                {{ authdata.authorizationMasterName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Select Authorizaion *</span>
+          <!-- <div
+          *ngIf="!AuthorizationMasterID.valid && editauthperson.submitted"
+          class="invalid-tooltip"
+          >
+          Authorization Master is required!
+        </div> -->
+      </label>
+    </div>
+  </div>
+  <hr style="color: green" />
+  <div class="row mb-2">
+    <div class="col-md-6">
+      <h3>Select Authorization Person:-</h3>
+    </div>
+    <div class="col-md-6" style="text-align: right">
+      <span class="button" class="btn btn-success" (click)="addvalue()">
+        ADD Authorization Person
+      </span>
+    </div>
+  </div>
+  <br>
+    <div class="row">
+      <br />
+      @for (value of values; track value; let i = $index) {
+        <div class="col-md-12">
+          @if (!value.deleted) {
+            <div class="row">
+              @if (selectedauth == 5) {
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" #SequenceNo="ngModel" [ngModel]="value.SequenceNo" readonly
+                      name="SequenceNo{{ i }}" />
+                      <span>Sequence Number</span>
+                    </label>
+                  </div>
+                }
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" (change)="selectCompany($event,i)" ngModel
+                      #company="ngModel" name="company{{i}}" [(ngModel)]="value.companyMasterID" required>
+                      @for (company of value.allCompany; track company) {
+                        <ng-option [value]="company.companyMasterID">
+                          {{ company.companyName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Company *</span>
+                    @if (!company.valid && editauthperson.submitted) {
+                      <div class="invalid-tooltip">
+                        Company is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #employee="ngModel" name="employee{{i}}"
+                      [(ngModel)]="value.AuthorizedByUserMasterId" required>
+                      @for (employee of value.allUsers; track employee) {
+                        <ng-option [value]="employee.userMasterID">
+                          {{ employee.displayName }} ({{ employee.userNumber }})
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Employee *</span>
+                    @if (!employee.valid && editauthperson.submitted) {
+                      <div class="invalid-tooltip">
+                        Employee is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                @if (values.length > 1) {
+                  <div class="col-md-1">
+                    <span (click)="removevalue(i)" class="btn btn-danger"
+                      style="margin-left: 3%; margin-top: 3%; font-size: 10px; cursor: pointer;">
+                      Remove
+                    </span>
+                  </div>
+                }
+                <div class="col-md-2" style="display: none;">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="number" [(ngModel)]="value.FromAmount" ngModel #FromAmount="ngModel"
+                      name="FromAmount{{ i }}" />
+                      <span>From Amount</span>
+                    </label>
+                  </div>
+                  <div class="col-md-2" style="display: none;">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" ngModel [(ngModel)]="value.ToAmount" #ToAmount="ngModel"
+                        name="ToAmount{{ i }}" />
+                        <span>To Amount</span>
+                      </label>
+                    </div>
+                    <div class="col-md-2" style="display: none;">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel [(ngModel)]="value.RequiredAuthorizationMessage"
+                          #RequiredAuthorizationMessage="ngModel" name="RequiredAuthorizationMessage{{ i }}">
+                          <ng-option value="1">Yes</ng-option>
+                          <ng-option value="0">No</ng-option>
+                        </ng-select>
+                        <span>Send Message</span>
+                      </label>
+                    </div>
+                    <!-- <div class="col-md-1" *ngIf="i > 0">
+                    <span (click)="removevalue(i)" class="btn btn-danger"
+                      style="margin-left: 3%; margin-top: 3%; font-size: 10px">
+                      Remove
+                    </span>
+                  </div> -->
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <!-- <div class="col-md-12" style="margin-bottom: 20px; text-align: right">
+        <span class="button" class="btn btn-success" (click)="addvalue()">
+          ADD Authorization Person
+        </span>
+      </div> -->
+      <div class="col-md-12">
+        <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+        <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/orgs/authorization'"
+          style="margin-left: 2%">
+          Cancel
+        </button>
+      </div>
+    </form>
+  }
+</div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

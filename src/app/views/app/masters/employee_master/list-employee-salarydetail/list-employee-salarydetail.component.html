@@ -1,0 +1,912 @@
+<div class="card mb-4" *ngIf="empjoining1 != undefined">
+  <div class="card-body">
+    <h5 class="mb-4">Salary Master</h5>
+
+    <!-- <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()"> -->
+    <div class="col-md-12 row">
+      <div class="col-md-12 col-lg-6 col-xl-6 row">
+        <form #addcomp="ngForm" novalidate>
+          <div class="col-md-12 row">
+            <div class="col-md-12">
+              <span><b>Salary By * :</b></span>
+              &nbsp;&nbsp;
+              <input
+                type="radio"
+                ngModel
+                #amountType1="ngModel"
+                name="amountType1"
+                [(ngModel)]="amountType"
+                value="1"
+                style="margin-right: 1%"
+                required
+              />
+              <label for="true" style="margin-right: 4%">GROSS</label>
+              <input
+                type="radio"
+                #amountType1="ngModel"
+                name="amountType1"
+                [(ngModel)]="amountType"
+                value="0"
+                style="margin-right: 1%"
+                required
+              />
+              <label for="false">CTC</label>
+              <div *ngIf="!amountType1.valid && addcomp.submitted" class="invalid-tooltip">
+                Salary By is required!
+              </div>
+            </div>
+            <br />
+            <br />
+
+            <div class="col-md-6" *ngIf="amountType == '0' && storedata == false">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #ctc="ngModel"
+                  name="ctc"
+                  [(ngModel)]="ctcamount1"
+                  (change)="getGrade()"
+                  required
+                />
+                <span>Enter CTC Amount *</span>
+                <div *ngIf="!ctc.valid && addcomp.submitted" class="invalid-tooltip">
+                  CTC is required!
+                </div>
+              </label>
+            </div>
+
+            <div class="col-md-6" *ngIf="amountType == '0' && storedata == true">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #ctc="ngModel"
+                  name="ctc"
+                  [(ngModel)]="ctcamount"
+                  (change)="getGrade()"
+                  required
+                  readonly
+                />
+                <span>Enter CTC Amount *</span>
+                <!-- <div *ngIf="!ctc.valid && addcomp.submitted" class="invalid-tooltip">CTC is required!</div> -->
+              </label>
+            </div>
+
+            <div class="col-md-6" *ngIf="amountType == '1' && storedata == false">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #gross="ngModel"
+                  name="gross"
+                  [(ngModel)]="grossamount1"
+                  (change)="getGrade()"
+                  required
+                />
+                <span>Enter GROSS Amount *</span>
+                <div *ngIf="!gross.valid && addcomp.submitted" class="invalid-tooltip">
+                  Gross is required!
+                </div>
+              </label>
+            </div>
+
+            <div class="col-md-6" *ngIf="amountType == '1' && storedata == true">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="number"
+                  required
+                  ngModel
+                  #gross="ngModel"
+                  name="gross"
+                  [(ngModel)]="grossamount"
+                  (change)="getGrade()"
+                  required
+                  readonly
+                />
+                <span>Enter GROSS Amount *</span>
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="month"
+                  name="month"
+                  ngModel
+                  #month="ngModel"
+                  (change)="getGrade()"
+                  [(ngModel)]="selectedMonth"
+                  [disabled]="storedata"
+                  [required]="!storedata"
+                />
+                <span>Applicable FromYearMonth *</span>
+                <div
+                  *ngIf="!month.valid && !storedata && addcomp.submitted"
+                  class="invalid-tooltip"
+                >
+                  Applicable FromYearMonth is required!
+                </div>
+              </label>
+            </div>
+
+            <!-- <div class="col-md-6" *ngIf="storedata == false">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #gradeStructureID="ngModel" name="gradeStructureID"
+                  [(ngModel)]="gsid" (change)="getgradeData($event)" required>
+                  <ng-option *ngFor="let data of grades" [value]="data.gsid">
+                    {{ data.gsname }}
+                  </ng-option>
+                </ng-select>
+                <span>Select Grade *</span>
+                <div *ngIf="!gradeStructureID.valid && addcomp.submitted" class="invalid-tooltip">
+                  Grade is required!
+                </div>
+              </label>
+            </div> -->
+
+            <!-- Grade -->
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #gradeStructureID="ngModel"
+                  name="gradeStructureID"
+                  [(ngModel)]="gsid"
+                  (change)="getgradeData($event)"
+                  required
+                  [readonly]="storedata"
+                >
+                  <ng-option *ngFor="let data of grades" [value]="data.gsid">
+                    {{ data.gsname }}
+                  </ng-option>
+                </ng-select>
+                <span>Select Grade *</span>
+                <div *ngIf="!gradeStructureID.valid && addcomp.submitted" class="invalid-tooltip">
+                  Grade is required!
+                </div>
+              </label>
+            </div>
+
+            <!-- <div class="col-md-6" *ngIf="stateShow == true && storedata == false">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #state1="ngModel" required name="state1"
+                  [(ngModel)]="stateid">
+                  <ng-option *ngFor="let states of state" [value]="states.stateMasterID">
+                    {{ states.stateName }}
+                  </ng-option>
+                </ng-select>
+                <span>Select State *</span>
+                <div *ngIf="!state1.valid && addcomp.submitted" class="invalid-tooltip">
+                  State is required!
+                </div>
+              </label>
+            </div> -->
+
+            <!-- Stete -->
+
+            <div class="col-md-6" *ngIf="stateShow">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #state1="ngModel"
+                  required
+                  name="state1"
+                  [(ngModel)]="stateid"
+                  (change)="selectstate($event, true)"
+                  [readonly]="storedata"
+                >
+                  <ng-option *ngFor="let states of state" [value]="states.stateMasterID">
+                    {{ states.stateName }}
+                  </ng-option>
+                </ng-select>
+                <span>Select State *</span>
+                <div *ngIf="!state1.valid && addcomp.submitted" class="invalid-tooltip">
+                  State is required!
+                </div>
+              </label>
+            </div>
+
+            <!-- Corporation  -->
+
+            <div class="col-md-6" *ngIf="corporation.length">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #corp="ngModel"
+                  name="corp"
+                  [readonly]="storedata"
+                  [(ngModel)]="selectedCorporation"
+                >
+                  <ng-option *ngFor="let corpo of corporation" [value]="corpo.id">
+                    {{ corpo.corporationName }}
+                  </ng-option>
+                </ng-select>
+                <span>Corporation</span>
+              </label>
+            </div>
+
+            <div
+              class="col-md-6"
+              style="margin: 4%"
+              *ngIf="salaryStructurePermissionCreate.length != 0"
+            >
+              <!-- <button class="btn btn-primary" type="button" style="background-color: var(--m-primary);
+              border-radius: 10px;
+              padding: 3%;
+              color: white;" (click)="getSalary()">Submit</button> -->
+              <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="disebled1"
+                (click)="getSalary()"
+              >
+                {{ 'Calculate' | translate }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="col-md-12 col-lg-6 col-xl-6"
+        style="margin-bottom: 20px"
+        *ngIf="gradeSalaryArry.length > 0"
+      >
+        <!-- <div class="col-md-12 pl-0" *ngIf="removeButton == 'Y'">
+          <button class="btn btn-danger" style="margin-bottom: 20px" (click)="remove()">
+            Delete Structure
+          </button>
+        </div> -->
+
+        <div class="scrollStyle">
+          <table border="1" width="100%">
+            <tr>
+              <th colspan="5" style="text-align: center; background-color: lightgray">
+                Salary Structure
+              </th>
+            </tr>
+            <tr>
+              <th style="text-align: center">Payhead Name</th>
+              <th style="text-align: center">Group</th>
+              <th style="text-align: center">Formula</th>
+              <th style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'D'">
+                Amount(Daily)
+              </th>
+              <th style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'H'">
+                Amount(Hourly)
+              </th>
+
+              <th style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                Amount(Monthly)
+              </th>
+              <th style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                Amount(Yearly)
+              </th>
+            </tr>
+
+            <tr *ngFor="let value of A_Salary; let i = index">
+              <td style="text-align: center">
+                {{
+                  value.payheadDisplayName && value.payheadDisplayName.trim()
+                    ? value.payheadDisplayName
+                    : value.payheadName
+                }}
+              </td>
+              <td style="text-align: center">
+                {{ value.salaryFieldSrNo }}
+              </td>
+              <td style="text-align: center">
+                <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+                  <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+                  of {{ value.formula }}
+                  <br />
+                  <strong>OR</strong>
+                  <br />
+                  {{ value.formula1 }}
+                </ng-container>
+                <ng-template #singleFormula>
+                  {{ value.formula || value.formula1 }}
+                </ng-template>
+              </td>
+
+              <td style="text-align: center" *ngIf="value.fieldFixAmount == null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+              <td style="text-align: center" *ngIf="value.fieldFixAmount != null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  (change)="manual(i, 'A')"
+                />
+              </td>
+              <td style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.yearly_finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+            </tr>
+            <tr *ngIf="grossData">
+              <td style="text-align: center">
+                <b>
+                  {{
+                    grossData.payheadDisplayName && grossData.payheadDisplayName.trim()
+                      ? grossData.payheadDisplayName
+                      : grossData.payheadName
+                  }}
+                </b>
+              </td>
+              <td></td>
+              <td></td>
+              <td style="text-align: center">
+                <b>
+                  <input
+                    style="font-weight: bold"
+                    class="form-control"
+                    type="number"
+                    value="{{ grossamount }}"
+                    disabled
+                  />
+                </b>
+              </td>
+              <td style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <b>
+                  <input
+                    style="font-weight: bold"
+                    class="form-control"
+                    type="number"
+                    value="{{ yearly_grossamount }}"
+                    disabled
+                  />
+                </b>
+              </td>
+            </tr>
+
+            <tr *ngFor="let value of B_Salary; let i = index">
+              <td style="text-align: center">
+                {{
+                  value.payheadDisplayName && value.payheadDisplayName.trim()
+                    ? value.payheadDisplayName
+                    : value.payheadName
+                }}
+              </td>
+              <td style="text-align: center">
+                {{ value.salaryFieldSrNo }}
+              </td>
+              <td style="text-align: center">
+                <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+                  <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+                  of {{ value.formula }}
+                  <br />
+                  <strong>OR</strong>
+                  <br />
+                  {{ value.formula1 }}
+                </ng-container>
+                <ng-template #singleFormula>
+                  {{ value.formula || value.formula1 }}
+                </ng-template>
+              </td>
+
+              <td style="text-align: center" *ngIf="value.fieldFixAmount == null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+              <td style="text-align: center" *ngIf="value.fieldFixAmount != null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  (change)="manual(i, 'B')"
+                />
+              </td>
+              <td style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.yearly_finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+            </tr>
+
+            <tr *ngFor="let value of extra_A_Salary; let i = index">
+              <td style="text-align: center">
+                {{
+                  value.payheadDisplayName && value.payheadDisplayName.trim()
+                    ? value.payheadDisplayName
+                    : value.payheadName
+                }}
+              </td>
+              <td style="text-align: center">
+                {{ value.salaryFieldSrNo }}
+              </td>
+              <td style="text-align: center">
+                <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+                  <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+                  of {{ value.formula }}
+                  <br />
+                  <strong>OR</strong>
+                  <br />
+                  {{ value.formula1 }}
+                </ng-container>
+                <ng-template #singleFormula>
+                  {{ value.formula || value.formula1 }}
+                </ng-template>
+              </td>
+
+              <td style="text-align: center" *ngIf="value.fieldFixAmount == null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+              <td style="text-align: center" *ngIf="value.fieldFixAmount != null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  (change)="manual(i, 'EA')"
+                />
+              </td>
+              <td style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.yearly_finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+            </tr>
+
+            <tr *ngIf="netPayData">
+              <td style="text-align: center">
+                <b>
+                  {{
+                    netPayData.payheadDisplayName && netPayData.payheadDisplayName.trim()
+                      ? netPayData.payheadDisplayName
+                      : netPayData.payheadName
+                  }}
+                </b>
+              </td>
+              <td></td>
+              <td></td>
+              <td style="text-align: center">
+                <b>
+                  <input
+                    style="font-weight: bold"
+                    class="form-control"
+                    type="number"
+                    value="{{ netpay }}"
+                    disabled
+                  />
+                </b>
+              </td>
+              <td style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <b>
+                  <input
+                    style="font-weight: bold"
+                    class="form-control"
+                    type="number"
+                    value="{{ yearly_netpay }}"
+                    disabled
+                  />
+                </b>
+              </td>
+            </tr>
+
+            <tr *ngFor="let value of C_Salary; let i = index">
+              <td style="text-align: center">
+                {{
+                  value.payheadDisplayName && value.payheadDisplayName.trim()
+                    ? value.payheadDisplayName
+                    : value.payheadName
+                }}
+              </td>
+              <td style="text-align: center">
+                {{ value.salaryFieldSrNo }}
+              </td>
+              <td style="text-align: center">
+                <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+                  <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+                  of {{ value.formula }}
+                  <br />
+                  <strong>OR</strong>
+                  <br />
+                  {{ value.formula1 }}
+                </ng-container>
+                <ng-template #singleFormula>
+                  {{ value.formula || value.formula1 }}
+                </ng-template>
+              </td>
+
+              <td style="text-align: center" *ngIf="value.fieldFixAmount == null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+              <td style="text-align: center" *ngIf="value.fieldFixAmount != null">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.finalvalue"
+                  [name]="'name_' + i"
+                  (change)="manual(i, 'C')"
+                />
+              </td>
+              <td style="text-align: center" *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="value.yearly_finalvalue"
+                  [name]="'name_' + i"
+                  readonly
+                />
+              </td>
+            </tr>
+
+            <tr *ngIf="ctcData">
+              <td style="text-align: center">
+                <b>
+                  {{
+                    ctcData.payheadDisplayName && ctcData.payheadDisplayName.trim()
+                      ? ctcData.payheadDisplayName
+                      : ctcData.payheadName
+                  }}
+                </b>
+              </td>
+              <td></td>
+              <td></td>
+              <td>
+                <b>
+                  <input
+                    style="font-weight: bold"
+                    class="form-control"
+                    type="number"
+                    value="{{ ctcamount }}"
+                    disabled
+                  />
+                </b>
+              </td>
+              <td *ngIf="gradeSalaryArry[0].baseOnCalculation == 'M'">
+                <b>
+                  <input
+                    style="font-weight: bold"
+                    class="form-control"
+                    type="number"
+                    value="{{ yearly_ctcamount }}"
+                    disabled
+                  />
+                </b>
+              </td>
+            </tr>
+          </table>
+          <br />
+          <br />
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <button
+          class="btn btn-primary float-right"
+          [disabled]="isdisebled"
+          type="submit"
+          (click)="onSubmit()"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="col-md-12">
+      <button
+        class="btn btn-success"
+        *ngIf="allStructure.length > 0"
+        type="submit"
+        (click)="export()"
+      >
+        Export
+      </button>
+    </div>
+
+    <div class="row" style="overflow-x: scroll">
+      <table
+        border="1"
+        class="col-md-10 col-lg-5 col-xl-5 col"
+        width="100%"
+        style="border-collapse: collapse; align-items: center; margin: 2% 4% 2% 4%"
+        *ngFor="let item of allStructure"
+      >
+        <tr style="border: none; border-color: white">
+          <td colspan="5">
+            <div
+              *ngIf="item[0].salaryCalculated == false"
+              style="text-align: right; margin-bottom: 10px"
+            >
+              <button class="btn btn-xs btn-danger" (click)="remove(item[0].salaryMasterID)">
+                Delete Structure
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th colspan="5" style="text-align: center; background-color: lightgray">
+            Salary Structure ({{ item[0].gradeName }}) From
+            {{ item[0].yearmonth }}
+          </th>
+        </tr>
+        <tr>
+          <th style="text-align: center">Payhead Name</th>
+          <th style="text-align: center">Group</th>
+          <th style="text-align: center">Formula</th>
+          <th style="text-align: center" *ngIf="item[0].baseOnCalculation == 'D'">Amount(Daily)</th>
+          <th style="text-align: center" *ngIf="item[0].baseOnCalculation == 'H'">
+            Amount(Hourly)
+          </th>
+
+          <th style="text-align: center" *ngIf="item[0].baseOnCalculation == 'M'">
+            Amount(Monthly)
+          </th>
+        </tr>
+
+        <tr *ngFor="let value of item; let i = index">
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn != 'net'"
+          >
+            {{ value.payheadName }}
+          </td>
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 50">
+            <b>{{ value.payheadName }}</b>
+          </td>
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn != 'net'"
+          >
+            {{ value.salaryFieldSrNo }}
+          </td>
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn != 'net'"
+          >
+            <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+              <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+              of {{ value.formula }}
+              <br />
+              <strong>OR</strong>
+              <br />
+              {{ value.formula1 }}
+            </ng-container>
+            <ng-template #singleFormula>
+              {{ value.formula || value.formula1 }}
+            </ng-template>
+          </td>
+
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn != 'net'"
+          >
+            <input
+              class="form-control"
+              type="number"
+              [(ngModel)]="value.EmployeeSalaryAmount"
+              [name]="'name_' + i"
+              readonly
+            />
+          </td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 50"></td>
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 50"></td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 50">
+            <b>
+              <input
+                style="font-weight: bold"
+                class="form-control"
+                type="number"
+                value="{{ value.EmployeeSalaryAmount }}"
+                disabled
+              />
+            </b>
+          </td>
+        </tr>
+
+        <tr *ngFor="let value of item; let i = index">
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'B'">
+            {{ value.payheadName }}
+          </td>
+          <!-- <td style="text-align: center" *ngIf="value.payheadName == 'Net Pay'">
+            <b>{{ value.payheadName }}</b>
+          </td> -->
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'B'">
+            {{ value.salaryFieldSrNo }}
+          </td>
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'B'">
+            <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+              <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+              of {{ value.formula }}
+              <br />
+              <strong>OR</strong>
+              <br />
+              {{ value.formula1 }}
+            </ng-container>
+            <ng-template #singleFormula>
+              {{ value.formula || value.formula1 }}
+            </ng-template>
+          </td>
+
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'B'">
+            <input
+              class="form-control"
+              type="number"
+              [(ngModel)]="value.EmployeeSalaryAmount"
+              [name]="'name_' + i"
+              readonly
+            />
+          </td>
+        </tr>
+
+        <tr *ngFor="let value of item; let i = index">
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn == 'net'"
+          >
+            {{ value.payheadName }}
+          </td>
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 92">
+            <b>{{ value.payheadName }}</b>
+          </td>
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn == 'net'"
+          >
+            {{ value.salaryFieldSrNo }}
+          </td>
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn == 'net'"
+          >
+            <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+              <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+              of {{ value.formula }}
+              <br />
+              <strong>OR</strong>
+              <br />
+              {{ value.formula1 }}
+            </ng-container>
+            <ng-template #singleFormula>
+              {{ value.formula || value.formula1 }}
+            </ng-template>
+          </td>
+
+          <td
+            style="text-align: center"
+            *ngIf="value.salaryFieldSrNo == 'A' && value.considerIn == 'net'"
+          >
+            <input
+              class="form-control"
+              type="number"
+              [(ngModel)]="value.EmployeeSalaryAmount"
+              [name]="'name_' + i"
+              readonly
+            />
+          </td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 92"></td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 92"></td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 92">
+            <input
+              style="font-weight: bold"
+              class="form-control"
+              type="number"
+              value="{{ value.EmployeeSalaryAmount }}"
+              disabled
+            />
+          </td>
+        </tr>
+
+        <tr *ngFor="let value of item; let i = index">
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'C'">
+            {{ value.payheadName }}
+          </td>
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 1">
+            <b>{{ value.payheadName }}</b>
+          </td>
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'C'">
+            {{ value.salaryFieldSrNo }}
+          </td>
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'C'">
+            <ng-container *ngIf="value.formula && value.formula1; else singleFormula">
+              <strong>{{ value.formulaPreference?.toUpperCase() }}</strong>
+              of {{ value.formula }}
+              <br />
+              <strong>OR</strong>
+              <br />
+              {{ value.formula1 }}
+            </ng-container>
+            <ng-template #singleFormula>
+              {{ value.formula || value.formula1 }}
+            </ng-template>
+          </td>
+
+          <td style="text-align: center" *ngIf="value.salaryFieldSrNo == 'C'">
+            <input
+              class="form-control"
+              type="number"
+              [(ngModel)]="value.EmployeeSalaryAmount"
+              [name]="'name_' + i"
+              readonly
+            />
+          </td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 1"></td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 1"></td>
+
+          <td style="text-align: center" *ngIf="value.payheadMasterId == 1">
+            <input
+              style="font-weight: bold"
+              class="form-control"
+              type="number"
+              value="{{ value.EmployeeSalaryAmount }}"
+              disabled
+            />
+          </td>
+        </tr>
+      </table>
+      <br />
+      <br />
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4" *ngIf="showjoining == true">
+  <h1 style="padding: 20px; color: red">Please Fill Employee Joining Details Form.</h1>
+</div>
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

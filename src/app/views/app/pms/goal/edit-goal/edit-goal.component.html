@@ -1,0 +1,261 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Goal</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" [(ngModel)]="editData.companyMasterId" (change)="company($event)">
+                @for (c of company; track c) {
+                  <ng-option [value]="c.companyMasterID">
+                    {{ c.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #title="ngModel" name="title"
+                [(ngModel)]="editData.title" />
+                <span>Goal Name *</span>
+                @if (!title.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Goal Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose Goal Type" ngModel #type="ngModel" name="type" required
+                  [(ngModel)]="editData.type">
+                  <ng-option value="Individual">Individual</ng-option>
+                  <ng-option value="Group">Group</ng-option>
+                </ng-select>
+                <span>Goal Type *</span>
+                @if (!type.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Goal Type is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <!-- <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" ngModel #type="ngModel" name="type" min="0" max="100"
+                [(ngModel)]="editData.type" />
+                <span>Goal Type</span>
+              </label>
+            </div> -->
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #description="ngModel" name="description" required
+                [(ngModel)]="editData.description"></textarea>
+                <span>Goal Description</span>
+                @if (!description.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Description is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #goalSettingId="ngModel"
+                  [(ngModel)]="editData.goalSettingId" name="goalSettingId" required>
+                  @for (goal of setting; track goal) {
+                    <ng-option [value]="goal.id">
+                      {{ goal.title }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Goal Setting *</span>
+                @if (!goalSettingId.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Goal Setting is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <!-- <div class="col-md-4">
+            <div class="form-group mb-2">
+              <label class="form-group has-float-label">
+                <input class="form-control"
+                  #duration="bsDaterangepicker" bsDaterangepicker
+                  [(bsValue)]="editData.bsRangeValue"
+                  [container]="'html'" />
+                  <span>Duration*</span>
+                </label>
+              </div>
+            </div> -->
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" #duration="bsDaterangepicker" bsDaterangepicker [container]="'html'"
+                  [(ngModel)]="selectedDateRange" name="duration" />
+                  <span>Duration*</span>
+                  @if (selectedDateRange.length == 0 && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Duration is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-12" style="margin-bottom: 20px">
+                <span class="button" class="btn btn-primary" (click)="addKra()">Add KRA</span>
+              </div>
+              <br />
+              @for (value of values; track value; let i = $index) {
+                <div class="col-md-12 my-2">
+                  <div class="row mb-4 kraform">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" [(ngModel)]="value.title" #kraTitle="ngModel"
+                          required [disabled]="value.delete && value.delete== true ? value.delete : false"
+                          name="kraTitle{{ i }}" />
+                          <span>{{i + 1 }}. KRA Title *</span>
+                          @if (!kraTitle.valid && addcomp.submitted && !value.delete) {
+                            <div
+                              class="invalid-tooltip">
+                              KRA Title is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <textarea class="form-control" [(ngModel)]="value.description" #kraDescription="ngModel"
+                            required [disabled]="value.delete && value.delete== true ? value.delete : false"
+                          name="kraDescription{{ i }}"></textarea>
+                          <span>KRA Description *</span>
+                          @if (!kraDescription.valid && addcomp.submitted && !value.delete) {
+                            <div
+                              class="invalid-tooltip">
+                              KRA Description is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" [(ngModel)]="value.weightage" min="0" required
+                            max="100" [disabled]="value.delete && value.delete== true ? value.delete : false"
+                            #kraWeightage="ngModel" name="kraWeightage{{ i }}" />
+                            <span>KRA Weightage *</span>
+                            @if (!kraWeightage.valid && addcomp.submitted &&!value.delete) {
+                              <div
+                                class="invalid-tooltip">
+                                KRA Weightage is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-6">
+                          <button class="btn btn-danger btn-xs mb-1" type="button" (click)="removeKra(i)"
+                            [disabled]="value.delete && value.delete== true ? value.delete : false"
+                            [disabled]="values.length === 1">Remove
+                          KRA</button>
+                          {{' '}}
+                          <button class="btn btn-success btn-xs mb-1" type="button"
+                            [disabled]="value.delete && value.delete== true ? value.delete : false"
+                          (click)="addKpi(i)">Add KPI</button>
+                        </div>
+                        @for (kpi of values[i].kpi; track kpi; let j = $index) {
+                          <div class="col-md-12 my-2">
+                            <div class="row mb-4 kpiform">
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" [(ngModel)]="kpi.title" required
+                                    [disabled]="kpi.delete && kpi.delete== true ? kpi.delete : false"
+                                    #kpiTitle="ngModel" name="kpiTitle{{ i }}{{ j }}" />
+                                    <span>KPI Title *</span>
+                                    @if (!kpiTitle.valid && addcomp.submitted && !kpi.delete) {
+                                      <div
+                                        class="invalid-tooltip">
+                                        KPI Title is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <textarea class="form-control" [(ngModel)]="kpi.description" required
+                                      [disabled]="kpi.delete && kpi.delete== true ? kpi.delete : false"
+                                    #kpiDescription="ngModel" name="kpiDescription{{ i }}{{ j }}"></textarea>
+                                    <span>KPI Description *</span>
+                                    @if (!kpiDescription.valid && addcomp.submitted && !kpi.delete) {
+                                      <div
+                                        class="invalid-tooltip">
+                                        KPI Description is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <div class="col-md-4">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="number" [(ngModel)]="kpi.weightage" required
+                                      [disabled]="kpi.delete && kpi.delete== true ? kpi.delete : false"
+                                      #kpiWeightage="ngModel" name="kpiWeightage{{ i }}{{ j }}" />
+                                      <span>KPI Weightage *</span>
+                                      @if (!kpiWeightage.valid && addcomp.submitted && !kpi.delete) {
+                                        <div
+                                          class="invalid-tooltip">
+                                          KPI Weightage is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="number" [(ngModel)]="kpi.targetGiven" required
+                                        [disabled]="kpi.delete && kpi.delete== true ? kpi.delete : false"
+                                        #kpiTargetGiven="ngModel" name="kpiTargetGiven{{ i }}{{ j }}" />
+                                        <span>KPI Target Given *</span>
+                                        @if (!kpiTargetGiven.valid && addcomp.submitted && !kpi.delete) {
+                                          <div
+                                            class="invalid-tooltip">
+                                            KPI Target Given is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <button class="btn btn-danger btn-xs mb-1" type="button" (click)="removeKpi(i,j)"
+                                        [disabled]="kpi.delete && kpi.delete== true ? kpi.delete : false"
+                                        [disabled]="value.delete && value.delete== true ? value.delete : false"
+                                        [disabled]="values[i].kpi.length === 1">Remove
+                                      KPI</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+                              <br>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                        <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                          [isDisabled]="buttonDisabled" click="onLoginClick()">
+                          {{ 'forms.submit' | translate }}
+                        </app-state-button>
+                        <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/pms/goal'"
+                          style="margin-left: 2%">
+                          Cancel
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                }
+
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

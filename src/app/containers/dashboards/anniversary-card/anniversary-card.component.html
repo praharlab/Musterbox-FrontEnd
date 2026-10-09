@@ -1,0 +1,194 @@
+<div class="row">
+  <div class="col-md-12 col-lg-12 col-12">
+    <div class="card">
+      <div class="position-absolute card-top-buttons">
+        <h5 class="card-title font">Work Anniversary</h5>
+      </div>
+      <tabset class="card-tabs">
+        <tab heading="Yesterday" class="card-body pt-2">
+          @if (showloader == 'true') {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div class="scroll dashboard-list-with-thumbs">
+            <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+              @for (product of yesterdayData; track product) {
+                <div class="d-flex flex-row mb-3 mt-3">
+                  <a class="d-block position-relative" style="margin-left: 3px">
+                    @if (product.firstName && product.lastName && (!product || product.photo == '' || product.photo == null)) {
+                      <app-profile-pic
+                        [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                      [firstName]="product.firstName" [lastName]="product.lastName"></app-profile-pic>
+                    }
+                    @if (product && product.photo != '' && product.photo != null) {
+                      <img src="{{ apiURL }}uploads/user/photo/{{ product.photo }}" [alt]="product.title"
+                        class="list-thumbnail border-0"
+                        style="height: 85px; width: 113px" />
+                    }
+                    <span class="badge position-absolute badge-position translate-middle zoom-left-in-out">
+                      🎂
+                    </span>
+                  </a>
+                  <div class="pl-3 pt-2 pr-2 pb-2">
+                    <a>
+                      <p class="list-item-heading" style="line-height: 0.3rem !important">
+                        @if (product.displayName) {
+                          <span>{{ product.displayName }}</span>
+                        }
+                      </p>
+                      <p class="text-primary text-small font-weight-medium mb-0">
+                        @if (product.dob) {
+                          <span style="margin-bottom: 1px">{{ product.dob }}</span>
+                        }
+                        <br />
+                        @if (product['employeeJoiningDetails.employeeCode']) {
+                          <span style="margin-bottom: 1px">
+                            {{ product['employeeJoiningDetails.employeeCode'] }}
+                          </span>
+                        }
+                        <br />
+                        @if (product.email) {
+                          <span>{{ product.email }}</span>
+                        }
+                      </p>
+                    </a>
+                  </div>
+                </div>
+              }
+            </perfect-scrollbar>
+          </div>
+        </tab>
+        <tab heading="Today" class="card-body pt-2" active="true">
+          @if (showloader == 'true') {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div class="scroll dashboard-list-with-thumbs">
+            <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+              @for (product of todayData; track product) {
+                <div class="d-flex flex-row mb-3 mt-3">
+                  <a class="d-block position-relative" style="margin-left: 3px">
+                    @if (product.firstName && product.lastName && (!product || product.photo == '' || product.photo == null)) {
+                      <app-profile-pic
+                        [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                      [firstName]="product.firstName" [lastName]="product.lastName"></app-profile-pic>
+                    }
+                    @if (product && product.photo != '' && product.photo != null) {
+                      <img src="{{ apiURL }}uploads/user/photo/{{ product.photo }}" [alt]="product.title"
+                        class="list-thumbnail border-0"
+                        style="height: 85px; width: 113px" />
+                    }
+                    <span class="badge position-absolute badge-position translate-middle zoom-left-in-out">
+                      🎂
+                    </span>
+                  </a>
+                  <div class="pl-3 pt-2 pr-2 pb-2">
+                    <a>
+                      <p class="list-item-heading" style="line-height: 0.3rem !important">
+                        @if (product.displayName) {
+                          <span>{{ product.displayName }}</span>
+                        }
+                      </p>
+                      <p class="text-primary text-small font-weight-medium mb-0">
+                        @if (product.dob) {
+                          <span style="margin-bottom: 1px">{{ product.dob }}</span>
+                        }
+                        <br />
+                        @if (product['employeeJoiningDetails.employeeCode']) {
+                          <span style="margin-bottom: 1px">
+                            {{ product['employeeJoiningDetails.employeeCode'] }}
+                          </span>
+                        }
+                        <br />
+                        @if (product.email) {
+                          <span>{{ product.email }}</span>
+                        }
+                      </p>
+                    </a>
+                  </div>
+                </div>
+              }
+            </perfect-scrollbar>
+          </div>
+        </tab>
+        <tab heading="Tommorow" class="card-body pt-2">
+          @if (showloader == 'true') {
+            <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          }
+          <div class="scroll dashboard-list-with-thumbs">
+            <perfect-scrollbar class="scroll" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+              @for (product of tomorrowData; track product) {
+                <div class="d-flex flex-row mb-3 mt-3">
+                  <a class="d-block position-relative" style="margin-left: 3px">
+                    @if (product.firstName && product.lastName && (!product || product.photo == '' || product.photo == null)) {
+                      <app-profile-pic
+                        [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                      [firstName]="product.firstName" [lastName]="product.lastName"></app-profile-pic>
+                    }
+                    @if (product && product.photo != '' && product.photo != null) {
+                      <img src="{{ apiURL }}uploads/user/photo/{{ product.photo }}" [alt]="product.title"
+                        class="list-thumbnail border-0"
+                        style="height: 85px; width: 113px" />
+                    }
+                    <span class="badge position-absolute badge-position translate-middle zoom-left-in-out">
+                      🎂
+                    </span>
+                  </a>
+                  <div class="pl-3 pt-2 pr-2 pb-2">
+                    <a>
+                      <p class="list-item-heading" style="line-height: 0.3rem !important">
+                        @if (product.displayName) {
+                          <span>{{ product.displayName }}</span>
+                        }
+                      </p>
+                      <p class="text-primary text-small font-weight-medium mb-0">
+                        @if (product.dob) {
+                          <span style="margin-bottom: 1px">{{ product.dob }}</span>
+                        }
+                        <br />
+                        @if (product['employeeJoiningDetails.employeeCode']) {
+                          <span style="margin-bottom: 1px">
+                            {{ product['employeeJoiningDetails.employeeCode'] }}
+                          </span>
+                        }
+                        <br />
+                        @if (product.email) {
+                          <span>{{ product.email }}</span>
+                        }
+                      </p>
+                    </a>
+                  </div>
+                </div>
+              }
+            </perfect-scrollbar>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</div>

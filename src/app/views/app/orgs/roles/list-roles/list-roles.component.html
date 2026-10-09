@@ -1,0 +1,191 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" name="Roles" [showDisplayMode]="false"
+  [searchValue]="filterData.searchQuery" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()"></app-list-page-header>
+
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" [(ngModel)]="filterData.companyMasterID" ngModel
+                #companyMasterID="ngModel" name="companyMasterID" required>
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp2.submitted) {
+                <div class="invalid-tooltip">
+                  Company selection is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">
+          {{ 'forms.submit' | translate }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
+<br />
+
+@if (rows.length != 0 && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="scrollBarHorizontal" [rowHeight]="50" [rows]="rows" [footerHeight]="100"
+        [columnMode]="'force'" [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="Company Name" prop="companyMaster.companyName" [flexGrow]="1.2"
+        [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="Role Name" prop="roleName" [flexGrow]="1.2" [width]="80"></ngx-datatable-column>
+        <ngx-datatable-column name="Role Type" [flexGrow]="1.2" [width]="120">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <b>{{row.roleType}}</b><br>{{row.companyAccessType}}@if (row.allBranch && row.allBranch.length) {
+            <a
+              style="cursor: pointer;color: #ADD8E6;" tooltip="Click to list all Branches"
+              (click)="lgModal1.show(); viewBranches(row.allBranch)">View all
+            Branch</a>
+          }
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Created By" prop="createBy" [flexGrow]="1.2" [width]="80"></ngx-datatable-column>
+      <ngx-datatable-column name="Updated By" prop="updateBy" [flexGrow]="1.2" [width]="80"></ngx-datatable-column>
+      <ngx-datatable-column name="Action" [sortable]="true" [width]="80">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (permissionedit.length != 0) {
+            <a (click)="navigateToEditPage(row)">
+              <span tooltip="Edit Role Details." [class]="'glyph-icon simple-icon-pencil tool_tip'"
+              style="padding-right: 10px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+          }
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Permission" [flexGrow]="1.2" [width]="100">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button type="button" class="btn btn-primary" (click)="lgModal.show(); view(row.roleMasterID)">
+            Permission
+          </button>
+          {{ ' ' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Clone" [flexGrow]="1.2" [width]="100">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          @if (permissioncreate.length != 0) {
+            <button type="button" class="btn btn-primary" (click)="navigateToCloneRolePage(row)"
+              >
+              Clone
+            </button>
+          }
+          {{ ' ' }}
+        </ng-template>
+      </ngx-datatable-column>
+      @if (true) {
+        <ngx-datatable-footer>
+          <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+            let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+            <div class="w-100 d-flex justify-content-center">
+              <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+            </div>
+          </ng-template>
+        </ngx-datatable-footer>
+      }
+    </ngx-datatable>
+  </div>
+</div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Permissions</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (showMyContainer) {
+          <div>
+            <app-permission-view [formdata]="formdata" [action]="'view'"
+              (parentform)="parentform($event.form, $event.checked)" (childform)="childform($event.child, $event.checked)"
+              (operations)="operations($event.parent, $event.child, $event.operation, $event.checked)">
+            </app-permission-view>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Branches</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12 row">
+          <div class="col-md-12">
+            @if (allBranches && allBranches.length > 0) {
+              <table style="width: 100%">
+                <tr style="background-color: lightgray; text-align: center">
+                  <th>Name</th>
+                  <th>Code</th>
+                  <th>City</th>
+                </tr>
+                @for (item of allBranches; track item) {
+                  <tr>
+                    <td style="padding: 10px; text-align: center">
+                      {{ item.branchMaster.branchName }}
+                    </td>
+                    <td style="padding: 10px; text-align: center">
+                      {{ item.branchMaster.branchCode }}
+                    </td>
+                    <td style="padding: 10px; text-align: center">
+                      {{ item.branchMaster.cityMaster.cityName }}
+                    </td>
+                  </tr>
+                }
+              </table>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

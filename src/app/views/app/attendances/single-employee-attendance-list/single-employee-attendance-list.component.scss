@@ -1,0 +1,201 @@
+body {
+  line-height: 1.6;
+  margin: 2em;
+  min-width: 990px;
+}
+td,
+th {
+  white-space: nowrap;
+  overflow: hidden;
+}
+th {
+  background-color: #134e4a;
+  color: #fff;
+  padding: 0.5em 1em;
+  border: 1px solid white;
+}
+
+td {
+  border-top: 1px solid rgb(221, 221, 221);
+  border-right: 1px solid rgb(221, 221, 221);
+  padding: 0.5em 1em;
+  text-align: center;
+}
+
+input {
+  cursor: pointer;
+}
+
+/* Column types */
+.missed-col {
+  background-color: #f00;
+}
+
+.missed-col {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+.missed-col1 {
+  background-color: #f00;
+}
+
+.missed-col1 {
+  background-color: lightgreen;
+  color: green;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-col2 {
+  background-color: #f00;
+}
+
+.missed-col2 {
+  background-color: lightyellow;
+  color: black;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding: 9px;
+}
+
+.missed-cols {
+  background-color: #ffecec;
+  color: #f00;
+  text-align: center;
+  width: 100%;
+}
+.missed-cols1 {
+  background-color: #f00;
+}
+
+.missed-cols1 {
+  background-color: lightgreen;
+  color: green;
+  text-align: center;
+  width: 100%;
+}
+
+.missed-cols2 {
+  background-color: #f00;
+}
+
+.missed-cols2 {
+  background-color: lightyellow;
+  color: black;
+  text-align: center;
+  width: 100%;
+}
+
+.table-style {
+  overflow-x: auto;
+  margin-top: 10px;
+  font-size: 12px !important;
+}
+
+.name-col {
+  padding: 12px;
+  text-align: center;
+}
+
+.simple-icon-pencil::before {
+  color: var(--m-primary);
+  content: '\e05f';
+}
+
+.table thead th {
+  /* vertical-align: bottom; */
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.present {
+  background: #28a745;
+  color: #000000;
+}
+
+.absent {
+  background: #ff3200;
+  color: #000000;
+}
+
+.halfDay {
+  background: #f78325;
+  color: #000000;
+}
+
+.penaltywithoutdeduction {
+  background: #ffe83d;
+  color: #000000;
+}
+
+.penaltywithdeduction {
+  background: #7b68ee;
+  color: #000000;
+}
+
+.missing-punch {
+  background: #8104a0;
+  color: #000000;
+}
+
+.outduty {
+  background: #9c27b0;
+  color: #000000;
+}
+
+.green-color {
+  color: #1db954;
+}
+
+.red-color {
+  color: #f42c2c;
+}
+
+.holiday {
+  background: #5ab0de;
+  color: #000000;
+}
+
+.leave {
+  background: #fc8ca5;
+  color: #000000;
+}
+
+.weekly-off {
+  background: #3462f6;
+  color: #000000;
+}
+
+.late {
+  background: #c82333;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.nolate {
+  background: #2ea52c;
+  color: black;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.accept {
+  background: #19cf47;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.pending {
+  background: #f3e307;
+  color: black;
+  padding: 5px;
+  border-radius: 5px;
+}

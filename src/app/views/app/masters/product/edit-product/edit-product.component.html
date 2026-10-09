@@ -1,0 +1,92 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (companydata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Product</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #productName="ngModel"
+                [(ngModel)]="companydata.productName"
+                name="productName"
+                />
+                <span>Product Name *</span>
+                @if (!productName.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Product Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group mb-3">
+                <div class="custom-file">
+                  <input
+                    type="file"
+                    class="custom-file-input"
+                    id="inputGroupFile03"
+                    (change)="onSelectFile($event)"
+                    accept="image/*"
+                    />
+                    <label class="custom-file-label" for="inputGroupFile03">Choose a Product Photo</label>
+                  </div>
+                </div>
+                @if (!url) {
+                  <img
+                    src="{{ companydata.productPhoto }}"
+                    height="100"
+                    width="100"
+                    style="margin-bottom: 21px"
+                    />
+                }
+                @if (url) {
+                  <img src="{{ url }}" height="100" width="100" style="margin-bottom: 21px" />
+                }
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    placeholder="Choose your option"
+                    ngModel
+                    #companyMasterID="ngModel"
+                    name="companyMasterID"
+                    [(ngModel)]="companydata.companyMasterID"
+                    >
+                    @for (product of product; track product) {
+                      <ng-option [value]="product.companyMasterID">
+                        {{ product.companyName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Company *</span>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button
+                class="btn btn-danger btn-shadow mt-4"
+                [routerLink]="adminRoot + '/masters/product'"
+                style="margin-left: 2%"
+                >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

@@ -1,0 +1,35 @@
+// #table1,table,td,th,tr {
+//     border-collapse: collapse;
+//     border-color: black
+// }
+
+// @media print {
+//     #table1,table,td,th,tr {
+//         border-collapse: collapse;
+//         border-color: black
+//     }
+// }
+
+.table {
+  page-break-inside: auto;
+}
+.table tr {
+  page-break-inside: avoid;
+}
+
+.table td {
+  page-break-inside: avoid;
+}
+
+tr {
+  page-break-inside: avoid !important;
+}
+
+.table th,
+.table td {
+  border-color: black !important;
+}
+
+.border {
+  border: 1px solid black !important;
+}

@@ -1,0 +1,9 @@
+<div class="search d-none d-md-block">
+  <ng-select placeholder="Search..." [items]="searchData" bindLabel="menuName" [(ngModel)]="searchTerm" bindValue="path"
+    groupBy="parent" (change)="onSearchSelect($event)">
+    <ng-template ng-optgroup-tmp let-item="item">
+      {{item.parent || 'Unnamed group'}}
+    </ng-template>
+  </ng-select>
+  <i class="icon simple-icon-magnifier"></i>
+</div>

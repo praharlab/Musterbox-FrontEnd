@@ -1,0 +1,137 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header name="Id Card" [showOrderBy]="false" [showSearch]="false" [showDisplayMode]="false"
+  [itemsPerPage]="body.limit" [itemOptionsPerPage]="itemOptionsPerPage"
+(itemsPerPageChange)="onLimitChange($event)"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate>
+      <div class="row">
+        <div class="col-lg-3 col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel [(ngModel)]="defaultCompany" #company="ngModel"
+              name="company" (change)="selectcompany($event)" required>
+              @for (company1 of companyData; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-lg-3 col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch">
+              @for (item of branchData; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #idCardType="ngModel" [(ngModel)]="radiostatus"
+              name="idCardType" required>
+              <ng-option value="portrait">Portrait</ng-option>
+              <ng-option value="landscape">Landscape</ng-option>
+            </ng-select>
+            <span>Orientation*</span>
+            @if (!idCardType.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Orientation is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #orderBy="ngModel" name="orderBy"
+              [(ngModel)]="orderByValue">
+              <ng-option value="displayName">
+                Employee Name
+              </ng-option>
+              <!-- <ng-option value="employeeCode">
+              Employee Code
+            </ng-option> -->
+            <ng-option value="joiningDate">
+              Joining Date
+            </ng-option>
+          </ng-select>
+          <span>Select OrderBy</span>
+        </label>
+      </div>
+
+      <div class="col-md-12">
+        <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+          {{ 'forms.submit' | translate }}
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+        <span> &nbsp;&nbsp; </span>
+        @if (idCardDataArray) {
+          <button class="btn btn-success form-group" type="button" (click)="onClickDownloadPdf()"
+            >
+            Download As PDF
+          </button>
+        }
+        @if (idCardDataArray && radiostatus == 'portrait') {
+          <button class="btn btn-success form-group ml-3" type="button" (click)="onClickDownloadZIP()"
+            >
+            Download As ZIP
+          </button>
+        }
+
+      </div>
+    </div>
+  </form>
+</div>
+</div>
+
+@if (idCardDataArray) {
+  <div class="d-flex justify-content-center mt-4">
+    <pdf-viewer [src]="idCardDataArray" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+      [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true" [external-link-target]="'blank'"
+    [autoresize]="true" [show-borders]="false" style="width: 80%; height: 1000px"></pdf-viewer>
+  </div>
+}
+
+
+<div class="row mt-2">
+  <div class="col-12">
+    <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+      [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="limit" [maxSize]="5"
+      (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate">
+    </pagination>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

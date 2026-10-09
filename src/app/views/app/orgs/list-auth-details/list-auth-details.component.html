@@ -1,0 +1,56 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name="List Authorization"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  [showItemsPerPage]="false"
+  [showreplace]="permissionedit"
+  (addNewItem)="showAddNewModal()"
+  [showSearch]="false"
+  [itemOptionsPerPage]="itemOptionsPerPage"
+></app-list-page-header>
+
+<br />
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)" (onClear)="clear()" [multiUser]="false">
+  </app-common-filter>
+}
+
+<br />
+@if (rows.length > 0 && permissionview.length != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable
+        [scrollbarH]="true"
+        [rowHeight]="50"
+        [rows]="rows"
+        [columnMode]="'force'"
+        [limit]="filterData.limit"
+        [externalPaging]="true"
+        [count]="page.totalCount"
+        [offset]="page.offset"
+        (page)="onChange($event)"
+        >
+        <ngx-datatable-column
+          name="Authorization Type"
+          prop="name"
+          [flexGrow]="1.2"
+          [width]="130"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="Authorization Count"
+          prop="count"
+          [flexGrow]="1.2"
+          [width]="180"
+        ></ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

@@ -1,0 +1,55 @@
+p{
+    margin-bottom: 0px;
+}
+
+.modal-dialog{
+    background: #FFF;
+    width: 380px !important;
+    height: 635px !important;
+    max-width: 380px !important;
+    max-height: 635px !important;
+    padding: 30px !important;
+    float: right;
+    margin-top: 100px;
+    margin-right: 40px;
+    border-radius: 10px;
+}
+
+.input{
+    width: 320px;
+    height: 35px;
+    padding: 10px;
+    padding-left: 30px !important;
+    margin-bottom: 20px !important;
+    color: #A5AFB6;
+    border-radius: 5px;
+    border: 1px solid #C9D8E3;
+}
+
+.searchIcon{
+    position: absolute;
+    top: 8px;
+    left: 10px;
+}
+
+.modal-header{
+    margin-bottom: 20px;
+    display: block !important;
+}
+
+.modal .modal-header, .modal .modal-body, .modal .modal-footer{
+    padding: 0px;
+    margin: 0px;
+}
+
+.mb10{
+    margin-bottom: 10px;
+}
+
+.recentgap{
+    padding-bottom: 105px;
+}
+
+.modal-body{
+    max-height: 390px !important;
+}

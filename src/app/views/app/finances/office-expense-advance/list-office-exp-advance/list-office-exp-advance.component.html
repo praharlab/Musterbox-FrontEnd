@@ -1,0 +1,199 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Office Expense Advance" [showOrderBy]="false" [showSearch]="false" [showDisplayMode]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit" [showadd]="permissioncreate"
+(addNewItem)="showAddNewModal()" [itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+<!-- <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" [multiUser]="false"
+(onSubmit)="onSubmit($event)" (getCompany)="getCompany($event)" (onClear)="clear()" (export)="export()"
+*ngIf="permissionview.length > 0" class="commonFilter" (getBranch)="getBranch($event)"> -->
+<div class="card">
+  <div class="card-body">
+    <form #listOfficeExpenseAdvance="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              (change)="selectCompany($event)" required [(ngModel)]="filterData.companyMasterID">
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && listOfficeExpenseAdvance.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch"
+              (change)="selectBranch($event)" [(ngModel)]="filterData.branchMasterID">
+              @for (branch of branchData; track branch) {
+                <ng-option [value]="+branch.branchMasterID">
+                  {{ branch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch</span>
+            @if (!branch.valid && listOfficeExpenseAdvance.submitted) {
+              <div class="invalid-tooltip">
+                Branch is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select [items]="allSites" [(ngModel)]="filterData.siteID" [multiple]="false" bindLabel="siteName"
+              bindValue="siteID" [closeOnSelect]="true" ngModel #siteID="ngModel" name="siteID"
+              placeholder="Choose your option" (ngModelChange)="selectSite($event)">
+            </ng-select>
+            <span>Select Site</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #user="ngModel" name="user"
+              [(ngModel)]="filterData.userMasterID">
+              @for (user of userData; track user) {
+                <ng-option [value]="+user.userMasterID">
+                  {{ user.displayName }} - ({{ user.userNumber }})
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Allocated Employee </span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel name="fromDate" #fromDate="ngModel"
+              (change)="onFromDateChange()" [(ngModel)]="filterData.fromDate"
+              [required]="filterData.toDate != ''" />
+              <span>From Date @if (filterData.toDate != '') {
+                <span>*</span>
+              }</span>
+              @if (!fromDate.valid && listOfficeExpenseAdvance.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel name="toDate" #toDate="ngModel"
+                [(ngModel)]="filterData.toDate" [required]="filterData.fromDate != ''" />
+                <span>To Date @if (filterData.fromDate != '') {
+                  <span>*</span>
+                }</span>
+                @if (!toDate.valid && listOfficeExpenseAdvance.submitted) {
+                  <div class="invalid-tooltip">
+                    To Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-primary mt-4" type="submit">Submit</button>
+            <button class="btn btn-danger btn-shadow mt-4 ml-2" (click)="clear()">Clear</button>
+            @if (rows.length > 0) {
+              <button class="btn btn-success mt-4 ml-2" (click)="export()" type="button">Export</button>
+            }
+          </div>
+        </form>
+      </div>
+    </div>
+
+    @if (permissionview.length > 0) {
+      <div class="row mt-4">
+        <div class="col-12 mb-4 data-table-rows">
+          <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+            [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+            (page)="onChange($event)">
+            <ngx-datatable-column name="Date" prop="date" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ $safeNavigationMigration(row?.date) | date: 'dd-MM-yyyy' || "" }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Employee Code" prop="userMaster.employeeJoiningDetails[0].employeeCode" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ getData($safeNavigationMigration(row?.userMaster)).employeeCode }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Employee Name" prop="userMaster.displayName" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Branch" prop="userMaster.employeeBranches[0].branchMaster.branchName" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ getData($safeNavigationMigration(row?.userMaster))?.branch }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Department" prop="userMaster.employeeDepartments[0].department.departmentName" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ getData($safeNavigationMigration(row?.userMaster))?.department }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Designation" prop="userMaster.employeeDesignations[0].designation.designationName" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ getData($safeNavigationMigration(row?.userMaster))?.designation }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Division" prop="userMaster.employeeDivisions[0].division.divisionName" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ getData($safeNavigationMigration(row?.userMaster))?.division }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Working Area" prop="userMaster.employeeWorkingAreas[0].workingArea?.workingAreaName" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ getData($safeNavigationMigration(row?.userMaster))?.workingArea }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Allocated Branch" prop="branchMaster.branchName" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Allocated Site" prop="site.siteName" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Transaction Type" prop="transactionType" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Amount" prop="amount" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Payment Mode" prop="paymentMode" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Reference No" prop="referenceNo" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            <ngx-datatable-column name="Reference Date" prop="referenceDate" [flexGrow]="1.2" [width]="100">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ $safeNavigationMigration(row?.referenceDate) | date: 'dd-MM-yyyy' || "" }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Remarks" prop="remarks" [flexGrow]="1.2" [width]="100"></ngx-datatable-column>
+            @if (true) {
+              <ngx-datatable-footer>
+                <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                  let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                  <div class="w-100 d-flex justify-content-center">
+                    <pagination [totalItems]="page.totalCount" [boundaryLinks]="true"
+                      [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate"
+                      [itemsPerPage]="filterData.limit" [maxSize]="5" [(ngModel)]="currentPage"
+                      (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                    [customPreviousTemplate]="prevTemplate"></pagination>
+                  </div>
+                </ng-template>
+              </ngx-datatable-footer>
+            }
+          </ngx-datatable>
+        </div>
+      </div>
+    }
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>

@@ -1,0 +1,20 @@
+@if (showloader == true) {
+  <div></div>
+}
+@if (showloader == false) {
+  <div>
+    @if (getReponseData.subscriptionData.showSubscriptionExpirationMessage == true) {
+      <div
+        class="card mb-4"
+        >
+        <div class="main-card">
+          <span>
+            <h6 class="font-style m-0">
+              {{ getReponseData.subscriptionData.subscriptionExpirationMessage }}
+            </h6>
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+}

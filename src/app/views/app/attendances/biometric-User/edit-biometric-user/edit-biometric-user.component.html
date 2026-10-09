@@ -1,0 +1,89 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Biometric User </h5>
+
+    @if (biometricData) {
+      <form #adddata="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #biometricUserSerialNo="ngModel" required
+                name="biometricUserSerialNo" [(ngModel)]="biometricData.biometricUserSerialNo" disabled />
+                <span>Biometric Serial No </span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #enrollid="ngModel" required name="enrollid"
+                  [(ngModel)]="biometricData.enrollid" disabled />
+                  <span>Biometric Code </span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #short="ngModel" required name="short"
+                    [(ngModel)]="biometricData.firstName" />
+                    <span>First Name *</span>
+                    @if (!short.valid && adddata.submitted) {
+                      <div class="invalid-tooltip">
+                        First Name is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #cpn="ngModel" name="cpn"
+                      [(ngModel)]="biometricData.lastName" />
+                      <span>Last Name</span>
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input type="file" class="form-control" ngModel #face="ngModel" name="face"
+                        accept=".png, .jpeg, .jpg" (change)="onFileChange($event)" />
+                        <span>Image </span>
+                      </label>
+                      <div class="text-danger mt-1">
+                        The image size must not exceed 70kb.
+                      </div>
+                      <img src="{{ apiURL }}{{ biometricData.face }}"
+                        style="margin-bottom: 30px; margin-top: 30px;max-width: 100px;" />
+                      </div>
+                      <div class="col-md-6">
+                        <label>Admin *</label>
+                        &nbsp;&nbsp;
+                        <input type="radio" name="isAdmin" ngModel #isAdmin="ngModel" [(ngModel)]="biometricData.isAdmin"
+                          [value]="1" required />
+                          &nbsp;
+                          <label for="html">Yes</label>
+                          &nbsp;&nbsp;
+                          <input type="radio" name="isAdmin" ngModel #isAdmin="ngModel" [(ngModel)]="biometricData.isAdmin"
+                            [value]="0" required />
+                            &nbsp;
+                            <label for="html">No</label>
+                            <span> &nbsp;&nbsp; </span>
+                            @if (!isAdmin.valid && adddata.submitted) {
+                              <div class="invalid-tooltip">
+                                Admin is required!
+                              </div>
+                            }
+                          </div>
+                        </div>
+                        <app-state-button [btnClass]="'btn btn-primary mt-4'" [currentState]="buttonState"
+                          [isDisabled]="buttonDisabled" click="onLoginClick()">
+                          {{ 'forms.submit' | translate }}
+                        </app-state-button>
+                        <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/attendances/list-biometricUser'"
+                          style="margin-left: 2%">
+                          Cancel
+                        </button>
+                      </form>
+                    }
+                  </div>
+                </div>
+
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,253 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons"
+  (onSubmit)="validateData($event)" (onClear)="clear()" (clearData)="clear()" (getCompany)="getCompany($event)"
+  customExportButtonName="Demo Excel" (onExcelSubmit)="demoImportCompanyData($event)" [showCustomExportButton]="true"
+  [heading]="'Bulk Update Branch/Job'" [showRequiredFields]="showRequiredFields" (init)="init($event)">
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <ng-select [closeOnSelect]="false" [multiple]="true" ngModel #uploadTypes="ngModel" name="uploadTypes"
+        required>
+        @for (item of updateBranchJobDropDownValues; track item) {
+          <ng-option [value]="item.value">
+            {{ item.Label }}
+          </ng-option>
+        }
+      </ng-select>
+      <span>Select Uploads *</span>
+      @if (!uploadTypes.valid && commonFilter?.filterForm?.submitted) {
+        <div class="invalid-tooltip">
+          This Filed is required!
+        </div>
+      }
+    </label>
+  </div>
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="file" ngModel #file="ngModel" (change)="onFileChange($event)"
+        accept=".xlsx, .xls" name="file" />
+        <span>Import File *</span>
+        @if (file.valid) {
+          <p>{{ fileName }}</p>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+
+  @if (validatedRows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            @if (validatedRows.length > 0 && remarksCount == 0) {
+              <div class="col mb-2">
+                <button class="btn btn-primary" type="submit" (click)="saveData()">Submit</button>
+              </div>
+            }
+            @if (validatedRows.length > 0 && remarksCount != 0) {
+              <div class="col-md-12 text-danger" style="font-size: 16px; padding: 2%"
+                >
+                <div>{{ remarksNote }}</div>
+              </div>
+            }
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 50px">Sr. No</th>
+                  <th>Remarks</th>
+                  <th>Employee Details</th>
+                  @if (uploadObject?.isUploadBranch) {
+                    <th>Branch</th>
+                  }
+                  @if (uploadObject?.isUploadDepartment) {
+                    <th>Department</th>
+                  }
+                  @if (uploadObject?.isUploadDesignation) {
+                    <th>Designation</th>
+                  }
+                  @if (uploadObject?.isUploadDivision) {
+                    <th>Division</th>
+                  }
+                  @if (uploadObject?.isUploadProject) {
+                    <th>Project</th>
+                  }
+                  @if (uploadObject?.isUploadReportsTo) {
+                    <th>Reports To</th>
+                  }
+                  @if (uploadObject?.isUploadSkillCategory) {
+                    <th>Skill Category</th>
+                  }
+                  @if (uploadObject?.isUploadWorkingArea) {
+                    <th>Working Area</th>
+                  }
+                  @if (uploadObject?.isUploadWorkingLocation) {
+                    <th>Working Location</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (validRows of validatedRows; track validRows; let i = $index) {
+                  <tr>
+                    <td style="width: 50px">
+                      <div style="width: 50px">
+                        {{ i + 1 }}
+                      </div>
+                    </td>
+                    <td>
+                      <div style="width: 200px">
+                        <ul>
+                          @for (item of validRows.remarks; track item) {
+                            <li>
+                              {{ item }}
+                            </li>
+                          }
+                        </ul>
+                      </div>
+                    </td>
+                    <td>
+                      <div style="width: 250px">
+                        <b>Employee Name:</b> {{ validRows.userName }}
+                        @if (validRows.employeeCode &&validRows.employeeCode != '' &&validRows.employeeCode != null) {
+                          <span
+                            >
+                            ({{ validRows.employeeCode }})
+                          </span>
+                        }
+                        <br />
+                        <b>Employee Number:</b> {{ validRows.userNumber }}
+                      </div>
+                    </td>
+                    @if (uploadObject?.isUploadBranch) {
+                      <td>
+                        @if (validRows?.branchData) {
+                          <div style="width: 250px">
+                            <b>Branch Name:</b> {{ validRows?.branchData?.branchName }}
+                            <br />
+                            <b>Branch Applicable Date:</b> {{ validRows?.branchData?.applicableDate }}
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadDepartment) {
+                      <td>
+                        @if (validRows?.departmentData) {
+                          <div style="width: 250px">
+                            <b>Department Name:</b> {{ validRows?.departmentData?.departmentName }}
+                            <br />
+                            <b>Department Applicable Date:</b> {{ validRows?.departmentData?.applicableDate }}
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadDesignation) {
+                      <td>
+                        @if (validRows?.designationData) {
+                          <div style="width: 250px">
+                            <b>Designation Name:</b> {{ validRows?.designationData?.designationName }}
+                            <br />
+                            <b>Designation Applicable Date:</b> {{ validRows?.designationData?.applicableDate }}
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadDivision) {
+                      <td>
+                        @if (validRows?.divisionData) {
+                          <div style="width: 250px">
+                            <b>Division Name:</b> {{ validRows?.divisionData?.divisionName }}
+                            <br />
+                            <b>Division Applicable Date:</b> {{ validRows?.divisionData?.startDate }}
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadProject) {
+                      <td>
+                        @if (validRows?.projectData && validRows?.projectData?.length) {
+                          <div style="width: 250px"
+                            >
+                            @for (project of validRows?.projectData; track project) {
+                              <b>Project Name:</b> {{ project.projectName }}
+                              <br />
+                              <b>Project Applicable Date:</b> {{ project.startDate }}
+                              <br />
+                              <br />
+                            }
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadReportsTo) {
+                      <td>
+                        @if (validRows?.reportsToData) {
+                          <div style="width: 250px">
+                            @for (report of validRows?.reportsToData; track report) {
+                              <b>Reports To Employee Name:</b> {{ report.displayName }}
+                              @if (report.employeeCode &&report.employeeCode != '' &&report.employeeCode != null) {
+                                <span
+                                  >
+                                  ({{ report.employeeCode }})
+                                </span>
+                              }
+                              <br />
+                              <b>Reports To Employee Number:</b> {{ report.userNumber }}
+                              <br />
+                              <br />
+                            }
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadSkillCategory) {
+                      <td>
+                        @if (validRows?.skillCategoryData) {
+                          <div style="width: 250px">
+                            <b>Skill Category Skill Category:</b> {{ validRows?.skillCategoryData?.skillCategory
+                            }}
+                            <br />
+                            <b>Skill Category Applicable Month:</b>
+                            {{ validRows?.skillCategoryData?.applicableYYYYMM }}
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadWorkingArea) {
+                      <td>
+                        @if (validRows?.workingAreaData) {
+                          <div style="width: 250px">
+                            <b>Working Area Name:</b> {{ validRows?.workingAreaData?.workingAreaName }}
+                            <br />
+                            <b>Working Area Applicable Date:</b> {{ validRows?.workingAreaData?.startDate }}
+                          </div>
+                        }
+                      </td>
+                    }
+                    @if (uploadObject?.isUploadWorkingLocation) {
+                      <td>
+                        @if (validRows?.workingLocationData) {
+                          <div style="width: 250px">
+                            <b>Working Area Name:</b>
+                            @for (location of validRows?.workingLocationData?.workingLocationName; track location) {
+                              {{ location }}
+                              <br />
+                            }
+                            <br />
+                            <b>Working Location Applicable Date:</b> {{
+                            validRows?.workingLocationData?.startDate }}
+                          </div>
+                        }
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,127 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="companyLogo text-center mb-4">
+      @if (imgShow) {
+        <div>
+          <img class="img-responsive mb-2" width="150px" height="50px" style="object-fit: contain;"
+            src="{{ apiURL }}uploads/company/logo/{{ editData?.companyMaster?.companyLogo }}" />
+          </div>
+        }
+        <h3>{{editData?.companyMaster?.companyName}}</h3>
+      </div>
+      <br />
+      @if (!showForm) {
+        <div style="margin: auto; text-align: center">
+          <h1>{{reponseMessage}}</h1>
+        </div>
+      }
+      @if (showForm) {
+        <form #applyJob="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #firstName="ngModel"
+                  name="firstName" />
+                  <span>First Name *</span>
+                  @if (!firstName.valid && applyJob.submitted) {
+                    <div class="invalid-tooltip">
+                      First Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #middleName="ngModel" name="middleName" />
+                  <span>Middle Name</span>
+                  <!-- <div *ngIf="!middleName.valid && applyJob.submitted" class="invalid-tooltip">
+                  Middle Name is required!
+                </div> -->
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #lastName="ngModel" name="lastName" />
+                <span>Last Name *</span>
+                @if (!lastName.valid && applyJob.submitted) {
+                  <div class="invalid-tooltip">
+                    Last Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3"class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" name="userNumberCountryMasterID" required ngModel #userNumberCountryMasterID="ngModel"
+                  name="userNumberCountryMasterID"[(ngModel)]="selectedCountryCode">
+                  @for (country of countryData; track country) {
+                    <ng-option [value]="country.countryMasterID">
+                      {{country.countryName}} ({{ country.countryCode }})
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Country Code *</span>
+                @if (!userNumberCountryMasterID.valid && addpreboarding.submitted) {
+                  <div class="invalid-tooltip">
+                    Country Code is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #userNumber="ngModel"
+                  name="userNumber" />
+                  <span>Phone Number *</span>
+                  @if (!userNumber.valid && applyJob.submitted) {
+                    <div class="invalid-tooltip">
+                      Phone Number is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="email" required ngModel #email="ngModel" name="email" />
+                  <span>Email *</span>
+                  @if (!email.valid && applyJob.submitted) {
+                    <div class="invalid-tooltip">
+                      Email is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" ngModel #file="ngModel" (change)="onSelectFile($event)"
+                    accept=".png, .jpg, .jpeg, .pdf" name="file" required />
+                    <span>Resume File *</span>
+                    @if (file.valid) {
+                      <p>{{ fileName }}</p>
+                    }
+                  </label>
+                  @if (!file.valid && applyJob.submitted) {
+                    <div class="invalid-tooltip">
+                      File is required!
+                    </div>
+                  }
+                </div>
+                <div class="col-md-12">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" ngModel #candidateComment="ngModel"
+                    name="candidateComment"></textarea>
+                    <span>Candidate Comment</span>
+                  </label>
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+            </form>
+          }
+        </div>
+      </div>

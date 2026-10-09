@@ -1,0 +1,25 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+<app-list-page-header name="Monthly Attendance Report" [showOrderBy]="false" [showDisplayMode]="false"
+[showSearch]="false" [showItemsPerPage]="false"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="Export($event)"
+    (init)="init($event)" (emitUsers)="emitUsers($event)"
+    [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" ngModel #month="ngModel" (change)="selectdate()" name="month"
+          [max]="currmonth" required />
+          <span> Month *</span>
+          @if (!month.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Month is required!
+            </div>
+          }
+        </label>
+      </div>
+    </app-common-filter>
+  }

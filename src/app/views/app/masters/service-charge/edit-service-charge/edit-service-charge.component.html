@@ -1,0 +1,153 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Contractor Service Charge</h5>
+
+    @if (serviceChargeData) {
+      <form #addservicecharge="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" placeholder="Choose your option" [(ngModel)]="companyName" ngModel #company="ngModel" name="company" readonly/>
+              <span>Company *</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" placeholder="Choose your option" [(ngModel)]="contractorName" ngModel #contractorId="ngModel" name="contractorId" readonly/>
+              <span>Contractor *</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #YearMM="ngModel" [(ngModel)]="applicableMonth" name="YearMM" required />
+              <span>Applicable YearMonth *</span>
+              @if (!YearMM.valid && addservicecharge.submitted) {
+                <div class="invalid-tooltip">
+                  Applicable YearMonth is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <section >
+          <div class="row">
+            <div class="col-md-12 my-1">
+              <button type="button" class="btn btn-xs btn-success" (click)="addValue()">
+                ADD
+              </button>
+            </div>
+            <br />
+            @for (value of slabsArray; track value; let i = $index) {
+              <div [ngClass]="{ 'd-none': value.isDeleted === true, 'col-md-12 my-2': true }"
+                >
+                <div class="row">
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" [min]="0" ngModel #fromDays="ngModel"
+                        name="fromDays{{ i }}" [(ngModel)]="value.fromDays" [required]="!value.isDeleted" />
+                        <span>From Days *</span>
+                      </label>
+                      @if (
+                        !fromDays.valid &&
+                        addservicecharge.submitted &&
+                        !value.isDeleted
+                        ) {
+                        <div class="invalid-tooltip">
+                          From Days is required!
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" [min]="0" ngModel #toDays="ngModel"
+                          name="toDays{{ i }}" [(ngModel)]="value.toDays" [required]="!value.isDeleted" />
+                          <span>To Days *</span>
+                        </label>
+                        @if (
+                          !toDays.valid &&
+                          addservicecharge.submitted &&
+                          !value.isDeleted
+                          ) {
+                          <div class="invalid-tooltip">
+                            To Days is required!
+                          </div>
+                        }
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" [min]="0" ngModel #skilledRate="ngModel"
+                            name="skilledRate{{ i }}" [(ngModel)]="value.skilledRate" [required]="!value.isDeleted" />
+                            <span>Skilled Rate *</span>
+                          </label>
+                          @if (
+                            !skilledRate.valid &&
+                            addservicecharge.submitted &&
+                            !value.isDeleted
+                            ) {
+                            <div class="invalid-tooltip">
+                              Skilled Rate is required!
+                            </div>
+                          }
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="number" [min]="0" ngModel #semiskilledRate="ngModel"
+                              name="semiskilledRate{{ i }}" [(ngModel)]="value.semiskilledRate" [required]="!value.isDeleted" />
+                              <span>SemiSkilled Rate *</span>
+                            </label>
+                            @if (
+                              !semiskilledRate.valid &&
+                              addservicecharge.submitted &&
+                              !value.isDeleted
+                              ) {
+                              <div class="invalid-tooltip">
+                                SemiSkilled Rate is required!
+                              </div>
+                            }
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="number" [min]="0" ngModel #unskilledRate="ngModel"
+                                name="unskilledRate{{ i }}" [(ngModel)]="value.unskilledRate" [required]="!value.isDeleted" />
+                                <span>UnSkilled Rate *</span>
+                              </label>
+                              @if (
+                                !unskilledRate.valid &&
+                                addservicecharge.submitted &&
+                                !value.isDeleted
+                                ) {
+                                <div class="invalid-tooltip">
+                                  UnSkilled Rate is required!
+                                </div>
+                              }
+                            </div>
+                            <div class="col-md-1">
+                              @if (i > 0) {
+                                <button class="btn btn-xs btn-danger c-pointer" (click)="removeValues(i)" type="button"
+                                  >
+                                  Remove
+                                </button>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </section>
+                  <div class="col-md-12">
+                    <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                    <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/service_charge'"
+                      style="margin-left: 2%">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              }
+            </div>
+          </div>
+
+          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+

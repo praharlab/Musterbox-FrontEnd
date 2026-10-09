@@ -1,0 +1,51 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+@if (idCardPdfData && idCardPdfData2) {
+  <div class="row">
+    <div class="col-1"></div>
+    <div class="col-4">
+      <!-- <img src="{{ idCardData}}" style="height: 390px !important;" /> -->
+      <div class="d-flex mt-4">
+        <pdf-viewer [src]="idCardPdfData" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+          [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+        [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false" style="width: 426px;
+        height: 658px;"></pdf-viewer>
+      </div>
+      <div class="row mb-4">
+        <div class="col-12">
+          <button class="btn   btn-primary" (click)="onClickDownloadPdf() ">
+            Full Size
+          </button>
+          &nbsp;
+          <button class="btn  btn-primary" (click)="onClickDownloadSmallPdf()">
+            Small Size
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <!-- <img src="{{ idCardData2}}" style="height: 240px !important;" /> -->
+      @if (idCardPdfData2) {
+        <div class="mt-4">
+          <pdf-viewer [src]="idCardPdfData2" [rotation]="0" [original-size]="false" [show-all]="true" [fit-to-page]="false"
+            [zoom]="1" [zoom-scale]="'page-width'" [stick-to-page]="false" [render-text]="true"
+        [external-link-target]="'blank'" [autoresize]="true" [show-borders]="false" style="width: 651px;
+        height: 359px;"></pdf-viewer>
+        </div>
+      }
+      <div class="row mb-4">
+        <div class="col-12 ">
+          <button class="btn btn-primary" (click)="onClickDownloadPdf2()">
+            Full Size
+          </button>
+          &nbsp;
+          <button class="btn btn-primary" (click)="onClickDownloadSmallPdf2() ">
+            Small Size
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

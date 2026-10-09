@@ -1,0 +1,91 @@
+::ng-deep {
+  datatable-body-cell.datatable-body-cell.sort-active {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 19px;
+  }
+
+  datatable-footer.datatable-footer {
+    overflow: visible !important;
+    margin-top: 18px;
+  }
+
+  ngx-datatable.ngx-datatable.fixed-header.fixed-row.virtualized.scroll-horz {
+    margin-top: 19px;
+  }
+
+  .data-table-rows .ngx-datatable .datatable-body .datatable-row-wrapper {
+    display: table;
+  }
+
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    top: 10px !important;
+    padding-bottom: 0px;
+    padding-left: 3px;
+  }
+
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 7px;
+  }
+
+  span.ng-clear-wrapper {
+    display: none;
+  }
+}
+
+.styled-table {
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 247px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.styled-table tbody tr.active-row {
+  font-weight: bold;
+  color: #009879;
+}
+
+.container {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: repeat(auto-fit, 300px);
+  grid-template-rows: repeat(0, 50px);
+}
+
+@media screen and (max-width: 900px) {
+  .container {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-rows: repeat(0, 50px);
+  }
+}

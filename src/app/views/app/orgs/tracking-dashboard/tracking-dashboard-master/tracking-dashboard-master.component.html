@@ -1,0 +1,75 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showItemsPerPage]="false"
+name="Tracking Dashboard"></app-list-page-header>
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (getCompany)="getCompany($event)">
+  </app-common-filter>
+}
+
+<div class="card">
+  <div class="card-body">
+    <div class="row justify-content-center">
+      <div class="col-md-3">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card cursor-pointer" style="margin-bottom: 27px">
+            <div class="card-body text-center iconsminds-business-man iconsminds icon">
+              <p class="card-text font-weight-semibold mb-0">Total Active Employee</p>
+              <p class="lead text-center"><b>{{trackingUserDetails?.activeUser}}</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="icon-row-item" style="width: inherit">
+          <div class="card cursor-pointer" style="margin-bottom: 27px">
+            <div class="card-body text-center iconsminds-business-man iconsminds icon">
+              <p class="card-text font-weight-semibold mb-0">Tracking Employee</p>
+              <p class="lead text-center"><b>{{trackingUserDetails?.trackingUser}}</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card mb-4 mt-4">
+  <div class="card-body">
+    <h3>Outside Tracking :</h3>
+    @if (permissionview.length > 0) {
+      <app-outside-tracking class="mb-5" #OutsideTrackingComponent
+      ></app-outside-tracking>
+    }
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h3>Inside Tracking :</h3>
+    @if (permissionview.length > 0) {
+      <app-inside-tracking class="mb-5" #InsideTrackingComponent
+      ></app-inside-tracking>
+    }
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h3>Offline :</h3>
+    @if (permissionview.length > 0) {
+      <app-offline-tracking class="mb-5" #OfflineTrackingComponent
+      ></app-offline-tracking>
+    }
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h3>GPS Off :</h3>
+    @if (permissionview.length > 0) {
+      <app-gps-off-tracking #GpsOffTrackingComponent></app-gps-off-tracking>
+    }
+  </div>
+</div>

@@ -1,0 +1,185 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Tour</h5>
+
+    <form #addtour="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #companyMasterID="ngModel"
+              (change)="companydata($event)"
+              name="companyMasterID"
+              >
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company</span>
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #userMasterID="ngModel"
+              name="userMasterID"
+              required
+              >
+              @for (empLists of empList; track empLists) {
+                <ng-option [value]="empLists.userMasterID">
+                  {{ empLists.firstName }} {{ empLists.lastName }} - {{ empLists.userNumber }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Assign Person</span>
+            @if (!userMasterID.valid && addtour.submitted) {
+              <div class="invalid-tooltip">
+                Assign Person is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #ToursName="ngModel"
+              name="ToursName"
+              />
+              <span>Tour Name</span>
+              @if (!ToursName.valid && addtour.submitted) {
+                <div class="invalid-tooltip">
+                  Tour Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                required
+                ngModel
+                #FromDate="ngModel"
+                name="FromDate"
+                (change)="calcdays()"
+                />
+                <span>From Date</span>
+                @if (!FromDate.valid && addtour.submitted) {
+                  <div class="invalid-tooltip">
+                    From Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="date"
+                  required
+                  ngModel
+                  #ToDate="ngModel"
+                  name="ToDate"
+                  (change)="calcdays()"
+                  />
+                  <span>To Date</span>
+                  @if (!ToDate.valid && addtour.submitted) {
+                    <div class="invalid-tooltip">
+                      To Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    required
+                    ngModel
+                    #TotalDays="ngModel"
+                    name="TotalDays"
+                    [ngModel]="days"
+                    />
+                    <span>Total days</span>
+                    @if (!TotalDays.valid && addtour.submitted) {
+                      <div class="invalid-tooltip">
+                        Total days is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select
+                      [items]="empList"
+                      [multiple]="true"
+                      bindLabel="name"
+                      groupBy="selectedAllGroup"
+                      [selectableGroup]="true"
+                      [selectableGroupAsModel]="false"
+                      bindValue="userMasterID"
+                      [closeOnSelect]="false"
+                      [(ngModel)]="selected"
+                      ngModel
+                      #coPersonID="ngModel"
+                      name="coPersonID"
+                      >
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Co-Person</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <textarea
+                      class="form-control"
+                      required
+                      ngModel
+                      #Description="ngModel"
+                      name="Description"
+                    ></textarea>
+                    <span>Description</span>
+                    @if (!Description.valid && addtour.submitted) {
+                      <div class="invalid-tooltip">
+                        Description is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+
+              <app-state-button
+                [btnClass]="'btn btn-primary btn-lg btn-shadow'"
+                [currentState]="buttonState"
+                [isDisabled]="buttonDisabled"
+                click="onLoginClick()"
+                >
+                {{ 'forms.submit' | translate }}
+              </app-state-button>
+            </form>
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

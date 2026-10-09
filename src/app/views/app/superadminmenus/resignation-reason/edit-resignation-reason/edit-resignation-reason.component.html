@@ -1,0 +1,48 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Resignation Reason</h5>
+
+    @if (reasonData) {
+      <form #editResignReason="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #reason="ngModel"
+                name="reason"
+                [(ngModel)]="reasonData.reason"
+                />
+                <span>Reason *</span>
+                @if (!reason.valid && editResignReason.submitted) {
+                  <div class="invalid-tooltip">
+                    Reason is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" [disabled]="isdisebled" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+          <button
+            class="btn btn-danger btn-shadow"
+            [routerLink]="adminRoot + '/superadminmenus/list-resignation-reason'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

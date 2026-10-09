@@ -1,0 +1,143 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Auto Mail Setup</h5>
+    @if (MailSetupData) {
+      <form #editAutoMailSetup="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel
+                [(ngModel)]="MailSetupData.companyMasterID" #company="ngModel" name="company" required>
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && editAutoMailSetup.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="ownerList" [multiple]="true" bindLabel="displayName"
+                groupBy="selectedAllGroup" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                bindValue="userMasterID" [closeOnSelect]="false" [(ngModel)]="MailSetupData.userMasterID"
+                ngModel required #userMasterID="ngModel" name="userMasterID">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                  Select All
+                </ng-template>
+                <!-- <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" />{{item.name}}
+              </ng-template> -->
+            </ng-select>
+            <span>Select Employee *</span>
+          </label>
+          @if (!userMasterID.valid && editAutoMailSetup.submitted) {
+            <div class="invalid-tooltip">
+              EMPLOYEE is required!
+            </div>
+          }
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #mailType="ngModel" name="mailType"
+              [(ngModel)]="MailSetupData.mailType" required>
+              <ng-option value="attendanceReport">Attendance Report</ng-option>
+              <ng-option value="leaveReport">Leave Report</ng-option>
+              <ng-option value="dailypuncinoutReport">Daily PunchIn-Out Report</ng-option>
+              <ng-option value="dailyleaveReport">Daily Leave Report</ng-option>
+              <ng-option value="visitReport">Visit Report</ng-option>
+              <ng-option value="shiftdepartmentwiseDailyattendancecountReport">Shift Department Wise
+              Report</ng-option>
+              <ng-option value="FYleaveReport">FY-Leave Report</ng-option>
+              <ng-option value="lateComeEarlyGoReport">Late-Come Early-Go Report</ng-option>
+              <ng-option value="departmentwiseDailyCostReport">Department Wise Daily Cost
+              Report</ng-option>
+            </ng-select>
+            <span>Mail Type *</span>
+            @if (!mailType.valid && editAutoMailSetup.submitted) {
+              <div class="invalid-tooltip">
+                Mail Type is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #mailMode="ngModel" name="mailMode"
+              (change)="ChangeDay()" [(ngModel)]="MailSetupData.mailMode" required>
+              <ng-option value="daily">Daily</ng-option>
+              <ng-option value="weekly">Weekly</ng-option>
+              <ng-option value="monthly">Monthly</ng-option>
+            </ng-select>
+            <span>Mail Mode *</span>
+            @if (!mailMode.valid && editAutoMailSetup.submitted) {
+              <div class="invalid-tooltip">
+                Mail Mode is required!
+              </div>
+            }
+          </label>
+        </div>
+        @if (editAutoMailSetup.value.mailMode && editAutoMailSetup.value.mailMode != 'daily') {
+          <div class="col-md-4"
+            >
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #day="ngModel" name="day" required
+                [(ngModel)]="MailSetupData.day">
+                @if (editAutoMailSetup.value.mailMode == 'weekly') {
+                  <div>@for (item of weekDays; track item) {
+                    <ng-option
+                    [value]="item.value">{{item.day}}</ng-option>
+                  }</div>
+                }
+                @if (editAutoMailSetup.value.mailMode == 'monthly') {
+                  <div>@for (item of monthDays; track item) {
+                    <ng-option
+                    [value]="item">{{item}}</ng-option>
+                  }</div>
+                }
+              </ng-select>
+              <span>Day *</span>
+              @if (!day.valid && editAutoMailSetup.submitted) {
+                <div class="invalid-tooltip">
+                  Day is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="time" ngModel #time="ngModel" required name="time"
+              [(ngModel)]="MailSetupData.time" />
+              <span>Time *</span>
+            </label>
+            @if (!time.valid && editAutoMailSetup.submitted) {
+              <div class="invalid-tooltip">
+                Time is required!
+              </div>
+            }
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/utilitys/Auto-Mail-Setup'"
+            style="margin-left: 2%">
+            Cancel
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

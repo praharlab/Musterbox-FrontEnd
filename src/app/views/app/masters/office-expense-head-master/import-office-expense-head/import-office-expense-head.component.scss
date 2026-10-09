@@ -1,0 +1,16 @@
+.invalid-tooltip1 {
+    display: flex;
+    position: relative;
+    font-size: 12px;
+    color: red;
+    z-index: 100;
+    width: max-content;
+}
+
+.invalid-tooltip1::before {
+    content: '';
+    position: relative;
+    top: -5px;
+    left: 10px;
+
+}

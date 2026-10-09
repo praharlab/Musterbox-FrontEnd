@@ -1,0 +1,149 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Skillsets Form</h5>
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              (change)="SelectedCompany($event)"
+              ngModel
+              [(ngModel)]="DefaultID"
+              #companyMasterID="ngModel"
+              name="companyMasterID"
+              required
+              >
+              @for (product of product; track product) {
+                <ng-option [value]="product.companyMasterID">
+                  {{ product.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #designation="ngModel"
+              name="designation"
+              required
+              >
+              @for (item of alldesignation; track item) {
+                <ng-option [value]="item.designationId">
+                  {{ item.designationName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Designation *</span>
+            @if (!designation.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom: 20px">
+          <span class="button" class="btn btn-success" (click)="addvalue()">ADD Skillsets</span>
+        </div>
+      </div>
+      <div class="row">
+        @for (value of values; track value; let i = $index) {
+          <div class="col-md-12">
+            <div class="row">
+              <!-- <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" [(ngModel)]="value.name"
+                  #holidayListName="ngModel" name="name{{i}}">
+                  <span>Name</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" [(ngModel)]="value.date" #holidayDate="ngModel"
+                    name="date{{i}}">
+                    <span>Date</span>
+                  </label> -->
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select
+                        placeholder="Choose your option"
+                        [(ngModel)]="value.skillsetsForm"
+                        #skillsetsFormOption="ngModel"
+                        name="skillsetsForm{{ i }}"
+                        required
+                        >
+                        @for (item of this.allskillsets; track item) {
+                          <ng-option [value]="item.skillSetID">
+                            {{ item.skillSet }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Skill Sets *</span>
+                      @if (!designation.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Company is required!
+                        </div>
+                      }
+                    </label>
+                    <!-- <label class="form-group has-float-label">
+                    <ng-select
+                      placeholder="Choose your option"
+                      [(ngModel)]="value.skillsetsForm"
+                      #skillsetsFormOption="ngModel"
+                      [name]="'skillsetsForm' + i">
+                      <ng-option *ngFor="let item of this.flattenedArray" [value]="item.skillSetID">
+                        {{ item.skillSet }}
+                      </ng-option>
+                    </ng-select>
+                    <span>Select Skill Sets</span>
+                  </label> -->
+                </div>
+                <div class="col-md-4">
+                  @if (i >= 1) {
+                    <span (click)="removevalue(i)" style="margin-left: 3%; margin-top: 3%">
+                      Remove
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="col-md-12">
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/skillsets/skillsetform'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

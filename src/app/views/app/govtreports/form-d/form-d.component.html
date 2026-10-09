@@ -1,0 +1,268 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Form - D</h5>
+
+    <form #addcompanyreport="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              required
+              #company="ngModel"
+              name="company"
+              >
+              @for (comp of comp; track comp) {
+                <ng-option [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addcompanyreport.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #department="ngModel"
+              name="department"
+              >
+              @for (item of alldepartment; track item) {
+                <ng-option [value]="item.departmentId">
+                  {{ item.departmentName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Department</span>
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #designation="ngModel"
+              name="designation"
+              >
+              @for (item of alldesignation; track item) {
+                <ng-option [value]="item.designationId">
+                  {{ item.designationName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Designation</span>
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="date"
+              ngModel
+              #startdate="ngModel"
+              name="startdate"
+              required
+              />
+              <span>From Date *</span>
+              @if (!startdate.valid && addcompanyreport.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                ngModel
+                #enddate="ngModel"
+                name="enddate"
+                required
+                />
+                <span>To Date *</span>
+                @if (!enddate.valid && addcompanyreport.submitted) {
+                  <div class="invalid-tooltip">
+                    To Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Search' | translate }}</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-12" style="margin-bottom: 20px">
+      <!-- <span class="button" class="btn btn-success" (click)="addvalue()">
+      Download
+    </span> -->
+    <!-- <button  class="btn btn-primary" ngxPrint [useExistingCss]="true"  printSectionId="content" style="margin-left:10px">Download PDF</button> -->
+    <button
+      class="btn btn-info mb-1"
+      printTitle="form-d Report"
+      printSectionId="content"
+      ngxPrint
+      layout="landscape"
+      >
+      Save as PDF
+    </button>
+  </div>
+
+  <!-- <kendo-pdf-export #pdf paperSize="A3" margin="2" [margin]="{top: 27, bottom: 50, right: 27, left: 27}" landscape="tue" [repeatHeaders]="true"> -->
+  <div #content id="content" style="margin: 10px">
+    <span style="display: table; margin: 0 auto">
+      <span style="font-size: 18px"><b>FORM 'D'</b></span>
+      <span>(see Rule 5) The Payment of Bonus Rule 1965</span>
+    </span>
+    <div>
+      Annual Return - Bonus paid to Employees for the accounting year ending on the
+      <span style="font-size: 16px">
+        <strong>{{ startDate | date: 'yyyy' }}-{{ endDate | date: 'yyyy' }}</strong>
+      </span>
+    </div>
+    <table border="0">
+      <tr>
+        <td width="30px">1.</td>
+        <td>Name of the Establishment and its complete postal address</td>
+        <td>:-</td>
+        <td>&nbsp;&nbsp;&nbsp;{{ companyname }}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>&nbsp;&nbsp;&nbsp;{{ companyaddress }}</td>
+      </tr>
+      <tr>
+        <td>2.</td>
+        <td>Nature of industry</td>
+        <td>:-</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>3.</td>
+        <td>Name of the Employer</td>
+        <td>:-</td>
+        <td>&nbsp;&nbsp;&nbsp;{{ companyname }}</td>
+      </tr>
+      <tr>
+        <td>4.</td>
+        <td>Total Number of Employees</td>
+        <td>:-</td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+      </tr>
+      <tr>
+        <td>5.</td>
+        <td>Number of Employees Benefited by bonus payment</td>
+        <td>:-</td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+      </tr>
+    </table>
+    <table border="1" width="100%">
+      <tr>
+        <td style="text-align: center; font-size: 12px">
+          Total amount payable
+          <br />
+          as bonus under sec.10 or
+          <br />
+          11 of the payment of
+          <br />
+          bonus Act 1965 as the
+          <br />
+          case may be
+          <br />
+          1
+        </td>
+        <td style="text-align: center; font-size: 12px">
+          Settlement , if any reached
+          <br />
+          under sec. 18(1) or 12(3)
+          <br />
+          of the industrial Disuts
+          <br />
+          Act. 1947 with date
+          <br />
+          2
+        </td>
+        <td style="text-align: center; font-size: 12px">
+          Percentage of bonus
+          <br />
+          declare to be paid
+          <br />
+          3
+        </td>
+        <td style="text-align: center; font-size: 12px">
+          Total Amount of Bonus
+          <br />
+          actually paid
+          <br />
+          4
+        </td>
+        <td style="text-align: center; font-size: 12px">
+          Date on which payment
+          <br />
+          made
+          <br />
+          5
+        </td>
+        <td style="text-align: center; font-size: 12px">
+          Wheather bonus has been paid
+          <br />
+          to all the
+          <br />
+          employees, if not,
+          <br />
+          reasons for non-payment
+          <br />
+          6
+        </td>
+        <td style="text-align: center; font-size: 12px">
+          Remarks
+          <br />
+          4
+        </td>
+      </tr>
+      <tr>
+        <td style="margin-left: 10px"></td>
+        <td style="margin-left: 10px"></td>
+        <td style="margin-left: 10px"></td>
+        <td style="margin-left: 10px"></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td style="height: 300px"></td>
+        <td style="height: 300px"></td>
+        <td style="height: 300px"></td>
+        <td style="height: 300px"></td>
+        <td style="height: 300px"></td>
+        <td style="height: 300px"></td>
+        <td style="height: 300px"></td>
+      </tr>
+    </table>
+    <table width="100%">
+      <tr>
+        <td style="text-align: right; font-size: 12px; margin-right: 10px">
+          Signature of employer or his agent :-
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

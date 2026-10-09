@@ -1,0 +1,61 @@
+@if (chatBotShow == 1) {
+  <section>
+    <!-- .theme-colors2 is only a fixed anchor in the bottom-right corner now.
+    It no longer slides on/off screen - the card inside it fades in and the
+    launcher stays put, so the two can be positioned independently. -->
+    <div class="{{ toggleClass }}">
+      <div class="chat-container">
+        <div class="chat-header">
+          <span class="chat-title">
+            <i class="simple-icon-earphones-alt"></i>
+            Assistant
+          </span>
+          <button
+            type="button"
+            class="chat-close"
+            (click)="toggleSwitcher($event)"
+            aria-label="Close chat"
+            >
+            <i class="simple-icon-close"></i>
+          </button>
+        </div>
+        <div class="chat-history" #chatHistory>
+          @for (message of messages; track message) {
+            <div
+              class="chat-message"
+          [ngClass]="{
+            'user-message': message.sender === 'user',
+            'bot-message': message.sender === 'bot'
+          }"
+              >
+              <span [innerHTML]="message.content"></span>
+            </div>
+          }
+        </div>
+        <form #chatForm="ngForm">
+          <input
+            type="text"
+            autocomplete="off"
+            [(ngModel)]="userInput"
+            name="userInput"
+            placeholder="Type your message..."
+            />
+          <button type="submit" (click)="sendMessage()" aria-label="Send message">
+            <i class="simple-icon-cursor font"></i>
+          </button>
+          <button type="button" (click)="restart('exit', true)" aria-label="Restart conversation">
+            <i class="iconsminds-reload-1 font2"></i>
+          </button>
+        </form>
+      </div>
+      <a
+        (click)="toggleSwitcher($event)"
+        class="c-pointer theme-button2 text-center items"
+        aria-label="Open chat assistant"
+        >
+        <i class="simple-icon-earphones-alt icon"></i>
+        <span class="icon-font-size">Can i help You?</span>
+      </a>
+    </div>
+  </section>
+}

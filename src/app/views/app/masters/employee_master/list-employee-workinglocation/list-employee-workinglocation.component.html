@@ -1,0 +1,286 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+<br />
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="list-item-heading mb-1 truncate" style="white-space: normal">
+                    @for (item12 of item.workinglocation.workingLocationName; track item12; let i = $index) {
+                      <span
+                        tooltip="Please click here to view Working Location details" [class]="'glyph-icon tool_tip'">
+                        <a style="cursor: pointer"
+                          (click)="getWorkingLocation(item.workingLocationIDs[i]); lgModal121.show()">
+                          {{ item12 }}
+                        </a>
+                      </span>
+                    }
+                  </p>
+                </div>
+                <div>
+                  <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+                  @if (item.showDelete) {
+                    <a class="btn btn-outline-danger btn-xs" (click)="alertConfirmation(item.employeeWorkingLocationID)"
+                      >
+                      DELETE
+                    </a>
+                  }
+                </div>
+              </div>
+              <hr>
+                <p class="text-muted mb-0 text-small">
+                  Start Date : {{ item.startDate | date: 'dd-MM-yyyy' }}
+                </p>
+                @if (item.endDate != null) {
+                  <p class="text-muted mb-0 text-small">
+                    End Date:-{{ item.endDate | date: 'dd-MM-yyyy' }}
+                  </p>
+                }
+                <div style="margin-top: 2%;">
+                  <p class="text-muted mb-0 text-small">
+                    <strong>Assigned</strong> by {{ item.createdByUserDetails.displayName}}, at {{
+                    item.createdAt
+                    | date: 'dd-MM-yyyy hh:mm a' }}
+                  </p>
+                </div>
+                <div class="min-width-zero">
+                  <a href="javascript:;">
+                    @if (item.workinglocationstatus == 'active') {
+                      <button type="button" class="btn btn-success"
+                        style="margin-top: 10%">
+                        {{ 'Active' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                    @if (item.workinglocationstatus == 'deactive') {
+                      <button type="button" class="btn btn-danger"
+                        style="margin-top: 10%">
+                        {{ 'Deactive' | translate }}
+                      </button>
+                    }
+                    {{ ' ' }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Employee Working Location</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addworkinglocation="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select multiple="true" [closeOnSelect]="false" placeholder="Choose your option" ngModel
+                    #wID="ngModel" name="wID" required>
+                    @for (item of allWL; track item) {
+                      <ng-option [value]="item.workingLocationID">
+                        {{ item.workingLocationName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Working Location *</span>
+                </label>
+                @if (!wID.valid && addworkinglocation.submitted) {
+                  <div class="invalid-tooltip">
+                    Working Location is required!
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="Date" ngModel #startDate="ngModel" required name="startDate" />
+                  <span>Start Date *</span>
+                </label>
+                @if (!startDate.valid && addworkinglocation.submitted) {
+                  <div class="invalid-tooltip">
+                    Start Date is required!
+                  </div>
+                }
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #lgModal121="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Working Location</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal121.hide()" aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (workinglocationdata) {
+            <form #editworkinglocation="ngForm" novalidate (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" (change)="selectcompany($event)"
+                      [(ngModel)]="workinglocationdata.companyMasterID" ngModel #company="ngModel" [readonly]="true"
+                      name="company" required>
+                      @for (company of company1; track company) {
+                        <ng-option [value]="company.companyMasterID">
+                          {{ company.companyName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Company *</span>
+                    @if (!company.valid && editworkinglocation.submitted) {
+                      <div class="invalid-tooltip">
+                        Company is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <!-- <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" [readonly]="true"
+                    [(ngModel)]="workinglocationdata.branchMasterID" ngModel #branch="ngModel" name="branch" required>
+                    <ng-option [value]="item.branchMasterID" *ngFor="let item of allbranch">
+                      {{ item.branchName }}
+                    </ng-option>
+                  </ng-select>
+                  <span>Select Branch *</span>
+                  <div *ngIf="!branch.valid && editworkinglocation.submitted" class="invalid-tooltip">
+                    Branch is required!
+                  </div>
+                </label>
+              </div> -->
+              <div class="col-md-5">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" required ngModel [readonly]="true"
+                    #workingLocationName="ngModel" [(ngModel)]="workinglocationdata.workingLocationName"
+                    name="workingLocationName" />
+                    <span>Working Location Name *</span>
+                    @if (!workingLocationName.valid && editworkinglocation.submitted) {
+                      <div class="invalid-tooltip">
+                        Working Location Name is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" placeholder="" ngModel #latitude="ngModel" [readonly]="true"
+                      [(ngModel)]="workinglocationdata.latitude" name="latitude" />
+                      <span>Latitude</span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" placeholder="" [readonly]="true" ngModel #longitude="ngModel"
+                        [(ngModel)]="workinglocationdata.longitude" name="longitude" />
+                        <span>Longitude</span>
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" placeholder="" ngModel [readonly]="true" #radius="ngModel"
+                          [(ngModel)]="workinglocationdata.radius" name="radius" />
+                          <span>Radius</span>
+                        </label>
+                      </div>
+                      <div class="col-md-12">
+                        <label class="form-group has-float-label">
+                          <textarea class="form-control" ngModel #workingLocationAddress="ngModel" name="workingLocationAddress"
+                          [readonly]="true" [(ngModel)]="workinglocationdata.workingLocationAddress" required></textarea>
+                          <span>Working Location Address *</span>
+                          @if (!workingLocationAddress.valid && editworkinglocation.submitted) {
+                            <div class="invalid-tooltip">
+                              Working Location Address is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" (change)="selectcountry($event)" [(ngModel)]="countryid"
+                            required [readonly]="true" ngModel #country1="ngModel" name="country1">
+                            @for (countrys of country; track countrys) {
+                              <ng-option [value]="countrys.countryMasterID">
+                                {{ countrys.countryName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Country *</span>
+                          @if (!country1.valid && editworkinglocation.submitted) {
+                            <div class="invalid-tooltip">
+                              Country is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" (change)="selectstate($event)" [(ngModel)]="stateid"
+                            [readonly]="true" required ngModel #state1="ngModel" name="state1">
+                            @for (states of state; track states) {
+                              <ng-option [value]="states.stateMasterID">
+                                {{ states.stateName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>State *</span>
+                          @if (!state1.valid && editworkinglocation.submitted) {
+                            <div class="invalid-tooltip">
+                              State is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" (change)="selectcity($event)" [(ngModel)]="cityid" required
+                            [readonly]="true" ngModel #city1="ngModel" name="city1">
+                            @for (citys of city; track citys) {
+                              <ng-option [value]="citys.cityMasterID">
+                                {{ citys.cityName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>City *</span>
+                          @if (!city1.valid && editworkinglocation.submitted) {
+                            <div class="invalid-tooltip">
+                              City is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    </div>
+                  </form>
+                }
+              </div>
+            </div>
+          </div>
+        </div>

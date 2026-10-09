@@ -1,0 +1,536 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Visit Customize Field"></app-heading>
+    <app-breadcrumb title="Visit Customize Field"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <ng-select placeholder="Choose your option" ngModel [(ngModel)]="selectedcompany"
+        (change)="selectcompany($event)">
+        @for (company of company; track company) {
+          <ng-option [value]="company.companyMasterID">
+            {{ company.companyName }}
+          </ng-option>
+        }
+      </ng-select>
+      <span>Select Company *</span>
+    </label>
+  </div>
+</div>
+@if (selectedcompany) {
+  <div style="text-align: right">
+    @if (permissioncreate.length != 0) {
+      <button class="btn btn-info mb-1" (click)="lgModal.show()">
+        Add
+      </button>
+    }
+  </div>
+}
+<br />
+<br />
+
+@if (selectedcompany) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Add Visit Form Demo</h5>
+      @if (permissionview.length != 0) {
+        <form #addvisit="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-12" style="margin-bottom: 1%;">
+              <span><b>Customer for whom user can create Visit *</b></span>
+              &nbsp;&nbsp;
+              <input type="radio" name="viewCustomer" value="created" ngModel [(ngModel)]="viewCustomers"
+                #viewCustomer="ngModel" (change)="changeCustomerPreference($event.target.value)" style="margin-right: 1%"
+                required />
+                <label for="true" style="margin-right: 1%">Customer created by user</label>
+                <input type="radio" name="viewCustomer" value="all" ngModel [(ngModel)]="viewCustomers"
+                  #viewCustomer="ngModel" (change)="changeCustomerPreference($event.target.value)" style="margin-right: 1%"
+                  required />
+                  <label for="false">All Customer</label>
+                  @if (!viewCustomer.valid && addvisit.submitted) {
+                    <div class="invalid-tooltip">
+                      Customer for whom user can create Visit is required!
+                    </div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #customerID="ngModel" name="customerID" required>
+                      @for (allcustomers of allcustomer; track allcustomers) {
+                        <ng-option [value]="allcustomers.customerID">
+                          {{ allcustomers.customerName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Customer *</span>
+                    @if (!customerID.valid && addvisit.submitted) {
+                      <div class="invalid-tooltip">
+                        Customer is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #assignID="ngModel" name="assignID" required>
+                      @for (empLists of empList; track empLists) {
+                        <ng-option [value]="empLists.userMasterID">
+                          {{ empLists.firstName }} {{ empLists.lastName }} -
+                          {{ empLists.userNumber }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Assign Person *</span>
+                    @if (!assignID.valid && addvisit.submitted) {
+                      <div class="invalid-tooltip">
+                        Assign Person is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="empList" [multiple]="true" bindLabel="name" groupBy="selectedAllGroup"
+                      [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+                      [(ngModel)]="selected" ngModel #coPersonID="ngModel" name="coPersonID">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Co-Person</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #visitPurposeID="ngModel" name="visitPurposeID">
+                      @for (getallvisitpurposes of getallvisitpurpose; track getallvisitpurposes) {
+                        <ng-option
+                          [value]="getallvisitpurposes.visitPurposeID">
+                          {{ getallvisitpurposes.visitPurpose }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Visit Purpose *</span>
+                    @if (!visitPurposeID.valid && addvisit.submitted) {
+                      <div class="invalid-tooltip">
+                        Visit Purpose is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #productID="ngModel" name="productID">
+                      @for (products of product; track products) {
+                        <ng-option [value]="products.productID">
+                          {{ products.productName }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select Product *</span>
+                    @if (!productID.valid && addvisit.submitted) {
+                      <div class="invalid-tooltip">
+                        Product is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="Date" ngModel #visitDate="ngModel" name="visitDate" required />
+                    <span>Select Visit Date *</span>
+                    @if (!visitDate.valid && addvisit.submitted) {
+                      <div class="invalid-tooltip">
+                        Visit Time is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input [ngxTimepicker]="visitpicker" class="form-control" placeholder="Enter Visit Time" ngModel
+                      #visitTime="ngModel" name="visitTime" required />
+                      <ngx-material-timepicker #visitpicker></ngx-material-timepicker>
+                      <span>Select Visit Time *</span>
+                      @if (!visitTime.valid && addvisit.submitted) {
+                        <div class="invalid-tooltip">
+                          Visit Time is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID">
+                        @for (company of company; track company) {
+                          <ng-option [value]="company.companyMasterID">
+                            {{ company.companyName }}
+                          </ng-option>
+                        }
+                      </ng-select>
+                      <span>Select Company</span>
+                    </label>
+                  </div>
+                </div>
+                <br />
+                <h5>Extra Fields</h5>
+                <hr />
+                @for (fields of field; track fields) {
+                  <div class="row" style="margin-top: 4%">
+                    <div class="col-md-5">
+                      @if (fields.inputType == 'number' && fields.isRequired == false) {
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" ngModel #{{fields.fieldLabel}}="ngModel"
+                            name="{{ fields.fieldLabel }}" />
+                            <span>{{ fields.fieldLabel }}</span>
+                          </label>
+                        }
+                        @if (fields.inputType == 'text' && fields.isRequired == false) {
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}" />
+                              <span>{{ fields.fieldLabel }}</span>
+                            </label>
+                          }
+                          @if (fields.inputType == 'textarea' && fields.isRequired == false) {
+                            <label class="form-group has-float-label"
+                              >
+                              <textarea class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}"></textarea>
+                              <span>{{ fields.fieldLabel }}</span>
+                            </label>
+                          }
+                          @if (fields.inputType == 'radio' && fields.isRequired == false) {
+                            <div class="row"
+                              style="margin-left: 1%; margin-bottom: 2%">
+                              <label style="margin-right: 30px">
+                                <b>{{ fields.fieldLabel }}</b>
+                              </label>
+                              @for (values of fields.value; track values) {
+                                <div>
+                                  <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    [value]="values" style="margin-right: 10px" />
+                                    <label for="value" style="margin-right: 25px">
+                                      {{ values }}
+                                    </label>
+                                  </div>
+                                }
+                              </div>
+                            }
+                            @if (fields.inputType == 'dropdown' && fields.isRequired == false) {
+                              <label class="form-group has-float-label"
+                                >
+                                <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                                  name="{{ fields.fieldLabel }}">
+                                  @for (values of fields.value; track values) {
+                                    <ng-option [value]="values">
+                                      {{ values }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>{{ fields.fieldLabel }}</span>
+                              </label>
+                            }
+                            @if (fields.inputType == 'number' && fields.isRequired == true) {
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="number" ngModel #{{fields.fieldLabel}}="ngModel"
+                                  name="{{ fields.fieldLabel }}" required />
+                                  <span>{{ fields.fieldLabel }} *</span>
+                                  @if (!fields.fieldLabel.valid && addvisit.submitted) {
+                                    <div class="invalid-tooltip">
+                                      {{ fields.fieldLabel }} is required!
+                                    </div>
+                                  }
+                                </label>
+                              }
+                              @if (fields.inputType == 'text' && fields.isRequired == true) {
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    name="{{ fields.fieldLabel }}" required />
+                                    <span>{{ fields.fieldLabel }} *</span>
+                                    @if (!fields.fieldLabel.valid && addvisit.submitted) {
+                                      <div class="invalid-tooltip">
+                                        {{ fields.fieldLabel }} is required!
+                                      </div>
+                                    }
+                                  </label>
+                                }
+                                @if (fields.inputType == 'textarea' && fields.isRequired == true) {
+                                  <label class="form-group has-float-label">
+                                    <textarea class="form-control" type="text" ngModel #{{fields.fieldLabel}}="ngModel"
+                                    name="{{ fields.fieldLabel }}" required></textarea>
+                                    <span>{{ fields.fieldLabel }} *</span>
+                                    @if (!fields.fieldLabel.valid && addvisit.submitted) {
+                                      <div class="invalid-tooltip">
+                                        {{ fields.fieldLabel }} is required!
+                                      </div>
+                                    }
+                                  </label>
+                                }
+                                @if (fields.inputType == 'radio' && fields.isRequired == true) {
+                                  <div class="row"
+                                    style="margin-left: 1%; margin-bottom: 2%">
+                                    <label style="margin-right: 30px">
+                                      <b>{{ fields.fieldLabel }}</b>
+                                    </label>
+                                    @for (values of fields.value; track values) {
+                                      <div>
+                                        <input type="radio" name="{{ fields.fieldLabel }}" ngModel #{{fields.fieldLabel}}="ngModel"
+                                          [value]="values" style="margin-right: 10px" required />
+                                          <label for="value" style="margin-right: 25px">
+                                            {{ values }}
+                                          </label>
+                                          @if (!fields.fieldLabel.valid && addvisit.submitted) {
+                                            <div class="invalid-tooltip">
+                                              {{ fields.fieldLabel }} is required!
+                                            </div>
+                                          }
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  @if (fields.inputType == 'dropdown' && fields.isRequired == true) {
+                                    <label class="form-group has-float-label">
+                                      <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                                        name="{{ fields.fieldLabel }}" required>
+                                        @for (values of fields.value; track values) {
+                                          <ng-option [value]="values">
+                                            {{ values }}
+                                          </ng-option>
+                                        }
+                                      </ng-select>
+                                      <span>{{ fields.fieldLabel }}</span>
+                                      @if (!fields.fieldLabel.valid && addvisit.submitted) {
+                                        <div class="invalid-tooltip">
+                                          {{ fields.fieldLabel }} is required!
+                                        </div>
+                                      }
+                                    </label>
+                                  }
+                                </div>
+                                @if (permissionedit.length != 0) {
+                                  <span class="btn btn-primary" (click)="editfields(lgModal12.show(), fields.visitFormCustomizeID)"
+                                    style="margin-left: 10%; cursor: pointer">
+                                    Edit
+                                  </span>
+                                }
+                                @if (permissiondelete.length != 0) {
+                                  <span class="btn btn-danger" (click)="removefields(fields.visitFormCustomizeID)"
+                                    style="margin-left: 10%; cursor: pointer">
+                                    Remove
+                                  </span>
+                                }
+                              </div>
+                            }
+                            <br />
+                          </form>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                    [config]="{backdrop: 'static', keyboard: false}">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title pull-left">Add Custom Field For Visit Form</h4>
+                          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+                            <span aria-hidden="true" class="visually-hidden">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form #addvisitcustom="ngForm" novalidate (ngSubmit)="onSubmit()">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" required ngModel #fieldLabel="ngModel" name="fieldLabel" />
+                                  <span>Field Label *</span>
+                                  @if (!fieldLabel.valid && addvisitcustom.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Filed Label is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <ng-select placeholder="Choose your option" ngModel #inputType="ngModel" name="inputType"
+                                    (change)="selectinput($event)" required>
+                                    <ng-option value="text">Text</ng-option>
+                                    <ng-option value="number">Number</ng-option>
+                                    <ng-option value="textarea">Text Area</ng-option>
+                                    <ng-option value="radio">Radio</ng-option>
+                                    <ng-option value="dropdown">Dropdown</ng-option>
+                                  </ng-select>
+                                  <span>Select Input Type</span>
+                                  @if (!inputType.valid && addvisitcustom.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Input Type is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <ng-select placeholder="Choose your option" ngModel #isRequired="ngModel" name="isRequired" required>
+                                    <ng-option value="1">Yes</ng-option>
+                                    <ng-option value="0">No</ng-option>
+                                  </ng-select>
+                                  <span>Field Required</span>
+                                  @if (!isRequired.valid && addvisitcustom.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Required selection is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            </div>
+                            @if (valueshow == true) {
+                              <div class="row">
+                                <div class="col-md-12" style="margin-bottom: 20px">
+                                  <span class="button" class="btn btn-success" (click)="addvalue()">
+                                    ADD Value For Dropdown / Radio
+                                  </span>
+                                </div>
+                                <br />
+                                @for (value of values; track value; let i = $index) {
+                                  <div class="col-md-12">
+                                    <label class="form-group has-float-label">
+                                      <div class="row">
+                                        <div class="col-md-6">
+                                          <input type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}"
+                                            class="form-control" />
+                                          </div>
+                                          <div class="col-md-6">
+                                            @if (i >= 1) {
+                                              <span (click)="removevalue(i)" style="margin-left: 3%">
+                                                Remove
+                                              </span>
+                                            }
+                                          </div>
+                                        </div>
+                                        <span>Value</span>
+                                      </label>
+                                    </div>
+                                  }
+                                </div>
+                              }
+
+                              <button class="btn btn-primary" type="submit" [disabled]="isdisabled">
+                                {{ 'forms.submit' | translate }}
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div bsModal #lgModal12="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+                      [config]="{backdrop: 'static', keyboard: false}">
+                      @if (customizedata) {
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Edit Visit Customize Field</h4>
+                              <button type="button" class="btn-close close pull-right" (click)="lgModal12.hide()" aria-label="Close">
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form #editvisitcustom="ngForm" novalidate (ngSubmit)="onSubmit1()">
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="text" required ngModel #fieldLabel="ngModel"
+                                        [(ngModel)]="customizedata.fieldLabel" name="fieldLabel" />
+                                        <span>Field Label *</span>
+                                        @if (!fieldLabel.valid && editvisitcustom.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Filed Label is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <ng-select placeholder="Choose your option" ngModel #inputType="ngModel" name="inputType"
+                                          (change)="selectinput($event)" [(ngModel)]="customizedata.inputType" required>
+                                          <ng-option value="text">Text</ng-option>
+                                          <ng-option value="number">Number</ng-option>
+                                          <ng-option value="textarea">Text Area</ng-option>
+                                          <ng-option value="radio">Radio</ng-option>
+                                          <ng-option value="dropdown">Dropdown</ng-option>
+                                          <ng-option value="image">Image</ng-option>
+                                        </ng-select>
+                                        <span>Select Input Type</span>
+                                        @if (!inputType.valid && editvisitcustom.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Input Type is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-group has-float-label">
+                                        <ng-select placeholder="Choose your option" ngModel #isRequired="ngModel" name="isRequired"
+                                          [(ngModel)]="customizedata.isRequired" required>
+                                          <ng-option value="1">Yes</ng-option>
+                                          <ng-option value="0">No</ng-option>
+                                        </ng-select>
+                                        <span>Field Required</span>
+                                        @if (!isRequired.valid && editvisitcustom.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Required selection is required!
+                                          </div>
+                                        }
+                                      </label>
+                                    </div>
+                                  </div>
+                                  @if (valueshow == true) {
+                                    <div class="row">
+                                      <div class="col-md-12" style="margin-bottom: 20px">
+                                        <span class="button" class="btn btn-success" (click)="addvalue()">
+                                          ADD Value For Dropdown / Radio
+                                        </span>
+                                      </div>
+                                      <br />
+                                      @for (value of values; track value; let i = $index) {
+                                        <div class="col-md-12">
+                                          <label class="form-group has-float-label">
+                                            <div class="row">
+                                              <div class="col-md-6">
+                                                <input type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}"
+                                                  class="form-control" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                  @if (i >= 1) {
+                                                    <span (click)="removevalue(i)" style="margin-left: 3%">
+                                                      Remove
+                                                    </span>
+                                                  }
+                                                </div>
+                                              </div>
+                                              <span>Value</span>
+                                            </label>
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    <button class="btn btn-primary" type="submit" [disabled]="isdisabled">
+                                      {{ 'forms.submit' | translate }}
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                        <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,235 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Incentive Details</h5>
+
+    <form #filterform="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel required #companyName="ngModel" name="companyName">
+              @for (data of allcomp; track data) {
+                <ng-option [value]="data.companyMasterID">
+                  {{ data.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company</span>
+            @if (!companyName.valid && filterform.submitted) {
+              <div class="invalid-tooltip">
+                Company Name is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" placeholder="" required ngModel #incentivetypename="ngModel"
+              name="incentivetypename" />
+              <span>Incentive Type name *</span>
+              @if (!incentivetypename.valid && filterform.submitted) {
+                <div class="invalid-tooltip">
+                  Incentive Type Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-12">
+            <label for="yes">
+              <input type="checkbox" ngModel (change)="calltoshow($event)" #showinsalaryslip="ngModel"
+                name="showinsalaryslip" />
+                <span>Show in salary slip</span>
+              </label>
+            </div>
+
+            @if (datashow) {
+              <div class="col-md-5" style="margin-bottom: 10px">
+                <input type="radio" name="show" value="gross" ngModel #show="ngModel" style="margin-right: 1%"
+                  (click)="applicablePFESIC($event)" required />
+                  <label for="consider" style="margin-right: 2%">Consider in gross salary</label>
+                  <input type="radio" name="show" value="net" ngModel #show="ngModel" style="margin-right: 1%"
+                    (click)="applicablePFESIC($event)" required />
+                    <label for="netsalary">Not Consider in gross salary</label>
+                    @if (!show.valid && filterform.submitted) {
+                      <div class="invalid-tooltip">
+                        Please Select One!
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (showPFESIC == true) {
+                  <div class="col-md-12">
+                    <label for="yes">
+                      <input type="checkbox" ngModel #pfApplicable="ngModel" name="pfApplicable" />
+                      <span>PF Applicable</span>
+                    </label>
+                  </div>
+                }
+
+                @if (showPFESIC == true) {
+                  <div class="col-md-12">
+                    <label for="yes">
+                      <input type="checkbox" ngModel #esicApplicable="ngModel" name="esicApplicable" />
+                      <span>ESIC Applicable</span>
+                    </label>
+                  </div>
+                }
+
+                @if (showPFESIC == true && filterform.value.esicApplicable == true) {
+                  <div class="col-md-12 row">
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="number" ngModel #employeeESICPer="ngModel" name="employeeESICPer"
+                          [(ngModel)]="employeeESICPercentage" />
+                          <span>&nbsp;Employee Side ESIC Percentage *</span>
+                        </label>
+                        @if (!employeeESICPer.valid && filterform.submitted) {
+                          <div class="invalid-tooltip">
+                            Employee Side ESIC Percentage is required!
+                          </div>
+                        }
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" ngModel #EmployerESICPer="ngModel" name="EmployerESICPer"
+                            [(ngModel)]="employerESICPercentage" />
+                            <span>&nbsp;Employer Side ESIC Percentage *</span>
+                          </label>
+                          @if (!EmployerESICPer.valid && filterform.submitted) {
+                            <div class="invalid-tooltip">
+                              Employer Side ESIC Percentage is required!
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    <!--
+                    <div class="col-md-5"  *ngIf="datashow" style="margin-bottom: 10px">
+                      <input
+                        type="radio"
+                        name="show"
+                        value="gross"
+                        ngModel
+                        #show="ngModel"
+                        style="margin-right: 1%;"
+                        required
+                        />
+                        <label for="consider" style="margin-right: 2%;">Consider in gross salary </label>
+                        <input
+                          type="radio"
+                          name="show"
+                          value="net"
+                          ngModel
+                          #show="ngModel"
+                          style="margin-right: 1%;"
+                          required
+                          />
+                          <label for="netsalary">Not Consider in gross salary</label>
+                          <div
+            *ngIf="
+              !show.valid && filterform.submitted
+            "  
+                            class="invalid-tooltip"
+                            >
+                            Please Select One!
+                          </div>
+                        </div>  -->
+
+                        <!-- <div class="row" *ngIf="datashow==false ">
+                        <div class="col-md-12" style="margin-bottom: 10px;">
+                          <input
+                            type="radio"
+                            id="yes"
+                            name="consider Consider in gross salary "
+                            value="yes"
+                            (click)="purpose($event)"
+                            style="margin-right: 1%;"
+                            />
+                            <label for="consider" style="margin-right: 2%;">Consider in gross salary</label>
+                            <input
+                              type="radio"
+                              id="no"
+                              name="Show in net salary after gross"
+                              value="no"
+                              (click)="purpose($event)"
+                              style="margin-right: 1%;"
+                              />
+                              <label for="netsalary" style="margin-right: 2%;">Show in net salary after gross</label>
+                            </div>
+
+
+
+
+
+
+                          </div> -->
+
+                          <!--
+
+                          <div class="col-md-4"  *ngIf="datashow==false ">
+                            <label class="form-group has-float-label">
+                              <input
+                                type="radio"
+                                ngModel #consider="ngModel"
+                                id="yes"
+                                name="consider in gross salary"
+                                value="yes"
+                                (click)="purpose2($event)"
+                                style="margin-right: 1%;"
+                                />
+                                <label for="consider" style="margin-right: 2%;">consider in gross salary</label>
+
+                                <span>consider in gross salary *</span>
+                                <div
+                                  *ngIf="!consider.valid && filterform.submitted"
+                                  class="invalid-tooltip"
+                                  >
+                                  consider in gross salary is required!
+                                </div>
+                              </label>
+                            </div>
+
+
+
+
+                            <div class="col-md-4"  *ngIf="datashow==false ">
+                              <label class="form-group has-float-label">
+                                <input
+                                  type="radio"
+                                  ngModel #Showinafternetsalary="ngModel"
+                                  id="no"
+                                  name="Show in after net salary"
+                                  value="no"
+                                  (click)="purpose2($event)"
+                                  style="margin-right: 1%;"
+                                  />
+                                  <label for="netsalary" style="margin-right: 2%;">Show in after net salary</label>
+
+                                  <span>Show in after net salary *</span>
+                                  <div
+                                    *ngIf="!netsalary.valid && filterform.submitted"
+                                    class="invalid-tooltip"
+                                    >
+                                    show in net salary is required!
+                                  </div>
+                                </label>
+                              </div> -->
+
+                              <div class="col-md-12">
+                                <button class="btn btn-primary form-group" type="submit">
+                                  {{ 'forms.submit' | translate }}
+                                </button>
+                                &nbsp;&nbsp;
+                              </div>
+                              <div class="col-md-3" style="text-align: right">
+                                <!-- <span class="btn btn-info mb-1" (click)="downloadFile()">Export</span> -->
+                              </div>
+                            </div>
+                          </form>
+                          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+                        </div>
+                      </div>

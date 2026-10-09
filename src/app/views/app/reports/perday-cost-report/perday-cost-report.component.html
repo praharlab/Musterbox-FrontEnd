@@ -1,0 +1,53 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+<app-list-page-header name="Daily Cost Report" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+[showItemsPerPage]="false"></app-list-page-header>
+
+
+<div class="card">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="Export()">
+        <div class="row">
+          <!--fromdate-->
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" ngModel #month="ngModel" max="{{maxMonth}}" name="month"
+                required />
+                <span> Month *</span>
+                @if (!month.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    Month is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #cid="ngModel" name="cid" required>
+                  @for (data of company; track data) {
+                    <ng-option [value]="data.companyMasterID">
+                      {{ data.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!cid.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <br />
+            <div class="col-md-3">
+              <button class="btn btn-success form-group" type="submit">Export</button>
+            </div>
+            <div class="col-md-3" style="text-align: right"></div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>

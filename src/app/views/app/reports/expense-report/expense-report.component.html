@@ -1,0 +1,299 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Expense Report" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (searchKeyUp)="updateFilter($event)" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="download('xlsx')" (exportCSV)="download('csv')" (clearData)="clear()"
+    (getPdf)="downloadPDF()" (sendMail)="downloadMail()" (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" required ngModel #fromdate="ngModel" name="fromdate" />
+        <span>From Date *</span>
+        @if (!fromdate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            From Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" required ngModel #todate="ngModel" name="todate" />
+        <span>To Date *</span>
+        @if (!todate.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            To Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #expensetype="ngModel" required name="expensetype">
+          @for (type of expenseTypeArrayForDropDown; track type) {
+            <ng-option [value]="type.value">{{type.name}}</ng-option>
+          }
+          <!-- <ng-option value="all">All</ng-option>
+          <ng-option value="visit">Visit Expense</ng-option>
+          <ng-option value="tour">Tour Expense</ng-option>
+          <ng-option value="personal">Personal Expense</ng-option> -->
+        </ng-select>
+        <span>Select Type Of Expense *</span>
+        @if (!expensetype.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Type Of Expense is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #status="ngModel" name="status">
+          <ng-option value="Approved">Accepted</ng-option>
+          <ng-option value="Pending">Pending</ng-option>
+          <ng-option value="Rejected">Rejected</ng-option>
+          <ng-option value="Paid">Paid</ng-option>
+        </ng-select>
+        <span>Select Status</span>
+      </label>
+    </div>
+    @if (rows && rows.length != 0) {
+      <div class="col-md-2">
+        <label class="form-group has-float-label">
+          <input type="checkbox" #attachment="ngModel" name="attachment" placeholder="Export" ngModel
+            (change)="onCheckChange()" [(ngModel)]="checkedValue" />
+            Export With Attachment
+          </label>
+        </div>
+      }
+    </app-common-filter>
+  }
+  <br>
+    @if (rows && rows.length != 0) {
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <h3>Total Accepted:-{{ ExpenseAccepted }}</h3>
+            </div>
+            <div class="col-md-3">
+              <h3>Total Pending:-{{ ExpensePending }}</h3>
+            </div>
+            <div class="col-md-3">
+              <h3>Total Rejected:-{{ ExpenseRejected }}</h3>
+            </div>
+            <div class="col-md-3">
+              <h3>Total Paid:-{{ ExpensePaid }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    <br>
+      @if (rows && rows.length != 0) {
+        <div class="row">
+          <div class="col-12 mb-4 data-table-rows">
+            <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+              [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+              (page)="onChange($event)">
+              <ngx-datatable-column name="Sr. No" prop="srlNo" [flexGrow]="1.2" [width]="90" value="1">
+                <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                  {{ filterData.limit * (filterData.page - 1) + rowIndex + 1 }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Name" prop="userExpense.userMaster.displayName" [flexGrow]="1.2"
+              [width]="200"></ngx-datatable-column>
+              <ngx-datatable-column name="Mobile Number" prop="userExpense.userMaster.userNumber" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="Expense Date" [flexGrow]="1.2" [width]="90" value="1">
+                <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                  {{ row.userExpense.expense_date | date: 'dd-MM-yyyy' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Expense Amount" prop="expenseAmount" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="Status" prop="authorizationStatus" [flexGrow]="1.2" [width]="140">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.authorizationStatus == '0') {
+                    <button type="button" class="btn btn-xs btn-outline-warning">
+                      Pending
+                    </button>
+                  }
+                  {{
+                  '
+                  '
+                  }}
+                  @if (row.authorizationStatus == '1') {
+                    <button type="button" class="btn btn-xs btn-outline-warning">
+                      Pending
+                    </button>
+                  }
+                  {{
+                  '
+                  '
+                  }}
+                  @if (row.authorizationStatus == '2') {
+                    <button type="button" class="btn btn-xs btn-outline-warning">
+                      Pending
+                    </button>
+                  }
+                  {{
+                  '
+                  '
+                  }}
+                  @if (row.authorizationStatus == '3' && (row.erpJvid || row.payment_Id)) {
+                    <button type="button" class="btn btn-xs btn-outline-info"
+                      >
+                      Paid
+                    </button>
+                  }
+                  {{
+                  '
+                  '
+                  }}
+                  @if (row.authorizationStatus == '3' && (!row.erpJvid && !row.payment_Id)) {
+                    <button type="button" class="btn btn-xs btn-outline-success"
+                      >
+                      Accepted
+                    </button>
+                  }
+                  {{
+                  '
+                  '
+                  }}
+                  @if (row.authorizationStatus == '4') {
+                    <button type="button" class="btn btn-xs btn-outline-danger">
+                      Rejected
+                    </button>
+                  }
+                  {{
+                  '
+                  '
+                  }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Authorization" prop="Authorization" [flexGrow]="1.2"
+              [width]="280"></ngx-datatable-column>
+              <ngx-datatable-column name="Authorization Criteria" prop="Authorization Criteria" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="Attachment - 1" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.attachFile  && row.attachFile != '' && row.attachFile != null && row.attachFile != 'null') {
+                    <button type="button" class="btn btn-xs btn-outline-primary"
+                      type="button" (click)="viewAttachment(row.attachFile)">
+                      View
+                    </button>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Attachment - 2" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row?.attachFile2   && row.attachFile2 != '' && row.attachFile2 != null && row.attachFile2 != 'null') {
+                    <button type="button" class="btn btn-xs btn-outline-primary"
+                      type="button" (click)="viewAttachment($safeNavigationMigration(row?.attachFile2))">
+                      View
+                    </button>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+              @if (tour) {
+                <ngx-datatable-column name="Tours Name" prop="userExpense" [flexGrow]="1.2" [width]="280">
+                  <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                    @if (row.userExpense.ToursMaster) {
+                      <div>
+                        {{ row.userExpense.ToursMaster.ToursName }}
+                      </div>
+                    }
+                  </ng-template>
+                </ngx-datatable-column>
+              }
+              @if (visit) {
+                <ngx-datatable-column name="Visit" prop="userExpense" [flexGrow]="1.2" [width]="280">
+                  <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                    @if (row.userExpense.visit) {
+                      <div>
+                        {{ row.userExpense.visit.customer.companyName }}
+                      </div>
+                    }
+                  </ng-template>
+                </ngx-datatable-column>
+              }
+              @if (visit) {
+                <ngx-datatable-column name="Project" prop="userExpense" [flexGrow]="1.2" [width]="280">
+                  <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                    @if (row.userExpense.project) {
+                      <div>
+                        {{ row.userExpense?.project?.projectName }}
+                      </div>
+                    }
+                  </ng-template>
+                </ngx-datatable-column>
+              }
+              <ngx-datatable-column name="Expense Category" prop="userExpense.expenseCategory.expenseCategory" [flexGrow]="1.2"
+              [width]="230"></ngx-datatable-column>
+              <ngx-datatable-column name="Expense Head" prop="expenseHead.expenseHead" [flexGrow]="1.2"
+              [width]="230"></ngx-datatable-column>
+              <ngx-datatable-column name="Version" prop="version" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+              <ngx-datatable-column name="Description" prop="description" [flexGrow]="1.2" [width]="380"></ngx-datatable-column>
+              <ngx-datatable-column name="ErpJVID" prop="erpJvid" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+              <ngx-datatable-column name="Bank Name" prop="userExpense.userMaster.bankName" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="Account Number" prop="userExpense.userMaster.accountNo" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="IFSC Code" prop="userExpense.userMaster.ifscCode" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              @if (true) {
+                <ngx-datatable-footer>
+                  <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                    let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                    <div class="w-100 d-flex justify-content-center">
+                      <pagination [totalItems]="rowCount" [itemsPerPage]="pageSize" [maxSize]="5"
+                        (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                      [customPreviousTemplate]="prevTemplate"></pagination>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-footer>
+              }
+            </ngx-datatable>
+          </div>
+        </div>
+      }
+
+      <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+        <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+        <i class="simple-icon-arrow-left"></i>
+      </ng-template>
+      <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+        <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+        <i class="simple-icon-arrow-right"></i>
+      </ng-template>
+      <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+        <i class="simple-icon-arrow-right"></i>
+      </ng-template>
+      <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+        <i class="simple-icon-arrow-left"></i>
+      </ng-template>
+
+      <div bsModal #lgModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+        [config]="{backdrop: 'static', keyboard: false}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Attachment</h4>
+              <button type="button" class="btn-close close pull-right" (click)="lgModal4.hide()" aria-label="Close">
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div style="text-align: center">
+                <img src="data:image/jpeg;base64,{{ showImage }}" style="max-height: 350px;" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

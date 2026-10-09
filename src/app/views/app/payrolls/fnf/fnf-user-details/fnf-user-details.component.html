@@ -1,0 +1,54 @@
+<div class="card p-5">
+  <div class="w-100 position-relative">
+    @if (showloader) {
+      <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+  </div>
+  <div class="d-flex align-items-center gap-8">
+    <div style="text-align: center">
+      @if (userData.photo) {
+        <span>
+          <img alt="img-responsive" height="90" width="90" style="border-radius: 50%"
+            src="{{ apiURL }}uploads/user/photo/{{ userData.photo }}" />
+          </span>
+        }
+        @if (!userData.photo) {
+          <span class="d-flex justify-content-center">
+            @if ( userData.firstName && userData.lastName) {
+              <app-profile-pic
+                [Style]="' border-radius: 50%;height : 90px; width : 90px'" [firstName]="userData.firstName"
+              [lastName]="userData.lastName"></app-profile-pic>
+            }
+          </span>
+        }
+      </div>
+      <div>
+        <div class="d-flex justify-content-between mb-1">
+          <p class="m-0 fs20 fw600">{{userData?.displayName}}</p>
+          <!-- <p class="blue">{{userData?.status}}</p> -->
+          <button class="btn btn-xs"
+            [class]="userData?.status == 'Completed' ? 'btn-outline-success' : 'btn-outline-warning'">{{ userData?.status
+          }}</button>
+        </div>
+        <div class="d-flex flex-wrap gap-8">
+          <p class="h25 border-right w-fit pr10 d-flex align-items-center">Designation: {{userData?.designation}}</p>
+          <p class="h25 border-right w-fit pr10 d-flex align-items-center">Branch & Department: {{userData?.branch}},
+          {{userData?.department}}</p>
+          <p class="h25 border-right w-fit pr10 d-flex align-items-center">Resigned on: {{$safeNavigationMigration(userData?.appliedDate) |
+          date:'dd-MM-yyyy'}}</p>
+          <p class="h25 border-right w-fit pr10 d-flex align-items-center">Last Working Date: {{$safeNavigationMigration(userData?.lastworkingdate)
+          | date:'dd-MM-yyyy'}}</p>
+          <p class="h25 w-fit d-flex align-items-center">Notice Period: {{userData?.noticeperiod}} Days</p>
+        </div>
+      </div>
+    </div>
+  </div>

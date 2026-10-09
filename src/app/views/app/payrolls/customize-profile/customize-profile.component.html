@@ -1,0 +1,70 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Customize Profile" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+[showItemsPerPage]="false"></app-list-page-header>
+@if (permissionview.length > 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #filterForm="ngForm" novalidate>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel required #company="ngModel" name="company"
+                (change)="selectcompany($event)" [(ngModel)]="filterData.companyMasterID"
+                [disabled]="permissioncreate.length == 0">
+                @for (company of allCompanies; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && filterForm.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            Set Fields: *
+            <input type="radio" ngModel #showValues="ngModel" id="showFields" name="showValues" [(ngModel)]="radiostatus" [value]="true"
+              style="margin-left: 4%" checked required/>
+              <label for="showFields" class="cursor-pointer ml-2 mb-0">Yes</label>
+              <input type="radio" #showValues="ngModel" id="hideFields" name="showValues" [(ngModel)]="radiostatus" [value]="false"
+                style="margin-left: 4%" required/>
+                <label for="hideFields" class="cursor-pointer ml-2 mb-0">None</label>
+              </div>
+              @if (radiostatus) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="selectedFieldsList" [multiple]="true" groupBy="selectedAllGroup"
+                      [selectableGroup]="true" [selectableGroupAsModel]="false" [closeOnSelect]="false" ngModel
+                      #fields="ngModel" [(ngModel)]="filterData.fields" name="fields"
+                    [disabled]="permissioncreate.length == 0"></ng-select>
+                    <span>Select Fields</span>
+                    @if (!fields.valid && filterForm?.submitted) {
+                      <div class="invalid-tooltip">
+                        Fields is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (permissioncreate.length > 0) {
+                <div class="col-md-12">
+                  <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+                    Submit
+                  </button>
+                  <button class="btn btn-danger form-group ml-2" type="button" (click)="cancel()">
+                    Cancel
+                  </button>
+                </div>
+              }
+            </div>
+          </form>
+          <br />
+        </div>
+      </div>
+    }

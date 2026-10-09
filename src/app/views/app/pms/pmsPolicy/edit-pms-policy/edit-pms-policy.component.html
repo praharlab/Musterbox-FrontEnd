@@ -1,0 +1,59 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Pms policy</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" [(ngModel)]="editData.companyMasterId" (change)="company($event)">
+                @for (c of company; track c) {
+                  <ng-option [value]="c.companyMasterID">
+                    {{ c.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose Goal Type" ngModel #goalType="ngModel" name="goalType" required
+                [(ngModel)]="editData.goalType">
+                <ng-option value="FinancialYear">FinancialYear</ng-option>
+                <ng-option value="CalendarYear">CalendarYear</ng-option>
+              </ng-select>
+              <span>Goal Type *</span>
+              @if (!goalType.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Goal Type is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <app-state-button [btnClass]="'btn btn-primary btn-shadow '" [currentState]="buttonState"
+              [isDisabled]="buttonDisabled" click="onLoginClick()">
+              {{ 'forms.submit' | translate }}
+            </app-state-button>
+            <button class="btn btn-danger btn-shadow " [routerLink]="adminRoot + '/pms/pmspolicy'"
+              style="margin-left: 2%">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

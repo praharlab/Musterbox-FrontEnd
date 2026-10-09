@@ -1,0 +1,139 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (editbyid) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Holiday Policy</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #holidayPolicyName="ngModel"
+                [(ngModel)]="editbyid.holidayPolicyName" name="holidayPolicyName" required />
+                <span>Holiday Policy Name *</span>
+                @if (!holidayPolicyName.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Holiday Policy Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #holidayYear="ngModel" (change)="changeYear($event)"
+                  [(ngModel)]="editbyid.holidayYear" name="holidayYear" required>
+                  <ng-option [value]="2020">2020</ng-option>
+                  <ng-option [value]="2021">2021</ng-option>
+                  <ng-option [value]="2022">2022</ng-option>
+                  <ng-option [value]="2023">2023</ng-option>
+                  <ng-option [value]="2024">2024</ng-option>
+                  <ng-option [value]="2025">2025</ng-option>
+                  <ng-option [value]="2026">2026</ng-option>
+                  <ng-option [value]="2027">2027</ng-option>
+                  <ng-option [value]="2028">2028</ng-option>
+                  <ng-option [value]="2029">2029</ng-option>
+                  <ng-option [value]="2030">2030</ng-option>
+                  <ng-option [value]="2031">2031</ng-option>
+                  <ng-option [value]="2032">2032</ng-option>
+                </ng-select>
+                <span>Select Year *</span>
+                @if (!holidayYear.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Holiday Year is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel required #companyMasterID="ngModel"
+                  [(ngModel)]="editbyid.companyMasterID" name="companyMasterID">
+                  @for (product of product; track product) {
+                    <ng-option [value]="product.companyMasterID">
+                      {{ product.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!companyMasterID.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" style="margin-bottom: 20px">
+              <span class="button" class="btn btn-success" (click)="addvalue()">ADD Holiday List</span>
+            </div>
+            <br />
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="value.name" #holidayListName="ngModel" required
+                        name="name{{ i }}" />
+                        <span>Holiday Name *</span>
+                        @if (!holidayListName.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Holiday Name is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="date" [(ngModel)]="value.date" [min]="min" [max]="max"
+                          #holidayDate="ngModel" required name="date{{ i }}" />
+                          <span>Holiday Date *</span>
+                          @if (!holidayDate.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Holiday Date is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-3">
+                        <label>Optional Holiday *</label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="optionalHoliday{{ i }}" ngModel [(ngModel)]="value.optionalHoliday"
+                          #optionalHoliday="ngModel" value="1" required />
+                          &nbsp;
+                          <label for="1">YES</label>
+                          &nbsp;&nbsp;
+                          <input type="radio" name="optionalHoliday{{ i }}" ngModel [(ngModel)]="value.optionalHoliday"
+                            #optionalHoliday="ngModel" value="0" required />
+                            &nbsp;
+                            <label for="0">
+                              NO
+                            </label>
+                            <br />
+                            <br />
+                          </div>
+                          <div class="col-md-1">
+                            @if (values.length > 1) {
+                              <span (click)="removevalue(i)" style="margin-left: 3%; margin-top: 3%">
+                                Remove
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  <div class="col-md-12">
+                    <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                    <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/holidayPolicy'"
+                      style="margin-left: 2%">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          }
+
+          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

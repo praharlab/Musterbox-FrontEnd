@@ -1,0 +1,67 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit LeaveMaster</h5>
+
+    @if (leaveData) {
+      <form #addLeaveMaster="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #leaveName="ngModel"
+                name="leaveName"
+                [(ngModel)]="leaveData.LeaveName"
+                />
+                <span>Leave Name *</span>
+                @if (!leaveName.valid && addLeaveMaster.submitted) {
+                  <div class="invalid-tooltip">
+                    Leave Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <textarea
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #leaveDesc="ngModel"
+                  name="leaveDesc"
+                  [(ngModel)]="leaveData.LeaveDesc"
+                ></textarea>
+                <span>Leave Description *</span>
+                @if (!leaveDesc.valid && addLeaveMaster.submitted) {
+                  <div class="invalid-tooltip">
+                    Leave Description is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" [disabled]="isdisebled" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+          <button
+            class="btn btn-danger btn-shadow"
+            [routerLink]="adminRoot + '/superadminmenus/leaveMaster'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

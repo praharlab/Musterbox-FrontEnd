@@ -1,0 +1,142 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="filterData.searchQuery" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="limit" [itemOptionsPerPage]="itemOptionsPerPage"
+(addNewItem)="showAddNewModal()" name="Discrepancy Letter"></app-list-page-header>
+
+<div class="card mb-4">
+  @if (permissionview.length != 0) {
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel [closeOnSelect]="false" [multiple]="false" [(ngModel)]="company_id"
+                #company="ngModel" name="company" required>
+                @for (company of comp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+            </label>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  }
+</div>
+
+@if (rows && permissionview != 0 && rows.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="scrollBarHorizontal" [rowHeight]="50" [rows]="rows" [footerHeight]="100"
+        [columnMode]="'force'" [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="Company Name" prop="companyMaster.companyName" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="Discrepancy Letter Name" prop="discrepancyLetterName" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="LetterHead" prop="letterHead" [flexGrow]="1.2" [width]="130">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.letterHead | uppercase}}
+          </ng-template>
+          <ngx-datatable-column name="" prop="" [flexGrow]="" [width]="">
+            <ng-template let-row="" ngx-datatable-cell-template>
+              {{ row.letterHead | uppercase }}
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Discrepancy Letter" prop="path" [flexGrow]="1.2" [width]="130">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.letterTemplate) {
+              <button type="button" class="btn btn-primary" (click)="lgModal.show(); subjectdata(row)"
+                >
+                {{ 'View' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="120">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (permissionedit != 0) {
+              <a (click)="navigateToEditPage(row)">
+                <span tooltip="Edit Discrepancy Letter ." [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                style="padding-right: 10px; font-size: 18px"></span>
+                {{ ' ' }}
+              </a>
+            }
+            @if (permissiondelete != 0) {
+              <a (click)="alertConfirmation(row.discrepancyLetterID)">
+                <span tooltip="Delete Discrepancy Letter ." [class]="'glyph-icon simple-icon-trash tool_tip'"
+                style="padding-right: 6px; font-size: 18px"></span>
+                {{ ' ' }}
+              </a>
+            }
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Discrepancy Letter </h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="subject"></div>
+      </div>
+    </div>
+  </div>
+</div>

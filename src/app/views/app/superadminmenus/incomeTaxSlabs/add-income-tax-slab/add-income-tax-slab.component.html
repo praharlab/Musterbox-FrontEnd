@@ -1,0 +1,78 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Income Tax Slab</h5>
+
+    @if (permissioncreate.length!=0) {
+      <form #addform="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #incomeTaxSlabMasterID="ngModel"
+                name="incomeTaxSlabMasterID" required>
+                @for (data of masterData; track data) {
+                  <ng-option [value]="data.incomeTaxSlabMasterID">
+                    {{ data.assessmentYear }}--{{data.gender}}({{data.regime}})
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Income Tax Slab Master *</span>
+              @if (!incomeTaxSlabMasterID.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Income Tax Slab Master is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" required ngModel #fromAmount="ngModel"
+                name="fromAmount" />
+                <span>From Amount *</span>
+                @if (!fromAmount.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    From Amount is required and Must be Positive value!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #toAmount="ngModel" name="toAmount" />
+                <span>To Amount *</span>
+                @if (!toAmount.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    To Amount is required and Must be Positive value!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #percentage="ngModel"
+                  name="percentage" />
+                  <span>Percentage *</span>
+                  @if (!percentage.valid && addform.submitted) {
+                    <div class="invalid-tooltip">
+                      percentage is required and Must be between 0 and 100!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <br />
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button class="btn btn-danger btn-shadow mt-4"
+                [routerLink]="adminRoot + '/superadminmenus/list_incomeTaxSlab'" style="margin-left: 2%">
+                Cancel
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

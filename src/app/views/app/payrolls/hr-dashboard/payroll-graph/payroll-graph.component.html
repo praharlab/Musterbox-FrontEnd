@@ -1,0 +1,36 @@
+<div class="card">
+  <div class="card-body">
+    <form #monthYearFilter="ngForm" novalidate (change)="onMonthYearSelect($event)">
+      <div class="float-right float-none-xs mt-2">
+        <input
+          class="btn btn-outline-primary btn-xs float-right"
+          type="month"
+          [(ngModel)]="currentMonthYear"
+          ngModel
+          #monthYear="ngModel"
+          name="monthYear"
+          max="{{ maxYearMonth }}"
+          />
+        </div>
+      </form>
+      @if (this.showloader == 'true') {
+        <div
+          style="color: #17a2b8; left: 50%"
+          class="la-ball-spin-clockwise"
+          >
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+      <h5 class="card-title">Payroll</h5>
+      <div class="chart-container">
+        <div [class]="class"><canvas #chart></canvas></div>
+      </div>
+    </div>
+  </div>

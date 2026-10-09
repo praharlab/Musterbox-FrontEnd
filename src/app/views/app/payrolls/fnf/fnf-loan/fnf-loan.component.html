@@ -1,0 +1,268 @@
+<div class="w-100 position-relative">
+  @if (showloader) {
+    <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  }
+</div>
+@if (applicationData && applicationData.length > 0) {
+  <div class="scrollStyleTable">
+    <table border="1" class="Table" width="100%">
+      <tr>
+        <th colspan="10" style="text-align: center; background-color: lightgray">
+          Loan
+        </th>
+      </tr>
+      <tr>
+        <th style="text-align: center" class="tableTh">Given Date</th>
+        <th style="text-align: center" class="tableTh">Loan Amount</th>
+        <th style="text-align: center" class="tableTh">Remaining Amount</th>
+        <th style="text-align: center" class="tableTh">Loan Remark</th>
+        <th style="text-align: center" class="tableTh">Loan Advance Amount</th>
+        <th style="text-align: center" class="tableTh">Payment Mode</th>
+        <th style="text-align: center" class="tableTh">Loan Transaction</th>
+        <th style="text-align: center" class="tableTh">Action</th>
+      </tr>
+      @for (application of applicationData; track application; let i = $index) {
+        <tr>
+          <td style="text-align: center" class="tableTd">
+            {{ $safeNavigationMigration(application?.givenDate) | date : 'dd-MM-yyyy' }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.LoanAmount }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.pendingAmount }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.LoanRemark }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.advanceAmount }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            {{ application?.paymentmode }}
+          </td>
+          <td style="text-align: center" class="tableTd">
+            <button type="button" class="btn btn-outline-primary btn-xs"
+              (click)="showDataModal.show(); showData(application)">
+              View Transaction
+            </button>
+          </td>
+          <td style="text-align: center" class="tableTd">
+            <button class="btn btn-primary btn-xs" (click)="onPayButtonClick(application)">Pay</button>
+            &nbsp;
+            &nbsp;
+            &nbsp;
+            <span> &nbsp; </span>
+            @if (application.deduct_from_salary_button) {
+              <button class="btn btn-danger btn-xs" (click)="alertDeductFromSalary(application)"
+              >Deduct From Salary</button>
+            }
+          </td>
+        </tr>
+      }
+    </table>
+    <br />
+    <br />
+  </div>
+}
+
+
+<div bsModal #showDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-sizes-name1" [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Loan Transaction</h4>
+        <button type="button" class="btn-close close pull-right" (click)="showDataModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          @if (loanTransactions && loanTransactions.length > 0) {
+            <div class="col-md-6">
+              <h3>
+                Loan Transaction
+              </h3>
+              <div class="scrollStyleTable">
+                <table border="1" class="Table" width="100%">
+                  <tr>
+                    <th style="text-align: center" class="tableTh">EMI Month</th>
+                    <th style="text-align: center" class="tableTh">EMI Amount</th>
+                    <th style="text-align: center" class="tableTh">Principle Amount</th>
+                    <th style="text-align: center" class="tableTh">Interest Amount</th>
+                    <th style="text-align: center" class="tableTh">Status</th>
+                  </tr>
+                  @for (application of loanTransactions; track application; let i = $index) {
+                    <tr>
+                      <td style="text-align: center" class="tableTd">
+                        {{ $safeNavigationMigration(application?.formattedEMIMonth) | date: 'MM-yyyy' }}
+                      </td>
+                      <td style="text-align: center" class="tableTd">
+                        {{ application?.EMIAmount }}
+                      </td>
+                      <td style="text-align: center" class="tableTd">
+                        {{ application?.monthlyPrinciple }}
+                      </td>
+                      <td style="text-align: center" class="tableTd">
+                        {{ application?.monthlyInterest }}
+                      </td>
+                      <td style="text-align: center" class="tableTd">
+                        @if (application.RefrenceId) {
+                          <button type="button" class="btn btn-outline-success btn-xs">
+                            Paid
+                          </button>
+                        }
+                        @if (!application.RefrenceId) {
+                          <button type="button" class="btn btn-outline-warning btn-xs">
+                            Pending
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </table>
+                <br />
+                <br />
+              </div>
+            </div>
+          }
+          @if (loanAdvances && loanAdvances.length > 0) {
+            <div class="col-md-6">
+              <h3>
+                Loan Advance
+              </h3>
+              <tr>
+                <th style="text-align: center" class="tableTh">Loan Advance Given Date</th>
+                <th style="text-align: center" class="tableTh">Loan Advance Amount</th>
+                <th style="text-align: center" class="tableTh">Payment Mode</th>
+              </tr>
+              @for (application of loanAdvances; track application; let i = $index) {
+                <tr>
+                  <td style="text-align: center" class="tableTd">
+                    {{ $safeNavigationMigration(application?.givenDate) | date : 'dd-MM-yyyy' }}
+                  </td>
+                  <td style="text-align: center" class="tableTd">
+                    {{ application?.Amount }}
+                  </td>
+                  <td style="text-align: center" class="tableTd">
+                    {{ application?.paymentmode }}
+                  </td>
+                </tr>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #payModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: true}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Advance Payment</h4>
+        <button type="button" class="btn-close close pull-right" (click)="closeModalFunction()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form #paymentForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" placeholder="" ngModel #paymentDate="ngModel" name="paymentDate"
+                  required />
+                  <span>Payment Date *</span>
+                  @if (!paymentDate.valid && paymentForm.submitted) {
+                    <div class="invalid-tooltip">
+                      Payment Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="number" ngModel #cashpayment="ngModel" name="cashpayment"
+                    (input)="changepayment()" required />
+                    <span>Loan Advance Payment *</span>
+                    @if (!cashpayment.valid && paymentForm.submitted) {
+                      <div class="invalid-tooltip">
+                        Loan Advance Payment is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel required #payment="ngModel" name="payment"
+                      (change)="onPaymentModeChange()" [(ngModel)]="paymentMode">
+                      <ng-option [value]="paymentModes.CASH">
+                        {{ paymentModes.CASH }}
+                      </ng-option>
+                      <ng-option [value]="paymentModes.CHEQUE">
+                        {{ paymentModes.CHEQUE }}
+                      </ng-option>
+                      <ng-option [value]="paymentModes.UPI">
+                        {{ paymentModes.UPI }}
+                      </ng-option>
+                      <ng-option [value]="paymentModes.WAIVE_OFF">
+                        {{ paymentModes.WAIVE_OFF }}
+                      </ng-option>
+
+                    </ng-select>
+                    <span>Select Payment Mode *</span>
+                    @if (!payment.valid && paymentForm.submitted) {
+                      <div class="invalid-tooltip">
+                        Payment Mode is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                @if (paymentMode == paymentModes.UPI || paymentMode == paymentModes.CHEQUE) {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input type="text" name="referenceId" #referenceId="ngModel" ngModel
+                        placeholder="{{paymentMode}} Reference ID" [(ngModel)]="paymentRefrenceID" class="form-control" />
+                        <span>{{paymentMode }} Reference Id *</span>
+                        @if (!referenceId.valid && paymentForm.submitted) {
+                          <div class="invalid-tooltip">
+                            Payment Mode is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <textarea class="form-control" type="text" ngModel #advanceRemark="ngModel"
+                      name="advanceRemark"></textarea>
+                      <span>Loan Advance Remark</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <button class="btn btn-primary" (click)="onPaymentFormSubmit()">Submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>

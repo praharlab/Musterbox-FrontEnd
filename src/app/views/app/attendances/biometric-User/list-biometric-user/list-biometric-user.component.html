@@ -1,0 +1,244 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="button-container">
+  <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/attendances/biometric_list'"
+    style="margin-bottom: 22px">
+    Back
+  </button>
+
+  @if (onlineStatus && onlineStatus != 'online') {
+    <div>
+      <button class="btn btn-outline-danger btn-shadow" style="margin-bottom: 22px">
+        Offline
+      </button>
+    </div>
+  }
+  @if (onlineStatus && onlineStatus === 'online') {
+    <div>
+      <button class="btn btn-outline-success btn-shadow" style="margin-bottom: 22px">
+        Online
+      </button>
+    </div>
+  }
+</div>
+
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="filterData.searchQuery" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" name="Biometric User"
+></app-list-page-header>
+
+<div class="d-flex justify-content-end align-items-center">
+  <!-- Text aligned to the left -->
+
+  <!-- Buttons aligned to the right -->
+  <div>
+    @if (onlineStatus && onlineStatus === 'online') {
+      <button class="btn btn-info mx-2" (click)="syncBiometricUser()"
+        >
+        Sync
+      </button>
+    }
+    @if (rows && permissionview != 0) {
+      <button class="btn btn-primary mx-2" (click)="downloadFile()">
+        Export
+      </button>
+    }
+    @if (rows.length > 0 && onlineStatus && onlineStatus === 'online') {
+      <button class="btn btn-danger mx-2" (click)="getAllUser();lgModal4.show()"
+        >
+        Transfer Multiple User
+      </button>
+    }
+  </div>
+</div>
+
+
+&nbsp;&nbsp;
+<span> &nbsp;&nbsp; </span>
+@if (onlineStatus && onlineStatus != 'online') {
+  <p style="color: red;">Machine is currently Offline, you cannot perform
+    any Operations!
+  </p>
+}
+
+@if (rows && permissionview != 0) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="scrollBarHorizontal" [rowHeight]="50" [rows]="rows" [footerHeight]="100"
+        [columnMode]="'force'" [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="Biometric Code" prop="enrollid" [flexGrow]="1.2" [width]="100">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="First Name" prop="firstName" [flexGrow]="1.2" [width]="100">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Last Name" prop="lastName" [flexGrow]="1.2"
+        [width]="130"></ngx-datatable-column>
+        <ngx-datatable-column name="Biometric SerialNo" prop="biometricUserSerialNo" [flexGrow]="1.2" [width]="100">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Admin" prop="isAdmin" [flexGrow]="1.2" [width]="100">
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value === 1 ? 'Yes' : 'No' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <!--
+        <ngx-datatable-column name="Photo" prop="face" [flexGrow]="1.2" [width]="130">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <img src="{{ apiURL }}{{ row.face }}" (click)="lgModal4.show();" height="50px" width="50px"
+              *ngIf="row.face" />
+            </ng-template>
+          </ngx-datatable-column> -->
+          <ngx-datatable-column name="Photo" prop="face" [flexGrow]="1.2" [width]="130">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (row.face) {
+                <img src="{{ apiURL }}{{ row.face }}" (click)="openModal(row.face)" height="50px" width="50px"
+                  />
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          @if (permissioncreate.length != 0) {
+            <ngx-datatable-column name="Transfer" [flexGrow]="1.2" [width]="120">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (onlineStatus && onlineStatus === 'online') {
+                  <button class="btn btn-danger mx-2" (click)="setUser(row.enrollid);lgModal4.show()"
+                    >
+                    Transfer
+                  </button>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+          }
+          @if (permissionedit.length != 0 || permissiondelete.length != 0) {
+            <ngx-datatable-column name="Action" [flexGrow]="1.2" [width]="120"
+              >
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (permissionedit.length != 0 && onlineStatus && onlineStatus === 'online') {
+                  <a (click)="navigateToEditPage(row)"
+                    >
+                    <span tooltip="Edit Biometric User" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                    style="padding-right: 10px; font-size: 18px"></span>
+                    {{ ' ' }}
+                  </a>
+                }
+                @if (permissiondelete.length != 0 && onlineStatus && onlineStatus === 'online') {
+                  <a (click)="alertConfirmation(row.enrollid)"
+                    >
+                    <span tooltip="Delete Biometric User" [class]="'glyph-icon simple-icon-trash tool_tip'"
+                    style="padding-right: 6px; font-size: 18px"></span>
+                    {{ ' ' }}
+                  </a>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+          }
+          @if (true) {
+            <ngx-datatable-footer>
+              <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                <div class="w-100 d-flex justify-content-center">
+                  <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                    [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                    [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                  [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
+          }
+        </ngx-datatable>
+      </div>
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+
+
+  <div bsModal #lgModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Transfer user</h4>
+          <button type="button" class="btn-close close pull-right" (click)="close_Modal();lgModal4.hide()"
+            #closeModal aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #transferForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              @if (!userEnroll) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="allUsers" [multiple]="true" bindLabel="firstName"
+                      groupBy="selectedAllGroup" [selectableGroup]="true" [selectableGroupAsModel]="false"
+                      bindValue="enrollid" [closeOnSelect]="false" ngModel #enrollid="ngModel"
+                      name="enrollid">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Users*</span>
+                      @if (!enrollid.valid && transferForm.submitted) {
+                        <div class="invalid-tooltip">
+                          Users is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [closeOnSelect]="false" [multiple]="true" ngModel #snNumber="ngModel"
+                      name="snNumber" required>
+                      @for (machineSN of biometriclist; track machineSN) {
+                        <ng-option [value]="machineSN.serialno">
+                          {{ machineSN.serialno }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>Select SerialNumber *</span>
+                    @if (!snNumber.valid && transferForm.submitted) {
+                      <div class="invalid-tooltip">
+                        SerialNumber is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+
+                <div class="col-md-4">
+                  <button class="btn btn-primary form-group" type="submit">
+                    {{ 'forms.submit' | translate }}
+                  </button>
+                </div>
+              </div>
+            </form>
+            <ul>
+              @for (message of errorMessages; track message) {
+                <li style="color: red;">{{message}}</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

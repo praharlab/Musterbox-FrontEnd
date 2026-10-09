@@ -1,0 +1,473 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (foodAllowancePolicyData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Food Allowance Policy</h5>
+      <form #editFoodAllowancePolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel [attr.disabled]="true"
+                [(ngModel)]="foodAllowancePolicyData.companyMaster.companyName" #companyMasterID="ngModel"
+                name="companyMasterID" required />
+                <span>Select Company *</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #foodAllowancePolicyName="ngModel"
+                  name="foodAllowancePolicyName"
+                  [(ngModel)]="foodAllowancePolicyData.foodAllowancePolicyName" />
+                  <span>Food Allowance Policy Name *</span>
+                  @if (!foodAllowancePolicyName.valid && editFoodAllowancePolicy.submitted) {
+                    <div
+                      class="invalid-tooltip">
+                      Food Allowance Policy Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-12">
+                <input type="radio" name="foodAllowanceType" value="noFoodAllowance" ngModel
+                  [(ngModel)]="foodAllowancePolicyData.foodAllowanceType" #foodAllowanceType="ngModel"
+                  (change)="setFoodAllowance($event)" style="margin-right: 1%" required />
+                  <label for="true" style="margin-right: 1%">
+                    <b>No Food Allowance</b>
+                  </label>
+                  <br>
+                    <input type="radio" name="foodAllowanceType" value="onInOutTime" ngModel
+                      [(ngModel)]="foodAllowancePolicyData.foodAllowanceType" #foodAllowanceType="ngModel"
+                      (change)="setFoodAllowance($event)" style="margin-right: 1%" required />
+                      <label for="true" style="margin-right: 1%">
+                        <b>Set Food Allowance on InTime and OutTime</b>
+                      </label>
+                      <br />
+                      <input type="radio" name="foodAllowanceType" value="onWorkingHours" ngModel
+                        [(ngModel)]="foodAllowancePolicyData.foodAllowanceType" #foodAllowanceType="ngModel"
+                        (change)="setFoodAllowance($event)" style="margin-right: 1%" required />
+                        <label for="false"><b>Set Food Allowance on Working Hours</b></label>
+                        @if (!foodAllowanceType.valid && editFoodAllowancePolicy.submitted) {
+                          <div class="invalid-tooltip">
+                            Set Food Allowance is required!
+                          </div>
+                        }
+                      </div>
+                      @if (!noFoodAllowance && setFoodAllowanceOnInOutTime) {
+                        <div class="col-md-12">
+                          <hr style="margin: 10px 0px" />
+                          <div style="margin-left: 1.2%">
+                            <input class="form-check-input" type="checkbox" ngModel name="onBasisoFInTimeCheckBox"
+                              [(ngModel)]="foodAllowancePolicyData.foodAllowanceOnBasisOfInTime"
+                              #onBasisoFInTimeCheckBox="ngModel" (change)="onBasisoFInTime($event.target.checked)" />
+                              <label class="form-check-label" for="inlineCheckbox3">
+                                <b>Set Food Allowance on Basis of InTime</b>
+                              </label>
+                            </div>
+                            @if (foodAllowanceOnBasisOfInTime) {
+                              <section>
+                                <div class="row">
+                                  <div class="col-md-12 my-1">
+                                    <button type="button" class="btn btn-xs btn-success" (click)="addInValue()">ADD</button>
+                                  </div>
+                                  <br />
+                                  @for (value of inTimeValues; track value; let i = $index) {
+                                    <div [ngClass]="{ 'd-none': value.isDeleted === true, 'col-md-12 my-2': true }"
+                                      >
+                                      <div class="row">
+                                        <div class="col-md-3">
+                                          <label class="form-group has-float-label">
+                                            <ng-select placeholder="Choose your option" [(ngModel)]="value.inShiftID"
+                                              ngModel #inShiftID="ngModel" name="inShiftID{{ i }}"
+                                              [required]="!value.isDeleted">
+                                              @for (item of shiftData; track item) {
+                                                <ng-option [value]="item.shiftID">
+                                                  {{ item.shiftName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Select Shift *</span>
+                                          </label>
+                                          @if (
+                                            !inShiftID.valid &&
+                                            editFoodAllowancePolicy.submitted &&
+                                            foodAllowanceOnBasisOfInTime &&
+                                            !value.isDeleted
+                                            ) {
+                                            <div class="invalid-tooltip">
+                                              Shift is required!
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="col-md-3">
+                                          <label class="form-group has-float-label">
+                                            <input [ngxTimepicker]="inTimePicker" class="form-control" placeholder=""
+                                              ngModel [(ngModel)]="value.inShiftTime" #inShiftTime="ngModel"
+                                              name="inShiftTime{{ i }}" [required]="!value.isDeleted" />
+                                              <ngx-material-timepicker #inTimePicker></ngx-material-timepicker>
+                                              <span>Punch-In Before *</span>
+                                            </label>
+                                            @if (
+                                              !inShiftTime.valid &&
+                                              editFoodAllowancePolicy.submitted &&
+                                              foodAllowanceOnBasisOfInTime &&
+                                              !value.isDeleted
+                                              ) {
+                                              <div class="invalid-tooltip">
+                                                Punch-In Before is required!
+                                              </div>
+                                            }
+                                          </div>
+                                          <div class="col-md-3">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="number" [min]="0" ngModel
+                                                #inShiftAmount="ngModel" name="inShiftAmount{{ i }}"
+                                                [(ngModel)]="value.inShiftAmount" [required]="!value.isDeleted" />
+                                                <span>Amount *</span>
+                                              </label>
+                                              @if (
+                                                !inShiftAmount.valid &&
+                                                editFoodAllowancePolicy.submitted &&
+                                                foodAllowanceOnBasisOfInTime &&
+                                                !value.isDeleted
+                                                ) {
+                                                <div class="invalid-tooltip">
+                                                  Amount is required!
+                                                </div>
+                                              }
+                                            </div>
+                                            <div class="col-md-1">
+                                              @if (value.isDeleted == false && i >= 1) {
+                                                <button class="btn btn-xs btn-danger c-pointer" (click)="removeInTimeValues(i)"
+                                                  type="button">
+                                                  Remove
+                                                </button>
+                                              }
+                                            </div>
+                                          </div>
+                                        </div>
+                                      }
+                                    </div>
+                                  </section>
+                                }
+                                <div style="margin-left: 1.2%">
+                                  <input class="form-check-input" type="checkbox" ngModel name="onBasisoFOutTimeCheckBox"
+                                    [(ngModel)]="foodAllowancePolicyData.foodAllowanceOnBasisOfOutTime"
+                                    #onBasisoFOutTimeCheckBox="ngModel" (change)="onBasisoFOutTime($event.target.checked)" />
+                                    <label class="form-check-label" for="inlineCheckbox3">
+                                      <b>Set Food Allowance on Basis of OutTime</b>
+                                    </label>
+                                  </div>
+                                  @if (foodAllowanceOnBasisOfOutTime) {
+                                    <section>
+                                      <div class="row">
+                                        <div class="col-md-12 my-1">
+                                          <button type="button" class="btn btn-xs btn-success"
+                                          (click)="addOutValue()">ADD</button>
+                                        </div>
+                                        <br />
+                                        @for (value of outTimeValues; track value; let i = $index) {
+                                          <div [ngClass]="{ 'd-none': value.isDeleted === true, 'col-md-12 my-2': true }"
+                                            >
+                                            <div class="row">
+                                              <div class="col-md-3">
+                                                <label class="form-group has-float-label">
+                                                  <ng-select placeholder="Choose your option" [(ngModel)]="value.outShiftID"
+                                                    ngModel #outShiftID="ngModel" name="outShiftID{{ i }}"
+                                                    [required]="!value.isDeleted">
+                                                    @for (item of shiftData; track item) {
+                                                      <ng-option [value]="item.shiftID">
+                                                        {{ item.shiftName }}
+                                                      </ng-option>
+                                                    }
+                                                  </ng-select>
+                                                  <span>Select Shift *</span>
+                                                </label>
+                                                @if (
+                                                  !outShiftID.valid &&
+                                                  editFoodAllowancePolicy.submitted &&
+                                                  foodAllowanceOnBasisOfInTime &&
+                                                  !value.isDeleted
+                                                  ) {
+                                                  <div class="invalid-tooltip">
+                                                    Shift is required!
+                                                  </div>
+                                                }
+                                              </div>
+                                              <div class="col-md-3">
+                                                <label class="form-group has-float-label">
+                                                  <input [ngxTimepicker]="outTimePicker" class="form-control" placeholder=""
+                                                    ngModel #outShiftTime="ngModel" name="outShiftTime{{ i }}"
+                                                    [(ngModel)]="value.outShiftTime" [required]="!value.isDeleted" />
+                                                    <ngx-material-timepicker #outTimePicker></ngx-material-timepicker>
+                                                    <span>Punch-Out After *</span>
+                                                  </label>
+                                                  @if (
+                                                    !outShiftTime.valid &&
+                                                    editFoodAllowancePolicy.submitted &&
+                                                    foodAllowanceOnBasisOfInTime &&
+                                                    !value.isDeleted
+                                                    ) {
+                                                    <div class="invalid-tooltip">
+                                                      Punch-Out After is required!
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <div class="col-md-3">
+                                                  <label class="form-group has-float-label">
+                                                    <input class="form-control" type="number" [min]="0" ngModel
+                                                      [(ngModel)]="value.outShiftAmount" #outShiftAmount="ngModel"
+                                                      name="outShiftAmount{{ i }}" [required]="!value.isDeleted" />
+                                                      <span>Amount *</span>
+                                                    </label>
+                                                    @if (
+                                                      !outShiftAmount.valid &&
+                                                      editFoodAllowancePolicy.submitted &&
+                                                      foodAllowanceOnBasisOfInTime &&
+                                                      !value.isDeleted
+                                                      ) {
+                                                      <div class="invalid-tooltip">
+                                                        Amount is required!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                  <div class=" col-md-1 ">
+                                                    @if (value.isDeleted == false && i >= 1) {
+                                                      <button class="btn btn-xs btn-danger c-pointer" (click)="removeOutTimeValues(i)"
+                                                        type="button">
+                                                        Remove
+                                                      </button>
+                                                    }
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            }
+                                            <div class="col-md-12">
+                                              <div style="margin-left: 2.2%">
+                                                <input class="form-check-input" type="checkbox" ngModel
+                                                  name="onFoodAllowanceCompleteHoursCheckBox"
+                                                  [(ngModel)]="foodAllowancePolicyData.foodAllowanceCompleteHours"
+                                                  #onFoodAllowanceCompleteHoursCheckBox="ngModel"
+                                                  (change)="onFoodAllowanceCompleteHours($event.target.checked)" />
+                                                  <label class="form-check-label" for="inlineCheckbox3">
+                                                    <b>Working Hours must be Completed (On basis of Outtime)</b>
+                                                  </label>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </section>
+                                        }
+                                        @if (
+                                          editFoodAllowancePolicy.submitted &&
+                                          setFoodAllowanceOnInOutTime &&
+                                          !foodAllowanceOnBasisOfInTime &&
+                                          !foodAllowanceOnBasisOfOutTime
+                                          ) {
+                                          <div class="invalid-tooltip">
+                                            Please Select Intime or outtime atleast one!
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    @if (!noFoodAllowance && setFoodAllowanceOnWorkingHours) {
+                                      <div class="col-md-12">
+                                        <hr />
+                                        <div class="row">
+                                          <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px">
+                                            <span>Employees Should Work</span>
+                                          </div>
+                                          <div class="col-md-2">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="number" [min]="0" ngModel
+                                                [(ngModel)]="foodAllowancePolicyData.minimumWorkingMinutes"
+                                                #workingTimeMinutes="ngModel" name="workingTimeMinutes" required />
+                                              </label>
+                                              @if (
+                                                !workingTimeMinutes.valid &&
+                                                editFoodAllowancePolicy.submitted &&
+                                                setFoodAllowanceOnWorkingHours
+                                                ) {
+                                                <div class="invalid-tooltip">
+                                                  Working Hour Time is required!
+                                                </div>
+                                              }
+                                            </div>
+                                            <div class="col-md-0" style="margin-top: 10px">
+                                              <span>Minutes For Food Allowance *</span>
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px">
+                                              <span>Food Allowance Amount *</span>
+                                            </div>
+                                            <div class="col-md-2">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="number" [min]="0" ngModel #workingTimeAmount="ngModel"
+                                                  [(ngModel)]="foodAllowancePolicyData.workingTimeAmount" name="workingTimeAmount"
+                                                  required />
+                                                </label>
+                                                @if (
+                                                  !workingTimeAmount.valid &&
+                                                  editFoodAllowancePolicy.submitted &&
+                                                  setFoodAllowanceOnWorkingHours
+                                                  ) {
+                                                  <div class="invalid-tooltip">
+                                                    Amount is required!
+                                                  </div>
+                                                }
+                                              </div>
+                                            </div>
+                                          </div>
+                                        }
+                                        <div class="col-md-12">
+                                          <hr style="margin: 10px 0px;color: black;" />
+                                          <input type="radio" name="teaAllowanceType" value="noTeaAllowance" ngModel #teaAllowanceType="ngModel"
+                                            [(ngModel)]="foodAllowancePolicyData.teaAllowanceType" (change)="setTeaAllowance($event)"
+                                            style="margin-right: 1%" required />
+                                            <label for="true" style="margin-right: 1%">
+                                              <b>No Tea/Coffee Allowance</b>
+                                            </label>
+                                            <br />
+                                            <input type="radio" name="teaAllowanceType" value="onInTime" ngModel #teaAllowanceType="ngModel"
+                                              [(ngModel)]="foodAllowancePolicyData.teaAllowanceType" (change)="setTeaAllowance($event)"
+                                              style="margin-right: 1%" required />
+                                              <label for="true" style="margin-right: 1%">
+                                                <b>Set Tea/Coffee Allowance on InTime </b>
+                                              </label>
+                                              <br />
+                                              <input type="radio" name="teaAllowanceType" [(ngModel)]="foodAllowancePolicyData.teaAllowanceType"
+                                                value="onAttnStatus" ngModel #teaAllowanceType="ngModel" (change)="setTeaAllowance($event)"
+                                                style="margin-right: 1%" required />
+                                                <label for="false"><b>Set Tea/Coffee Allowance on Attendance Status</b></label>
+                                                @if (!teaAllowanceType.valid && editFoodAllowancePolicy.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Set Tea/Coffee Allowance is required!
+                                                  </div>
+                                                }
+                                              </div>
+                                              @if (!noTeaAllowance && setTeaAllowanceOnInTime) {
+                                                <div class="col-md-12">
+                                                  <hr style="margin: 10px 0px" />
+                                                  <section>
+                                                    <div class="row">
+                                                      <div class="col-md-12 my-1">
+                                                        <button type="button" class="btn btn-xs btn-success" (click)="addInTeaValue()">
+                                                          ADD
+                                                        </button>
+                                                      </div>
+                                                      <br />
+                                                      @for (value of inTimeTeaValues; track value; let i = $index) {
+                                                        <div [ngClass]="{ 'd-none': value.isDeleted === true, 'col-md-12 my-2': true }"
+                                                          >
+                                                          <div class="row">
+                                                            <div class="col-md-3">
+                                                              <label class="form-group has-float-label">
+                                                                <ng-select placeholder="Choose your option" [(ngModel)]="value.inShiftID" ngModel
+                                                                  #inTeaShiftID="ngModel" name="inTeaShiftID{{ i }}" [required]="!value.isDeleted">
+                                                                  @for (item of shiftData; track item) {
+                                                                    <ng-option [value]="item.shiftID">
+                                                                      {{ item.shiftName }}
+                                                                    </ng-option>
+                                                                  }
+                                                                </ng-select>
+                                                                <span>Select Shift *</span>
+                                                              </label>
+                                                              @if (
+                                                                !inTeaShiftID.valid &&
+                                                                editFoodAllowancePolicy.submitted &&
+                                                                setTeaAllowanceOnInTime &&
+                                                                !value.isDeleted
+                                                                ) {
+                                                                <div class="invalid-tooltip">
+                                                                  Shift is required!
+                                                                </div>
+                                                              }
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                              <label class="form-group has-float-label">
+                                                                <input class="form-control" type="number" [min]="0" ngModel #inTeaShiftAmount="ngModel"
+                                                                  name="inTeaShiftAmount{{ i }}" [(ngModel)]="value.inShiftAmount"
+                                                                  [required]="!value.isDeleted" />
+                                                                  <span>Amount *</span>
+                                                                </label>
+                                                                @if (
+                                                                  !inTeaShiftAmount.valid &&
+                                                                  editFoodAllowancePolicy.submitted &&
+                                                                  setTeaAllowanceOnInTime &&
+                                                                  !value.isDeleted
+                                                                  ) {
+                                                                  <div class="invalid-tooltip">
+                                                                    Amount is required!
+                                                                  </div>
+                                                                }
+                                                              </div>
+                                                              <div class="col-md-1">
+                                                                @if (i > 0) {
+                                                                  <button class="btn btn-xs btn-danger c-pointer" (click)="removeInTeaTimeValues(i)" type="button"
+                                                                    >
+                                                                    Remove
+                                                                  </button>
+                                                                }
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                    </section>
+                                                  </div>
+                                                }
+                                                @if (!noTeaAllowance && setTeaAllowanceOnAttnStatus) {
+                                                  <div class="col-md-12 row">
+                                                    <div class="col-md-2"><b style="padding-left: 30%;"> Set For HalfDay : </b> </div>
+                                                    <div class="col-md-3">
+                                                      <label class="form-group has-float-label">
+                                                        <input class="form-control" type="number" [min]="0" ngModel #halfDayAmount="ngModel" name="halfDayAmount"
+                                                          [(ngModel)]="foodAllowancePolicyData.teaHalfDayAmount" required />
+                                                          <span> Amount *</span>
+                                                        </label>
+                                                        @if (
+                                                          !halfDayAmount.valid &&
+                                                          editFoodAllowancePolicy.submitted &&
+                                                          setTeaAllowanceOnAttnStatus
+                                                          ) {
+                                                          <div class="invalid-tooltip">
+                                                            Amount is required!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                      <br />
+                                                      <div class="col-md-2"><b style="padding-left: 30%;"> Set For FullDay : </b> </div>
+                                                      <div class="col-md-3">
+                                                        <label class="form-group has-float-label">
+                                                          <input class="form-control" type="number" [min]="0" ngModel #fullDayAmount="ngModel" name="fullDayAmount"
+                                                            [(ngModel)]="foodAllowancePolicyData.teaFullDayAmount" required />
+                                                            <span> Amount *</span>
+                                                          </label>
+                                                          @if (
+                                                            !fullDayAmount.valid &&
+                                                            editFoodAllowancePolicy.submitted &&
+                                                            setTeaAllowanceOnAttnStatus
+                                                            ) {
+                                                            <div class="invalid-tooltip">
+                                                              Amount is required!
+                                                            </div>
+                                                          }
+                                                        </div>
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                  <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                                                    [isDisabled]="buttonDisabled" click="onLoginClick()">
+                                                    {{ 'forms.submit' | translate }}
+                                                  </app-state-button>
+                                                  <button class="btn btn-danger btn-lg btn-shadow mt-4"
+                                                    [routerLink]="adminRoot + '/masters/foodAllowancePolicy'" style="margin-left: 2%">
+                                                    Cancel
+                                                  </button>
+                                                </form>
+                                              </div>
+                                            </div>
+                                          }
+
+                                          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

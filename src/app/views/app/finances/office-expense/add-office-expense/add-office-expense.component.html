@@ -1,0 +1,212 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Office Expense</h5>
+    <form #addOfficeExpense="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <ng-container>
+        <div class="row mt-4">
+          <div class="col-md-6" style="margin-bottom: 10px">
+            <span class="text-muted text-small mb-2 top">Choose Office Type *&nbsp;&nbsp;</span>
+            @for (item of officeExpenseTypeArrayData; track item; let i = $index) {
+              <input type="radio" [id]="item.value" name="officeType" [attr.value]="item.value" [value]="item.value" ngModel
+                #officeType="ngModel" style="margin-right: 1%" required [(ngModel)]="selectedOfficeType" (change)="onOfficeTypeSelect()"/>
+                <label [for]="item.value" style="margin-right: 2%">{{ item.name }}</label>
+                @if (!officeType.valid && addOfficeExpense.submitted) {
+                  <div class="invalid-tooltip">
+                    Office Type is required!
+                  </div>
+                }
+              }
+            </div>
+          </div>
+          @if (selectedOfficeType && selectedOfficeType != '') {
+            <div class="row">
+              @if (selectedOfficeType == officeExpenseTypes.BRANCH) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="allbranch" [multiple]="false" bindLabel="branchName"
+                      (ngModelChange)="onSelectBranch($event)" bindValue="branchMasterID" [closeOnSelect]="true" ngModel
+                      [(ngModel)]="selectedBranch" #branch="ngModel" name="branch" placeholder="Choose your option"
+                      [required]="selectedOfficeType == officeExpenseTypes.BRANCH">
+                    </ng-select>
+                    <span>Select Branch @if (selectedOfficeType == officeExpenseTypes.BRANCH) {
+                      <span>*</span>
+                    }</span>
+                    @if (!branch.valid && addOfficeExpense.submitted && selectedOfficeType == officeExpenseTypes.BRANCH) {
+                      <div
+                        class="invalid-tooltip">
+                        Branch is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              @if (selectedOfficeType == officeExpenseTypes.SITE) {
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="allSites" [multiple]="false" bindLabel="siteName" bindValue="siteID"
+                      [closeOnSelect]="true" ngModel [(ngModel)]="selectedSite" #siteID="ngModel" name="siteID"
+                      placeholder="Choose your option" [required]="selectedOfficeType == officeExpenseTypes.SITE">
+                    </ng-select>
+                    <span>Select Site @if (selectedOfficeType == officeExpenseTypes.SITE) {
+                      <span>*</span>
+                    }</span>
+                    @if (!siteID.valid && addOfficeExpense.submitted && selectedOfficeType == officeExpenseTypes.SITE) {
+                      <div
+                        class="invalid-tooltip">
+                        Site is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel #expense_date="ngModel" name="expense_date" required
+                    [(ngModel)]="selectedExpenseDate" [max]="currDate" [min]="minDate"
+                    (ngModelChange)="onExpenseDateChange($event)" />
+                    <span>Expense Date *</span>
+                    @if (!expense_date.valid && addOfficeExpense.submitted) {
+                      <div class="invalid-tooltip">
+                        Expense Date is required!
+                      </div>
+                    }
+                  </label>
+                  <!-- <p class="red text-left" *ngIf="minDate">Expenses can only be submitted for dates between
+                  {{ minDate | date:'dd-MM-yyyy'}} and {{ currDate | date: 'dd-MM-yyyy'}}, inclusive.
+                </p> -->
+              </div>
+            </div>
+          }
+          <hr />
+          @if (selectedOfficeType && selectedOfficeType != '') {
+            <div class="row">
+              <br />
+              @for (value of values; track value; let i = $index) {
+                <div class="col-md-12">
+                  @if (!value.isDeleted) {
+                    <div class="row">
+                      <!-- Expense Category Dropdown -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose Expense Category" [(ngModel)]="value.officeExpenseCategoryID"
+                            name="officeExpenseCategoryID{{ i }}" required
+                            (change)="onCategoryChange(value.officeExpenseCategoryID, i)" #officeExpenseCategoryID="ngModel">
+                            @for (category of officeExpenseCategory; track category) {
+                              <ng-option [value]="category.officeExpenseCategoryID">
+                                {{ category.officeExpenseCategory }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Office Expense Category *</span>
+                          @if (!officeExpenseCategoryID.valid && addOfficeExpense.submitted) {
+                            <div class="invalid-tooltip">
+                              Office Expense Category is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <!-- Expense Head Dropdown (linked to selected category) -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose Expense Head" [(ngModel)]="value.officeExpenseHeadID"
+                            name="officeExpenseHeadID{{ i }}" required [items]="value.filteredExpenseHeads"
+                            bindLabel="officeExpenseHead" bindValue="officeExpenseHeadID" #officeExpenseHeadID="ngModel"
+                            (change)="onExpenseHeadChange($event, i)">
+                          </ng-select>
+                          <span>Select Office Expense Head *</span>
+                          @if (!officeExpenseHeadID.valid && addOfficeExpense.submitted) {
+                            <div class="invalid-tooltip">
+                              Office Expense Head is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <!-- Expense Amount -->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input required class="form-control" type="number" [(ngModel)]="value.expenseAmount"
+                            #expenseAmount="ngModel" name="expenseAmount{{ i }}" />
+                            <span>Amount *</span>
+                            @if (!expenseAmount.valid && addOfficeExpense.submitted) {
+                              <div class="invalid-tooltip">
+                                Amount is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <!-- Description -->
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <textarea class="form-control" [(ngModel)]="value.description" name="description{{ i }}"></textarea>
+                            <span>Description</span>
+                          </label>
+                        </div>
+                        <!-- Attachments -->
+                        @for (file of value.attachments; track trackByFn(j, file); let j = $index) {
+                          <div
+                            class="d-flex col-md-4 justify-content-between">
+                            <div>
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="file" name="file{{j}}{{i}}" [value]=""
+                                  (change)="onFileChangeAll($event, i, j)" accept="image/*,application/pdf" />
+                                  <span>Attachment - {{ j + 1 }}</span>
+                                </label>
+                                <p class="red text-right">(.jpg, .jpeg, .png, .pdf)</p>
+                              </div>
+                              @if (value?.attachments?.length > 1) {
+                                <div>
+                                  <span class="btn btn-danger" (click)="removeAttachment(i, j)">-</span>
+                                </div>
+                              }
+                            </div>
+                          }
+                          <!-- Add Attachment Button -->
+                          @if (value?.attachments?.length < 4) {
+                            <div class="col-md-1">
+                              <span class="button btn btn-success" (click)="addAttachment(i)">+</span>
+                            </div>
+                          }
+                          <!-- Rule Note -->
+                          @if (value.expensePriceRuleID) {
+                            <div class="col-md-12 text-danger mt-1">
+                              <div>
+                                Note* :- Price Rule For {{value?.expenseHeadName}} is
+                                {{value?.rule}}
+                              </div>
+                              <br />
+                            </div>
+                          }
+                          <!-- Remove Button -->
+                          <div class="col-md-12 mt-2">
+                            @if (values.length > 1) {
+                              <span class="btn btn-danger" (click)="removeTransaction(i)" style="margin-bottom: 3%"
+                                >
+                                Remove
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (values.length) {
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: right">
+                      <span class="button" class="btn btn-success" (click)="addTransaction()">ADD More</span>
+                    </div>
+                  }
+                </div>
+              }
+            </ng-container>
+            <div>
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/finances/officeExpense'"
+                style="margin-left: 2%">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>

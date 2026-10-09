@@ -1,0 +1,228 @@
+@if (permissioncreate.length != 0) {
+  <div style="text-align: right">
+    <button class="btn btn-primary mb-1" (click)="discrepancyLetterData()">Add</button>
+  </div>
+}
+@if (permissionView.length != 0) {
+  <div class="row">
+    @for (item of rows; track item) {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;"></a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <p class="list-item-heading mb-1 truncate">{{
+                  item['discrepancyLetter.discrepancyLetterName'] | uppercase }}</p>
+                  <div class="min-width-zero">
+                    <a href="javascript:;">
+                      <button type="button" class="btn btn-success btn-xs" style="margin-top: 10%"
+                        (click)="view(item.path)">
+                        {{ 'View' | translate }}
+                      </button>
+                      {{ ' ' }}
+                      <button type="button" class="btn btn-primary btn-xs" style="margin-top: 10%"
+                        (click)="sendmail(item.employeeDiscrepancyLetterID)">
+                        {{ 'Send Email' | translate }}
+                      </button>
+                      {{ ' ' }}
+                    </a>
+                  </div>
+                </a>
+              </div>
+              <div>
+                @if (permissionedit.length != 0) {
+                  <a class="btn btn-outline-primary btn-xs" (click)="editLetter(item); lgModal1.show()"
+                    style="margin-top: 10%">
+                    EDIT
+                  </a>
+                }
+                <br />
+                @if (permissiondelete.length != 0) {
+                  <a class="btn btn-outline-danger btn-xs"
+                    (click)="alertConfirmation(item.employeeDiscrepancyLetterID)" style="margin-top: 10%"
+                    >
+                    DELETE
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+
+<!-- Add Document -->
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Discrepancy Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      @if (discrepancyLettersData) {
+        <div class="modal-body">
+          <form #addDocument="ngForm" novalidate (ngSubmit)="onAddSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #discrepancyLetterID="ngModel"
+                    name="discrepancyLetterID" required>
+                    @for (item of discrepancyLettersData; track item) {
+                      <ng-option [value]="item.discrepancyLetterID"
+                        >
+                        {{ item.discrepancyLetterName }}
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Discrepancy Letter *</span>
+                </label>
+                @if (!discrepancyLetterID.valid && addDocument.submitted) {
+                  <div class="invalid-tooltip">
+                    Discrepancy Letter is required!
+                  </div>
+                }
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+          </form>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Edit Document -->
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{ backdrop: 'static', keyboard: false }">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12 text-danger" style="font-size: 14px;padding: 2%">
+          <div>Note* :- 1) To access the options menu for the body toolbar, simply right-click with your
+            mouse. eg.
+          font-size</div>
+          <div><span style="visibility: hidden;">Note* :-</span> 2) To insert a page break, simply use the
+          [PageBreak]
+        tag.</div>
+      </div>
+
+      <form #editcomp="ngForm" novalidate (ngSubmit)="onEditSubmit()">
+        <div class="row">
+          <div class="col-md-12">
+            <label class="form-group has-float-label">
+              <quill-editor (contextmenu)="onToolbarRightClick($event)" [placeholder]="''" ngModel
+                #body="ngModel" name="body" [(ngModel)]="html_Content" required>
+                <div quill-editor-toolbar>
+                  <span class="ql-formats">
+                    <button class="ql-bold" [title]="'Bold'"></button>
+                    <button class="ql-italic" [title]="'Italic'"></button>
+                    <button class="ql-underline" [title]="'Underline'"></button>
+                    <button class="ql-strike" [title]="'Strike'"></button>
+                    <button class="ql-image" [title]="'Image'"></button>
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-link"></button>
+                    <button class="ql-video"></button>
+                  </span>
+
+                  <span class="ql-formats">
+                    <select class="ql-align" [title]="'Aligment'">
+                      <option selected=""></option>
+                      <option value="center"></option>
+                      <option value="right"></option>
+                      <option value="justify"></option>
+                    </select>
+                    <select class="ql-size" [title]="'Size'">
+                      <option value="8px">8px</option>
+                      <option value="10px">10px</option>
+                      <option selected="" value="12px">12px</option>
+                      <option value="14px">14px</option>
+                      <option value="16px">16px</option>
+                      <option value="18px">18px</option>
+                      <option value="20px">20px</option>
+                      <option value="22px">22px</option>
+                      <option value="24px">24px</option>
+                      <option value="26px">26px</option>
+                      <option value="28px">28px</option>
+                      <option value="30px">30px</option>
+                      <option value="32px">32px</option>
+                      <option value="34px">34px</option>
+                      <option value="36px">36px</option>
+                      <option value="38px">38px</option>
+                      <option value="40px">40px</option>
+                      <option value="42px">42px</option>
+                      <option value="44px">44px</option>
+                      <option value="46px">46px</option>
+                      <option value="48px">48px</option>
+                      <option value="50px">50px</option>
+                    </select>
+                    <select class="ql-header" [title]="'Header'">
+                      <option value="1">Heading 1</option>
+                      <option value="2">Heading 2</option>
+                      <option value="3">Heading 3</option>
+                      <option value="4">Heading 4</option>
+                      <option value="5">Heading 5</option>
+                      <option value="6">Heading 6</option>
+                    </select>
+                    <select class="ql-color" [title]="'Color'">
+                      <option value="rgb(0, 0, 0)"></option>
+                      <option value="rgb(230, 0, 0)"></option>
+                      <option value="rgb(255, 153, 0)"></option>
+                      <option value="rgb(255, 255, 0)"></option>
+                      <option value="rgb(0, 138, 0)"></option>
+                      <option value="rgb(0, 102, 204)"></option>
+                      <option value="rgb(153, 51, 255)"></option>
+                      <option value="rgb(255, 255, 255)"></option>
+                      <option value="rgb(250, 204, 204)"></option>
+                      <option value="rgb(255, 235, 204)"></option>
+                      <option value="rgb(204, 224, 245)"></option>
+                      <option value="rgb(235, 214, 255)"></option>
+                      <option value="rgb(187, 187, 187)"></option>
+                      <option value="rgb(102, 185, 102)"></option>
+                      <option value="rgb(192,192,192)"></option>
+                      <option value="rgb(128,128,128)"></option>
+                      <option value="rgb(128,0,0)"></option>
+                      <option value="rgb(128,128,0)"></option>
+                      <option value="rgb(0,128,0)"></option>
+                      <option value="rgb(128,0,128)"></option>
+                      <option value="rgb(0,128,128)"></option>
+                      <option value="rgb(0,0,128)"></option>
+                    </select>
+                    <select class="ql-font" [title]="'Font'">
+                      <option selected="">Sans Serif</option>
+                      <option value="inconsolata">Inconsolata</option>
+                      <option value="roboto">Roboto</option>
+                      <option value="mirza">Mirza</option>
+                      <option value="arial">Arial</option>
+                      <option value="calibri">Calibri</option>
+                    </select>
+                  </span>
+                </div>
+              </quill-editor>
+              <span>Body</span>
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>

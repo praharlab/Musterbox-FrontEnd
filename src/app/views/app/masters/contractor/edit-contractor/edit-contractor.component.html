@@ -1,0 +1,242 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (constrctordata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Contractor</h5>
+      <form #Editdata="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcompany($event)"
+                [(ngModel)]="constrctordata.companyMasterID" ngModel #company="ngModel" name="company"
+                required>
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && Editdata.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #contractorName="ngModel"
+                name="contractorName" [(ngModel)]="constrctordata.contractorName" />
+                <span>Contractor Name *</span>
+                @if (!contractorName.valid && Editdata.submitted) {
+                  <div class="invalid-tooltip">
+                    Contractor Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #website="ngModel" name="website"
+                  [(ngModel)]="constrctordata.website" />
+                  <span>Website </span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" ngModel #shortName="ngModel" required name="shortName"
+                    [(ngModel)]="constrctordata.shortName" />
+                    <span>Short Name *</span>
+                    @if (!shortName.valid && Editdata.submitted) {
+                      <div class="invalid-tooltip">
+                        Short Name is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #contactPersonName="ngModel"
+                            name="contactPersonName" [(ngModel)]="constrctordata.contactPersonName
+                            " />
+                      <span>Contact Person Name</span>
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #contractorCode="ngModel" required
+                        name="contractorCode" [(ngModel)]="constrctordata.contractorCode" />
+                        <span>Contractor Code *</span>
+                        @if (!contractorCode.valid && Editdata.submitted) {
+                          <div class="invalid-tooltip">
+                            Contractor Code is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" ngModel #contactNo="ngModel" required name="contactNo"
+                          [(ngModel)]="constrctordata.contactNo" />
+                          <span>Contact Number*</span>
+                          @if (!contactNo.valid && Editdata.submitted) {
+                            <div class="invalid-tooltip">
+                              Contact Number is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #email="ngModel" required name="email"
+                            [(ngModel)]="constrctordata.email" />
+                            <span> Email* </span>
+                            @if (!email.valid && Editdata.submitted) {
+                              <div class="invalid-tooltip">
+                                Email is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" ngModel #contractorAddress="ngModel" name="contractorAddress"
+                              [(ngModel)]="constrctordata.contractorAddress" />
+                              <span>Contractor Address</span>
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" (change)="selectcountry($event)"
+                                [(ngModel)]="countryid" required ngModel #country1="ngModel" name="country1">
+                                @for (countrys of country; track countrys) {
+                                  <ng-option [value]="countrys.countryMasterID">
+                                    {{ countrys.countryName }}
+                                  </ng-option>
+                                }
+                              </ng-select>
+                              <span>Branch Country *</span>
+                              @if (!country1.valid && Editdata.submitted) {
+                                <div class="invalid-tooltip">
+                                  Country is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" (change)="selectstate($event)" [(ngModel)]="stateid"
+                                ngModel #state1="ngModel" name="state1" [(ngModel)]="stateid" required>
+                                @for (states of state; track states) {
+                                  <ng-option [value]="states.stateMasterID">
+                                    {{ states.stateName }}
+                                  </ng-option>
+                                }
+                              </ng-select>
+                              <span> State *</span>
+                              @if (!state1.valid && Editdata.submitted) {
+                                <div class="invalid-tooltip">
+                                  State is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <ng-select placeholder="Choose your option" (change)="selectcity($event)" [(ngModel)]="cityid"
+                                ngModel #city1="ngModel" name="city1">
+                                @for (citys of city; track citys) {
+                                  <ng-option [value]="citys.cityMasterID">
+                                    {{ citys.cityName }}
+                                  </ng-option>
+                                }
+                              </ng-select>
+                              <span>City *</span>
+                              @if (!city1.valid && Editdata.submitted) {
+                                <div class="invalid-tooltip">
+                                  City is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="date" ngModel #dateofIncorporation="ngModel" required
+                                name="dateofIncorporation" [(ngModel)]="constrctordata.dateofIncorporation" />
+                                <span> Date of Incorporation*</span>
+                                @if (!dateofIncorporation.valid && Editdata.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Date of Incorporation is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel" name="bankMasterID"
+                                  [(ngModel)]="constrctordata.bankMasterID">
+                                  @for (bankdata of bankdata; track bankdata; let i = $index) {
+                                    <ng-option [value]="bankdata.bankMasterID">
+                                      {{ bankdata.bankName }}
+                                    </ng-option>
+                                  }
+                                </ng-select>
+                                <span>Select Bank</span>
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" ngModel #bankIFSC="ngModel" name="bankIFSC" [(ngModel)]="constrctordata.bankIFSC" />
+                                <span>{{bankIfscCodeLabel}}</span>
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="number" ngModel #bankAccountNo="ngModel" name="bankAccountNo"  [(ngModel)]="constrctordata.bankAccountNo"/>
+                                <span>Bank Account No</span>
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" ngModel #pancard="ngModel" name="pancard"  [(ngModel)]="constrctordata.pancard"/>
+                                <span>Pan Card No</span>
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" placeholder="" ngModel #gstNumber="ngModel" name="gstNumber"  [(ngModel)]="constrctordata.gstNumber"/>
+                                <span>GST No.</span>
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" ngModel #registrationNo="ngModel" name="registrationNo"
+                                  [(ngModel)]="constrctordata.registrationNo" />
+                                  <span> Registration Number*</span>
+                                </label>
+                              </div>
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" ngModel #aboutContractor="ngModel" name="aboutContractor"
+                                    [(ngModel)]="constrctordata.aboutContractor" />
+                                    <span>About Contractor</span>
+                                  </label>
+                                </div>
+                              </div>
+                              <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+                                [isDisabled]="buttonDisabled" (click)="onSubmit()">
+                                {{ 'forms.submit' | translate }}
+                              </app-state-button>
+                              <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/masters/cotractor'"
+                                style="margin-left: 2%">
+                                Cancel
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      }
+
+                      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

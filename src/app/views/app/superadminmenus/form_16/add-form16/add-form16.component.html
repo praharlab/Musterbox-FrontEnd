@@ -1,0 +1,161 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Form 16</h5>
+
+    <form #addform="ngForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #detailsofSalary="ngModel"
+              name="detailsofSalary"
+              value="Gross"
+              />
+              <span>Details of Salary *</span>
+              @if (!detailsofSalary.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Details are required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #series="ngModel"
+                name="series"
+                />
+                <span>Series *</span>
+                @if (!series.valid && addform.submitted) {
+                  <div class="invalid-tooltip">
+                    Series is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  (change)="toggle()"
+                  placeholder="Choose your option"
+                  ngModel
+                  #parentFormMasterID="ngModel"
+                  name="parentFormMasterID"
+                  >
+                  <!-- <ng-option *ngFor="let company of topics">{{company}}</ng-option> -->
+
+                  @for (parentformdata of parentformdata; track parentformdata) {
+                    <ng-option
+                      [value]="parentformdata.Form16ID"
+                      >
+                      {{ parentformdata.SalaryDetails }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select ParentForm</span>
+                <!-- <div
+                *ngIf="!parentFormMasterID.valid && addform.submitted"
+                class="invalid-tooltip"
+                >
+                Parent Form is required!
+              </div> -->
+            </label>
+          </div>
+
+          @if (show) {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" />
+                <span>From Date</span>
+                <!-- <div
+                *ngIf="!startdate.valid && addform.submitted"
+                class="invalid-tooltip"
+                >
+                From Date is required!
+              </div> -->
+            </label>
+          </div>
+        }
+        @if (show) {
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" />
+              <span>To Date</span>
+              <!-- <div
+              *ngIf="!enddate.valid && addform.submitted" class="invalid-tooltip"
+              >
+              To Date is required!
+            </div> -->
+          </label>
+        </div>
+      }
+      @if (show) {
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              ngModel
+              #grossAmount="ngModel"
+              name="grossAmount"
+              />
+              <span>Gross Amount</span>
+              <!-- <div
+              *ngIf="!grossAmount.valid && addform.submitted"
+              class="invalid-tooltip"
+              >
+              Gross Amount is required!
+            </div> -->
+          </label>
+        </div>
+      }
+      @if (show) {
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              ngModel
+              #qualifyingAmount="ngModel"
+              name="qualifyingAmount"
+              />
+              <span>Qualifying Amount</span>
+              <!-- <div
+              *ngIf="!qualifyingAmount.valid && addform.submitted"
+              class="invalid-tooltip"
+              >
+              Qualifying Amount is required!
+            </div> -->
+          </label>
+        </div>
+      }
+    </div>
+    <br />
+    <div class="col-md-12">
+      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+      <button
+        class="btn btn-danger btn-shadow mt-4"
+        [routerLink]="adminRoot + '/superadminmenus/form16'"
+        style="margin-left: 2%"
+        >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

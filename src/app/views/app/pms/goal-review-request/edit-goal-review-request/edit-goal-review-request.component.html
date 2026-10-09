@@ -1,0 +1,108 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  @if (show) {
+    <div class="card-body">
+      <h5 class="mb-4">Employee Review :-&nbsp;{{emlpoyeeGoalReviewData.employeeGoal.goalAssignedTo.displayName | uppercase}}
+      </h5>
+      <h6 class="mb-4">Goal
+        Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:-&nbsp;{{emlpoyeeGoalReviewData.employeeGoal.goalMaster.title
+      | uppercase}} </h6>
+      @if (comp) {
+        <form #addEmployeeGoalReview="ngForm" novalidate>
+          @if (kpiData.length != 0) {
+            <div class="row">
+              <div class="table-style mb-2" style="width: 100%;">
+                <table style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th class="name-col name-col-shadow" style="width:20%; border-radius: 10px 0px 0px 0px">
+                        KRA
+                      </th>
+                      <th class="name-col name-col-shadow" style="width:20%;">
+                        KPI
+                      </th>
+                      <th class="name-col name-col-shadow" style="width:10%;">
+                        Weightage
+                      </th>
+                      <th class="name-col name-col-shadow" style="width:10%;">
+                        Target Given
+                      </th>
+                      <th class="name-col name-col-shadow" style="width:20%;">
+                        Target Achieved (required)
+                      </th>
+                      <th class="name-col name-col-shadow"
+                        style="width: 20%;border-radius: 0px 10px 0px 0px;width:20%;">Remarks
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-black" style="font-weight: 600;">
+                    @for (item of kpiData; track item; let i = $index) {
+                      <tr class="student bottom-border bottom-border-radius"
+                        >
+                        <td class="name-col left-border">
+                          {{ item.kraTitle }}
+                        </td>
+                        <td class="name-col ">
+                          {{ item.title }}
+                        </td>
+                        <td class="name-col">
+                          {{ item.weightage | number
+                          }}%
+                        </td>
+                        <td class="name-col ">
+                          {{ item.targetGiven }}
+                        </td>
+                        <!-- <td class="name-col">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" ngModel #targetAchieved="ngModel"
+                            placeholder="please enter target achieved" [(ngModel)]="item.targetAchieved"
+                            name="targetAchieved{{i}}" min="0" max="100" required />
+                            <div *ngIf="!targetAchieved.valid && addEmployeeGoalReview.submitted"
+                              class="invalid-tooltip">
+                              Target Achieved is required!
+                            </div>
+                          </label>
+                        </td> -->
+                        <td class="name-col">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="number" ngModel #targetAchieved="ngModel"
+                              placeholder="please enter target achieved" [(ngModel)]="item.targetAchieved"
+                              name="targetAchieved{{i}}" min="0" max="100" required />
+                              @if (!targetAchieved.valid && addEmployeeGoalReview.submitted) {
+                                <div class="invalid-tooltip">
+                                  Target Achieved is required!
+                                </div>
+                              }
+                            </label>
+                          </td>
+                          <td class="name-col">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" ngModel #remarks="ngModel"
+                                placeholder="please enter remarks" [(ngModel)]="item.remarks"
+                                name="remarks{{i}}" />
+                              </label>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              }
+              <button class="btn btn-primary  btn-shadow mt-4" type="submit" (click)="onSubmit()">
+                Submit
+              </button>
+              &nbsp;
+              <button class="btn btn-danger  btn-shadow mt-4" type="button"
+                [routerLink]="adminRoot + '/pms/goalReviewRequest'">
+                Cancel
+              </button>
+            </form>
+          }
+        </div>
+      }
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,1639 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 4"></app-heading>
+    <app-breadcrumb title="Form 4"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              (change)="selectcompany($event)"
+              required
+              >
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #branchName="ngModel"
+              name="branch"
+              required
+              >
+              @for (item of branch; track item) {
+                <ng-option [value]="item.branchMasterID">
+                  {{ item.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Branch*</span>
+            @if (!branchName.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Branch is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="month"
+              ngModel
+              #fromyearmonth="ngModel"
+              name="fromyearmonth"
+              required
+              />
+              <span>From yearmonth*</span>
+              @if (!fromyearmonth.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  From yearmonth is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                ngModel
+                #toyearmonth="ngModel"
+                name="toyearmonth"
+                required
+                />
+                <span>To yearmonth*</span>
+                @if (!toyearmonth.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    To yearmonth is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-5">
+              <button class="btn btn-primary form-group" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+              <span> &nbsp;&nbsp; </span>
+              @if (finaldata == true) {
+                <button
+                  class="btn btn-success form-group"
+                  type="button"
+                  (click)="savePdf()"
+                  >
+                  Download As PDF
+                </button>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="Generator" content="Microsoft Word 15 (filtered)" />
+        <title>FORM IV</title>
+        <style>
+          /* Font Definitions */
+          @font-face {
+          font-family: "Cambria Math";
+          panose-1: 2 4 5 3 5 4 6 3 2 4;
+        }
+
+        /* Style Definitions */
+        p.MsoNormal,
+        li.MsoNormal,
+        div.MsoNormal {
+        margin: 0in;
+        font-size: 10.0pt;
+        font-family: "Times New Roman", serif;
+      }
+
+      p.MsoTitle,
+      li.MsoTitle,
+      div.MsoTitle {
+      margin-top: 20px;
+      margin-right: 0in;
+      margin-bottom: 2.0pt;
+      margin-left: 0in;
+      text-align: center;
+      font-size: 22.0pt;
+      font-family: "Arial", sans-serif;
+      color: black;
+    }
+
+    p.MsoSubtitle,
+    li.MsoSubtitle,
+    div.MsoSubtitle {
+    margin-top: 2.0pt;
+    margin-right: 0in;
+    margin-bottom: 2.0pt;
+    margin-left: 0in;
+    text-align: center;
+    line-height: 14.0pt;
+    font-size: 11.0pt;
+    font-family: "Arial", sans-serif;
+    color: black;
+  }
+
+  @page WordSection1 {
+  size: 595.45pt 841.7pt;
+  margin: .75in .75in .75in .75in;
+}
+
+div.WordSection1 {
+page: WordSection1;
+}
+</style>
+</head>
+@if (rows.length > 0) {
+  <div>
+    <body lang="EN-US" style="word-wrap: break-word">
+      <div class="WordSection1">
+        <!-- <div style="text-align: center;">
+        <h1 style="    font-weight: 900;
+      font-size: 42px;">FORM NO. 4</h1>
+      </div>
+      <p class="MsoNormal" align="center" style="text-align: center;">
+        [Rule 25(2)]
+      </p>
+      <p class="MsoNormal" align="center" style="text-align: center;">
+        &nbsp;
+      </p>
+      <div class="MsoNormal" align="center" style="text-align: center;">
+        <h1 style="    font-size: 22px;">Overtime Register for Workers</h1>
+      </div>
+      <p class="MsoNormal" align="center" style="
+          margin-top: 2pt;
+          margin-right: 0in;
+          margin-bottom: 2pt;
+          margin-left: 0in;
+          text-align: center;
+          line-height: 14pt;
+        ">
+        <span style="
+              font-size: 12pt;
+              font-family: 'Arial', sans-serif;
+              color: black;
+            ">
+          Month ending
+          <u></u>
+          19
+          <u></u>
+          .
+        </span>
+      </p>
+      <p class="MsoNormal" align="center" style="
+          margin-top: 2pt;
+          margin-right: 0in;
+          margin-bottom: 2pt;
+          margin-left: 0in;
+          text-align: center;
+          line-height: 14pt;
+        ">
+        <span style="font-family: 'Arial', sans-serif; color: black;">
+          &nbsp;
+        </span>
+      </p>
+      <p class="MsoNormal" align="center" style="
+          margin-top: 2pt;
+          margin-right: 0in;
+          margin-bottom: 2pt;
+          margin-left: 0in;
+          text-align: center;
+          line-height: 14pt;
+        ">
+        <span style="font-family: 'Arial', sans-serif; color: black;">
+          &nbsp;
+        </span>
+      </p> -->
+      <div style="overflow-x: auto">
+        <table
+          id="form4-content"
+          class="MsoNormalTable"
+          border="1"
+          cellspacing="0"
+          cellpadding="0"
+          style="margin-left: 0.9pt; border-collapse: collapse; border: none"
+          >
+          <tr>
+            <td
+              width="36"
+              valign="top"
+              style="width: 27pt; border: solid windowtext 1px; padding: 0in 5.4pt 0in 5.4pt"
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 23pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  S.
+                  <br />
+                  No
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                width="72"
+                align="center"
+                  style="
+                    margin-top: 36ptpt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                  width="72"
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Name
+                </span>
+              </p>
+            </td>
+            <td
+              width="20"
+              valign="top"
+                style="
+                  width: 54pt;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Father’s/Husband’s Name
+                </span>
+              </p>
+            </td>
+            <td
+              width="48"
+              valign="top"
+                style="
+                  width: 0.5in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Sex
+                </span>
+              </p>
+            </td>
+            <td
+              width="132"
+              valign="top"
+                style="
+                  width: 99pt;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Designation and Department
+                </span>
+              </p>
+            </td>
+            <td
+              width="84"
+              valign="top"
+                style="
+                  width: 63pt;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Dates on which overtime worked
+                </span>
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Extent of overtime on each occasion
+                </span>
+              </p>
+            </td>
+            <td
+              width="103"
+              valign="top"
+              style="width: 77.4pt; border: solid windowtext 1px; padding: 0in 5.4pt 0in 5.4pt"
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Total overtime worked or production in case of piece-workers
+                </span>
+              </p>
+            </td>
+            <td
+              width="78"
+              valign="top"
+                style="
+                  width: 58.5pt;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Normal hours
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Normal rate
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Overtime rate
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Normal earnings
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Overtime earnings
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Total
+                  <br />
+                  earnings
+                </span>
+              </p>
+            </td>
+            <td
+              width="123"
+              valign="top"
+                style="
+                  width: 92.1pt;
+                  border: solid windowtext 1px;
+                  border-left: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  Date on which overtime payment made
+                </span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 27pt;
+                  border: solid windowtext 1px;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  1
+                </span>
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  2
+                </span>
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  3
+                </span>
+              </p>
+            </td>
+            <td
+              width="48"
+              valign="top"
+                style="
+                  width: 0.5in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  4
+                </span>
+              </p>
+            </td>
+            <td
+              width="132"
+              valign="top"
+                style="
+                  width: 99pt;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  5
+                </span>
+              </p>
+            </td>
+            <td
+              width="84"
+              valign="top"
+                style="
+                  width: 63pt;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  6
+                </span>
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  7
+                </span>
+              </p>
+            </td>
+            <td
+              width="103"
+              valign="top"
+                style="
+                  width: 77.4pt;
+                  border: solid windowtext 1px;
+                  border-top: none;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  8
+                </span>
+              </p>
+            </td>
+            <td
+              width="78"
+              valign="top"
+                style="
+                  width: 58.5pt;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  9
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  10
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  11
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  12
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  13
+                </span>
+              </p>
+            </td>
+            <td
+              width="72"
+              valign="top"
+                style="
+                  width: 0.75in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  14
+                </span>
+              </p>
+            </td>
+            <td
+              width="123"
+              valign="top"
+                style="
+                  width: 92.1pt;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                align="center"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                  "
+                >
+                <span
+                    style="
+                      font-size: 14px !important;
+                      font-family: 'Arial', sans-serif;
+                      color: black;
+                    "
+                  >
+                  15
+                </span>
+              </p>
+            </td>
+          </tr>
+          @for (item of rows; track item; let i = $index) {
+            <tr style="height: 50px">
+              <td
+                width="36"
+                valign="top"
+                style="
+                  width: 27pt;
+                  border: solid windowtext 1px;
+                  border-top: none;
+                  padding: 10px 5.4pt 0px 5.4pt;
+                "
+                >
+                <p
+                  class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: justify;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                  >
+                  <span style="font-family: 'Arial', sans-serif; color: black">
+                    <b>{{ i + 1 }}</b>
+                  </span>
+                </p>
+              </td>
+              <td
+                width="36"
+                valign="top"
+                colspan="8"
+                style="
+                  width: 27pt;
+                  border: solid windowtext 1px;
+                  border-top: none;
+                  padding: 10px 5.4pt 0px 5.4pt;
+                "
+                >
+                <p
+                  class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: justify;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                  >
+                  <span style="font-family: 'Arial', sans-serif; color: black">
+                    <b>No any overtime for the month of {{ item.month }} {{ item.year }}</b>
+                  </span>
+                </p>
+              </td>
+              <!-- <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>Overtime</b>
+                </span>
+              </p>
+            </td>
+          <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>for</b>
+                </span>
+              </p>
+            </td>
+          <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>for</b>
+                </span>
+              </p>
+            </td>
+          <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>the</b>
+                </span>
+              </p>
+            </td>
+          <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>month</b>
+                </span>
+              </p>
+            </td>
+          <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>of</b>
+                </span>
+              </p>
+            </td>
+          <td width="36" valign="top" style="
+              width: 27pt;
+              border: solid windowtext 1px;
+              border-top: none;
+              padding: 0in 5.4pt 0in 5.4pt;
+            ">
+            <p class="MsoNormal" style="
+                margin-top: 2pt;
+                margin-right: 0in;
+                margin-bottom: 2pt;
+                margin-left: 0in;
+                text-align: justify;
+                line-height: 14pt;
+              ">
+                <span style="font-family: 'Arial', sans-serif; color: black;">
+                  <b>{{item.month}}</b>
+                </span>
+              </p>
+            </td> -->
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                >
+                <span style="font-family: 'Arial', sans-serif; color: black"></span>
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                >
+                <span style="font-family: 'Arial', sans-serif; color: black">&nbsp;</span>
+              </p>
+            </td>
+            <td
+              width="48"
+              valign="top"
+                style="
+                  width: 0.5in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                >
+                <span style="font-family: 'Arial', sans-serif; color: black">&nbsp;</span>
+              </p>
+            </td>
+            <td
+              width="132"
+              valign="top"
+                style="
+                  width: 99pt;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                >
+                <span style="font-family: 'Arial', sans-serif; color: black">&nbsp;</span>
+              </p>
+            </td>
+            <td
+              width="84"
+              valign="top"
+                style="
+                  width: 63pt;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 0in 5.4pt 0in 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: center;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                >
+                <span style="font-family: 'Arial', sans-serif; color: black">&nbsp;</span>
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                style="
+                  width: 1.25in;
+                  border-top: none;
+                  border-left: none;
+                  border-bottom: solid windowtext 1px;
+                  border-right: solid windowtext 1px;
+                  padding: 10px 5.4pt 0px 5.4pt;
+                "
+              >
+              <p
+                class="MsoNormal"
+                  style="
+                    margin-top: 2pt;
+                    margin-right: 0in;
+                    margin-bottom: 2pt;
+                    margin-left: 0in;
+                    text-align: justify;
+                    line-height: 14pt;
+                    font-size: 20px;
+                  "
+                >
+                <span style="font-family: 'Arial', sans-serif; color: black">&nbsp;</span>
+              </p>
+            </td>
+          </tr>
+        }
+      </table>
+    </div>
+    <p
+      class="MsoNormal"
+      align="center"
+          style="
+            margin-top: 2pt;
+            margin-right: 0in;
+            margin-bottom: 2pt;
+            margin-left: 0in;
+            text-align: center;
+            line-height: 14pt;
+          "
+      >
+      <span style="font-family: 'Arial', sans-serif; color: black">&nbsp;</span>
+    </p>
+  </div>
+</body>
+</div>
+}
+</html>

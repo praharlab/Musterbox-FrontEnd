@@ -1,0 +1,151 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Increment Report" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="download()" (clearData)="clear()" (init)="init($event)" (emitUsers)="emitUsers($event)" [showRequiredFields]="showRequiredFields">
+  </app-common-filter>
+}
+@if (incrementdata && incrementdata.length > 0) {
+  <div #TABLE>
+    @for (data of incrementdata; track data; let i = $index) {
+      <div>
+        <div class="main">
+          <div class="salaryData row">
+            <div class="col-md-2 col-sm-4 col-xs-6">
+              <b>Employee Code : </b>
+              <br>
+                <p class="m-0">{{data.employeeCode}}</p>
+              </div>
+              <div class="col-md-2 col-sm-4 col-xs-6">
+                <b>Employee Name : </b>
+                <br>
+                  <p class="m-0">{{data.displayName}}</p>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                  <b>Number : </b>
+                  <p class="m-0">{{data.userNumber}}</p>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                  <b>Branch : </b>
+                  <p class="m-0">{{data.branch}}</p>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                  <b>Department : </b>
+                  <p class="m-0">{{data.department}}</p>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                  <b>Designation : </b>
+                  <p class="m-0">{{data.designation}}</p>
+                </div>
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                  <b>Joining Date : </b>
+                  <p class="m-0">{{data.joiningDate | date: 'dd-MM-yyyy'}}</p>
+                </div>
+              </div>
+              <hr>
+                @if (data?.salaryData.length > 0) {
+                  <div>
+                    @for (salary of data?.salaryData; track salary; let s = $index) {
+                      <div>
+                        <div class="d-flex">
+                          <p class="mt15 mb10"><b>Applicable Month: </b>{{salary.salaryFromYYYYMM}}</p>
+                          <p class="mt15 ml15"><b>Salary Calculation: </b>{{salary.baseOnCalculation == 'M' ? 'Monthly' :
+                        salary.baseOnCalculation == 'D' ? 'Daily' : salary.baseOnCalculation == 'H' ? 'Hourly' : ''}}</p>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table">
+                          <tr>
+                            @for (child of salary.achildData; track child; let c = $index) {
+                              <td>{{child.payheadDisplayName ?
+                              child.payheadDisplayName : child.payheadName}}</td>
+                            }
+                            @if (salary.grossData) {
+                              <td> <b>{{salary.grossData.payheadDisplayName ?
+                              salary.grossData.payheadDisplayName : salary.grossData.payheadName}}</b> </td>
+                            }
+                            @for (child of salary.bchildData; track child; let c = $index) {
+                              <td>{{child.payheadDisplayName ?
+                              child.payheadDisplayName : child.payheadName}}</td>
+                            }
+                            @for (child of salary.extra_achild; track child; let c = $index) {
+                              <td>{{child.payheadDisplayName ?
+                              child.payheadDisplayName : child.payheadName}}</td>
+                            }
+                            @if (salary.netPayData) {
+                              <td><b>{{salary.netPayData.payheadDisplayName ?
+                              salary.netPayData.payheadDisplayName : salary.netPayData.payheadName}}</b> </td>
+                            }
+                            @for (child of salary.cchildData; track child; let c = $index) {
+                              <td>{{child.payheadDisplayName ?
+                              child.payheadDisplayName : child.payheadName}}</td>
+                            }
+                            @if (salary.ctcData) {
+                              <td><b>{{salary.ctcData.payheadDisplayName ?
+                              salary.ctcData.payheadDisplayName : salary.ctcData.payheadName}}</b></td>
+                            }
+                          </tr>
+                          <tr>
+                            @for (child of salary.achildData; track child; let c = $index) {
+                              <td>{{child.EmployeeSalaryAmount}}</td>
+                            }
+                            @if (salary.grossData) {
+                              <td> <b>{{salary.grossData.EmployeeSalaryAmount}}</b></td>
+                            }
+                            @for (child of salary.bchildData; track child; let c = $index) {
+                              <td>{{child.EmployeeSalaryAmount}}</td>
+                            }
+                            @for (child of salary.extra_achild; track child; let c = $index) {
+                              <td>{{child.EmployeeSalaryAmount}}</td>
+                            }
+                            @if (salary.netPayData) {
+                              <td><b>{{salary.netPayData.EmployeeSalaryAmount}}</b></td>
+                            }
+                            @for (child of salary.cchildData; track child; let c = $index) {
+                              <td>{{child.EmployeeSalaryAmount}}</td>
+                            }
+                            @if (salary.ctcData) {
+                              <td><b>{{salary.ctcData.EmployeeSalaryAmount}}</b></td>
+                            }
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+              @if (data?.salaryData.length == 0) {
+                <div>
+                  <p><b>No salary data found!</b></p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        <div class="col-12">
+          <pagination class="justify-content-center" [totalItems]="page.totalCount" [boundaryLinks]="true"
+            [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit"
+            [maxSize]="5" (pageChanged)="onChange($event)" [customNextTemplate]="nextTemplate"
+          [customPreviousTemplate]="prevTemplate"></pagination>
+        </div>
+      </div>
+    }
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>

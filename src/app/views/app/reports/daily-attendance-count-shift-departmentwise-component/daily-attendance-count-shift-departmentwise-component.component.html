@@ -1,0 +1,86 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Shift & Department Wise Attendance Count Report" [showOrderBy]="false" [showSearch]="false"
+[showDisplayMode]="false" [showItemsPerPage]="false"></app-list-page-header>
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company" required>
+                @for (companydata of companydata; track companydata) {
+                  <ng-option [value]="companydata.companyMasterID">
+                    {{ companydata.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" [max]="date12"
+                required />
+                <span>From Date *</span>
+                @if (!startdate.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" [max]="date12" required />
+                <span>To Date *</span>
+                @if (!enddate.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    To Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-12">
+              <button class="btn btn-primary form-group" type="submit">
+                Submit
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+              <span> &nbsp;&nbsp; </span>
+              @if (rows && rows.length != 0) {
+                <button class="btn btn-success form-group" type="button" (click)="download()"
+                  >
+                  Export
+                </button>
+              }
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  @if (rows && permissionview.length != 0) {
+    <div class="row">
+      @if (resultColumns && resultColumns.length != 0) {
+        <div class="col-12 mb-4 data-table-rows">
+          <ngx-datatable [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [rows]="rows"
+            [limit]="filterData.limit" [scrollbarH]="true" [rowHeight]="50" [footerHeight]="100" [columnMode]="'force'"
+            [externalPaging]="false" [count]="false" [offset]="page.offset" (page)="onChange($event)">
+            @for (column of resultColumns; track column; let i = $index) {
+              <ngx-datatable-column name="{{ column.name }}"
+              prop="{{ column.prop }}" [flexGrow]="column.flexGrow" [width]="column.minWidth"></ngx-datatable-column>
+            }
+          </ngx-datatable>
+        </div>
+      }
+    </div>
+  }

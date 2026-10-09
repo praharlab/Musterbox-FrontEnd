@@ -1,0 +1,121 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (sn_codeData) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit SN Codes</h5>
+      <form #edit_sncodes="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="selectcompany($event)"
+                ngModel
+                #company="ngModel"
+                name="company"
+                required
+                [disabled]="true"
+                [(ngModel)]="sn_codeData.userMaster.companyMasterId"
+                >
+                @for (company of allcomp; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              <!-- <div *ngIf="!company.valid && edit_sncodes.submitted" class="invalid-tooltip">
+              Company is required!
+            </div> -->
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="ownerList"
+              [multiple]="false"
+              bindLabel="name"
+              required
+              [disabled]="true"
+              [selectableGroup]="false"
+              [selectableGroupAsModel]="false"
+              bindValue="userMasterID"
+              [(ngModel)]="sn_codeData.userMasterID"
+              ngModel
+              #userMasterID="ngModel"
+              name="userMasterID"
+              >
+              <!-- <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" />{{item.name}}
+            </ng-template> -->
+          </ng-select>
+          <span>Select Employee *</span>
+        </label>
+        <!-- <div *ngIf="!userMasterID.valid && edit_sncodes.submitted" class="invalid-tooltip">
+        EMPLOYEE is required!
+      </div> -->
+    </div>
+    <div class="col-md-6">
+      <label class="form-group has-float-label">
+        <input
+          class="form-control"
+          type="text"
+          required
+          ngModel
+          #sn_code="ngModel"
+          [(ngModel)]="sn_codeData.sn_code"
+          name="sn_code"
+          />
+          <span>SN Codes *</span>
+          @if (!sn_code.valid && edit_sncodes.submitted) {
+            <div class="invalid-tooltip">
+              SN Codes is required!
+            </div>
+          }
+        </label>
+      </div>
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <input
+            class="form-control"
+            type="text"
+            required
+            ngModel
+            #tankhwaPatra_code="ngModel"
+            [(ngModel)]="sn_codeData.tankhwaPatra_code"
+            name="tankhwaPatra_code"
+            />
+            <span>{{tankhwaPatraNameLabel}} Codes *</span>
+            @if (!tankhwaPatra_code.valid && edit_sncodes.submitted) {
+              <div class="invalid-tooltip">
+                {{tankhwaPatraNameLabel}} Codes is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <app-state-button
+        [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+        [currentState]="buttonState"
+        [isDisabled]="buttonDisabled"
+        click="onLoginClick()"
+        >
+        {{ 'forms.submit' | translate }}
+      </app-state-button>
+      <button
+        class="btn btn-danger btn-lg btn-shadow mt-4"
+        [routerLink]="adminRoot + '/finances/sn_codes'"
+        style="margin-left: 2%"
+        >
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+}
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

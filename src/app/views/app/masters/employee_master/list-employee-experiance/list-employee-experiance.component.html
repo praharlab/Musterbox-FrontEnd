@@ -1,0 +1,432 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show(); add()">Add</button>
+</div>
+<br />
+<div class="row">
+  <!-- <div class="col-12 col-sm-12 col-lg-6 col-xl-4" *ngFor="let item of rows">
+  <div class="card d-flex flex-row mb-4">
+    <a class="d-flex" href="javascript:;"></a>
+    <div class="d-flex flex-grow-1 min-width-zero">
+      <div
+        class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row min-width-zero"
+        style="margin-left: 5%;"
+        >
+        <div class="min-width-zero" style="width: 60%;">
+          <a href="javascript:;">
+
+            <p class="list-item-heading mb-1 truncate">{{item.organization | uppercase}}</p>
+
+            <table>
+              <tr>
+                <td>Designation</td>
+                <td> {{item.designation}} </td>
+              </tr>
+              <tr>
+                <td>From Date</td>
+                <td> {{item.housfromDateeName}} </td>
+              </tr>
+              <tr>
+                <td>To Date</td>
+                <td> {{item.toDate}} </td>
+              </tr>
+              <tr *ngIf="item.createBy">
+                <td>Created by  </td>
+                <td> {{item.createBy}} </td>
+              </tr>
+              <tr *ngIf="item.verifyBy">
+                <td>Verified by  </td>
+                <td> {{item.verifyBy}} </td>
+              </tr>
+            </table>
+
+            <button type="button" class="btn btn-success" (click)=" alertVerifyConfirmation(item)" *ngIf="item.verifyStatus == '0'"
+            style="margin-top: 10%;">{{'Verify' | translate}}</button>{{" "}}
+            <button type="button" class="btn btn-danger"  (click)=" alertRejectConfirmation(item)" *ngIf="item.verifyStatus == '0'"
+            style="margin-top: 10%;">{{'Reject' | translate}}</button>{{" "}}
+
+
+
+
+            <div class="min-width-zero" *ngIf="usertype != 1">
+              <a href="javascript:;">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  *ngIf="item.status == '1'"
+                  style="margin-top: 10%;"
+                  >
+                  {{ 'Active' | translate }}
+                </button>
+                {{ ' ' }}
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  *ngIf="item.status == '0'"
+                  style="margin-top: 10%;"
+                  >
+                  {{ 'Deactive' | translate }}
+                </button>
+                {{ ' ' }}
+              </a>
+            </div>
+          </a>
+        </div>
+        <div style="margin-top: 14px;">
+          <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%;"
+          *ngIf="item.status == '1'">{{'Active' | translate}}</button>{{" "}}
+          <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%;"
+          *ngIf="item.status == '0'">{{'Deactive' | translate}}</button>{{" "}}
+          <button type="button" class="btn btn-outline-warning btn-xs" style="margin-bottom: 5%;"
+            *ngIf="item.verifyStatus == '0'">{{'Pending' |
+          translate}}</button>{{" "}}
+          <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%;"
+            *ngIf="item.verifyStatus == '1'">{{'Verified' |
+          translate}}</button>{{" "}}
+          <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%;"
+            *ngIf="item.verifyStatus == '2'">{{'Rejected' |
+          translate}}</button>{{" "}}
+
+          <div>
+            <a class="btn btn-primary" *ngIf="usertype == 1" (click)="lgModal1.show(); edit(item)">
+              EDIT
+            </a>
+            <br />
+            <a class="btn btn-danger" *ngIf="usertype == 1"  (click)="alertConfirmation(item.userExperienceID)" style="margin-top: 10%;" >
+              DELETE
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+@for (item of rows; track item) {
+  <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+    <div class="card d-flex flex-row mb-4">
+      <a class="d-flex" href="javascript:;"></a>
+      <div class="d-flex flex-grow-1 min-width-zero">
+        <div
+          class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+          style="margin-left: 5%">
+          <div class="min-width-zero">
+            <a href="javascript:;">
+              <p class="list-item-heading mb-1 truncate">{{ item.organization | uppercase }}</p>
+              <table>
+                <tr>
+                  <td>Designation</td>
+                  <td>: {{ item.designation }}</td>
+                </tr>
+                <tr>
+                  <td>From Date</td>
+                  <td>: {{ item.fromDate }}</td>
+                </tr>
+                <tr>
+                  <td>To Date</td>
+                  <td>: {{ item.toDate }}</td>
+                </tr>
+                @if (item.roleRespo.length != 0) {
+                  <tr>
+                    <td>Responsibilities</td>
+                    <td style="padding-top: 4%">
+                      :
+                      <button type="button" class="btn btn-outline-primary btn-xs"
+                        (click)="setrespo(item.roleRespo); lgModalviewResp.show()" style="margin-bottom: 5%">
+                        {{ 'View' | translate }}
+                      </button>
+                      {{ ' ' }}
+                    </td>
+                  </tr>
+                }
+                @if (item.createBy) {
+                  <tr>
+                    <td>Created by</td>
+                    <td>: {{ item.createBy }}</td>
+                  </tr>
+                }
+                @if (item.verifyBy) {
+                  <tr>
+                    <td>Verified by</td>
+                    <td>: {{ item.verifyBy }}</td>
+                  </tr>
+                }
+                @if (item.rejectionRemarks && item.verifyStatus != '1') {
+                  <tr>
+                    <td>Rejection Reason</td>
+                    <td>: {{ item.rejectionRemarks }}</td>
+                  </tr>
+                }
+              </table>
+              <!-- <div class="min-width-zero">
+              <a href="javascript:;">
+                <button type="button" class="btn btn-success" *ngIf="item.status == '1'"  style="margin-top: 10%;">{{'Active' | translate}}</button>{{" "}}
+                <button type="button" class="btn btn-danger" *ngIf="item.status == '0'"  style="margin-top: 10%;">{{'Deactive' | translate}}</button>{{" "}}
+              </a>
+            </div> -->
+            @if (item.verifyStatus == '0') {
+              <button type="button" class="btn btn-xs btn-success" (click)="openVerifyModelSubmit(item)"
+                style="margin-top: 10%">
+                {{ 'Verify' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            @if (item.verifyStatus == '0') {
+              <button type="button" class="btn btn-xs btn-danger"
+                (click)="openRejectModelSubmit(item)"
+                style="margin-top: 10%">
+                {{ 'Reject' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            <!-- <button type="button" (click)="openRejectModelSubmit(item)" *ngIf="item.verifyStatus == '0'"
+            class="btn btn-danger" style="margin-top: 10%">
+            Reject
+          </button> -->
+        </a>
+      </div>
+      <div style="margin-top: 14px; width: 25%">
+        @if (item.status == '1') {
+          <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%"
+            >
+            {{ 'Active' | translate }}
+          </button>
+        }
+        {{ ' ' }}
+        @if (item.status == '0') {
+          <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%"
+            >
+            {{ 'Deactive' | translate }}
+          </button>
+        }
+        {{ ' ' }}
+        @if (item.verifyStatus == '0') {
+          <button type="button" class="btn btn-outline-warning btn-xs" style="margin-bottom: 5%"
+            >
+            {{ 'Pending' | translate }}
+          </button>
+        }
+        {{ ' ' }}
+        @if (item.verifyStatus == '1') {
+          <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%"
+            >
+            {{ 'Verified' | translate }}
+          </button>
+        }
+        {{ ' ' }}
+        @if (item.verifyStatus == '2') {
+          <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%"
+            >
+            {{ 'Rejected' | translate }}
+          </button>
+        }
+        {{ ' ' }}
+        <div class="min-width-zero" style="margin-top: 60%">
+          <a class="btn btn-xs  btn-primary" (click)="lgModal1.show(); edit(item)">EDIT</a>
+          <br />
+          <a class="btn btn-xs  btn-danger" (click)="alertConfirmation(item.userExperienceID)"
+            style="margin-top: 10%">
+            DELETE
+          </a>
+        </div>
+      </div>
+      <!-- <div style="margin-top: 14px;">
+      <a class="btn btn-outline-primary btn-xs"     (click)="lgModal1.show();edit(item)">EDIT</a><br>
+      <a class="btn btn-outline-primary btn-xs"    (click)="alertConfirmation(item.userAddressID)" style="margin-top: 10%;">DELETE</a>
+    </div> -->
+  </div>
+</div>
+</div>
+</div>
+}
+</div>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Experience</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel required #organization="ngModel" name="organization" />
+                <span>Organization *</span>
+                @if (!organization.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Organization is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel required #designation="ngModel" name="designation" />
+                <span>Designation *</span>
+                @if (!designation.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Designation is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #fromDate="ngModel" name="fromDate" />
+                <span>From Date</span>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel #toDate="ngModel" name="toDate" />
+                <span>To Date</span>
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" style="margin-bottom: 20px">
+              <span class="button" class="btn btn-success" (click)="addvalue()">
+                ADD Responsibilty
+              </span>
+            </div>
+            <br />
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}"
+                    style="width: 50%" />
+                    @if (i >= 1) {
+                      <span (click)="removevalue(i)" style="margin-left: 3%">Remove</span>
+                    }
+                    <span>Responsibilty</span>
+                  </label>
+                </div>
+              }
+            </div>
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Edit Employee Experience</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+            #closeModal1>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          @if (editbyid) {
+            <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel required #organization="ngModel"
+                      [(ngModel)]="editbyid.organization" name="organization" />
+                      <span>Organization *</span>
+                      @if (!organization.valid && editcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Organization is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel required #designation="ngModel"
+                        [(ngModel)]="editbyid.designation" name="designation" />
+                        <span>Designation *</span>
+                        @if (!designation.valid && editcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Designation is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="date" ngModel #fromDate="ngModel"
+                          [ngModel]="editbyid.fromDate | date: 'yyyy-MM-dd'" name="fromDate" />
+                          <span>From Date</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="date" ngModel #toDate="ngModel"
+                            [ngModel]="editbyid.toDate | date: 'yyyy-MM-dd'" name="toDate" />
+                            <span>To Date</span>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12" style="margin-bottom: 20px">
+                          <span class="button" class="btn btn-success" (click)="addvalue()">
+                            ADD Responsibilty
+                          </span>
+                        </div>
+                        <br />
+                        @for (value of values; track value; let i = $index) {
+                          <div class="col-md-12">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" [(ngModel)]="value.value" #name="ngModel" name="value{{ i }}"
+                                style="width: 50%" />
+                                @if (i >= 1) {
+                                  <span (click)="removevalue(i)" style="margin-left: 3%">Remove</span>
+                                }
+                                <span>Responsibilty</span>
+                              </label>
+                            </div>
+                          }
+                        </div>
+                        <button class="btn btn-primary" type="submit">
+                          {{ 'forms.submit' | translate }}
+                        </button>
+                      </form>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div bsModal #lgModalviewResp="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+              aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Responsibilities</h4>
+                    <button type="button" class="btn-close close pull-right" (click)="lgModalviewResp.hide()" aria-label="Close"
+                      #closeModalexpedit>
+                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <table class="table table-striped">
+                      @for (item of responsibilities; track item) {
+                        <tr>
+                          <td>{{ item }}</td>
+                        </tr>
+                      }
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <app-employee-experiance-reject></app-employee-experiance-reject>

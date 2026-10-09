@@ -1,0 +1,454 @@
+<style>
+  /* ===== Employee Analytics Dashboard ===== */
+  .analytics-dashboard {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+background: var(--m-gradient);
+border-radius: 16px;
+padding: 28px 32px;
+margin-bottom: 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+overflow: hidden;
+position: relative;
+}
+
+.welcome-banner::before {
+content: '';
+position: absolute;
+right: -40px;
+top: -40px;
+width: 200px;
+height: 200px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.06);
+}
+
+.welcome-banner::after {
+content: '';
+position: absolute;
+right: 80px;
+bottom: -30px;
+width: 120px;
+height: 120px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.04);
+}
+
+.welcome-text h2 {
+font-size: 1.4rem;
+font-weight: 700;
+color: #ffffff;
+margin: 0 0 4px;
+font-family: 'Inter', sans-serif;
+}
+
+.welcome-text p {
+font-size: 0.88rem;
+color: rgba(255, 255, 255, 0.75);
+margin: 0;
+font-family: 'Inter', sans-serif;
+}
+
+.welcome-date-pill {
+background: rgba(255, 255, 255, 0.12);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 10px;
+padding: 10px 18px;
+text-align: center;
+position: relative;
+z-index: 1;
+}
+
+.welcome-date-pill .date-day {
+font-size: 1.8rem;
+font-weight: 800;
+color: #fff;
+line-height: 1;
+font-family: 'Inter', sans-serif;
+}
+
+.welcome-date-pill .date-month {
+font-size: 0.78rem;
+color: rgba(255, 255, 255, 0.75);
+font-family: 'Inter', sans-serif;
+font-weight: 500;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+/* Modern Section Card */
+.dash-card {
+background: var(--m-surface);
+border-radius: 14px;
+border: 1px solid var(--m-border-subtle);
+overflow: hidden;
+box-shadow: 0 1px 4px rgba(0, 54, 90, 0.04);
+height: 100%;
+}
+
+.dash-card-header {
+padding: 16px 20px;
+border-bottom: 1px solid var(--m-border-subtle);
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.dash-card-title {
+font-size: 0.9rem;
+font-weight: 700;
+color: var(--m-text);
+font-family: 'Inter', sans-serif;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.dash-card-title i {
+color: var(--m-primary);
+font-size: 16px;
+}
+
+.dash-card-body {
+padding: 0;
+}
+
+/* Quick Action Pills */
+.quick-actions {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+margin-bottom: 20px;
+}
+
+.quick-action-btn {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 10px 18px;
+border-radius: 10px;
+font-size: 0.82rem;
+font-weight: 600;
+font-family: 'Inter', sans-serif;
+cursor: pointer;
+transition: all 0.2s;
+border: 1.5px solid;
+text-decoration: none;
+}
+
+.quick-action-btn.primary {
+background: var(--m-primary);
+border-color: var(--m-primary);
+color: #fff;
+box-shadow: 0 4px 12px rgba(0, 54, 90, 0.25);
+}
+
+.quick-action-btn.primary:hover {
+background: var(--m-primary-active);
+transform: translateY(-1px);
+}
+
+.quick-action-btn.outline {
+background: var(--m-surface);
+border-color: var(--m-border);
+color: var(--m-text);
+}
+
+.quick-action-btn.outline:hover {
+border-color: var(--m-primary);
+color: var(--m-primary);
+background: var(--m-primary-softer);
+}
+
+.quick-action-btn i {
+font-size: 14px;
+}
+
+@media (max-width: 576px) {
+.welcome-banner {
+flex-direction: column;
+gap: 16px;
+align-items: flex-start;
+}
+
+.welcome-date-pill {
+align-self: flex-start;
+}
+
+.quick-actions {
+gap: 8px;
+}
+
+.quick-action-btn {
+padding: 8px 14px;
+font-size: 0.78rem;
+}
+}
+</style>
+
+<!-- Display for regular employees / manager -->
+@if (tabDisplay == 1) {
+  <div class="analytics-dashboard">
+    <!-- Company Subscription Alert (if any) -->
+    <div class="row mb-2">
+      <div class="col-md-12">
+        <app-company-subscription-plan-expiration></app-company-subscription-plan-expiration>
+      </div>
+    </div>
+    <!-- Main Dashboard Row -->
+    <div class="row">
+      <!-- Punch In / Attendance Widget -->
+      @if (webPunchInPermission.length != 0) {
+        <div class="col-xl-6 col-lg-12 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">
+                <i class="iconsminds-clock"></i> Today's Attendance
+              </span>
+            </div>
+            <div class="dash-card-body">
+              <app-web-punch-in-out></app-web-punch-in-out>
+            </div>
+          </div>
+        </div>
+      }
+      <!-- Leave / Notification Summary -->
+      @if (webPunchInPermission.length != 0) {
+        <div class="col-xl-6 col-lg-12 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">
+                <i class="iconsminds-speach-bubble-3"></i> My Requests
+              </span>
+            </div>
+            <div class="dash-card-body">
+              <app-recent-orders></app-recent-orders>
+            </div>
+          </div>
+        </div>
+      }
+      <!-- Announcements / Message Box -->
+      <div class="col-xl-6 col-lg-12 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-megaphone"></i> Announcements
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-message-box></app-message-box>
+          </div>
+        </div>
+      </div>
+      <!-- Birthday Card -->
+      @if (birthdayPermission.length > 0) {
+        <div class="col-xl-6 col-lg-12 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">
+                <i class="iconsminds-birthday-cake"></i> Birthdays 🎂
+              </span>
+            </div>
+            <div class="dash-card-body">
+              <app-birthday-card></app-birthday-card>
+            </div>
+          </div>
+        </div>
+      }
+      <!-- Icon Cards Carousel (if no birthday/anniversary) -->
+      @if (birthdayPermission.length === 0 && anniversaryPermission.length === 0) {
+        <div class="col-xl-6 col-lg-12 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-body">
+              <app-icon-cards-carousel></app-icon-cards-carousel>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+    <!-- Second Row -->
+    <div class="row">
+      <!-- Icon Cards / Quick Stats -->
+      @if (birthdayPermission.length > 0 || anniversaryPermission.length > 0) {
+        <div class="col-lg-6 col-xl-6 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-body">
+              <app-icon-cards-carousel></app-icon-cards-carousel>
+            </div>
+          </div>
+        </div>
+      }
+      <!-- Work Anniversary -->
+      @if (anniversaryPermission.length > 0) {
+        <div class="col-lg-6 col-xl-6 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">
+                <i class="iconsminds-trophy"></i> Work Anniversaries 🎉
+              </span>
+            </div>
+            <div class="dash-card-body">
+              <app-anniversary-card></app-anniversary-card>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+    <!-- Third Row -->
+    <div class="row">
+      <!-- Tickets -->
+      <div class="col-lg-12 col-xl-6 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-support"></i> My Tickets
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-tickets></app-tickets>
+          </div>
+        </div>
+      </div>
+      <!-- Calendar -->
+      <div class="col-lg-12 col-xl-6 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-calendar-4"></i> Calendar & Events
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-dashboard-calendar></app-dashboard-calendar>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+
+<!-- Display for Admin/Manager users (tabDisplay == 2) -->
+@if (tabDisplay == 2) {
+  <div class="analytics-dashboard">
+    <!-- Subscription Alert -->
+    <div class="row mb-2">
+      <div class="col-md-12">
+        <app-company-subscription-plan-expiration></app-company-subscription-plan-expiration>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Punch In -->
+      @if (webPunchInPermission.length != 0) {
+        <div class="col-xl-6 col-lg-12 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">
+                <i class="iconsminds-clock"></i> Today's Attendance
+              </span>
+            </div>
+            <div class="dash-card-body">
+              <app-web-punch-in-out></app-web-punch-in-out>
+            </div>
+          </div>
+        </div>
+      }
+      <!-- My Requests -->
+      @if (webPunchInPermission.length != 0) {
+        <div class="col-xl-6 col-lg-12 mb-4">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">
+                <i class="iconsminds-speach-bubble-3"></i> My Requests
+              </span>
+            </div>
+            <div class="dash-card-body">
+              <app-recent-orders></app-recent-orders>
+            </div>
+          </div>
+        </div>
+      }
+      <!-- Announcements -->
+      <div class="col-xl-6 col-lg-12 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-megaphone"></i> Announcements
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-message-box></app-message-box>
+          </div>
+        </div>
+      </div>
+      <!-- Birthdays -->
+      <div class="col-xl-6 col-lg-12 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-birthday-cake"></i> Birthdays 🎂
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-birthday-card></app-birthday-card>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Quick Stats -->
+      <div class="col-lg-6 col-xl-6 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-body">
+            <app-icon-cards-carousel></app-icon-cards-carousel>
+          </div>
+        </div>
+      </div>
+      <!-- Work Anniversary -->
+      <div class="col-lg-6 col-xl-6 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-trophy"></i> Work Anniversaries 🎉
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-anniversary-card></app-anniversary-card>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Tickets -->
+      <div class="col-lg-12 col-xl-6 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-support"></i> My Tickets
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-tickets></app-tickets>
+          </div>
+        </div>
+      </div>
+      <!-- Calendar -->
+      <div class="col-lg-12 col-xl-6 mb-4">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <span class="dash-card-title">
+              <i class="iconsminds-calendar-4"></i> Calendar & Events
+            </span>
+          </div>
+          <div class="dash-card-body">
+            <app-dashboard-calendar></app-dashboard-calendar>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

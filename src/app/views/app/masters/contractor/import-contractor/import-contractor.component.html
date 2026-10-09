@@ -1,0 +1,524 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-4">Import Contractor</h4>
+    <form #addimportuser="ngForm" novalidate (ngSubmit)="validateData()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              required
+              [(ngModel)]="filterData.companyMasterID"
+              (change)="companyChange($event)"
+              >
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="file"
+              ngModel
+              #file="ngModel"
+              (change)="onFileChange($event)"
+              accept=".xlsx, .xls"
+              name="file"
+              required
+              />
+              <span>Import File *</span>
+              @if (file.valid) {
+                <p>{{ fileName }}</p>
+              }
+            </label>
+            @if (!file.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                File is required!
+              </div>
+            }
+          </div>
+          <div class="col-md-4">
+            <button (click)="downloadDemoExcel()" type="button" class="btn btn-success btn-xs">
+              Download Demo Excel
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          @if (!isValidated) {
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          }
+          @if (isValidated) {
+            <button class="btn btn-primary" type="button" (click)="clear()">
+              Clear
+            </button>
+          }
+          <span> &nbsp;&nbsp; </span>
+          <button class="btn btn-danger" type="button" (click)="prev()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              <span> &nbsp;&nbsp; </span>
+              @if (rows.length > 0 && isEdited) {
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  (click)="reValidateData()"
+                  >
+                  Re-Validate
+                </button>
+              }
+              @if (rows.length > 0 && !isEdited) {
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  (click)="saveData()"
+                  >
+                  Submit
+                </button>
+              }
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Actions</th>
+                  <th>Remarks</th>
+                  <th>Contractor Name *</th>
+                  <th>Website</th>
+                  <th>Short Name *</th>
+                  <th>Contact Person Name *</th>
+                  <th>Contractor Code *</th>
+                  <th>Contact Number *</th>
+                  <th>E-Mail *</th>
+                  <th>Country *</th>
+                  <th>State *</th>
+                  <th>City *</th>
+                  <th>Date Of Incorporation *</th>
+                  <th>Bank</th>
+                  <th>Bank Acoount Number</th>
+                  <th>Pan Card Number</th>
+                  <th>GST Number</th>
+                  <th>Registration Number</th>
+                  <th>Contractor Address</th>
+                  <th>About Contractor</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of rows; track item; let i = $index) {
+                  <tr>
+                    <td>
+                      <button type="button" class="btn btn-danger btn-xs" (click)="removeRow(i)">
+                        Remove
+                      </button>
+                    </td>
+                    <td>
+                      <div style="width: 250px">
+                        {{ item.remarks }}
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="contractorName{{ i }}"
+                        [(ngModel)]="item.contractorName"
+                        #contractorName="ngModel"
+                        style="width: 250px"
+                        class="form-control"
+                        (change)="oncontractorDataChange($event)"
+                        pattern=".*\S.*"
+                        required
+                        />
+                        @if (contractorName.errors?.pattern && tableForm.submitted) {
+                          <div
+                            class="invalid-tooltip1"
+                            >
+                            Contractor Name is required!
+                          </div>
+                        }
+                        @if (contractorName.errors?.required && tableForm.submitted) {
+                          <div
+                            class="invalid-tooltip1"
+                            >
+                            Contractor Name is required!
+                          </div>
+                        }
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          name="website{{ i }}"
+                          [(ngModel)]="item.website"
+                          #website="ngModel"
+                          style="width: 250px"
+                          class="form-control"
+                          (change)="oncontractorDataChange($event)"
+                          pattern=".*\S.*"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            name="shortName{{ i }}"
+                            [(ngModel)]="item.shortName"
+                            #shortName="ngModel"
+                            style="width: 250px"
+                            class="form-control"
+                            (change)="oncontractorDataChange($event)"
+                            pattern=".*\S.*"
+                            required
+                            />
+                            @if (shortName.errors?.pattern && tableForm.submitted) {
+                              <div
+                                class="invalid-tooltip1"
+                                >
+                                Short Name is required!
+                              </div>
+                            }
+                            @if (shortName.errors?.required && tableForm.submitted) {
+                              <div
+                                class="invalid-tooltip1"
+                                >
+                                Short Name is required!
+                              </div>
+                            }
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="contactPersonName{{ i }}"
+                              [(ngModel)]="item.contactPersonName"
+                              #contactPersonName="ngModel"
+                              style="width: 250px"
+                              class="form-control"
+                              (change)="oncontractorDataChange($event)"
+                              pattern=".*\S.*"
+                              required
+                              />
+                              @if (contactPersonName.errors?.pattern && tableForm.submitted) {
+                                <div
+                                  class="invalid-tooltip1"
+                                  >
+                                  Contact Person Name is required!
+                                </div>
+                              }
+                              @if (contactPersonName.errors?.required && tableForm.submitted) {
+                                <div
+                                  class="invalid-tooltip1"
+                                  >
+                                  Contact Person Name is required!
+                                </div>
+                              }
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                name="contractorCode{{ i }}"
+                                [(ngModel)]="item.contractorCode"
+                                #contractorCode="ngModel"
+                                style="width: 250px"
+                                class="form-control"
+                                (change)="oncontractorDataChange($event)"
+                                pattern=".*\S.*"
+                                required
+                                />
+                                @if (contractorCode.errors?.pattern && tableForm.submitted) {
+                                  <div
+                                    class="invalid-tooltip1"
+                                    >
+                                    Contractor Code is required!
+                                  </div>
+                                }
+                                @if (contractorCode.errors?.required && tableForm.submitted) {
+                                  <div
+                                    class="invalid-tooltip1"
+                                    >
+                                    Contractor Code is required!
+                                  </div>
+                                }
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  name="contactNo{{ i }}"
+                                  [(ngModel)]="item.contactNo"
+                                  #contactNo="ngModel"
+                                  style="width: 250px"
+                                  class="form-control"
+                                  (change)="oncontractorDataChange($event)"
+                                  pattern=".*\S.*"
+                                  required
+                                  />
+                                  @if (contactNo.errors?.pattern && tableForm.submitted) {
+                                    <div
+                                      class="invalid-tooltip1"
+                                      >
+                                      Contact Number is required!
+                                    </div>
+                                  }
+                                  @if (contactNo.errors?.required && tableForm.submitted) {
+                                    <div
+                                      class="invalid-tooltip1"
+                                      >
+                                      Contact Number is required!
+                                    </div>
+                                  }
+                                </td>
+                                <td>
+                                  <input
+                                    type="text"
+                                    name="email{{ i }}"
+                                    [(ngModel)]="item.email"
+                                    #email="ngModel"
+                                    style="width: 250px"
+                                    class="form-control"
+                                    (change)="oncontractorDataChange($event)"
+                                    pattern=".*\S.*"
+                                    required
+                                    />
+                                    @if (email.errors?.pattern && tableForm.submitted) {
+                                      <div class="invalid-tooltip1">
+                                        E-Mail is required!
+                                      </div>
+                                    }
+                                    @if (email.errors?.required && tableForm.submitted) {
+                                      <div class="invalid-tooltip1">
+                                        E-Mail is required!
+                                      </div>
+                                    }
+                                  </td>
+                                  <td>
+                                    <select
+                                      name="countryMasterID{{ i }}"
+                                      [(ngModel)]="item.countryMasterID"
+                                      #countryMasterID="ngModel"
+                                      class="form-control"
+                                      style="width: 250px"
+                  (change)="
+                    oncontractorDataChange($event); Changeselectcountry(item.countryMasterID, i)
+                  "
+                                      required
+                                      >
+                                      @for (countrys of country; track countrys) {
+                                        <option [value]="countrys.countryMasterID">
+                                          {{ countrys.countryName }}
+                                        </option>
+                                      }
+                                    </select>
+                                    @if (countryMasterID.errors?.required && tableForm.submitted) {
+                                      <div
+                                        class="invalid-tooltip1"
+                                        >
+                                        Branch Country is required!
+                                      </div>
+                                    }
+                                  </td>
+                                  <td>
+                                    <select
+                                      name="stateMasterID{{ i }}"
+                                      [(ngModel)]="item.stateMasterID"
+                                      #stateMasterID="ngModel"
+                                      class="form-control"
+                                      style="width: 250px"
+                  (change)="
+                    oncontractorDataChange($event); Changeselectstate(item.stateMasterID, i)
+                  "
+                                      required
+                                      >
+                                      @for (state of item.stateDropdown; track state) {
+                                        <option [value]="state.stateMasterID">
+                                          {{ state.stateName }}
+                                        </option>
+                                      }
+                                    </select>
+                                    @if (stateMasterID.errors?.required && tableForm.submitted) {
+                                      <div
+                                        class="invalid-tooltip1"
+                                        >
+                                        Branch State is required!
+                                      </div>
+                                    }
+                                  </td>
+                                  <td>
+                                    <select
+                                      name="cityMasterID{{ i }}"
+                                      [(ngModel)]="item.cityMasterID"
+                                      #cityMasterID="ngModel"
+                                      class="form-control"
+                                      style="width: 250px"
+                                      (change)="oncontractorDataChange($event); Changeselectcity(item.cityMasterID)"
+                                      required
+                                      >
+                                      @for (city of item.cityDropdown; track city) {
+                                        <option [value]="city.cityMasterID">
+                                          {{ city.cityName }}
+                                        </option>
+                                      }
+                                    </select>
+                                    @if (cityMasterID.errors?.required && tableForm.submitted) {
+                                      <div
+                                        class="invalid-tooltip1"
+                                        >
+                                        Branch City is required!
+                                      </div>
+                                    }
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="date"
+                                      name="dateofIncorporation{{ i }}"
+                                      [(ngModel)]="item.dateofIncorporation"
+                                      #dateofIncorporation="ngModel"
+                                      style="width: 250px"
+                                      class="form-control"
+                                      (change)="oncontractorDataChange($event)"
+                                      pattern=".*\S.*"
+                                      required
+                                      />
+                                      @if (dateofIncorporation.errors?.pattern && tableForm.submitted) {
+                                        <div
+                                          class="invalid-tooltip1"
+                                          >
+                                          Date Of Incorporation is required!
+                                        </div>
+                                      }
+                                      @if (dateofIncorporation.errors?.required && tableForm.submitted) {
+                                        <div
+                                          class="invalid-tooltip1"
+                                          >
+                                          Date Of Incorporation is required!
+                                        </div>
+                                      }
+                                    </td>
+                                    <td>
+                                      <select
+                                        name="bankMasterID{{ i }}"
+                                        [(ngModel)]="item.bankMasterID"
+                                        #bankMasterID="ngModel"
+                                        class="form-control"
+                                        style="width: 250px"
+                                        (change)="oncontractorDataChange($event)"
+                                        >
+                                        @for (bank of bankdata; track bank) {
+                                          <option [value]="bank.bankMasterID">
+                                            {{ bank.bankName }}
+                                          </option>
+                                        }
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="text"
+                                        name="bankAccountNo{{ i }}"
+                                        [(ngModel)]="item.bankAccountNo"
+                                        #bankAccountNo="ngModel"
+                                        style="width: 250px"
+                                        class="form-control"
+                                        (change)="oncontractorDataChange($event)"
+                                        pattern=".*\S.*"
+                                        />
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          name="pancard{{ i }}"
+                                          [(ngModel)]="item.pancard"
+                                          #pancard="ngModel"
+                                          style="width: 250px"
+                                          class="form-control"
+                                          (change)="oncontractorDataChange($event)"
+                                          pattern=".*\S.*"
+                                          />
+                                        </td>
+                                        <td>
+                                          <input
+                                            type="text"
+                                            name="gstNumber{{ i }}"
+                                            [(ngModel)]="item.gstNumber"
+                                            #gstNumber="ngModel"
+                                            style="width: 250px"
+                                            class="form-control"
+                                            (change)="oncontractorDataChange($event)"
+                                            pattern=".*\S.*"
+                                            />
+                                          </td>
+                                          <td>
+                                            <input
+                                              type="text"
+                                              name="registrationNo{{ i }}"
+                                              [(ngModel)]="item.registrationNo"
+                                              #registrationNo="ngModel"
+                                              style="width: 250px"
+                                              class="form-control"
+                                              (change)="oncontractorDataChange($event)"
+                                              pattern=".*\S.*"
+                                              />
+                                            </td>
+                                            <td>
+                                              <textarea
+                                                name="contractorAddress{{ i }}"
+                                                [(ngModel)]="item.contractorAddress"
+                                                #contractorAddress="ngModel"
+                                                style="width: 250px"
+                                                class="form-control"
+                                                (change)="oncontractorDataChange($event)"
+                                                pattern=".*\S.*"
+                                              ></textarea>
+                                            </td>
+                                            <td>
+                                              <textarea
+                                                name="aboutContractor{{ i }}"
+                                                [(ngModel)]="item.aboutContractor"
+                                                #aboutContractor="ngModel"
+                                                style="width: 250px"
+                                                class="form-control"
+                                                (change)="oncontractorDataChange($event)"
+                                                pattern=".*\S.*"
+                                              ></textarea>
+                                            </td>
+                                          </tr>
+                                        }
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                  <div class="row mt-3">
+                                    <div class="col">
+                                      <button type="button" class="btn btn-success btn-xs" (click)="addRow()">Add Row</button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          }
+
+                          <simple-notifications
+                            [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                          ></simple-notifications>

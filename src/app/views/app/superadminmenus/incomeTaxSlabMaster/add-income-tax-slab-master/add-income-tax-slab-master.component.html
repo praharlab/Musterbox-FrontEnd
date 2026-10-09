@@ -1,0 +1,106 @@
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Income Tax Slab Master</h5>
+
+    @if (permissioncreate.length!=0) {
+      <form #addform="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #assessmentYear="ngModel"
+                name="assessmentYear"
+                required
+                >
+                @for (fy of fyarray; track fy) {
+                  <ng-option
+                    [value]="fy"
+                    >
+                    {{ fy }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Assessment Year *</span>
+              @if (!assessmentYear.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Assessment Year is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #gender="ngModel"
+                name="gender"
+                required
+                >
+                @for (gender of genderArray; track gender) {
+                  <ng-option
+                    [value]="gender"
+                    >
+                    {{ gender }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Gender *</span>
+              @if (!gender.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Gender is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #regime="ngModel"
+                name="regime"
+                required
+                >
+                @for (regime of regimeArray; track regime) {
+                  <ng-option
+                    [value]="regime"
+                    >
+                    {{ regime}}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Regime *</span>
+              @if (!regime.valid && addform.submitted) {
+                <div class="invalid-tooltip">
+                  Regime is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <br />
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+          <button
+            class="btn btn-danger btn-shadow mt-4"
+            [routerLink]="adminRoot + '/superadminmenus/list_incomeTaxSlabMaster'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+<simple-notifications
+  [options]="{ position: ['top', 'center'], maxStack: 1 }"
+></simple-notifications>

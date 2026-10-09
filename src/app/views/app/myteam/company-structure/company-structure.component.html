@@ -1,0 +1,12 @@
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Structure"></app-heading>
+    <app-breadcrumb title="Structure"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+@if (items) {
+  <div>
+    <organization-chart [datasource]="items"></organization-chart>
+  </div>
+}

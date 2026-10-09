@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 104" width="360" height="104" role="img" aria-label="HR &amp; Payroll">
+  <defs>
+    <linearGradient id="bdTile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="bdSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- mark -->
+  <g transform="translate(0 4)">
+    <rect width="96" height="96" rx="22" fill="url(#bdTile)"/>
+    <rect width="96" height="48" rx="22" fill="url(#bdSheen)"/>
+    <g fill="#ffffff">
+      <rect x="24" y="54" width="10" height="20" rx="5" opacity=".55"/>
+      <rect x="40" y="45" width="10" height="29" rx="5" opacity=".78"/>
+      <rect x="56" y="32" width="10" height="42" rx="5"/>
+    </g>
+    <circle cx="61" cy="22" r="7.2" fill="#5eead4"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="118" y="64" font-family="'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif"
+        font-size="40" font-weight="700" letter-spacing="-0.6" fill="#0f172a">HR</text>
+  <text x="182" y="64" font-family="'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif"
+        font-size="40" font-weight="400" letter-spacing="-0.6" fill="#0f766e">Payroll</text>
+  <rect x="118" y="76" width="64" height="4" rx="2" fill="#0d9488"/>
+</svg>

@@ -1,0 +1,131 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Subscription For Company</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              (change)="selectproduct($event)"
+              ngModel
+              #productm="ngModel"
+              name="productm"
+              required
+              >
+              @for (product of product; track product) {
+                <ng-option [value]="product.productMasterID">
+                  {{ product.productName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Product *</span>
+            @if (!productm.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Product is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="date"
+              required
+              ngModel
+              #startDate="ngModel"
+              name="startDate"
+              />
+              <span>Start Date *</span>
+              @if (!startDate.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Start Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="date"
+                required
+                ngModel
+                #endDate="ngModel"
+                name="endDate"
+                />
+                <span>End Date *</span>
+                @if (!endDate.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    End Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  required
+                  ngModel
+                  #totalUser="ngModel"
+                  name="totalUser"
+                  />
+                  <span>Total user *</span>
+                  @if (!totalUser.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Total User is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="text"
+                    required
+                    ngModel
+                    #totalTracking="ngModel"
+                    name="totalTracking"
+                    />
+                    <span>Total tracking user *</span>
+                    @if (!totalTracking.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Product Code is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button
+                class="btn btn-danger"
+        [routerLink]="
+          adminRoot + '/superadminmenus/company_subscription'
+        "
+                style="margin-left: 2%"
+                >
+                Cancel
+              </button>
+            </form>
+            <br />
+            <p style="color: red">
+              Note: By adding new Subscription plan, all the existing Roles and Permission of all the
+              existing users will be deleted
+            </p>
+          </div>
+        </div>
+
+        <simple-notifications
+          [options]="{ position: ['top', 'center'], maxStack: 1 }"
+        ></simple-notifications>

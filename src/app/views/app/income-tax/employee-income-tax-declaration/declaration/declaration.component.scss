@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  .dropdown-menu {
+    min-width: fit-content !important;
+    font-size: 0.8rem;
+    background: white;
+    border-color: rgba(58, 58, 58, 0.15);
+    border-radius: 0.75rem !important;
+  }
+}

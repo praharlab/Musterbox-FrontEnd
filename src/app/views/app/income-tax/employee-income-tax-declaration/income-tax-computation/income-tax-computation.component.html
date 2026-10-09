@@ -1,0 +1,337 @@
+<div class="d-flex flex-column mb-4">
+  <h3>{{data.sectionName}}</h3>
+  <p class="m-0">{{data.sectionInfo}}</p>
+</div>
+
+
+<div class="d-flex flex-row justify-content-start align-items-center mb-4 font-weight-bold row">
+  @if (taxdataloader) {
+    <div style="color: var(--m-primary); left: 50%;" class="la-ball-spin-clockwise">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  }
+  <div class="mr-4 my-0 px-4 py-2 col-md-3">
+    <p class="my-1" style="font-size: 11px;">{{'NET TAXABLE INCOME' | uppercase}}</p>
+    <p class="my-1" style="font-size: 15px;">INR &nbsp;{{ taxableAmount }}</p>
+  </div>
+  <div class="mr-4 my-0 px-4 py-2 col-md-3">
+    <p class="my-1" style="font-size: 11px;">{{'GROSS INCOME TAX' | uppercase}}</p>
+    <p class="my-1" style="font-size: 15px;">INR &nbsp;{{ grossIncomeTaxAmount }}</p>
+  </div>
+  <div class="mr-4 my-0 px-4 py-2 col-md-3">
+    <p class="my-1" style="font-size: 11px;">{{'TOTAL SURCHARGE & CESS' | uppercase}}</p>
+    <p class="my-1" style="font-size: 15px;">INR &nbsp;{{ cess }}</p>
+  </div>
+  <div class="mr-4 my-0 px-4 py-2 col-md-3">
+    <p class="my-1" style="font-size: 11px;">{{'NET INCOME TAX PAYABLE' | uppercase}}</p>
+    <p class="my-1" style="font-size: 15px;">INR &nbsp;{{ netIncomeTaxPayable }}</p>
+  </div>
+  <div class="mr-4 my-0 px-4 py-2 col-md-3">
+    <p class="my-1" style="font-size: 11px;">{{'TAX PAID TILL NOW' | uppercase}}</p>
+    <p class="my-1" style="font-size: 15px;">INR &nbsp;{{ paidAmount }}</p>
+  </div>
+  <div class="mr-4 my-0 px-4 py-2 col-md-3">
+    <p class="my-1" style="font-size: 11px;">{{'REMAINING TAX TO BE PAID' | uppercase}}</p>
+    <p class="my-1" style="font-size: 15px;">INR &nbsp;{{ remainingAmount }}</p>
+  </div>
+</div>
+
+@if (salaryData.length > 0) {
+  <div>
+    <h6><b> Gross Earnings from Employment</b></h6>
+    <div><span style=" position: relative;" class="circle"></span> Projected Salary</div>
+    <div class="table-style">
+      <table style="width: 100%">
+        <thead>
+          <th class="name-col name-col-shadow font-size" style=" border-radius: '10px 0px 0px 0px'">
+            SALARY BREAKUP
+          </th>
+          <th class="name-col name-col-shadow font-size">
+            Total
+          </th>
+          @for (item of salaryData[0].monthlyData; track item; let i = $index) {
+            <th class="name-col name-col-shadow font-size"
+              [style.border-radius]="i === (salaryData[0].monthlyData.length - 1) ? '0px 10px 0px 0px' : '0px 0px 0px 0px' ">
+              <div>{{ item.month }} @if (item.projectedSalary) {
+                <span style=" position: relative;"
+                class="circle"></span>
+              }</div>
+            </th>
+          }
+        </thead>
+        <tbody class=" text-black" style="font-weight: 500;">
+          @for (salary of salaryData; track salary) {
+            <tr class="student bottom-border bottom-border-radius">
+              <td class="name-col left-border font-size"><b>{{salary.payheadName}}</b></td>
+              <td class="name-col left-border font-size"><b>{{salary.total}}</b></td>
+              @for (data of salary.monthlyData; track data) {
+                <td class="name-col left-border font-size">
+                  <b>{{data.amount}}</b>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="margin: 13px;font-size: 15px;"> <b>Less : Deductions</b></div>
+      <table style="width: 100%">
+        <tr class="bottom-border">
+          <td class="left-border" style="text-align: left;"><b>Total Deductions</b> </td>
+          <td><button type="button" class="btn btn-primary btn-xs" (click)="lgModal.show();">View Details
+          </button> </td>
+          <td><b>{{totalDeduction}}</b> </td>
+        </tr>
+      </table>
+    </div>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Income From Salaries</b>
+    </div>
+    <table style="width: 100%">
+      <tr class="bottom-border">
+        <td class="left-border" style="text-align: left;"><b>Total Salary Received</b> </td>
+        <td><b>{{finalNetPayReceived}}</b> </td>
+      </tr>
+    </table>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Less: Section 16 Tax Exemptions</b>
+    </div>
+    <table style="width: 100%;margin-left: 13px;">
+      <tr class="bottom-border">
+        <td class="left-border" style="text-align: left;"> 16(ia) </td>
+        <td class="left-border" style="text-align: left;"> Standard Deduction </td>
+        <td>{{standardDeduction}} </td>
+      </tr>
+      <tr class="bottom-border">
+        <td colspan="2" class="left-border" style="text-align: left;"><b>Total</b> </td>
+        <td><b>{{standardDeduction}}</b> </td>
+      </tr>
+    </table>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Less : Declaration</b>
+    </div>
+    <table style="width: 100%">
+      <tr class="bottom-border">
+        <td class="left-border" style="text-align: left;"><b>Total Declared Amount</b> </td>
+        <td><button type="button" class="btn btn-primary btn-xs" (click)="lgModal1.show();">View Details
+        </button> </td>
+        <td><b>{{totalDeclaredAmount}}</b> </td>
+      </tr>
+    </table>
+    <div style="margin: 13px 0px 13px 0px;">
+      <table style="width: 100%">
+        <tr class="bottom-border">
+          <td class="left-border" style="text-align: left;"><b>Total Taxable Amount </b> </td>
+          <td><b>{{taxableAmount}}</b> </td>
+        </tr>
+        <tr class="bottom-border">
+          <td class="left-border" style="text-align: left;"> Net Taxable Income is </td>
+          <td>{{taxableAmount}} </td>
+        </tr>
+      </table>
+    </div>
+    <div style="margin: 13px 2px 5px 0px;font-size: 15px;">
+      <b>Tax Calculation</b>
+    </div>
+    <div class="table-style">
+      <table style="width: 100%">
+        <thead>
+          <tr class="bottom-border">
+            <th style="text-align: left;border-radius: '10px 0px 0px 0px';font-size: 12px;"><b>TAXABLE INCOME
+            SLABS</b> </th>
+            <th style=" border-radius: '0px 10px 0px 0px';font-size: 12px;">TAX AMOUNT </th>
+          </tr>
+        </thead>
+        <tbody class=" text-black" style="font-weight: 500;">
+          @for (slab of slabs.amountWithRanges; track slab; let i = $index) {
+            <tr class="student bottom-border bottom-border-radius"
+              >
+              @if (i!=(slabs.amountWithRanges.length-1)) {
+                <td class="name-col left-border font-size">
+                {{slab.percentage}}% Tax on income between {{slab.fromAmount}} and {{slab.toAmount}}</td>
+              }
+              @if (i==(slabs.amountWithRanges.length-1)) {
+                <td class="name-col left-border font-size">
+                {{slab.percentage}}% Tax on income {{slab.fromAmount}} or above</td>
+              }
+              <td class="name-col left-border font-size">{{slab.amount}}</td>
+            </tr>
+          }
+          <tr class="student bottom-border bottom-border-radius">
+            <td class="name-col left-border font-size">
+              Tax Rebate-Section 87A When tax amount less than or equal to {{rebateUpto}} or additional relief
+              applicable
+            </td>
+            @if (rebate >0) {
+              <td class="name-col left-border font-size"> -{{rebate}}</td>
+            }
+            @if (rebate <=0) {
+              <td class="name-col left-border font-size"> 0</td>
+            }
+          </tr>
+          <tr class="student bottom-border bottom-border-radius">
+            <td class="name-col left-border font-size">
+              <b> Gross Income Tax </b>
+            </td>
+            <td class="name-col left-border font-size"><b>{{grossIncomeTaxAmount}}</b> </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Surcharge & Cess</b>
+    </div>
+    <div class="table-style">
+      <table style="width: 100%">
+        <tr class="bottom-border font-size">
+          <td class="left-border" style="text-align: left;">Health and Education Cess - 4% of Gross Income Tax and
+          Surcharge </td>
+          <td>{{cess}} </td>
+        </tr>
+        <tr class="bottom-border">
+          <td class="left-border" style="text-align: left;"><b>Total Surcharge & Cess</b> </td>
+          <td><b>{{cess}}</b> </td>
+        </tr>
+      </table>
+    </div>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Net Income Tax Payable</b>
+    </div>
+    <table style="width: 100%">
+      <tr class="bottom-border">
+        <td class="left-border" style="text-align: left;">Tax Calculation + Surcharge & Cess </td>
+        <td>{{netIncomeTaxPayable}} </td>
+      </tr>
+      <tr class="bottom-border">
+        <td class="left-border" style="text-align: left;"><b>Net Tax Amount is</b> </td>
+        <td><b>{{netIncomeTaxPayable}}</b> </td>
+      </tr>
+    </table>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Cumulative Tax Deductions Details</b>
+    </div>
+    <table style="width: 100%">
+      <tr class="bottom-border">
+        <td class="left-border" style="text-align: left;">Remaining Tax To Be Paid </td>
+        <td>{{remainingAmount}} </td>
+      </tr>
+    </table>
+    <div style="margin: 13px;font-size: 15px;">
+      <b>Month on Month Tax Deductions Details</b>
+    </div>
+    <div class="table-style">
+      <table style="width: 100%">
+        <thead>
+          <th class="name-col name-col-shadow" style=" border-radius: '10px 0px 0px 0px'">
+            MONTH
+          </th>
+          @for (item of myTaxData; track item; let i = $index) {
+            <th class="name-col name-col-shadow"
+              [style.border-radius]="i === (myTaxData.length - 1) ? '0px 10px 0px 0px' : '0px 0px 0px 0px' ">
+              <div> {{ item.month }} @if (item.projectedSalary) {
+                <span style=" position: relative;"
+                class="circle"></span>
+              }</div>
+            </th>
+          }
+        </thead>
+        <tbody class=" text-black" style="font-weight: 600;">
+          <tr class="student bottom-border bottom-border-radius">
+            <td class="name-col left-border">Monthly Total Tax</td>
+            @for (item of myTaxData; track item) {
+              <td class="name-col left-border"><b>{{item.amount}}</b></td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div><span style=" position: relative;" class="circle"></span> Projected Income Tax</div>
+  </div>
+}
+
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Deductions</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (deductionData.length > 0) {
+          <div>
+            <table style="width: 100%">
+              <thead>
+                <th class="name-col name-col-shadow font-size" style=" border-radius: '10px 0px 0px 0px'">
+                  Month
+                </th>
+                <th class="name-col name-col-shadow font-size" style=" border-radius: '0px 10px 0px 0px'">
+                  Deduction
+                </th>
+              </thead>
+              <tbody class=" text-black" style="font-weight: 500;">
+                @for (deduction of deductionData; track deduction) {
+                  <tr class="student bottom-border bottom-border-radius"
+                    >
+                    <td class="name-col left-border font-size"><b>{{deduction.month}}</b></td>
+                    <td class="name-col left-border font-size"><b>{{deduction.amount}}</b></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Declarations</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (declarationData.length > 0) {
+          <div>
+            <table style="width: 100%">
+              <thead>
+                <th class="name-col name-col-shadow font-size" style=" border-radius: '10px 0px 0px 0px'">
+                  Declaration
+                </th>
+                <th class="name-col name-col-shadow font-size" style=" border-radius: '0px 10px 0px 0px'">
+                  Deduction Amount
+                </th>
+              </thead>
+              <tbody class="text-black" style="font-weight: 600;">
+                @for (item of declarationData; track item) {
+                  <tr class="student bottom-border bottom-border-radius">
+                    <td class="name-col left-border">{{item.categoryName}}</td>
+                    <td class="name-col left-border"><b>{{item.actualApprovedAmount | number: '1.0-0'}}</b>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,86 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Site</h5>
+
+    <form #addsite="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (companyData.length > 0) {
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel"
+                name="companyMasterID" required [(ngModel)]="filterData.companyMasterID"
+                (change)="selectCompany($event)">
+                @for (company of companyData; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addsite.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #branch="ngModel" name="branch" required
+              [(ngModel)]="filterData.branchMasterID">
+              @for (branch of allBranches; track branch) {
+                <ng-option [value]="branch.branchMasterID">
+                  {{ branch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Branch *</span>
+            @if (!branch.valid && addsite.submitted) {
+              <div class="invalid-tooltip">
+                Branch is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #siteCode="ngModel" name="siteCode" />
+            <span>Site Code *</span>
+            @if (!siteCode.valid && addsite.submitted) {
+              <div class="invalid-tooltip">
+                Site Code is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #siteName="ngModel" name="siteName" />
+            <span>Site Name *</span>
+            @if (!siteName.valid && addsite.submitted) {
+              <div class="invalid-tooltip">
+                Site Name is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" type="submit">
+          Submit
+        </button>
+        <button class="btn btn-danger btn-shadow ml-2" [routerLink]="adminRoot + '/masters/site'">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,253 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name=" Team Daily Reporting"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)"
+  [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage"
+></app-list-page-header>
+
+<br />
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                [items]="copersonlist"
+                [multiple]="true"
+                bindLabel="name"
+                groupBy="selectedAllGroup"
+                [selectableGroup]="true"
+                [selectableGroupAsModel]="false"
+                bindValue="userMasterID"
+                [closeOnSelect]="false"
+                ngModel
+                #user="ngModel"
+                name="user"
+                [(ngModel)]="filterData.userMasterID"
+                required
+                >
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input
+                    id="item-{{ index }}"
+                    type="checkbox"
+                    [ngModel]="item$.selected"
+                    [ngModelOptions]="{ standalone: true }"
+                    />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select User *</span>
+                @if (!user.valid && addcomp2.submitted) {
+                  <div class="invalid-tooltip">
+                    User is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="date"
+                  ngModel
+                  #startdate="ngModel"
+                  name="startdate"
+                  required
+                  [(ngModel)]="filterData.startdate"
+                  />
+                  <span>From Date *</span>
+                  @if (!startdate.valid && addcomp2.submitted) {
+                    <div class="invalid-tooltip">
+                      From Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="date"
+                    ngModel
+                    #enddate="ngModel"
+                    name="enddate"
+                    required
+                    [(ngModel)]="filterData.enddate"
+                    />
+                    <span>To Date *</span>
+                    @if (!enddate.valid && addcomp2.submitted) {
+                      <div class="invalid-tooltip">
+                        To Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <button class="btn btn-primary form-group" type="submit">
+                    {{ 'Submit' | translate }}
+                  </button>
+                  &nbsp;&nbsp;
+                  <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+                  <span> &nbsp;&nbsp; </span>
+                  @if (rows.length > 0) {
+                    <button
+                      class="btn btn-success form-group"
+                      type="button"
+                      (click)="export()"
+                      >
+                      Export
+                    </button>
+                  }
+                </div>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+      <br />
+      @if (rows) {
+        <div class="row">
+          <div class="col-12 mb-4 data-table-rows">
+            <ngx-datatable
+              [scrollbarH]="true"
+              [rowHeight]="50"
+              [rows]="rows"
+              [footerHeight]="100"
+              [columnMode]="'force'"
+              [limit]="filterData.limit"
+              [externalPaging]="true"
+              [count]="page.totalCount"
+              [offset]="page.offset"
+              (page)="onChange($event)"
+              (activate)="onActivate($event)"
+              >
+              <ngx-datatable-column name="Employee Code" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.userMaster.employeeJoiningDetails[0].employeeCode }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="User Name" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="cursor" style="cursor: pointer">
+                    {{ row.userMaster.displayName }}
+                  </span>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="Branch" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ (row.userMaster.employeeBranches && row.userMaster.employeeBranches.length > 0) ? row.userMaster.employeeBranches[0].branchMaster ?
+                  row.userMaster.employeeBranches[0].branchMaster.branchName : '' : ''}}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Department" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ (row.userMaster.employeeDepartments && row.userMaster.employeeDepartments.length > 0) ? row.userMaster.employeeDepartments[0].department ?
+                  row.userMaster.employeeDepartments[0].department.departmentName : '' : ''}}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Designation" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{(row.userMaster.employeeDesignations && row.userMaster.employeeDesignations.length > 0) ? row.userMaster.employeeDesignations[0].designation ?
+                  row.userMaster.employeeDesignations[0].designation.designationName : '' : ''}}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Task Date" prop="taskDate" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row.taskDate | date:'dd-MM-yyyy'}}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Task Description" prop="taskDesc" [flexGrow]="1.2"
+              [width]="180"></ngx-datatable-column>
+              <ngx-datatable-column name="Attachment" [flexGrow]="1.2" [width]="250">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.attachments && row.attachments.length > 0) {
+                    @for (attachment of row.attachments; track attachment) {
+                      <div class="attachments">
+                        <div style="position: relative; display: inline-block;" (click)="view(attachment)">
+                          <span class="attachment">
+                            <i class="simple-icon-paper-clip"></i>&nbsp;
+                            {{ attachment.length > 18 ? (attachment.substring(0, 16) + '...' +
+                            attachment.split('.').pop()) : attachment }}
+                          </span>
+                        </div>
+                      </div>
+                    }
+                  }
+                  @if (row.attachment) {
+                    <a type="button" class="btn btn-primary" href="{{ apiURL }}uploads/dailyTask/{{ row.attachment }}"
+                      target="_blank">
+                      {{ 'View Attachment' | translate }}
+                    </a>
+                  }
+                  {{ ' ' }}
+                </ng-template>
+                <!-- <ng-template let-row="row" ngx-datatable-cell-template>
+                <a type="button" class="btn btn-primary" href="{{ apiURL }}uploads/dailyTask/{{ row.attachment }}"
+                  *ngIf="row.attachment" target="_blank">
+                  {{ 'View Attachment' | translate }}
+                </a>
+                {{ ' ' }}
+              </ng-template> -->
+            </ngx-datatable-column>
+            @if (true) {
+              <ngx-datatable-footer>
+                <ng-template
+                  ngx-datatable-footer-template
+                  let-rowCount="rowCount"
+                  let-pageSize="pageSize"
+                  let-selectedCount="selectedCount"
+                  let-curPage="curPage"
+                  let-offset="offset"
+                  let-limit="limit"
+                  >
+                  <div class="w-100 d-flex justify-content-center">
+                    <pagination
+                      [totalItems]="rowCount"
+                      [boundaryLinks]="true"
+                      [customFirstTemplate]="firstTemplate"
+                      [customLastTemplate]="lastTemplate"
+                      [itemsPerPage]="filterData.limit"
+                      [maxSize]="5"
+                      (pageChanged)="table.onFooterPage($event)"
+                      [customNextTemplate]="nextTemplate"
+                      [customPreviousTemplate]="prevTemplate"
+                    ></pagination>
+                  </div>
+                </ng-template>
+              </ngx-datatable-footer>
+            }
+          </ngx-datatable>
+        </div>
+      </div>
+    }
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+    <simple-notifications
+      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+    ></simple-notifications>

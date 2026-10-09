@@ -1,0 +1,341 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Salary Policy</h5>
+
+    <form #addsalarypolicy="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #salaryPolicyName="ngModel"
+              name="salaryPolicyName" />
+              <span>Salary Policy Name *</span>
+              @if (!salaryPolicyName.valid && addsalarypolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Salary Policy Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          @if (childcompany == 'false') {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company" required
+                  [(ngModel)]="salarypolicydata.companyMasterID">
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && addsalarypolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #salaryCycleDate="ngModel" name="salaryCycleDate"
+                [(ngModel)]="salarypolicydata.salaryCycleDate" />
+                <span>Salary Calculation Date *</span>
+                @if (!salaryCycleDate.valid && addsalarypolicy.submitted) {
+                  <div class="invalid-tooltip">
+                    Salary Calculation Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #salaryCycleConsider="ngModel"
+                  name="salaryCycleConsider" [(ngModel)]="salarypolicydata.salaryCycleConsider">
+                  <ng-option value="S">
+                    Start Date
+                  </ng-option>
+                  <ng-option value="E">
+                    End Date
+                  </ng-option>
+                </ng-select>
+                <span>Consider Salary Calculation Month </span>
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <span><b>Salary Calculation Based On *</b></span>
+              &nbsp;&nbsp;
+              <input type="radio" name="monthwise" value="monthwise" (click)="showdays($event)" ngModel #monthwise="ngModel"
+                style="margin-right: 1%" [(ngModel)]="salarypolicydata.salarycalculationBasedon" required />
+                <label for="true" style="margin-right: 1%">Month Day Wise</label>
+                <input type="radio" name="monthwise" value="daywise" (click)="showdays($event)" ngModel #monthwise="ngModel"
+                  style="margin-right: 1%" [(ngModel)]="salarypolicydata.salarycalculationBasedon" required />
+                  <label for="false" style="margin-right: 1%">Fix Day Wise</label>
+
+                  <input type="radio" name="monthwise" value="hourwise" (click)="showdays($event)" ngModel #monthwise="ngModel"
+                    style="margin-right: 1%" [(ngModel)]="salarypolicydata.salarycalculationBasedon" required />
+                    <label for="false">Hour Wise</label>
+
+                    @if (!monthwise.valid && addsalarypolicy.submitted) {
+                      <div class="invalid-tooltip">
+                        Salary Calculation Based On is required!
+                      </div>
+                    }
+                  </div>
+
+
+                  @if (days) {
+                    <div class="col-md-6">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" required ngModel #salaryCalculationDays="ngModel"
+                          name="salaryCalculationDays" [(ngModel)]="salaryCalculationbydays" />
+                          <span>Fix Days *</span>
+                          @if (!salaryCalculationDays.valid && addsalarypolicy.submitted) {
+                            <div class="invalid-tooltip">
+                              Fix Days is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+
+                    @if (hours) {
+                      <div class="col-md-12">
+                        <div class="col-md-6">
+                          <span><b>Monthly Hours *</b></span>
+                          &nbsp;&nbsp;
+                          <input type="radio" name="hourwise" value="monthhours" (click)="showhours($event)" ngModel
+                            #hourwise="ngModel" style="margin-right: 1%" [(ngModel)]="monthlyhours" required />
+                            <label for="true" style="margin-right: 1%">By Days In Months</label>
+                            <input type="radio" name="hourwise" value="fixhours" (click)="showhours($event)" ngModel #hourwise="ngModel"
+                              style="margin-right: 1%" [(ngModel)]="monthlyhours" required />
+                              <label for="false">By Fix Hours</label>
+                              @if (!hourwise.valid && addsalarypolicy.submitted) {
+                                <div class="invalid-tooltip">
+                                  Monthly is required!
+                                </div>
+                              }
+                            </div>
+                            @if (fixhours) {
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="number" required ngModel #salarycalculatedonhours="ngModel"
+                                    name="salarycalculatedonhours" [(ngModel)]="monthlyFixhours" />
+                                    <span>Monthly Fix Hours *</span>
+                                    @if (!salarycalculatedonhours.valid && addsalarypolicy.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Fix Hours is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                              }
+                              @if (monthhours) {
+                                <div class="col-md-12">
+                                  <span><b>Daily Hours *</b></span>
+                                  &nbsp;&nbsp;
+                                  <input type="radio" name="monthlyhours" value="shifthours" (click)="showmonthlyhours($event)" ngModel
+                                    #monthlyhours="ngModel" style="margin-right: 1%" [(ngModel)]="dailyhours" required />
+                                    <label for="true" style="margin-right: 1%">By Shift Hours</label>
+                                    <input type="radio" name="monthlyhours" value="dailyfixhours" (click)="showmonthlyhours($event)" ngModel
+                                      #monthlyhours="ngModel" style="margin-right: 1%" [(ngModel)]="dailyhours" required />
+                                      <label for="false">By Fix Hours</label>
+                                      @if (!monthlyhours.valid && addsalarypolicy.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Daily Hours is required!
+                                        </div>
+                                      }
+                                      @if (dailyfixhours) {
+                                        <div class="col-md-6">
+                                          <label class="form-group has-float-label">
+                                            <input class="form-control" type="number" required ngModel #dailyhours="ngModel" name="dailyhours"
+                                              [(ngModel)]="dailyFixhours" />
+                                              <span>Per Day Fix Hours *</span>
+                                              @if (!dailyhours.valid && addsalarypolicy.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  Per Day Fix Hours is required!
+                                                </div>
+                                              }
+                                            </label>
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    <div class="col-md-12">
+                                      <span><b>Holiday Hours *</b></span>
+                                      &nbsp;&nbsp;
+                                      <input type="radio" name="holidayhours" value="Y" required ngModel #holidayhours="ngModel"
+                                        style="margin-right: 1%" [(ngModel)]="holidayHours" />
+                                        <label for="true" style="margin-right: 1%">Paid</label>
+                                        <input type="radio" name="holidayhours" value="N" required ngModel #holidayhours="ngModel"
+                                          style="margin-right: 1%" [(ngModel)]="holidayHours" />
+                                          <label for="false">Unpaid</label>
+                                          @if (!holidayhours.valid && addsalarypolicy.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Holiday Hours is required!
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="col-md-12">
+                                          <span><b>WeekOff Hours *</b></span>
+                                          &nbsp;&nbsp;
+                                          <input type="radio" name="weekoffhours" value="Y" required ngModel #weekoffhours="ngModel"
+                                            style="margin-right: 1%" [(ngModel)]="weekoffHours" />
+                                            <label for="true" style="margin-right: 1%">Paid</label>
+                                            <input type="radio" name="weekoffhours" value="N" required ngModel #weekoffhours="ngModel"
+                                              style="margin-right: 1%" [(ngModel)]="weekoffHours" />
+                                              <label for="false">Unpaid</label>
+                                              @if (!weekoffhours.valid && addsalarypolicy.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  WeekOff Hours is required!
+                                                </div>
+                                              }
+                                            </div>
+                                            <div class="col-md-12">
+                                              <span><b>Leave Hours *</b></span>
+                                              &nbsp;&nbsp;
+                                              <input type="radio" name="leavehours" value="Y" required ngModel #leavehours="ngModel"
+                                                style="margin-right: 1%" [(ngModel)]="leaveHours" />
+                                                <label for="true" style="margin-right: 1%">Paid</label>
+                                                <input type="radio" name="leavehours" value="N" required ngModel #leavehours="ngModel"
+                                                  style="margin-right: 1%" [(ngModel)]="leaveHours" />
+                                                  <label for="false">Unpaid</label>
+                                                  @if (!leavehours.valid && addsalarypolicy.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      Leave Hours is required!
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <div class="col-md-12">
+                                                  <span><b>Break Hours *</b></span>
+                                                  &nbsp;&nbsp;
+                                                  <input type="radio" name="breakhours" value="Y" required ngModel #breakhours="ngModel"
+                                                    style="margin-right: 1%" [(ngModel)]="breakHours" />
+                                                    <label for="true" style="margin-right: 1%">Paid</label>
+                                                    <input type="radio" name="breakhours" value="N" required ngModel #breakhours="ngModel"
+                                                      style="margin-right: 1%" [(ngModel)]="breakHours" />
+                                                      <label for="false">Unpaid</label>
+                                                      @if (!breakhours.valid && addsalarypolicy.submitted) {
+                                                        <div class="invalid-tooltip">
+                                                          Break Hours is required!
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                      <span><b>Overtime Added *</b></span>
+                                                      &nbsp;&nbsp;
+                                                      <input type="radio" name="overtime" value="daily" ngModel #overtime="ngModel" style="margin-right: 1%"
+                                                        [(ngModel)]="overtimeAdded" />
+                                                        <label for="true" style="margin-right: 1%">Daily</label>
+                                                        <input type="radio" name="overtime" value="monthly" required ngModel #overtime="ngModel"
+                                                          style="margin-right: 1%" [(ngModel)]="overtimeAdded" />
+                                                          <label for="false">Monthly</label>
+                                                          @if (!overtime.valid && addsalarypolicy.submitted) {
+                                                            <div class="invalid-tooltip">
+                                                              Overtime Added is required!
+                                                            </div>
+                                                          }
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                          <span><b> Consider Type Time *</b></span>
+                                                          &nbsp;&nbsp;
+                                                          <input type="radio" name="considerTimeType" value="actual" ngModel #considerTimeType="ngModel"
+                                                            (change)="callOvertimeType($event)" [(ngModel)]="selectedconsidertimeType" style="margin-right: 1%"
+                                                            required />
+                                                            <label for="true" style="margin-right: 1%"> Actual </label>
+                                                            <input type="radio" name="considerTimeType" value="slotwise" ngModel #considerTimeType="ngModel"
+                                                              (change)="callOvertimeType($event)" [(ngModel)]="selectedconsidertimeType" style="margin-right: 1%"
+                                                              required />
+                                                              <label for="false" style="margin-right: 1%"> Slot Wise</label>
+                                                              <input type="radio" name="considerTimeType" value="roundoff" ngModel #considerTimeType="ngModel"
+                                                                (change)="callOvertimeType($event)" [(ngModel)]="selectedconsidertimeType" style="margin-right: 1%"
+                                                                required />
+                                                                <label for="false1">Round Off</label>
+                                                                @if (!considerTimeType.valid && addsalarypolicy.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    Consider Type Time is required!
+                                                                  </div>
+                                                                }
+                                                              </div>
+                                                              <div class="row">
+                                                                @if ( selectedconsidertimeType =='slotwise') {
+                                                                  <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px"
+                                                                    >
+                                                                    <span> Slot * : </span>
+                                                                  </div>
+                                                                }
+                                                                @if ( selectedconsidertimeType=='slotwise') {
+                                                                  <div class="col-md-2">
+                                                                    <label class="form-group has-float-label">
+                                                                      <input class="form-control" type="number" min="1" ngModel #typeValue="ngModel" name="typeValue"
+                                                                        [(ngModel)]="salarypolicydata.considerTimeValue" required />
+                                                                      </label>
+                                                                      @if (!typeValue.valid && addsalarypolicy.submitted) {
+                                                                        <div class="invalid-tooltip">
+                                                                          Slot Minutes is required!
+                                                                        </div>
+                                                                      }
+                                                                    </div>
+                                                                  }
+                                                                  @if ( selectedconsidertimeType=='slotwise') {
+                                                                    <div class="col-md-0" style="margin-top: 10px">
+                                                                      <span> Minutes </span>
+                                                                    </div>
+                                                                  }
+                                                                </div>
+                                                                <div class="row">
+                                                                  @if ( selectedconsidertimeType=='roundoff') {
+                                                                    <div class="col-md-0" style="padding-left: 1.5%; margin-top: 10px"
+                                                                      >
+                                                                      <span> RoundOff After * : </span>
+                                                                    </div>
+                                                                  }
+                                                                  @if ( selectedconsidertimeType=='roundoff') {
+                                                                    <div class="col-md-2">
+                                                                      <label class="form-group has-float-label">
+                                                                        <input class="form-control" type="number" min="1" ngModel #typeValue="ngModel" name="typeValue"
+                                                                          [(ngModel)]="salarypolicydata.considerTimeValue" required />
+                                                                        </label>
+                                                                        @if (!typeValue.valid && addsalarypolicy.submitted) {
+                                                                          <div class="invalid-tooltip">
+                                                                            RoundOff Minutes is required!
+                                                                          </div>
+                                                                        }
+                                                                      </div>
+                                                                    }
+                                                                    @if (selectedconsidertimeType=='roundoff') {
+                                                                      <div class="col-md-0" style="margin-top: 10px">
+                                                                        <span> Minutes </span>
+                                                                      </div>
+                                                                    }
+                                                                  </div>
+                                                                  @if (selectedconsidertimeType=='roundoff' ||selectedconsidertimeType=='slotwise') {
+                                                                    <div class="col-md-10">
+                                                                    </div>
+                                                                  }
+                                                                </div>
+                                                              }
+
+
+                                                            </div>
+
+
+
+
+                                                            <div class="col-md-12">
+                                                              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                                                              <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/masters/salary_policy'"
+                                                                style="margin-left: 2%">
+                                                                Cancel
+                                                              </button>
+                                                            </div>
+                                                          </form>
+                                                        </div>
+                                                      </div>
+
+                                                      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,55 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="mb-5">Edit Office Expense Category</h4>
+    <form #editForm="ngForm">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel required #company="ngModel" name="company"
+              [(ngModel)]="filterData.companyMasterID" disabled>
+              <!-- disabled> -->
+              @for (company of allCompany; track company) {
+                <ng-option [value]="$safeNavigationMigration(company?.companyMasterID)">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && editForm?.submitted) {
+              <div
+                class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" required ngModel #officeExpenseCategory="ngModel"
+              name="officeExpenseCategory" [(ngModel)]="filterData.officeExpenseCategory"/>
+              <span>Office Expense Category *</span>
+              @if (!officeExpenseCategory.valid && editForm?.submitted) {
+                <div
+                  class="invalid-tooltip">
+                  Office Expense Category is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4 d-flex gap-10">
+            <button class="btn btn-primary form-group ml-3" type="button" (click)="onSubmit()">
+              Submit
+            </button>
+            <button class="btn btn-danger form-group ml-2" type="button" (click)="cancel()">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>

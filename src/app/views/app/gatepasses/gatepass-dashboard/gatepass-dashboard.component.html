@@ -1,0 +1,159 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Gate Pass Dashboard"></app-heading>
+    <app-breadcrumb title="Gate Pass Dashboard"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<!-- First Card -->
+@if (defaultValue) {
+  <div class="card mb-5">
+    <div class="card-body">
+      <!-- <h5 class="card-title"> PUNCH IN & PUNCH OUT</h5> -->
+      <form #datefilter="ngForm" novalidate (ngSubmit)="onChange()">
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                [(ngModel)]="defaultValue.cName"
+                ngModel
+                #cid="ngModel"
+                name="cid"
+                (change)="selectcompany($event)"
+                required
+                >
+                @for (data of company; track data) {
+                  <ng-option [value]="data.companyMasterID">
+                    {{ data.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company*</span>
+              @if (!cid.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #bid="ngModel"
+                name="bid"
+                [(ngModel)]="bName"
+                (change)="selectbranch($event)"
+                >
+                @for (item of allbranch; track item) {
+                  <ng-option [value]="item.branchMasterID">
+                    {{ item.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                placeholder="today"
+                type="date"
+                [(ngModel)]="defaultValue.tDate"
+                ngModel
+                #startdate="ngModel"
+                name="startdate"
+                required
+                />
+                <span>Date *</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-primary form-group" type="submit">
+                {{ 'forms.submit' | translate }}
+              </button>
+              &nbsp;&nbsp;
+            </div>
+            <div class="col-md-3" style="text-align: right">
+              <!-- <span class="btn btn-info mb-1" (click)="downloadFile()">Export</span> -->
+            </div>
+          </div>
+        </form>
+        @for (item of rows; track item) {
+          <div class="row">
+            <div class="col-md-3" cursor="none">
+              <div class="icon-row-item" style="width: inherit">
+                <div class="card" style="margin-bottom: 27px; cursor: default">
+                  <div class="card-body text-center iconsminds-id-card iconsminds icon">
+                    <p class="card-text font-weight-semibold mb-0">Total Gate Pass</p>
+                    <p class="lead text-center">{{ item.total_gatePass }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3" cursor="none">
+              <div class="icon-row-item" style="width: inherit">
+                <div class="card" style="margin-bottom: 27px; cursor: default">
+                  <div class="card-body text-center">
+                    <img
+                      class="iconsminds icon"
+                      style="margin: 10px 0 20px 0"
+                      src="../../../../assets/img/cards/account.png"
+                      alt="New Gate Pass"
+                      width="50"
+                      height="50"
+                      />
+                      <p class="card-text font-weight-semibold mb-0">New Gate Pass</p>
+                      <p class="lead text-center">{{ item.total_checkout }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3" cursor="none">
+                <div class="icon-row-item" style="width: inherit">
+                  <div class="card" style="margin-bottom: 27px; cursor: default">
+                    <div class="card-body text-center">
+                      <img
+                        class="iconsminds icon"
+                        style="margin: 10px 0 20px 0"
+                        src="../../../../assets/img/cards/log-in.png"
+                        alt="Checked-In"
+                        width="50"
+                        height="50"
+                        />
+                        <p class="card-text font-weight-semibold mb-0">Checked-In</p>
+                        <p class="lead text-center">{{ item.total_checkin }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3" cursor="none">
+                  <div class="icon-row-item" style="width: inherit">
+                    <div class="card" style="margin-bottom: 27px; cursor: default">
+                      <div class="card-body text-center">
+                        <img
+                          class="iconsminds icon"
+                          style="margin: 10px 0 20px 0"
+                          src="../../../../assets/img/cards/log-out.png"
+                          alt=" Checked-Out"
+                          width="50"
+                          height="50"
+                          />
+                          <p class="card-text font-weight-semibold mb-0">Checked-Out</p>
+                          <p class="lead text-center">{{ item.total_notCheckin }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }

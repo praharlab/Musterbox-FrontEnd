@@ -1,0 +1,85 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <app-heading title="My Attendance Summary"></app-heading>
+    <app-breadcrumb title="My Attendance Summary"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    @if (permissionview.length != 0) {
+      <form
+        #datefilter="ngForm"
+        novalidate
+        (ngSubmit)="onSubmit()"
+        >
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="month"
+                required
+                ngModel
+                #YearMM="ngModel"
+                name="YearMM"
+                required
+                />
+              <span>YearMonth *</span>
+              <!-- <div *ngIf="!ctc.valid && addattendance.submitted" class="invalid-tooltip">CTC is required!</div> -->
+              @if (!YearMM.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Year Month is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+@if (rows.length > 0) {
+  <div class="card mb-4" style="margin-top: 4%">
+    <div class="card-body">
+      <div>
+        <b style="font-size: 15px">Month : {{ rows[0].month }}</b>
+      </div>
+      <br />
+      <table border="1">
+        @for (item of rows[0].user_leave; track item) {
+          <tr>
+            <td style="background-color: var(--m-primary-hover); text-align: center; color: white; padding: 10px">
+              <b>{{ item.leave_name }}</b>
+            </td>
+            <td style="text-align: center; padding: 10px">
+              <b>{{ item.leave_dec }}</b>
+            </td>
+            <td style="text-align: center; padding: 10px">
+              <b>{{ item.values }}</b>
+            </td>
+          </tr>
+        }
+      </table>
+      @if (rows[0].user_leave == '') {
+        <div>
+          <div style="text-align: center">
+            <h5>Employee Joining Detail's Not Found !</h5>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

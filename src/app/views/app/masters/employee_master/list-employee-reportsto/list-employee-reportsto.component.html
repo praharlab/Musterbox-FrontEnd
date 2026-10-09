@@ -1,0 +1,85 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h5 class="mb-4">Reports To</h5>
+      </div>
+      <div class="col-md-6" style="text-align: right;">
+        <span class="button" class="btn btn-info" (click)="addvalue()" style="cursor: pointer;">ADD Reports to</span>
+      </div>
+    </div>
+    <br />
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <!-- <div class="col-md-6" *ngIf="selectedCityIds1.length > 0">
+      <ng-select [items]="ownerList" [multiple]="true" bindLabel="name" bindValue="userMasterID"
+        [closeOnSelect]="false" placeholder="Select Reports To" [(ngModel)]="selectedCityIds1" ngModel
+      #reportToID="ngModel" name="reportToID"></ng-select>
+    </div> -->
+
+    <!-- <div class="col-md-6" *ngIf="selectedCityIds1.length == 0">
+    <ng-select [items]="ownerList" [multiple]="true" bindLabel="name" bindValue="userMasterID"
+      [closeOnSelect]="false" placeholder="Select Reports To" [(ngModel)]="selectedCityIds1" ngModel
+    #reportToID="ngModel" name="reportToID"></ng-select>
+  </div> -->
+
+  @for (value of values; track value; let i = $index) {
+    <div class="col-md-12">
+      @if (!value.deleted) {
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcompany($event,i)" ngModel #company="ngModel"
+                name="company{{i}}" [(ngModel)]="value.companyMasterID" required>
+                @for (company of value.allCompany; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #employee="ngModel" name="employee{{i}}"
+                [(ngModel)]="value.userMasterID" required>
+                @for (employee of value.allUsers; track employee) {
+                  <ng-option [value]="employee.userMasterID">
+                    {{ employee.displayName }}
+                    @if (employee.employeeJoiningDetails?.length > 0 && employee.employeeJoiningDetails[0].employeeCode) {
+                      <span
+                        >
+                        ( {{ employee.employeeJoiningDetails[0].employeeCode }} )
+                      </span>
+                    }
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Employee *</span>
+              @if (!employee.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Employee is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-1">
+            <span (click)="removevalue(i)" style="margin-left: 3%; margin-top: 3%;cursor: pointer;">
+              Remove
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+  <br />
+  <br />
+  <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+</form>
+</div>
+</div>

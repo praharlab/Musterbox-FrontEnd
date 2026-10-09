@@ -1,0 +1,23 @@
+<div class="card mb-4">
+  <div class="card-body card-height">
+    @if (showloader == 'true') {
+      <div
+        style="color: #17a2b8; left: 50%"
+        class="la-ball-spin-clockwise"
+        >
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    <h5 class="card-title">Sentiments Graph</h5>
+    <div class="chart-container1">
+      <div [class]="class"><canvas #chart></canvas></div>
+    </div>
+  </div>
+</div>

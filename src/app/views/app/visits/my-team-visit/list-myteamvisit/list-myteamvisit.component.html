@@ -1,0 +1,610 @@
+<!-- <p>list-myteamvisit works!</p> -->
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Team Visit" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()"
+  [showadd]="permissioncreate"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row" *ngIf="permissionview.length != 0">
+      <div class="col-md-12">
+        <label class="form-group has-float-label">
+          <ng-select class="form-group" [items]="tabledata" [multiple]="true" [closeOnSelect]="false"
+            placeholder="Select To Show Fields In Table" [(ngModel)]="selected"
+            (change)="changeshowfields()"></ng-select>
+          <span>Show Fields In Table</span>
+        </label>
+      </div>
+    </div>
+
+    <form #filterdate="ngForm" novalidate *ngIf="permissionview.length != 0">
+      <div class="row">
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #empid="ngModel" name="empid"
+              [(ngModel)]="filterData.id" (change)="onEmployeeChange($event)">
+              <ng-option *ngFor="let empLists of copersonlist; let i = index" [value]="empLists.userMasterID">
+                {{ empLists.employee.displayName }}
+              </ng-option>
+              <!-- <ng-option value="Tour">Tour</ng-option>
+            <ng-option value="Personal">Personal</ng-option> -->
+            </ng-select>
+            <span>Employee Name</span>
+            <!-- <div *ngIf="!empid.valid && filterdate.submitted" class="invalid-tooltip">
+              Employee Name is required!
+            </div> -->
+          </label>
+        </div>
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #startdate="ngModel" [(ngModel)]="filterData.startdate"
+              name="startdate" required />
+            <span>From Date *</span>
+            <div *ngIf="!startdate.valid && filterdate.submitted" class="invalid-tooltip">
+              From Date is required!
+            </div>
+          </label>
+        </div>
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #enddate="ngModel" [(ngModel)]="filterData.enddate"
+              name="enddate" required />
+            <span>To Date *</span>
+            <div *ngIf="!enddate.valid && filterdate.submitted" class="invalid-tooltip">
+              To Date is required!
+            </div>
+          </label>
+        </div>
+        <div class="col-md-2">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #status="ngModel" name="status"
+              [(ngModel)]="filterData.status" required>
+              <ng-option value="3">All</ng-option>
+              <ng-option value="0">New</ng-option>
+              <ng-option value="1">Checked In</ng-option>
+              <!-- <ng-option value="">Checked Out</ng-option> -->
+              <ng-option value="2">Completed</ng-option>
+            </ng-select>
+
+            <span>Status *</span>
+            <div *ngIf="!status.valid && filterdate.submitted" class="invalid-tooltip">
+              Status is required!
+            </div>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+            {{ 'forms.submit' | translate }}
+          </button>
+          &nbsp;&nbsp;
+          <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          &nbsp;&nbsp;
+          <button class="btn btn-info form-group" type="submit" (click)="downloadFile()"
+            *ngIf="rows && rows.length > 0 && permissionview.length != 0">
+            Export
+          </button>
+        </div>
+        <!-- <div class="col-md-1" style="text-align: right;">
+        <span class="btn btn-info mb-1" (click)="downloadFile()">Export</span>
+      </div> -->
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row" *ngIf="rows && rows.length > 0 && permissionview.length != 0">
+  <div class="col-12 data-table-rows">
+    <ngx-datatable [scrollbarH]="true" [rowHeight]="'auto'" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+      [limit]="limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+      (page)="onChange($event)">
+      <ngx-datatable-column name="Customer Name" prop="customer.customerName" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('CustomerName')"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Product" prop="product.productName" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('Product')"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Visit Assign" prop="assign.displayName" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('VisitAssign')"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Visitor Phone Number" prop="assign.userNumber" [flexGrow]="1.2"
+        [width]="160"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Visit Co-Person" prop="coPersonID" [flexGrow]="1.2" [width]="300"
+        *ngIf="selected.includes('CoPerson')"></ngx-datatable-column>
+      <ngx-datatable-column name="Visit Purpose" prop="visitPurpose.visitPurpose" [flexGrow]="1.2" [width]="500"
+        *ngIf="selected.includes('VisitPurpose')"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Visit Date" prop="visitDate" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('VisitDate')">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.visitDate | date: 'dd-MM-yyyy' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Visit Time" prop="visitTime" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('VisitTime')"></ngx-datatable-column>
+      <ngx-datatable-column name="Status" prop="status" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('Status')">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button type="button" class="btn btn-success" *ngIf="row.status == '1'"
+            (click)="alertDeactiveConfirmation(row.visitID)">
+            {{ 'Active' | translate }}
+          </button>
+          {{ ' ' }}
+          <button type="button" class="btn btn-danger" *ngIf="row.status == '0'"
+            (click)="alertActiveConfirmation(row.visitID)">
+            {{ 'Deactive' | translate }}
+          </button>
+          {{ ' ' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <!-- <ngx-datatable-column
+          name="Visit Status"
+          prop="visitStatus"
+          [flexGrow]="1.2"
+          [width]="160"
+          *ngIf="selected.includes('VisitStatus')"
+        ></ngx-datatable-column> -->
+      <ngx-datatable-column name="Create By" prop="createBy" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('CreateBy')">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.createdByUserDetails.displayName }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Create By IP" prop="createByIp" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('CreateByIp')"></ngx-datatable-column>
+      <ngx-datatable-column name="Created Date" prop="createdAt" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('CreatedAt')">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.createdAt | date: 'dd-MM-yyyy' }}
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Customize Fields" prop="visitreport" [flexGrow]="4" [width]="700">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div *ngFor="let data of row.visitreport; let i = index">
+            <div>
+              {{ i + 1 }}. &nbsp;
+              <b>{{ data['visitFormCustomize.fieldLabel'] }} :</b>
+              &nbsp; &nbsp;{{ data.value }}
+              <br />
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Update By" prop="updateBy" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('updateBy')">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.updateBy ? row.updatedByUserDetails.displayName : '' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Update By IP" prop="updateByIp" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('UpdateByIp')"></ngx-datatable-column>
+      <ngx-datatable-column name="Updated Date" prop="updatedAt" [flexGrow]="1.2" [width]="160"
+        *ngIf="selected.includes('UpdatedAt')">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.updatedAt | date: 'dd-MM-yyyy' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Action" [sortable]="true" [width]="360"
+        *ngIf="permissionedit.length != 0 || permissiondelete.length != 0">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <a (click)="navigateToEditPage(row)" *ngIf="permissionedit.length != 0 && row.editvisit == true &&
+                (row.checkInDateTime == null ||
+                row.checkOutDateTime == null)">
+            <span tooltip="edit visit details" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+              style="padding-right: 10px; font-size: 18px"></span>
+            {{ ' ' }}
+          </a>
+          <a (click)="alertConfirmation(row.visitID)" *ngIf="permissiondelete.length != 0 && row.editvisit == true&&
+             row.checkInDateTime == null &&
+                row.checkOutDateTime == null">
+            <span tooltip="delete visit details" [class]="'glyph-icon simple-icon-trash tool_tip'"
+              style="padding-right: 6px; font-size: 18px"></span>
+            {{ ' ' }}
+          </a>
+
+          <button class="btn btn-primary" (click)="lgModal1.show(); checkindata(row)" *ngIf="
+              permissionview.length != 0 &&
+              row.checkInDateTime == null &&
+              row.checkOutDateTime == null
+            ">
+            Check In / Check Out
+            {{ ' ' }}
+          </button>
+          <button class="btn btn-primary" (click)="lgModal.show(); reportdata(row)" *ngIf="
+              permissionview.length != 0 &&
+              row.checkInDateTime != null &&
+              row.checkOutDateTime != null &&
+              row.report == 'No'
+            ">
+            Report
+            {{ ' ' }}
+          </button>
+          <button class="btn btn-primary" (click)="lgModal2.show(); reportshowdata(row)" *ngIf="
+              permissionview.length != 0 &&
+              row.checkInDateTime != null &&
+              row.checkOutDateTime != null &&
+              row.report == 'Yes'
+            ">
+            Show Report
+            {{ ' ' }}
+          </button>
+          <a (click)="navigateToListVisitCallFollowup(row)">
+            <button class="btn btn-primary" *ngIf="
+                permissionview.length != 0 &&
+                row.checkInDateTime != null &&
+                row.checkOutDateTime != null
+              " style="margin-left: 10px">
+              Call FollowUp
+              {{ ' ' }}
+            </button>
+          </a>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-footer *ngIf="true">
+        <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+          let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+          <div class="w-100 d-flex justify-content-center">
+            <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+              [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+              [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+          </div>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Report</h4>
+        <button type="button" class="btn-close close pull-right" (click)="close(lgModal);" aria-label="Close"
+          #closeModal>
+          <span inert class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectreport($event)" [(ngModel)]="selectedreport">
+                <ng-option *ngFor="let report of report" [value]="report.visitReportMasterID">
+                  {{ report.visitReportName }}
+                </ng-option>
+              </ng-select>
+              <span>Select Report</span>
+            </label>
+          </div>
+        </div>
+        <form #addreport="ngForm" novalidate (ngSubmit)="reportsubmit()" *ngIf="selectedreport">
+          <div *ngFor="let pair of field; let i = index">
+            <div class="row" *ngIf="i % 2 === 0">
+              <div class="col-lg-6">
+                <ng-container *ngIf="field[i]">
+                  <ng-container *ngTemplateOutlet="renderField; context: { field: field[i] }"></ng-container>
+                </ng-container>
+              </div>
+
+              <div class="col-lg-6">
+                <ng-container *ngIf="field[i + 1]">
+                  <ng-container *ngTemplateOutlet="renderField; context: { field: field[i + 1] }"></ng-container>
+                </ng-container>
+              </div>
+            </div>
+
+            <ng-template #renderField let-field="field">
+              <div>
+                <label class="form-group has-float-label" *ngIf="field.inputType === 'number'">
+                  <input class="form-control" type="number" ngModel name="{{ field.fieldLabel }}"
+                    [required]="field.isRequired" />
+                  <span>{{ field.fieldLabel }}</span>
+                  <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                    class="invalid-tooltip">
+                    {{ field.fieldLabel }} is required!
+                  </div>
+                </label>
+              </div>
+
+              <div>
+                <label class="form-group has-float-label" *ngIf="field.inputType === 'text'">
+                  <input class="form-control" type="text" ngModel name="{{ field.fieldLabel }}"
+                    [required]="field.isRequired" />
+                  <span>{{ field.fieldLabel }}</span>
+                  <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                    class="invalid-tooltip">
+                    {{ field.fieldLabel }} is required!
+                  </div>
+                </label>
+              </div>
+
+              <div *ngIf="field.inputType === 'textarea'">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" ngModel name="{{ field.fieldLabel }}"
+                    [required]="field.isRequired"></textarea>
+                  <span>{{ field.fieldLabel }}</span>
+                  <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                    class="invalid-tooltip">
+                    {{ field.fieldLabel }} is required!
+                  </div>
+                </label>
+              </div>
+
+              <div *ngIf="field.inputType === 'image'">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" (change)="onSelectFile($event, field.visitReportCustomizeID)"
+                    name="{{ field.fieldLabel }}" [required]="field.isRequired" />
+                  <span>{{ field.fieldLabel }}</span>
+                  <div *ngIf="field.isRequired && !this.url && addreport.submitted" class="invalid-tooltip">
+                    {{ field.fieldLabel }} is required!
+                  </div>
+                </label>
+              </div>
+
+              <div *ngIf="field.inputType === 'signature'">
+                <label class="form-group has-float-label">
+                  <span>{{ field.fieldLabel }}</span>
+                  <ngx-signature-pad [config]="config" #sign [required]="field.isRequired"></ngx-signature-pad>
+                  <button type="button" (click)="getImage(field.visitReportCustomizeID)"
+                    class="btn btn-success mt-2">Confirm Sign</button>
+                  <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                    class="invalid-tooltip">
+                    {{ field.fieldLabel }} is required!
+                  </div>
+                </label>
+              </div>
+
+              <div *ngIf="field.inputType === 'radio'" class="row">
+                <label class="label-margin"><b>{{ field.fieldLabel }}</b></label>
+                <div *ngFor="let value of field.value" class="form-check  form-check-inline">
+                  <input class="form-check-input" type="radio" name="{{ field.fieldLabel }}" ngModel [value]="value"
+                    [required]="field.isRequired" />
+                  <label class="form-check-label">{{ value }}</label>
+                </div>
+                <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                  class="invalid-tooltip">
+                  {{ field.fieldLabel }} is required!
+                </div>
+              </div>
+
+              <div *ngIf="field.inputType === 'checkbox'" class="row">
+                <label class="label-margin"><b>{{ field.fieldLabel }}</b></label>
+                <div *ngFor="let value of field.value" class="form-check  form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="{{ field.fieldLabel }}" ngModel [value]="value"
+                    [required]="field.isRequired" (change)="checkBoxChange($event,field.value,value, i)" />
+                  <label class="form-check-label">{{ value }}</label>
+                </div>
+                <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                  class="invalid-tooltip">
+                  {{ field.fieldLabel }} is required!
+                </div>
+              </div>
+
+              <div *ngIf="field.inputType === 'dropdown'">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel name="{{ field.fieldLabel }}"
+                    [required]="field.isRequired">
+                    <ng-option *ngFor="let value of field.value" [value]="value">{{ value }}</ng-option>
+                  </ng-select>
+                  <span>{{ field.fieldLabel }}</span>
+                  <div *ngIf="field.isRequired && !addreport.value[field.fieldLabel] && addreport.submitted"
+                    class="invalid-tooltip">
+                    {{ field.fieldLabel }} is required!
+                  </div>
+                </label>
+              </div>
+            </ng-template>
+          </div>
+
+          <button class="btn btn-primary" type="submit" style="margin-top: 40px">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Check In / Check Out</h4>
+        <button #closeModal type="button" class="btn-close close pull-right" (click)="lgModal1.hide()"
+          aria-label="Close">
+          <span inert class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form #addcheckincheckout="ngForm" novalidate (ngSubmit)="checkinoutsubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="datetime-local" required ngModel #checkInDateTime="ngModel"
+                  [(ngModel)]="checkintime" name="checkInDateTime" />
+                <span>Check in *</span>
+                <div *ngIf="!checkInDateTime.valid && addcheckincheckout.submitted" class="invalid-tooltip">
+                  Check in is required!
+                </div>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="datetime-local" required ngModel #checkOutDateTime="ngModel"
+                  [(ngModel)]="checkouttime" name="checkOutDateTime" />
+                <span>Check Out *</span>
+                <div *ngIf="!checkOutDateTime.valid && addcheckincheckout.submitted" class="invalid-tooltip">
+                  Check Out is required!
+                </div>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #nextstep="ngModel" name="nextstep" required>
+                  <ng-option value="NextVisitSchedule">Next Visit Schedule</ng-option>
+                  <ng-option value="CallFollowup">Call Follow up</ng-option>
+                </ng-select>
+                <div *ngIf="!nextstep.valid && addcheckincheckout.submitted" class="invalid-tooltip">
+                  Next Step is required!
+                </div>
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Show Report</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+          #closeModal>
+          <span inert class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectreport($event)" [(ngModel)]="reportselected"
+                disabled>
+                <ng-option *ngFor="let report of report" [value]="report.visitReportMasterID">
+                  {{ report.visitReportName }}
+                </ng-option>
+              </ng-select>
+              <span>Select Report</span>
+            </label>
+          </div>
+        </div>
+        <form #addreport="ngForm" novalidate (ngSubmit)="reportsubmit()">
+          <div *ngFor="let pair of field; let i = index">
+            <div class="row" *ngIf="i % 2 === 0">
+              <div class="col-lg-6">
+                <ng-container *ngIf="field[i]">
+                  <ng-container *ngTemplateOutlet="renderField; context: { field: field[i] }"></ng-container>
+                </ng-container>
+              </div>
+
+              <div class="col-lg-6">
+                <ng-container *ngIf="field[i + 1]">
+                  <ng-container *ngTemplateOutlet="renderField; context: { field: field[i + 1] }"></ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #renderField let-field="field">
+            <label class="form-group has-float-label" *ngIf="field.inputType == 'number'">
+              <input class="form-control" type="number" ngModel #{{field.fieldLabel}}="ngModel"
+                name="{{ field.fieldLabel }}" [required]="field.isRequired" [(ngModel)]="field.fieldvalue" disabled />
+              <span>{{ field.fieldLabel }}</span>
+            </label>
+
+            <label class="form-group has-float-label" *ngIf="field.inputType == 'text'">
+              <input class="form-control" type="text" ngModel #{{field.fieldLabel}}="ngModel"
+                name="{{ field.fieldLabel }}" [required]="field.isRequired" [(ngModel)]="field.fieldvalue" disabled />
+              <span>{{ field.fieldLabel }}</span>
+            </label>
+
+            <label class="form-group has-float-label" *ngIf="field.inputType == 'textarea'">
+              <textarea class="form-control" type="text" ngModel #{{field.fieldLabel}}="ngModel"
+                name="{{ field.fieldLabel }}" [required]="field.isRequired" [(ngModel)]="field.fieldvalue"
+                disabled></textarea>
+              <span>{{ field.fieldLabel }}</span>
+            </label>
+
+            <label class="form-group has-float-label d-flex align-items-center" *ngIf="field.inputType == 'image'">
+              <span class="me-3">{{ field.fieldLabel }}</span>
+              <img style="margin-left: 35px;" src="data:image/jpeg;base64,{{ field.fieldvalue }}" height="100px"
+                width="100px" [required]="field.isRequired" />
+            </label>
+
+            <label class="form-group has-float-label" style="margin-bottom: 100px"
+              *ngIf="field.inputType == 'signature'">
+              <span>{{ field.fieldLabel }}</span>
+              <div class="container">
+                <ngx-signature-pad [config]="config" #sign [required]="field.isRequired"></ngx-signature-pad>
+              </div>
+              <button type="button" (click)="getImage(field.visitReportCustomizeID)" class="btn btn-success"
+                style="margin-top: 12px; margin-left: 63%; width: 37%">
+                Confirm Sign
+              </button>
+            </label>
+
+            <div *ngIf="field.inputType == 'radio'" class="row" style="margin-left: 1%; margin-bottom: 2%">
+              <label style="margin-right: 30px">
+                <b>{{ field.fieldLabel }}</b>
+              </label>
+              <div *ngFor="let values of field.value">
+                <input type="radio" name="{{ field.fieldLabel }}" ngModel #{{field.fieldLabel}}="ngModel"
+                  [value]="values" style="margin-right: 10px" [required]="field.isRequired"
+                  [(ngModel)]="field.fieldvalue" disabled />
+                <label for="value" style="margin-right: 25px">
+                  {{ values }}
+                </label>
+              </div>
+            </div>
+
+            <div *ngIf="field.inputType == 'checkbox'" class="row" style="margin-left: 1%; margin-bottom: 2%">
+              <label style="margin-right: 30px">
+                <b>{{ field.fieldLabel }}</b>
+              </label>
+              <div *ngFor="let values of field.value">
+                <input type="checkbox" name="{{ field.fieldLabel }}" [value]="values" style="margin-right: 10px"
+                  [required]="field.isRequired" [checked]="field.fieldvalue[values]" disabled />
+                <label for="value" style="margin-right: 25px">
+                  {{ values }}
+                </label>
+              </div>
+            </div>
+
+            <label class="form-group has-float-label" *ngIf="field.inputType == 'dropdown'">
+              <ng-select placeholder="Choose your option" ngModel #{{field.fieldLabel}}="ngModel"
+                name="{{ field.fieldLabel }}" [required]="field.isRequired" [(ngModel)]="field.fieldvalue" disabled>
+                <ng-option *ngFor="let values of field.value" [value]="values">
+                  {{ values }}
+                </ng-option>
+              </ng-select>
+              <span>{{ field.fieldLabel }}</span>
+            </label>
+          </ng-template>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

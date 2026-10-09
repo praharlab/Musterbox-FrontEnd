@@ -1,0 +1,90 @@
+@if (userData) {
+  <div class="row">
+    <div class="w-100 position-relative">
+      @if (showloader) {
+        <div style="color: #17a2b8; left: 48%" class="la-ball-spin-clockwise">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      }
+    </div>
+    @if (userData.isFNF) {
+      <div class="col-md-4">
+        @if (!experienceLetterData || !experienceLetterData.path) {
+          <button type="button" class="btn btn-success btn-xs" style="margin-top: 10%" (click)="generate()"
+            >
+            Generate
+          </button>
+        }
+        {{ ' ' }}
+        @if (experienceLetterData && experienceLetterData.path) {
+          <button type="button" class="btn btn-success btn-xs" style="margin-top: 10%"
+            (click)="view(experienceLetterData.path)">
+            View
+          </button>
+        }
+        {{ ' ' }}
+        @if (experienceLetterData && experienceLetterData.path) {
+          <button type="button" class="btn btn-primary btn-xs" style="margin-top: 10%"
+            (click)="sendmail()">
+            Send Email
+          </button>
+        }
+        {{ ' ' }}
+      </div>
+    }
+    @if (!userData.isFNF) {
+      <div class="col-4">
+        <p style="color: red; font-size: 14px">
+          *Note :- Please Complete FNF Process to Generate Experience Letter.
+        </p>
+      </div>
+    }
+  </div>
+}
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Generate Experience Letter</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModalE>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #generateLetter="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #experienceLetterList="ngModel"
+                  name="experienceLetterList" required>
+                  @for (item of allExperienceletter; track item) {
+                    <ng-option [value]="item.experienceLetterID">
+                      {{ item.experienceLetterName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Experience Letter Template *</span>
+                @if (!experienceLetterList.valid && generateLetter.submitted) {
+                  <div class="invalid-tooltip">
+                    Experience Letter Template is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">{{ 'Generate' | translate }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

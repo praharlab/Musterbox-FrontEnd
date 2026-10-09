@@ -1,0 +1,38 @@
+
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit District</h5>
+
+    @if (jobRoleData) {
+      <form #adddesignation="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #districtName="ngModel"
+                [(ngModel)]="jobRoleData.districtName"  name="districtName" />
+                <span>District Name*</span>
+                @if (!districtName.valid && adddesignation.submitted) {
+                  <div class="invalid-tooltip">
+                    District Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" [currentState]="buttonState"
+            [isDisabled]="buttonDisabled" click="onLoginClick()">
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button class="btn btn-danger btn-lg btn-shadow mt-4" [routerLink]="adminRoot + '/superadminmenus/district'"
+            style="margin-left: 2%">
+            Cancel
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

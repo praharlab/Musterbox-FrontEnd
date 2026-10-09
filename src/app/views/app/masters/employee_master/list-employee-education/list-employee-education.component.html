@@ -1,0 +1,352 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="lgModal.show()">Add</button>
+</div>
+<div class="row">
+  @for (item of rows; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div
+            class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <a href="javascript:;">
+                <p class="list-item-heading mb-1 truncate">{{ item.qualification | uppercase }}</p>
+                <table>
+                  <tr>
+                    <td>Institute</td>
+                    <td>: {{ item.institute }}</td>
+                  </tr>
+                  <tr>
+                    <td>Year of Passing</td>
+                    <td>: {{ item.yearOfPassing }}</td>
+                  </tr>
+                  @if (item.degree) {
+                    <tr>
+                      <td>Degree</td>
+                      <td style="padding-top: 4%">
+                        :
+                        <button type="button" class="btn btn-outline-primary btn-xs" (click)="view(item.degree)"
+                          style="margin-bottom: 5%">
+                          {{ 'View' | translate }}
+                        </button>
+                        {{ ' ' }}
+                      </td>
+                    </tr>
+                  }
+                  @if (item.createBy) {
+                    <tr>
+                      <td>Created by</td>
+                      <td>: {{ item.createBy }}</td>
+                    </tr>
+                  }
+                  @if (item.verifyBy) {
+                    <tr>
+                      <td>Verified by</td>
+                      <td>: {{ item.verifyBy }}</td>
+                    </tr>
+                  }
+                  @if (item.rejectionRemarks && item.verifyStatus != '1') {
+                    <tr>
+                      <td>Rejection Reason</td>
+                      <td>: {{ item.rejectionRemarks }}</td>
+                    </tr>
+                  }
+                </table>
+                <!-- <div class="min-width-zero">
+                <a href="javascript:;">
+                  <button type="button" class="btn btn-success" *ngIf="item.status == '1'"  style="margin-top: 10%;">{{'Active' | translate}}</button>{{" "}}
+                  <button type="button" class="btn btn-danger" *ngIf="item.status == '0'"  style="margin-top: 10%;">{{'Deactive' | translate}}</button>{{" "}}
+                </a>
+              </div> -->
+              @if (item.verifyStatus == '0') {
+                <button type="button" class="btn btn-xs btn-success" (click)="openVerifyModelSubmit(item)"
+                  style="margin-top: 10%">
+                  {{ 'Verify' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+              @if (item.verifyStatus == '0') {
+                <button type="button" class="btn btn-xs btn-danger"
+                  (click)="openRejectModelSubmit(item)"
+                  style="margin-top: 10%">
+                  {{ 'Reject' | translate }}
+                </button>
+              }
+              {{ ' ' }}
+            </a>
+          </div>
+          <div style="margin-top: 14px; width: 25%">
+            @if (item.status == '1') {
+              <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%"
+                >
+                {{ 'Active' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            @if (item.status == '0') {
+              <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%"
+                >
+                {{ 'Deactive' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            @if (item.verifyStatus == '0') {
+              <button type="button" class="btn btn-outline-warning btn-xs" style="margin-bottom: 5%"
+                >
+                {{ 'Pending' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            @if (item.verifyStatus == '1') {
+              <button type="button" class="btn btn-outline-success btn-xs" style="margin-bottom: 5%"
+                >
+                {{ 'Verified' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            @if (item.verifyStatus == '2') {
+              <button type="button" class="btn btn-outline-danger btn-xs" style="margin-bottom: 5%"
+                >
+                {{ 'Rejected' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            <div class="min-width-zero" style="margin-top: 60%">
+              <a class="btn btn-xs  btn-primary" (click)="lgModal1.show(); edit(item)">EDIT</a>
+              <br />
+              <a class="btn btn-xs  btn-danger" (click)="alertConfirmation(item.userEducationID)"
+                style="margin-top: 10%">
+                DELETE
+              </a>
+            </div>
+          </div>
+          <!-- <div style="margin-top: 14px;">
+          <a class="btn btn-outline-primary btn-xs"     (click)="lgModal1.show();edit(item)">EDIT</a><br>
+          <a class="btn btn-outline-primary btn-xs"    (click)="alertConfirmation(item.userAddressID)" style="margin-top: 10%;">DELETE</a>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+}
+</div>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Employee Education</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #qualification="ngModel"
+                  name="qualification" />
+                  <span>Qualification *</span>
+                  @if (!qualification.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Qualification is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" required ngModel #yearOfPassing="ngModel"
+                    name="yearOfPassing" />
+                    <span>Year Of Passing *</span>
+                    @if (!yearOfPassing.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Year Of Passing is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #grade="ngModel" name="grade" />
+                    <span>Grade</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" ngModel #percentageObtained="ngModel"
+                      name="percentageObtained" />
+                      <span>Percentage Obtained</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" required ngModel #institute="ngModel" name="institute" />
+                      <span>Institute *</span>
+                      @if (!institute.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Institute is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel #university="ngModel" name="university" />
+                      <span>University</span>
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="file" (change)="onSelectCertificate($event)" ngModel
+                        #certificate="ngModel" name="certificate" />
+                        <span>Certificate</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">Edit Employee Education</h4>
+                <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+                  #closeModal1>
+                  <span aria-hidden="true" class="visually-hidden">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                @if (editbyid) {
+                  <form #editcomp="ngForm" novalidate (ngSubmit)="onSubmit1()">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" required ngModel #qualification="ngModel"
+                            [(ngModel)]="editbyid.qualification" name="qualification" />
+                            <span>Qualification *</span>
+                            @if (!qualification.valid && editcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                Qualification is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" required ngModel #yearOfPassing="ngModel"
+                              [(ngModel)]="editbyid.yearOfPassing" name="yearOfPassing" />
+                              <span>Year Of Passing *</span>
+                              @if (!yearOfPassing.valid && editcomp.submitted) {
+                                <div class="invalid-tooltip">
+                                  Year Of Passing is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <label class="form-group has-float-label">
+                              <input class="form-control" type="text" ngModel #grade="ngModel" [(ngModel)]="editbyid.grade"
+                                name="grade" />
+                                <span>Grade</span>
+                              </label>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input class="form-control" type="text" ngModel #percentageObtained="ngModel"
+                                  [(ngModel)]="editbyid.percentageObtained" name="percentageObtained" />
+                                  <span>Percentage Obtained</span>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" type="text" required ngModel #institute="ngModel"
+                                    [(ngModel)]="editbyid.institute" name="institute" />
+                                    <span>Institute *</span>
+                                    @if (!institute.valid && editcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Institute is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <div class="col-md-6">
+                                  <label class="form-group has-float-label">
+                                    <input class="form-control" type="text" ngModel #university="ngModel" [(ngModel)]="editbyid.university"
+                                      name="university" />
+                                      <span>University</span>
+                                    </label>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <label class="form-group has-float-label">
+                                      <input class="form-control" type="file" (change)="onSelectCertificate($event)" ngModel
+                                        #certificate="ngModel" name="certificate" />
+                                        <span>Certificate</span>
+                                      </label>
+                                    </div>
+                                    @if (editbyid.degree) {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <p>{{ editbyid.degree }}</p>
+                                        </label>
+                                      </div>
+                                    }
+                                  </div>
+                                  <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                                </form>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!--
+                      <div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title pull-left">Reject Education</h4>
+                              <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close"
+                                #closelgModal2>
+                                <span aria-hidden="true" class="visually-hidden">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form #reject="ngForm" novalidate (ngSubmit)="rejectSubmit()">
+                                <div class="col-md-12">
+                                  <label class="form-group has-float-label">
+                                    <input type="text" class="form-control" ngModel #remarks="ngModel" name="remarks" required />
+                                    <span>Remarks *</span>
+                                    <div *ngIf="!remarks.valid && reject.submitted" class="invalid-tooltip">
+                                      Remarks is required!
+                                    </div>
+                                  </label>
+                                </div>
+                                <button class="btn btn-primary" type="submit">
+                                  {{ 'forms.submit' | translate }}
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div> -->
+
+                      <app-employee-education-reject></app-employee-education-reject>

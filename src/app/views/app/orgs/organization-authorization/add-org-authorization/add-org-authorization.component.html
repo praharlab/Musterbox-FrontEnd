@@ -1,0 +1,187 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Organization Authorization</h5>
+    <form #addOrgAuth="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (allcomp.length > 0) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel
+                [(ngModel)]="company_id" #company="ngModel" name="company" required>
+                @for (com of allcomp; track com) {
+                  <ng-option [value]="com.companyMasterID">
+                    {{ com.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Company *</span>
+              @if (!company.valid && addOrgAuth.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        @if (allbranch.length > 0) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName" groupBy="selectedAllGroup" [(ngModel)]="selectedBranch"
+                [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="branchMasterID" [closeOnSelect]="false" ngModel
+                #branch="ngModel" name="branch" placeholder="Choose your option" required (ngModelChange)="selectBranch($event)">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                    [ngModelOptions]="{ standalone: true }" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Branch *</span>
+                @if (!branch.valid && addOrgAuth.submitted) {
+                  <div class="invalid-tooltip">
+                    Branch is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+          @if (allSites.length > 0) {
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #site="ngModel" name="site" [(ngModel)]="selectedSite">
+                  @for (site of allSites; track site) {
+                    <ng-option [value]="site.siteID">
+                      {{ site.siteName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Sites</span>
+              </label>
+            </div>
+          }
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #orgAuthorizationTypeID="ngModel"
+                name="orgAuthorizationTypeID" required>
+                @for (type of orgAuthtypes; track type) {
+                  <ng-option [value]="type.orgAuthorizationTypeID">
+                    {{ type.orgAuthorizationType }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Org Auth Type *</span>
+              @if (!orgAuthorizationTypeID.valid && addOrgAuth?.submitted) {
+                <div class="invalid-tooltip">
+                  Org Auth Type is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #AuthorizationCriteriaID="ngModel"
+                name="AuthorizationCriteriaID" [(ngModel)]="selectedauth" required>
+                @for (authcritera of authcritera; track authcritera) {
+                  <ng-option [value]="authcritera.AuthorizationCriteriaID">
+                    {{ authcritera.AuthorizationCriteria }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Authorization Criteria *</span>
+              @if (!AuthorizationCriteriaID.valid && addOrgAuth.submitted) {
+                <div class="invalid-tooltip">
+                  Authorization Criteria is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <hr style="color: green" />
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <h3>Select Authorization Person:-</h3>
+          </div>
+          <div class="col-md-6" style="text-align: right">
+            <span class="button" class="btn btn-success" (click)="addvalue()">
+              ADD Authorization Person
+            </span>
+          </div>
+        </div>
+        <br>
+          <div class="row">
+            <br />
+            @for (value of values; track value; let i = $index) {
+              <div class="col-md-12">
+                @if (!value.deleted) {
+                  <div class="row">
+                    @if (selectedauth == 5) {
+                      <div class="col-md-2">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" #SequenceNo="ngModel" [ngModel]="value.SequenceNo" readonly
+                            name="SequenceNo{{ i }}" />
+                            <span>Sequence Number</span>
+                          </label>
+                        </div>
+                      }
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" (change)="selectCompany($event,i)" ngModel
+                            #company="ngModel" name="company{{i}}" [(ngModel)]="value.companyMasterID" required>
+                            @for (company of value.allCompany; track company) {
+                              <ng-option [value]="company.companyMasterID">
+                                {{ company.companyName }}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Company *</span>
+                          @if (!company.valid && addOrgAuth.submitted) {
+                            <div class="invalid-tooltip">
+                              Company is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" ngModel #employee="ngModel" name="employee{{i}}"
+                            [(ngModel)]="value.AuthorizedByUserMasterId" required>
+                            @for (employee of value.allUsers; track employee) {
+                              <ng-option [value]="employee.userMasterID">
+                                {{ employee.displayName }} ({{ employee.userNumber }})
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Employee *</span>
+                          @if (!employee.valid && addOrgAuth.submitted) {
+                            <div class="invalid-tooltip">
+                              Employee is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      @if (values.length > 1) {
+                        <div class="col-md-1">
+                          <span (click)="removevalue(i)" class="btn btn-danger"
+                            style="margin-left: 3%; margin-top: 3%; font-size: 10px; cursor: pointer;">
+                            Remove
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/orgs/orgAuthorization'"
+                style="margin-left: 2%">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>

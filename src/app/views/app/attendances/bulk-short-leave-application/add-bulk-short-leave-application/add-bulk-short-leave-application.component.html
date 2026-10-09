@@ -1,0 +1,36 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Bulk Short Leave Application"></app-heading>
+    <app-breadcrumb title="Bulk Short Leave Application"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+
+@if (permissionview?.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (clearData)="clear()">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="date" ngModel name="date" #date="ngModel" [max]="maxDate" required />
+        <span>Date *</span>
+        @if (!date.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Date is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <textarea class="form-control" ngModel name="remarks" #remarks="ngModel" type="text"></textarea>
+        <span>Remarks</span>
+      </label>
+    </div>
+  </app-common-filter>
+}
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

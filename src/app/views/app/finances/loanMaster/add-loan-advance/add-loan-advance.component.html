@@ -1,0 +1,313 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Loan Advance</h5>
+
+    @if (loandata) {
+      <form #addloanMaster="ngForm" novalidate (ngSubmit)="(onSubmit)">
+        <div class="row">
+          @if (childcompany == 'false') {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  ngModel
+                  #companyMasterID="ngModel"
+                  name="companyMasterID"
+                  [(ngModel)]="loandata.companyMaster.companyName"
+                  disabled
+                  />
+                  <span>Company</span>
+                </label>
+              </div>
+            }
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  ngModel
+                  #userMasterID="ngModel"
+                  name="userMasterID"
+                  [(ngModel)]="loandata.userMaster.displayName"
+                  disabled
+                  />
+                  <span>UserName</span>
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    ngModel
+                    #loanAmount="ngModel"
+                    name="loanAmount"
+                    [(ngModel)]="loandata.LoanAmount"
+                    (change)="calcloaninst()"
+                    disabled
+                    />
+                    <span>Loan Amount *</span>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="number"
+                      ngModel
+                      #paidInstallment="ngModel"
+                      name="paidInstallment"
+                      [(ngModel)]="paidInst"
+                      disabled
+                      />
+                      <span>PaidInstallment *</span>
+                    </label>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="number"
+                        ngModel
+                        #interest="ngModel"
+                        name="interest"
+                        [(ngModel)]="loandata.interest"
+                        disabled
+                        />
+                        <span>Interest *</span>
+                      </label>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="number"
+                          ngModel
+                          #cashpayment="ngModel"
+                          name="cashpayment"
+                          (input)="validateLoanAmount($event); changepayment()"
+                          required
+                          />
+                          <span>Loan Advance Payment *</span>
+                          @if (!cashpayment.valid && addloanMaster.submitted) {
+                            <div class="invalid-tooltip">
+                              Loan Advance Payment is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="number"
+                            ngModel
+                            #emiMonth="ngModel"
+                            name="emiMonth"
+                            [(ngModel)]="loandata.EMIMonths"
+                            (change)="calcloaninst()"
+                            disabled
+                            />
+                            <span>EMI Month *</span>
+                          </label>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-group has-float-label">
+                            <input
+                              class="form-control"
+                              type="date"
+                              ngModel
+                              #givenDate="ngModel"
+                              [(ngModel)]="loandata.givenDate"
+                              name="givenDate"
+                              required
+                              [min]="minDate"
+                              [max]="maxDate"
+                              />
+                              <span>Given Date *</span>
+                              @if (!givenDate.valid && addloanMaster.submitted) {
+                                <div class="invalid-tooltip">
+                                  Given Date is required!
+                                </div>
+                              }
+                            </label>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-group has-float-label">
+                              <input
+                                class="form-control"
+                                type="month"
+                                ngModel
+                                #startMonth="ngModel"
+                                [(ngModel)]="loandata.startMonth"
+                                name="startMonth"
+                                (change)="calcloaninst()"
+                                disabled
+                                />
+                                <span>Select Start Month *</span>
+                              </label>
+                            </div>
+                            <div class="col-md-3">
+                              <label class="form-group has-float-label">
+                                <ng-select
+                                  placeholder="Choose your option"
+                                  ngModel
+                                  #paymentmode="ngModel"
+                                  name="paymentmode"
+                                  required
+                                  >
+                                  <ng-option value="Cash">Cash</ng-option>
+                                  <ng-option value="Cheque">Cheque</ng-option>
+                                  <ng-option value="UPI">UPI</ng-option>
+                                  <ng-option value="NetBanking">NetBanking</ng-option>
+                                </ng-select>
+                                <span>Payment Mode *</span>
+                                @if (!paymentmode.valid && addloanMaster.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Payment Mode is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            @if (addloanMaster.value.paymentmode != '' && addloanMaster.value.paymentmode != 'Cash') {
+                              <div
+                                class="col-md-3"
+                                >
+                                <label class="form-group has-float-label">
+                                  <input class="form-control" ngModel #referenceNo="ngModel" name="referenceNO" />
+                                  <span>{{ addloanMaster.value.referenceNO }} Reference NO</span>
+                                </label>
+                              </div>
+                            }
+                            @if (addloanMaster.value.paymentmode != '' && addloanMaster.value.paymentmode != 'Cash') {
+                              <div
+                                class="col-md-3"
+                                >
+                                <label class="form-group has-float-label">
+                                  <input
+                                    class="form-control"
+                                    type="date"
+                                    required
+                                    ngModel
+                                    #referencedate="ngModel"
+                                    name="referencedate"
+                                    />
+                                    <span>{{ addloanMaster.value.paymentmode }} Reference Date *</span>
+                                    @if (!referencedate.valid && addloanMaster.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Reference Date is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                              }
+                              <div class="col-md-3">
+                                <label class="form-group has-float-label">
+                                  <textarea
+                                    class="form-control"
+                                    type="text"
+                                    ngModel
+                                    #advanceRemark="ngModel"
+                                    name="advanceRemark"
+                                  ></textarea>
+                                  <span>Loan Advance Remark</span>
+                                </label>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-group has-float-label">
+                                  <input
+                                    class="form-control"
+                                    type="number"
+                                    ngModel
+                                    #paidAdvance="ngModel"
+                                    name="paidAdvance"
+                                    [(ngModel)]="AdvanceData"
+                                    disabled
+                                    />
+                                    @if (AdvanceData != 0) {
+                                      <div class="float-right">
+                                        <a (click)="navigateToLoanAdvancePage(loandata)"
+                                          style="color: blue; text-decoration: underline"
+                                          >
+                                          {{ 'Show Paid Transaction' }}
+                                        </a>
+                                      </div>
+                                    }
+                                    <span>PaidAdvance *</span>
+                                  </label>
+                                </div>
+                              </div>
+                              <table border="1" class="col-sm-6">
+                                <thead>
+                                  <tr align="center">
+                                    <th>EMI Month</th>
+                                    <th>Loan Installment</th>
+                                    <th>Principle Amount</th>
+                                    <th>Interest Amount</th>
+                                    <th>Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @for (data of datearr; track data; let i = $index) {
+                                    <tr align="center">
+                                      @if (data.RefrenceId == null) {
+                                        <td>
+                                          <input
+                                            class="form-control"
+                                            type="month"
+                                            [(ngModel)]="data.EMIMonth"
+                                            [name]="'EMIMonth_' + i"
+                                            (change)="changeMonth(i)"
+                                            readonly
+                                            />
+                                          </td>
+                                        }
+                                        @if (data.RefrenceId != null) {
+                                          <td>
+                                            <input
+                                              class="form-control"
+                                              type="month"
+                                              [(ngModel)]="data.EMIMonth"
+                                              [name]="'EMIMonth_' + i"
+                                              disabled
+                                              />
+                                            </td>
+                                          }
+                                          <td>{{ data.EMIAmount1 }}</td>
+                                          <td>{{ data.monthlyPrinciple }}</td>
+                                          <td>{{ data.monthlyInterest }}</td>
+                                          @if (data.RefrenceId == null) {
+                                            <td style="color: red">Pending</td>
+                                          }
+                                          @if (data.RefrenceId != null) {
+                                            <td style="color: green">Paid</td>
+                                          }
+                                        </tr>
+                                      }
+                                    </tbody>
+                                  </table>
+                                  <br />
+                                  <button
+                                    class="btn btn-primary mr-2"
+                                    type="submit"
+                                    [disabled]="isdisabled"
+                                    (click)="onSubmit()"
+                                    >
+                                    {{ 'submit' | translate }}
+                                  </button>
+                                  <button
+                                    class="btn btn-danger btn-shadow"
+                                    [routerLink]="adminRoot + '/finances/loanMaster'"
+                                    style="margin-left: 2%"
+                                    >
+                                    Cancel
+                                  </button>
+                                  <simple-notifications
+                                    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                                  ></simple-notifications>
+                                </form>
+                              }
+                            </div>
+                          </div>

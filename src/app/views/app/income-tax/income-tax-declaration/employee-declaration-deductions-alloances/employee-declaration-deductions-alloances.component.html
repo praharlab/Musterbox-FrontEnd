@@ -1,0 +1,208 @@
+<div class="d-flex flex-column mb-4">
+  <h3>{{data.sectionName}}</h3>
+  <p class="m-0">{{data.sectionInfo}}</p>
+</div>
+
+
+<div class="mb-4">
+  <div class="table-style mb-2">
+    @if (loaderstatus) {
+      <div style="color: var(--m-primary); left: 50%;top: 50%;" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+
+    <table style="width: 100%">
+      <thead>
+        <tr>
+          <th class="name-col name-col-shadow" style="width: 15%; border-radius: 10px 0px 0px 0px">
+            SECTION
+          </th>
+          <th class="name-col name-col-shadow" style="width: 20%">DEDUCTION NAME</th>
+          <th class="name-col name-col-shadow" style="width: 15%">DECLARATION</th>
+          <th class="name-col name-col-shadow" style="width: 15%">MAX LIMIT</th>
+          <th class="name-col name-col-shadow" style="width: 22%">PROOF</th>
+          <th class="name-col name-col-shadow" style="width: 15%">STATUS</th>
+          <th class="name-col name-col-shadow sticky"
+            style="border-radius: 0px 10px 0px 0px; width: 15%;position: sticky;">
+            ACTIONS
+          </th>
+        </tr>
+      </thead>
+      @if (tableStatus) {
+        <tbody class="text-black" style="font-weight: 600;">
+          @for (item of subSectionData; track item; let i = $index) {
+            <tr class="student bottom-border bottom-border-radius"
+              >
+              <td class="name-col left-border">
+                {{ item['tdsSection.tdsSectionName'] }}
+                <sup>$</sup>
+              </td>
+              <td class="name-col">
+                {{ item.tdsSubSectionName }}
+                <span class="ml-1 text-small" [tooltip]="item.tdsSubSectionDescription"
+                [class]="'glyph-icon simple-icon-info '"></span>
+              </td>
+              <td class="name-col">
+                @if (!item.editMode && item.amount) {
+                  <span>INR&nbsp;{{ item.amount }}</span>
+                }
+                @if ( !item.editMode && !item.amount) {
+                  <span class="text-muted">Not Declared</span>
+                }
+                @if (item.editMode) {
+                  <div class="input-group" style="width: max-content">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">$</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)"
+                      [(ngModel)]="item.amount" />
+                  </div>
+                }
+              </td>
+              <td class="name-col">
+                @if (item.maxLimit) {
+                  <span>
+                    INR&nbsp;{{ item.maxLimit | number: '1.0-0'}}
+                  </span>
+                }
+                @if (!item.maxLimit) {
+                  <span>No Limit</span>
+                }
+              </td>
+              <td class="name-col">
+                @if (!item.editMode && item.proof && item.proof.length == 0) {
+                  <span class="text-muted">No
+                  Proof</span>
+                }
+                @if (!item.editMode && item.proof) {
+                  @for (proofItem of item.proof; track proofItem; let j = $index) {
+                    <div class="attachments">
+                      <div style="position: relative; display: inline-block;" (click)="view(proofItem)">
+                        <span class="attachment">
+                          <i class="simple-icon-paper-clip"></i>&nbsp;
+                          {{ proofItem.length > 18 ? (proofItem.substring(0, 16) + '...' +
+                          proofItem.split('.').pop()) : proofItem }}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                }
+                @if (item.editMode) {
+                  <form #addAttachments="ngForm" novalidate>
+                    <div class="input-group" style="width: max-content">
+                      <input class="form-control" type="file"
+                        accept=".png, .jpg, .jpeg, .xlsx, .csv, .pdf" multiple ngModel
+                        #fileInput="ngModel" name="fileInput{{ i }}"
+                        (change)="onSelectFile($event,item)" />
+                    </div>
+                  </form>
+                  @for (proofItem of item.proof; track proofItem; let j = $index) {
+                    <div class="attachments">
+                      <div style="position: relative; display: inline-block;">
+                        <span class="attachment">
+                          <i class="simple-icon-paper-clip"></i>&nbsp;
+                          {{ proofItem.length > 18 ? (proofItem.substring(0, 16) + '...' +
+                          proofItem.split('.').pop()) : proofItem }}
+                        </span>
+                        <button class="close pull-right" style="position: absolute; margin-left: 10px;"
+                          (click)="removeImage(i,j)"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                      </div>
+                    }
+                  }
+                </td>
+                <td class="name-col">
+                  @if (item.authStatus==null) {
+                    <span class="text-small">Not Declared</span>
+                  }
+                  @if (item.authStatus == 0) {
+                    <button type="button"
+                    class="btn btn-outline-warning btn-xs">Pending</button>
+                  }
+                  @if (item.authStatus == 1) {
+                    <button type="button"
+                    class="btn btn-outline-success btn-xs">Accepted</button>
+                  }
+                  @if (item.authStatus == 2) {
+                    <button type="button"
+                    class="btn btn-outline-danger btn-xs">Rejected</button>
+                  }
+                  <!-- <i *ngIf="item.status && item.status !== 'Pending'"
+                class="simple-icon-check text-success mr-2"></i>
+                <i *ngIf="item.status === 'Pending'" class="simple-icon-check text-warning mr-2"></i> -->
+                @if (item.status === 'Accepted') {
+                  <span>
+                    Accepted
+                    <br />
+                    <span class="text-muted">Using Amount {{ item.amount }}</span>
+                  </span>
+                }
+                @if (item.authStatus === 'Auto Accepted') {
+                  <span>Auto Accepted</span>
+                }
+                @if (item.authStatus === 'Pending') {
+                  <span>
+                    Auto Accepted till cutoff date
+                    <br />
+                    <span class="text-muted">Using Amount {{ item.amount }}</span>
+                  </span>
+                }
+              </td>
+              <td class="name-col sticky" style="position: sticky;">
+                @if (!item.editMode && item.authStatus!=1) {
+                  <div>
+                    <button type="button" class="btn btn-primary btn-xs mr-2 pointer"
+                      (click)="onEditClick(item)">
+                      Edit
+                    </button>
+                    @if (item.employeeDeclarationID && item.authStatus == 0) {
+                      <button type="button"
+                        class="btn btn-danger btn-xs pointer"
+                        (click)="onDeleteClick(item.employeeDeclarationID)">
+                        Delete
+                      </button>
+                    }
+                  </div>
+                }
+                @if (item.editMode) {
+                  <div>
+                    <button type="submit" class="btn btn-success btn-xs mr-2 pointer"
+                      (click)="onSaveClick(item)">
+                      Save
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs pointer" (click)="onCalcelClick(item)">
+                      Cancel
+                    </button>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      }
+    </table>
+  </div>
+
+  <pagination class="pagination-sm justify-content-center" [totalItems]="page.totalCount" [itemsPerPage]="limit"
+    [(ngModel)]="body.page" (pageChanged)="pageChanged($event)" [customNextTemplate]="nextTemplate"
+    [customPreviousTemplate]="prevTemplate">
+  </pagination>
+
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

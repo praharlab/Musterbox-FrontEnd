@@ -1,0 +1,651 @@
+<div bsModal #acceptModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Approve</h4>
+        <button type="button" class="btn-close close pull-right" (click)="acceptModal.hide()" aria-label="Close"
+          #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <form #accept="ngForm" novalidate (ngSubmit)="onsubmit()">
+        <div class="modal-body">
+          @if (referencedata) {
+            <div class="row">
+              <div class="col-md-6">
+                <span style="font-size: 14px;"><b>Employee Name:
+                </b>{{referencedata.PersonName}} ({{referencedata.userNumber}})
+              </span>
+            </div>
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Applied On: </b>
+            {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Employee Code: </b>{{
+            referencedata.employeeCode }}
+          </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+    </span>
+  </div>
+  @if (referencedata.division != null) {
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+    </span>
+  </div>
+}
+@if (referencedata.workingArea != null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+@if (referencedata) {
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th>From Date</th>
+        <td>{{ referencedata.FromDate | date: 'dd-MM-yyyy' }}</td>
+        <th>To Date</th>
+        <td>{{ referencedata.ToDate | date: 'dd-MM-yyyy' }}</td>
+      </tr>
+      <tr>
+        <th>Day Type</th>
+        <td>{{ referencedata.DayType }}</td>
+        <th>Leave Days</th>
+        <td>{{ referencedata.LeaveDays }}</td>
+      </tr>
+      <tr>
+        <th>Applied Leave</th>
+        @if (!referencedata.leaveAttanchment) {
+          <td colspan="3">{{
+          referencedata.appliedLeaveName }}</td>
+        }
+        @if (referencedata.leaveAttanchment) {
+          <td>{{ referencedata.appliedLeaveName }}</td>
+        }
+        @if (referencedata.leaveAttanchment) {
+          <th>Attachment</th>
+        }
+        @if (referencedata.leaveAttanchment) {
+          <td>
+            <button type="button" class="btn btn-outline-primary btn-xs"
+              (click)="view(referencedata.leaveAttanchment)">
+              {{ 'View' | translate }}
+            </button>
+          </td>
+        }
+      </tr>
+      @if (referencedata.Remark) {
+        <tr>
+          <th>Leave Reason</th>
+          <td colspan="3">{{ referencedata.Remark }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+<br />
+<div class="row">
+  <div class="col-md-12">
+    <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ auth_Criteria }}
+  </span>
+</div>
+</div>
+<br>
+  <table class="table">
+    @for (items of authdata; track items) {
+      <tbody>
+        <tr>
+          <td style="width: 120px;">
+            @if (items.authstatus == 1) {
+              <button class="btn btn-outline-success btn-xs" type="button"
+                >
+                Approved
+              </button>
+            }
+            @if (items.authstatus == 0) {
+              <button class="btn btn-outline-danger btn-xs" type="button"
+                >
+                Rejected
+              </button>
+            }
+            @if (items.authstatus == 2) {
+              <button class="btn btn-outline-warning btn-xs" type="button"
+                >
+                Pending
+              </button>
+            }
+          </td>
+          <td><b>Authorizer : </b> {{ items.username }}
+          <br>
+            @if (items.authstatus != 2) {
+              <span>@if (items.authstatus == 1) {
+                <span><b>Approved
+                On : </b></span>
+                }@if (items.authstatus == 0) {
+                <span><b>Rejected On :
+                </b></span>
+              }
+            {{items.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</span>
+          }
+          @if (items.authstatus == 0 && items.rejectionRemarks) {
+            <br>
+            }
+            @if (items.authstatus == 0 && items.rejectionRemarks) {
+              <span><b>Rejection Remark
+              :</b> {{
+            items.rejectionRemarks }}</span>
+          }
+        </td>
+        @if (items.approvedLeaveAuthorizations?.length>0) {
+          <td>
+            <table class="table" style="border: none; width: 100%;">
+              <thead>
+                <tr style="border-bottom: 1px solid #ccc;">
+                  <th style="border: none; padding: 0.5rem;">Date</th>
+                  <th style="border: none; padding: 0.5rem;">Days</th>
+                  <th style="border: none; padding: 0.5rem;">Leave Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (leave of items.approvedLeaveAuthorizations; track leave) {
+                  <tr
+                    style="border-bottom: 1px solid #ccc;">
+                    <td style="border: none; padding: 0.5rem;">{{ leave.date |
+                    date:'dd-MM-yyyy' }}</td>
+                    <td style="border: none; padding: 0.5rem;">{{ leave.days }}</td>
+                    <td style="border: none; padding: 0.5rem;">{{ leave.LeaveName }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </td>
+        }
+      </tr>
+    </tbody>
+  }
+</table>
+<br>
+
+  @for (value of leavedata; track value; let i = $index) {
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" [ngModel]="value.date" #date="ngModel"
+              name="date{{ i }}" readonly />
+              <span>Date</span>
+            </label>
+          </div>
+          @if (value.show == false) {
+            <div class="col-md-2">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" [(ngModel)]="value.days" #days="ngModel"
+                  name="days{{ i }}" readonly />
+                  <span>Day*</span>
+                </label>
+              </div>
+            }
+            @if (value.show == true) {
+              <div class="col-md-2">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" [(ngModel)]="value.days" #days="ngModel"
+                    (change)="dayscall($event, value.date, value.LeaveTranId, 'leave')"
+                    name="days{{ i }}" required>
+                    <ng-option value="0.5">0.5</ng-option>
+                    <ng-option value="1">1</ng-option>
+                  </ng-select>
+                  <span>Day*</span>
+                  @if (!days.valid && accept.submitted) {
+                    <div class="invalid-tooltip">
+                      Day is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            }
+            <div class="col-md-2">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" [(ngModel)]="value.LeaveTranId"
+                  #LeaveTranId="ngModel" name="LeaveTranId{{ i }}"
+                  (change)="leave($event, value.date, value.days, 'leave')" required>
+                  @for (LeaveType of value.leaveTypes; track LeaveType) {
+                    <ng-option
+                      [value]="LeaveType.leavetran">
+                      {{ LeaveType.leavename }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>LeaveType*</span>
+                @if (!LeaveTranId.valid && accept.submitted) {
+                  <div class="invalid-tooltip">
+                    LeaveType is required!
+                  </div>
+                }
+              </label>
+            </div>
+            @if (value.days1 == 0.5) {
+              <div class="col-md-2">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="text" [(ngModel)]="value.days1" #days1="ngModel"
+                    name="days1{{ i }}" readonly />
+                    <span>Day*</span>
+                  </label>
+                </div>
+              }
+              @if (value.days1 == 0.5) {
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #LeaveTranId1="ngModel"
+                      [(ngModel)]="value.LeaveTranId1" name="LeaveTranId1{{ i }}"
+                      (change)="leave1($event, value.date, value.days1, 'leave')" required>
+                      @for (LeaveType of value.leaveTypes; track LeaveType) {
+                        <ng-option
+                          [value]="LeaveType.leavetran">
+                          {{ LeaveType.leavename }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>LeaveType*</span>
+                    @if (!LeaveTranId1.valid && accept.submitted) {
+                      <div class="invalid-tooltip">
+                        LeaveType is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              <!-- <div *ngIf="value.availableleave == 'N'" class="invalid-tooltip">
+              You have not sufficient leave balance so it is consider as a
+              L.W.P.
+            </div> -->
+          </div>
+        </div>
+      }
+      <br />
+      @if (sandwichvalues.length > 0) {
+        <div class="row">
+          <div class="col-md-12">
+            <span style="font-size: 16px;"><b>Sandwich Leave </b>
+          </span>
+        </div>
+      </div>
+    }
+    @if (sandwichvalues.length > 0) {
+      <br />
+    }
+    @for (values of sandwichleavedata; track values; let i = $index) {
+      <div class="col-md-12">
+        @if (sandwichvalues.length > 0) {
+          <div class="row">
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" [ngModel]="values.date | date: 'yyyy-MM-dd'"
+                  #sandwichdate="ngModel" name="sandwichdate{{ i }}" readonly />
+                  <span>Date</span>
+                </label>
+              </div>
+              @if (values.show == false) {
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" [(ngModel)]="values.days"
+                      #sandwichdays="ngModel" name="sandwichdays{{ i }}" readonly />
+                      <span>Day*</span>
+                    </label>
+                  </div>
+                }
+                @if (values.show == true) {
+                  <div class="col-md-2">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" required [(ngModel)]="values.days"
+                        #sandwichdays="ngModel"
+                        (change)="dayscall($event, values.date, values.LeaveTranId, 'sandwich')"
+                        name="sandwichdays{{ i }}">
+                        <ng-option value="0.5">0.5</ng-option>
+                        <ng-option value="1">1</ng-option>
+                      </ng-select>
+                      <span>Day*</span>
+                      @if (!sandwichdays.valid && accept.submitted) {
+                        <div class="invalid-tooltip">
+                          Day is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                <div class="col-md-2">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" [(ngModel)]="values.LeaveTranId"
+                      #sandwichleaveTypeID="ngModel" name="sandwichleaveTypeID{{ i }}"
+                      (change)="leave($event, values.date, values.days, 'sandwich')" required>
+                      @for (LeaveType of values.leaveTypes; track LeaveType) {
+                        <ng-option
+                          [value]="LeaveType.leavetran">
+                          {{ LeaveType.leavename }}
+                        </ng-option>
+                      }
+                    </ng-select>
+                    <span>LeaveType*</span>
+                    @if (!sandwichleaveTypeID.valid && accept.submitted) {
+                      <div class="invalid-tooltip">
+                        LeaveType is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                @if (values.days1 == 0.5) {
+                  <div class="col-md-2">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" [(ngModel)]="values.days1"
+                        #sandwichdays1="ngModel" name="sandwichdays1{{ i }}" readonly />
+                        <span>Day*</span>
+                      </label>
+                    </div>
+                  }
+                  @if (values.days1 == 0.5) {
+                    <div class="col-md-2">
+                      <label class="form-group has-float-label">
+                        <ng-select placeholder="Choose your option" ngModel #sandwichLeaveTranId1="ngModel"
+                          [(ngModel)]="value.LeaveTranId1" name="sandwichLeaveTranId1{{ i }}"
+                          (change)="leave1($event, values.date, values.days1, 'sandwich')" required>
+                          @for (LeaveType of values.leaveTypes; track LeaveType) {
+                            <ng-option
+                              [value]="LeaveType.leavetran">
+                              {{ LeaveType.leavename }}
+                            </ng-option>
+                          }
+                        </ng-select>
+                        <span>LeaveType*</span>
+                        @if (!sandwichLeaveTranId1.valid && accept.submitted) {
+                          <div
+                            class="invalid-tooltip">
+                            LeaveType is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @if (sandwichvalues.length > 0) {
+            <br />
+          }
+
+          <div class="row">
+            <div class="col-md-12">
+              <span style="font-size: 16px;"><b>Leave Balance</b>
+            </span>
+          </div>
+        </div>
+        <br />
+
+        <table class="table table-striped">
+          <tbody>
+            <tr>
+              <th style="width: 25%;">Leave Type</th>
+              <th style="width: 25%;">Balance</th>
+              <th style="width: 25%;">Leave Type</th>
+              <th style="width: 25%;">Balance</th>
+            </tr>
+            @for (item of leavebalance; track item; let i = $index) {
+              <tr [hidden]="i % 2 !== 0">
+                <th style="width: 25%;">{{ item.leaveName | uppercase }}</th>
+                <td style="width: 25%;">{{ item.Balance }}</td>
+                <!-- Second column in the same row -->
+                @if (leavebalance[i + 1]) {
+                  <th style="width: 25%;">{{ leavebalance[i + 1].leaveName |
+                  uppercase }}</th>
+                }
+                @if (leavebalance[i + 1]) {
+                  <td style="width: 25%;">{{ leavebalance[i + 1].Balance }}
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        @if (authdata) {
+          @if (showButton(authdata, leaveAuthorizationData)) {
+            <button class="btn btn-success" type="submit"
+              >
+              Approve
+            </button>
+          }
+        }
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+<!-- Rejection Modal modal -->
+<div bsModal #rejectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Reject Reason</h4>
+        <button type="button" class="btn-close close pull-right" (click)="rejectModal.hide()" aria-label="Close"
+          #closeRejectionModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form #rejectionRemarksForm="ngForm" novalidate (ngSubmit)="rejectionSubmit()">
+          @if (referencedata) {
+            <div class="row">
+              <div class="col-md-6">
+                <span style="font-size: 14px;"><b>Employee Name:
+                </b>{{referencedata.PersonName}} ({{referencedata.userNumber}})
+              </span>
+            </div>
+            <div class="col-md-6">
+              <span style="font-size: 14px;"><b>Applied On: </b>
+            {{ referencedata.createdAt | date: 'dd-MM-yyyy h:mm a' }} </span>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size: 14px;"><b>Employee Code: </b>{{
+            referencedata.employeeCode }}
+          </span>
+        </div>
+        <div class="col-md-6">
+          <span style="font-size: 14px;"><b>Designation: </b> {{ referencedata.designation }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <span style="font-size: 14px;"><b>Branch: </b> {{ referencedata.branch }}
+      </span>
+    </div>
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Department: </b> {{ referencedata.department }}
+    </span>
+  </div>
+  @if (referencedata.division != null) {
+    <div class="col-md-6">
+      <span style="font-size: 14px;"><b>Division: </b> {{ referencedata.division }}
+    </span>
+  </div>
+}
+@if (referencedata.workingArea!= null) {
+  <div class="col-md-6">
+    <span style="font-size: 14px;"><b>Working Area: </b> {{ referencedata.workingArea }}
+  </span>
+</div>
+}
+</div>
+}
+<br />
+@if (referencedata) {
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th>From Date</th>
+        <td>{{ referencedata.FromDate | date: 'dd-MM-yyyy' }}</td>
+        <th>To Date</th>
+        <td>{{ referencedata.ToDate | date: 'dd-MM-yyyy' }}</td>
+      </tr>
+      <tr>
+        <th>Day Type</th>
+        <td>{{ referencedata.DayType }}</td>
+        <th>Leave Days</th>
+        <td>{{ referencedata.LeaveDays }}</td>
+      </tr>
+      <tr>
+        <th>Applied Leave</th>
+        @if (!referencedata.leaveAttanchment) {
+          <td colspan="3">{{
+          referencedata.appliedLeaveName }}</td>
+        }
+        @if (referencedata.leaveAttanchment) {
+          <td>{{ referencedata.appliedLeaveName }}</td>
+        }
+        @if (referencedata.leaveAttanchment) {
+          <th>Attachment</th>
+        }
+        @if (referencedata.leaveAttanchment) {
+          <td>
+            <button type="button" class="btn btn-outline-primary btn-xs"
+              (click)="view(referencedata.leaveAttanchment)">
+              {{ 'View' | translate }}
+            </button>
+          </td>
+        }
+      </tr>
+      @if (referencedata.Remark) {
+        <tr>
+          <th>Leave Reason</th>
+          <td colspan="3">{{ referencedata.Remark }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+<br />
+
+
+<div class="row">
+  <div class="col-md-12">
+    <span style="font-size: 16px;"><b>Authorization Criteria : </b>{{ auth_Criteria }}
+  </span>
+</div>
+</div>
+<br>
+  <table class="table">
+    @for (items of authdata; track items) {
+      <tbody>
+        <tr>
+          <td style="width: 120px;">
+            @if (items.authstatus == 1) {
+              <button class="btn btn-outline-success btn-xs" type="button"
+                >
+                Approved
+              </button>
+            }
+            @if (items.authstatus == 0) {
+              <button class="btn btn-outline-danger btn-xs" type="button"
+                >
+                Rejected
+              </button>
+            }
+            @if (items.authstatus == 2) {
+              <button class="btn btn-outline-warning btn-xs" type="button"
+                >
+                Pending
+              </button>
+            }
+          </td>
+          <td><b>Authorizer : </b> {{ items.username }}
+          <br>
+            @if (items.authstatus != 2) {
+              <span>@if (items.authstatus == 1) {
+                <span><b>Approved
+                On : </b></span>
+                }@if (items.authstatus == 0) {
+                <span><b>Rejected On :
+                </b></span>
+              }
+            {{items.updatedAt | date: 'dd-MM-yyyy h:mm a'}}</span>
+          }
+          @if (items.authstatus == 0 && items.rejectionRemarks) {
+            <br>
+            }
+            @if (items.authstatus == 0 && items.rejectionRemarks) {
+              <span><b>Rejection Remark
+              :</b> {{
+            items.rejectionRemarks }}</span>
+          }
+        </td>
+        @if (items.approvedLeaveAuthorizations?.length>0) {
+          <td>
+            <table class="table" style="border: none; width: 100%;">
+              <thead>
+                <tr style="border-bottom: 1px solid #ccc;">
+                  <th style="border: none; padding: 0.5rem;">Date</th>
+                  <th style="border: none; padding: 0.5rem;">Days</th>
+                  <th style="border: none; padding: 0.5rem;">Leave Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (leave of items.approvedLeaveAuthorizations; track leave) {
+                  <tr
+                    style="border-bottom: 1px solid #ccc;">
+                    <td style="border: none; padding: 0.5rem;">{{ leave.date |
+                    date:'dd-MM-yyyy' }}</td>
+                    <td style="border: none; padding: 0.5rem;">{{ leave.days }}</td>
+                    <td style="border: none; padding: 0.5rem;">{{ leave.LeaveName }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </td>
+        }
+      </tr>
+    </tbody>
+  }
+</table>
+<br>
+  <br>
+    @if (authdata) {
+      <div class="col-md-12">
+        @if (showButton(authdata, leaveAuthorizationData)) {
+          <label class="form-group has-float-label">
+            <textarea class="form-control" type="text" ngModel #rejectionRemarks="ngModel"
+            name="rejectionRemarks"></textarea>
+            <span>Rejection Remarks</span>
+          </label>
+        }
+      </div>
+    }
+
+    @if (authdata) {
+      @if (showButton(authdata, leaveAuthorizationData)) {
+        <button class="btn btn-danger" type="submit">
+          Reject
+        </button>
+      }
+    }
+  </form>
+</div>
+</div>
+</div>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

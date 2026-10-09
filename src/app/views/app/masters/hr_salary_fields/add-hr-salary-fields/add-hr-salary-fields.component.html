@@ -1,0 +1,241 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add HR Salary Fields</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        @if (childcompany == 'false') {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+                (change)="changePayhead($event)" required>
+                @for (product of product; track product) {
+                  <ng-option [value]="product.companyMasterID">
+                    {{ product.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company Selection is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #payheadMasterId="ngModel" name="payheadMasterId"
+              required>
+              @for (payhead of payhead; track payhead; let i = $index) {
+                <ng-option [value]="payhead.payheadMasterId">
+                  {{ payhead.payheadName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Payhead *</span>
+            @if (!payheadMasterId.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Payhead Master is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #payheadDisplayName="ngModel" name="payheadDisplayName" />
+            <span>Payhead Display Name </span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <!-- <input class="form-control" type="text" ngModel #salaryFieldWhenMonth="ngModel"  name="salaryFieldWhenMonth"/> -->
+            <ng-select [items]="monthname" bindLabel="month" bindValue="number" name="salaryFieldWhenMonth"
+              placeholder="" appendTo="body" multiple="true" ngModel #salaryFieldWhenMonth="ngModel"
+            required></ng-select>
+            <span>Payhead Calculate in Month *</span>
+            @if (!salaryFieldWhenMonth.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Month Selection is required!
+              </div>
+            }
+          </label>
+        </div>
+
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #salaryFieldAttanChk="ngModel"
+              name="salaryFieldAttanChk" required>
+              <ng-option value="1">Paid Days</ng-option>
+              <ng-option value="0">Fix</ng-option>
+              <ng-option value="2">Physical Attendence</ng-option>
+
+            </ng-select>
+            <span>Select Depends On *</span>
+            @if (!salaryFieldAttanChk.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Depends On is required !
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #salaryFieldSrNo="ngModel" name="salaryFieldSrNo"
+              required (change)="grossConsider()">
+              <ng-option value="A">A</ng-option>
+              <ng-option value="B">B</ng-option>
+              <ng-option value="C">C</ng-option>
+              <ng-option value="D">D</ng-option>
+            </ng-select>
+            <span>Select Salary Field Group *</span>
+            @if (!salaryFieldSrNo.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Salary Field Group Selection is required !
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label><b>Payhead Side *</b></label>
+          &nbsp;&nbsp;
+          <input type="radio" name="salaryFieldSide" ngModel #salaryFieldSide="ngModel" value="E" required />
+          &nbsp;
+          <label for="html">EARNING</label>
+          &nbsp;&nbsp;
+          <input type="radio" name="salaryFieldSide" ngModel #salaryFieldSide="ngModel" value="D" required />
+          &nbsp;
+          <label for="css">DEDUCT</label>
+          <br />
+          <br />
+          @if (!salaryFieldSide.valid && addcomp.submitted) {
+            <div class="invalid-tooltip">
+              Salary Field Side is required!
+            </div>
+          }
+        </div>
+        <div class="col-md-4">
+          <label><b>Payhead Show *</b></label>
+          &nbsp;&nbsp;
+          <input type="radio" name="salaryFieldShow" ngModel #salaryFieldShow="ngModel" [ngModel]="null" value="Y"
+            required (change)="grossConsider()" />
+            &nbsp;
+            <label for="html">YES</label>
+            &nbsp;&nbsp;
+            <input type="radio" name="salaryFieldShow" ngModel #salaryFieldShow="ngModel" [ngModel]="null" value="N"
+              required (change)="grossConsider()"/>
+              &nbsp;
+              <label for="css">NO</label>
+              <br />
+              <br />
+              @if (!salaryFieldShow.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Payhead Show is required!
+                </div>
+              }
+            </div>
+
+            @if (toShowConsiderIn) {
+              <div class="col-md-4">
+                <label><b>Payhead Consider In *</b></label>
+                &nbsp;&nbsp;
+                <input type="radio" name="considerIn" ngModel #considerIn="ngModel" [(ngModel)]="considerInValue" value="gross"
+                  required (change)="grossConsider()" />
+                  &nbsp;
+                  <label for="html">Gross Salary</label>
+                  &nbsp;&nbsp;
+                  <input type="radio" name="considerIn" ngModel #considerIn="ngModel" [(ngModel)]="considerInValue" value="net"
+                    required (change)="grossConsider()"/>
+                    &nbsp;
+                    <label for="css">NetPay</label>
+                    <br />
+                    <br />
+                    @if (!considerIn.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Payhead Consider In is required!
+                      </div>
+                    }
+                  </div>
+                }
+
+
+                <div class="col-md-4">
+                  <label><b>Round off in Salary</b></label>
+                  &nbsp;&nbsp;
+                  <input type="radio" name="salaryFieldRound" ngModel #salaryFieldRound="ngModel" [ngModel]="null" value="Y"
+                    required />
+                    &nbsp;
+                    <label for="html">YES</label>
+                    &nbsp;&nbsp;
+                    <input type="radio" name="salaryFieldRound" ngModel #salaryFieldRound="ngModel" [ngModel]="null" value="N"
+                      required />
+                      &nbsp;
+                      <label for="css">NO</label>
+                      <br />
+                      <br />
+                      @if (!salaryFieldRound.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Round off in Salary is required!
+                        </div>
+                      }
+                    </div>
+                    @if (addcomp.value.salaryFieldRound == 'N') {
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" ngModel #salaryFieldRoundNo="ngModel" [ngModel]="null"
+                            name="salaryFieldRoundNo" required />
+                            <span>Show digit after decimal point *</span>
+                            @if (!salaryFieldRoundNo.valid && addcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                digit after decimal point is required !
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+
+
+                      @if (addcomp.value.salaryFieldRound == 'Y') {
+                        <div class="col-md-6">
+                          <label><b> Set Round off Type * : </b></label>
+                          &nbsp;&nbsp;
+                          <input type="radio" name="roundOffType" ngModel #roundOffType="ngModel" value="1" required />
+                          &nbsp;
+                          <label for="html">Regular RoundOff</label>
+                          &nbsp;&nbsp;
+                          <input type="radio" name="roundOffType" ngModel #roundOffType="ngModel" value="0" required />
+                          &nbsp;
+                          <label for="css">Ceiling Value</label>
+                          <br />
+                          <br />
+                          @if (!roundOffType.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Round off Type is required!
+                            </div>
+                          }
+                        </div>
+                      }
+
+
+                    </div>
+
+                    <button class="btn btn-primary" [disabled]="isdisebled" type="submit">
+                      {{ 'forms.submit' | translate }}
+                    </button>
+                    <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/masters/hr_field_salary'"
+                      style="margin-left: 2%">
+                      Cancel
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

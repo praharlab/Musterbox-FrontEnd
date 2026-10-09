@@ -1,0 +1,92 @@
+@if (bonuspolicydata) {
+  <form #addbonuspolicy="ngForm" novalidate>
+    <div class="row">
+      <!-- Company -->
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+            [(ngModel)]="bonuspolicydata.companyMasterID" required disabled>
+            @for (company of allcomp; track company) {
+              <ng-option [value]="company.companyMasterID">
+                {{ company.companyName }}
+              </ng-option>
+            }
+          </ng-select>
+          <span>Company *</span>
+          @if (!company.valid && addbonuspolicy.submitted) {
+            <div class="invalid-tooltip">
+              Company is required!
+            </div>
+          }
+        </label>
+      </div>
+      <!-- Bonus Policy Name -->
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <input class="form-control" type="text" required ngModel #bonusPolicyName="ngModel"
+            name="bonusPolicyName" [(ngModel)]="bonuspolicydata.bonusPolicyName" disabled/>
+            <span>Bonus Policy Name *</span>
+            @if (!bonusPolicyName.valid && addbonuspolicy.submitted) {
+              <div class="invalid-tooltip">
+                Bonus Policy Name is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #bonuscycle="ngModel" name="bonuscycle"
+              [(ngModel)]="bonuspolicydata.bonusCycle" required disabled>
+              <ng-option value="January to December">January to December</ng-option>
+              <ng-option value="April to March">April to March</ng-option>
+            </ng-select>
+            <span>Bonus Cycle *</span>
+            @if (!bonuscycle.valid && addbonuspolicy.submitted) {
+              <div class="invalid-tooltip">
+                Bonus Cycle is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #bonuscredittype="ngModel"
+              name="bonuscredittype" [(ngModel)]="bonuspolicydata.bonusCreditType" required disabled>
+              <ng-option value="previous">Previous</ng-option>
+              <ng-option value="current">Current</ng-option>
+            </ng-select>
+            <span>Bonus Credit Type *</span>
+            @if (!bonuscredittype.valid && addbonuspolicy.submitted) {
+              <div class="invalid-tooltip">
+                Bonus Credit Type is required!
+              </div>
+            }
+          </label>
+        </div>
+        @if (bonuspolicydata.bonusCreditType == 'current') {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #bonuscreditcycle="ngModel"
+                name="bonuscreditcycle" [(ngModel)]="bonuspolicydata.bonusCreditCycle" required disabled>
+                <ng-option value="monthly">Monthly</ng-option>
+                <ng-option value="quarterly">Quarterly</ng-option>
+                <ng-option value="halfYearly">HalfYearly</ng-option>
+                <ng-option value="yearly">Yearly</ng-option>
+              </ng-select>
+              <span>Bonus Credit Cycle *</span>
+              @if (!bonuscreditcycle.valid && addbonuspolicy.submitted) {
+                <div class="invalid-tooltip">
+                  Bonus Credit Cycle is required!
+                </div>
+              }
+            </label>
+          </div>
+        }
+        <div class="col-md-12">
+          <input type="checkbox" ngModel #payinsalary="ngModel" [(ngModel)]="bonuspolicydata.payInSalary"
+            name="payinsalary" disabled/>
+            <label for="yes" style="margin-left: 1%"><b>Pay In Salary</b>  </label>
+          </div>
+        </div>
+      </form>
+    }

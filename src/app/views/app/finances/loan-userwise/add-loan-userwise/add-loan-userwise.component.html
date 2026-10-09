@@ -1,0 +1,64 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Loan</h5>
+
+    <form #addloanMaster="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="number"
+              required
+              ngModel
+              #loanAmount="ngModel"
+              name="loanAmount"
+              />
+              <span>Loan Amount *</span>
+              @if (!loanAmount.valid && addloanMaster.submitted) {
+                <div class="invalid-tooltip">
+                  Loan Amount is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <textarea
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #loanRemark="ngModel"
+                name="loanRemark"
+              ></textarea>
+              <span>Loan Remarks *</span>
+              @if (!loanRemark.valid && addloanMaster.submitted) {
+                <div class="invalid-tooltip">
+                  Loan Remarks is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'" click="onSubmit()">
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-lg btn-shadow mt-4"
+            [routerLink]="adminRoot + '/finances/loanUserwise'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <simple-notifications
+        [options]="{ position: ['top', 'center'], maxStack: 1 }"
+      ></simple-notifications>
+    </div>
+  </div>

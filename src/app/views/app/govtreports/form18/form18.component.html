@@ -1,0 +1,1481 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Form 18"></app-heading>
+    <app-breadcrumb title="Form 18"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #datefilter="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              (change)="selectcompany($event)"
+              required
+              >
+              @for (company1 of company1; track company1) {
+                <ng-option [value]="company1.companyMasterID">
+                  {{ company1.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!company.valid && datefilter.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="allbranch"
+              [multiple]="true"
+              bindLabel="branchName"
+              groupBy="selectedAllGroup"
+              [selectableGroup]="true"
+              [selectableGroupAsModel]="false"
+              bindValue="branchMasterID"
+              [closeOnSelect]="false"
+              ngModel
+              #branch="ngModel"
+              name="branch"
+              >
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input
+                  id="item-{{ index }}"
+                  type="checkbox"
+                  [ngModel]="item$.selected"
+                  name="selectall1"
+                  />
+                  Select All
+                </ng-template>
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #fromdate="ngModel"
+                name="fromdate"
+                required
+                >
+                @for (item of year; track item) {
+                  <ng-option [value]="item">
+                    {{ item }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select year *</span>
+              @if (!fromdate.valid && datefilter.submitted) {
+                <div class="invalid-tooltip">
+                  Year is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select
+                [items]="alldepartment"
+                [multiple]="true"
+                bindLabel="departmentName"
+                groupBy="selectedAllGroup"
+                [selectableGroup]="true"
+                [selectableGroupAsModel]="false"
+                bindValue="departmentId"
+                [closeOnSelect]="false"
+                ngModel
+                #department="ngModel"
+                name="department"
+                >
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input
+                    id="item-{{ index }}"
+                    type="checkbox"
+                    [ngModel]="item$.selected"
+                    name="selectall"
+                    />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select Department</span>
+              </label>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select
+                  [items]="designation1"
+                  [multiple]="true"
+                  bindLabel="designationName"
+                  groupBy="selectedAllGroup"
+                  [selectableGroup]="true"
+                  [selectableGroupAsModel]="false"
+                  bindValue="designationId"
+                  [closeOnSelect]="false"
+                  ngModel
+                  #designation="ngModel"
+                  name="designation"
+                  >
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input
+                      id="item-{{ index }}"
+                      type="checkbox"
+                      [ngModel]="item$.selected"
+                      name="selectall1"
+                      />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Designation</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select
+                    [items]="empList"
+                    [multiple]="true"
+                    bindLabel="name"
+                    groupBy="selectedAllGroup"
+                    [selectableGroup]="true"
+                    [selectableGroupAsModel]="false"
+                    bindValue="userMasterID"
+                    [closeOnSelect]="false"
+                    ngModel
+                    #employee="ngModel"
+                    name="employee"
+                    >
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input
+                        id="item-{{ index }}"
+                        type="checkbox"
+                        [ngModel]="item$.selected"
+                        [ngModelOptions]="{ standalone: true }"
+                        />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Employee</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <button class="btn btn-primary form-group" type="submit">
+                    {{ 'Submit' | translate }}
+                  </button>
+                  &nbsp;&nbsp;
+                  <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+                  @if (finaldata == true) {
+                    <button
+                      class="btn btn-primary form-group"
+                      (click)="SavePDF()"
+                      style="margin-left: 10px"
+                      >
+                      Save as PDF
+                    </button>
+                  }
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <html>
+          @if (finaldata == true) {
+            <div>
+              <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="Generator" content="Microsoft Word 15 (filtered)" />
+                <title>FORM NO</title>
+                <style>
+                  /* Font Definitions */
+                  @font-face {
+                  font-family: "Cambria Math";
+                  panose-1: 2 4 5 3 5 4 6 3 2 4;
+                }
+                /* Style Definitions */
+                p.MsoNormal,
+                li.MsoNormal,
+                div.MsoNormal {
+                margin: 0in;
+                font-size: 12.0pt;
+                font-family: "Times New Roman", serif;
+              }
+              .tabledata{
+              font-family: "Times New Roman", serif;
+            }
+            h1 {
+            margin: 0in;
+            text-align: center;
+            page-break-after: avoid;
+            font-size: 12.0pt;
+          }
+          @page WordSection1 {
+          size: 8.5in 11.0in;
+          margin: .75in 1.25in .75in 1.25in;
+        }
+        div.WordSection1 {
+        page: WordSection1;
+      }
+      /* List Definitions */
+      ol {
+      margin-bottom: 0in;
+    }
+    ul {
+    margin-bottom: 0in;
+  }
+</style>
+</head>
+<body lang="EN-US" style="word-wrap: break-word">
+  <div class="WordSection1">
+    <div style="overflow-x: auto">
+      <table
+        id="content"
+        class="MsoNormalTable"
+        border="1"
+        style="width: 7.2in; border-collapse: collapse; border: none"
+        >
+        @for (item of form18; track item) {
+          <tr>
+            <td colspan="30" style="border: none; text-align: center; font-size: 37px">
+              <b>FORM NO. 18</b>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="30" style="border: none; text-align: center; font-size: 30px">
+              <b>(Prescribe under Rule 94)</b>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="30" style="border: none; text-align: center; font-size: 34px">
+              <b>Register of Leave with wages.</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="8" style="border: none; font-size: 20px">
+              1. Name :
+              <b>{{ item.Name }}</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="8" style="border: none; font-size: 20px">
+              2. Sex :
+              <b>{{ item.gender }}</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="8" style="border: none; font-size: 20px">
+              3. Father’s/Husband’s name :
+              <b>{{ item.middleName }}</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="13" style="border: none; font-size: 20px">
+              4. Serial number in the Register of adult/child worker :
+              <b>{{ item.employeeCode }}</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="8" style="border: none; font-size: 20px">
+              5. Department :
+              <b>{{ item.Department }}</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="8" style="border: none; font-size: 20px">
+              6. Designation :
+              <b>{{ item.Designation }}</b>
+            </td>
+          </tr>
+          <tr>
+            <td class="tabledata" colspan="8" style="border: none; font-size: 20px">
+              7. Date of joining employment :
+              <b>{{ item.joiningDate | date: 'dd-MMM-yyyy' }}</b>
+            </td>
+          </tr>
+          <br />
+          <tr style="page-break-inside: avoid">
+            <td
+              width="83"
+              rowspan="3"
+              valign="top"
+              style="width: 62.55pt; border: solid windowtext 1px; padding: 0in 5.4pt 0in 5.4pt"
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Calendar year of service (i.e. previous year)
+                <br />
+                <b>{{ datefilter.value.fromdate }}</b>
+              </p>
+            </td>
+            <td
+              width="167"
+              colspan="2"
+              valign="top"
+                  style="
+                    width: 125.1pt;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Leave due or on 1
+                <sup>st</sup>
+                January of the year in column 1
+              </p>
+            </td>
+            <td
+              width="334"
+              colspan="4"
+              valign="top"
+                  style="
+                    width: 250.2pt;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Leave availed during the year
+              </p>
+            </td>
+            <td
+              width="107"
+              rowspan="3"
+              valign="top"
+                  style="
+                    width: 80.55pt;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Leave refused out of regular leave mentioned in column 3
+              </p>
+            </td>
+            <td
+              width="319"
+              colspan="5"
+              valign="top"
+              style="width: 239.4pt; border: solid windowtext 1px; padding: 0in 5.4pt 0in 5.4pt"
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Number of working days for computation of leave during the year mentioned in
+                column1
+              </p>
+            </td>
+            <td
+              width="96"
+              rowspan="3"
+              valign="top"
+                  style="
+                    width: 1in;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Regular leave earned for the year mentioned in col. 1
+              </p>
+            </td>
+            <td
+              width="252"
+              colspan="2"
+              valign="top"
+                  style="
+                    width: 189pt;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Balance of leave admissible on 1
+                <sup>st</sup>
+                January of the year following the year mentioned in column 1
+              </p>
+            </td>
+            <td
+              width="136"
+              valign="top"
+              style="width: 101.8pt; border: solid windowtext 1px; padding: 0in 5.4pt 0in 5.4pt"
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Leave period (i.e. col. 4 + col. 5 in days)
+              </p>
+            </td>
+            <td
+              width="456"
+              colspan="4"
+              valign="top"
+                  style="
+                    width: 341.8pt;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Details of wages paid
+              </p>
+            </td>
+            <td
+              width="76"
+              valign="top"
+                  style="
+                    width: 56.8pt;
+                    border: solid windowtext 1px;
+                    border-left: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Signature</p>
+            </td>
+          </tr>
+          <tr style="page-break-inside: avoid">
+            <td
+              width="83"
+              rowspan="2"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Refused</p>
+            </td>
+            <td
+              width="83"
+              rowspan="2"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Regular</p>
+            </td>
+            <td
+              width="83"
+              rowspan="2"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Refused</p>
+            </td>
+            <td
+              width="83"
+              rowspan="2"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Regular</p>
+            </td>
+            <td
+              width="167"
+              colspan="2"
+              valign="top"
+                  style="
+                    width: 125.1pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Dates</p>
+            </td>
+            <td
+              rowspan="2"
+              width="62"
+              valign="top"
+                  style="
+                    width: 0.65in;
+                    border: solid windowtext 1px;
+                    border-top: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Days worked</p>
+            </td>
+            <td
+              rowspan="2"
+              width="45"
+              valign="top"
+                  style="
+                    width: 33.5pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Lay-off</p>
+            </td>
+            <td
+              rowspan="2"
+              width="78"
+              valign="top"
+                  style="
+                    width: 58.15pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Maternity leave upto 12 weeks
+              </p>
+            </td>
+            <td
+              rowspan="2"
+              width="65"
+              valign="top"
+                  style="
+                    width: 48.8pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Leave with Wages enjoyed
+              </p>
+            </td>
+            <td
+              rowspan="2"
+              width="70"
+              valign="top"
+                  style="
+                    width: 52.15pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Total</p>
+              <p class="MsoNormal" align="center" style="text-align: center">(9 to12)</p>
+            </td>
+            <td
+              rowspan="2"
+              width="132"
+              valign="top"
+                  style="
+                    width: 99pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Refused</p>
+              <p class="MsoNormal" align="center" style="text-align: center">(Col. 2+8-4)</p>
+            </td>
+            <td
+              rowspan="2"
+              width="120"
+              valign="top"
+                  style="
+                    width: 1.25in;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">Regular</p>
+              <p class="MsoNormal" align="center" style="text-align: center">(Col. 3+14-5-8)</p>
+            </td>
+            <td
+              width="136"
+              valign="top"
+              rowspan="2"
+                  style="
+                    width: 101.8pt;
+                    border: solid windowtext 1px;
+                    border-top: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+            </td>
+            <td
+              width="112"
+              valign="top"
+              rowspan="2"
+                  style="
+                    width: 83.9pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Normal rates of wages excluding of any overtime as well as bonus but including
+              </p>
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Dearness Allowance (Rs.)
+              </p>
+            </td>
+            <td
+              width="112"
+              valign="top"
+              rowspan="2"
+                  style="
+                    width: 84.3pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Cash equivalent of the advantages accruing through the concessional sale of
+                food-grains and other articles
+              </p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+              rowspan="2"
+                  style="
+                    width: 90.25pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Rate if wages for leave with wages paid (Rs.)
+              </p>
+              <p class="MsoNormal" align="center" style="text-align: center">(Col.18+Col.19)</p>
+            </td>
+            <td
+              width="111"
+              valign="top"
+              rowspan="2"
+                  style="
+                    width: 83.35pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">
+                Total wages paid for the period of leave with wages enjoyed (Rs.)
+              </p>
+              <p class="MsoNormal" align="center" style="text-align: center">
+                (Col.17 Col.X Col.20)
+              </p>
+            </td>
+            <td
+              width="76"
+              valign="top"
+              rowspan="2"
+                  style="
+                    width: 56.8pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+            </td>
+          </tr>
+          <tr style="page-break-inside: avoid">
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">From</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">To</p>
+            </td>
+          </tr>
+          <tr>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border: solid windowtext 1px;
+                    border-top: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">1</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">2</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">3</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">4</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">5</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">6</p>
+            </td>
+            <td
+              width="83"
+              valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">7</p>
+            </td>
+            <td
+              width="107"
+              valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">8</p>
+            </td>
+            <td
+              width="62"
+              valign="top"
+                  style="
+                    width: 0.65in;
+                    border: solid windowtext 1px;
+                    border-top: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">9</p>
+            </td>
+            <td
+              width="45"
+              valign="top"
+                  style="
+                    width: 33.5pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">10</p>
+            </td>
+            <td
+              width="78"
+              valign="top"
+                  style="
+                    width: 58.15pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">11</p>
+            </td>
+            <td
+              width="65"
+              valign="top"
+                  style="
+                    width: 48.8pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">12</p>
+            </td>
+            <td
+              width="70"
+              valign="top"
+                  style="
+                    width: 52.15pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">13</p>
+            </td>
+            <td
+              width="96"
+              valign="top"
+                  style="
+                    width: 1in;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">14</p>
+            </td>
+            <td
+              width="132"
+              valign="top"
+                  style="
+                    width: 99pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">15</p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                  style="
+                    width: 1.25in;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">16</p>
+            </td>
+            <td
+              width="136"
+              valign="top"
+                  style="
+                    width: 101.8pt;
+                    border: solid windowtext 1px;
+                    border-top: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">17</p>
+            </td>
+            <td
+              width="112"
+              valign="top"
+                  style="
+                    width: 83.9pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">18</p>
+            </td>
+            <td
+              width="112"
+              valign="top"
+                  style="
+                    width: 84.3pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">19</p>
+            </td>
+            <td
+              width="120"
+              valign="top"
+                  style="
+                    width: 90.25pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">20</p>
+            </td>
+            <td
+              width="111"
+              valign="top"
+                  style="
+                    width: 83.35pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">21</p>
+            </td>
+            <td
+              width="76"
+              valign="top"
+                  style="
+                    width: 56.8pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                  "
+              >
+              <p class="MsoNormal" align="center" style="text-align: center">22</p>
+            </td>
+          </tr>
+          @for (data of item.attendancedata; track data) {
+            <tr
+              style="page-break-inside: avoid; height: 20.5pt"
+              >
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border: solid windowtext 1px;
+                    border-top: none;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">
+                  <b>{{ data.month }}</b>
+                </p>
+              </td>
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="83"
+                valign="top"
+                  style="
+                    width: 62.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">
+                  <b>{{ data.PresentDay }}</b>
+                </p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">
+                  <b>{{ data.weekoffholiday }}</b>
+                </p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">
+                  <b>{{ data.Leave }}</b>
+                </p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">
+                  <b>{{ data.Total }}</b>
+                </p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+              <td
+                width="107"
+                valign="top"
+                  style="
+                    width: 80.55pt;
+                    border-top: none;
+                    border-left: none;
+                    border-bottom: solid windowtext 1px;
+                    border-right: solid windowtext 1px;
+                    padding: 0in 5.4pt 0in 5.4pt;
+                    height: 20.5pt;
+                  "
+                >
+                <p class="MsoNormal" align="center" style="text-align: center">&nbsp;</p>
+              </td>
+            </tr>
+          }
+          <br />
+          <br />
+        }
+      </table>
+    </div>
+    <p class="MsoNormal"><b>&nbsp;</b></p>
+    <!-- <p class="MsoNormal"><b>Notes :</b></p>
+    <p class="MsoNormal">&nbsp;</p>
+    <p class="MsoNormal" style="margin-left: 0.75in; text-indent: -0.5in;">
+      1.
+      <span style="font: 7pt 'Times New Roman';">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      Separate register should be maintained for adult child.
+    </p>
+    <p class="MsoNormal" style="margin-left: 0.75in; text-indent: -0.5in;">
+      2.
+      <span style="font: 7pt 'Times New Roman';">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      A child will include an adolescent worker who has not been certified fit
+      to work as an adult.
+    </p>
+    <p class="MsoNormal" style="margin-left: 0.75in; text-indent: -0.5in;">
+      3.
+      <span style="font: 7pt 'Times New Roman';">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      A separate page should be maintained in respect of each worker.
+    </p>
+    <p class="MsoNormal" style="margin-left: 0.75in; text-indent: -0.5in;">
+      4.
+      <span style="font: 7pt 'Times New Roman';">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      Leave earned in column 14 is calculated on the basis of number of days
+      worked given in column9.
+    </p>
+    <p class="MsoNormal" style="margin-left: 0.75in; text-indent: -0.5in;">
+      5.
+      <span style="font: 7pt 'Times New Roman';">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      As per section 79(5) figures in column 16 should not exceed 30 days in
+      case of adult and 40 days in case of child worker.
+    </p>
+    <p class="MsoNormal" style="margin-left: 0.75in; text-indent: -0.5in;">
+      6.
+      <span style="font: 7pt 'Times New Roman';">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      Delete which is not required.
+    </p>
+    -->
+    <p class="MsoNormal">&nbsp;</p>
+  </div>
+</body>
+</div>
+}
+</html>

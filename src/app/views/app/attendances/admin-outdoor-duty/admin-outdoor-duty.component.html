@@ -1,0 +1,131 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header name="Admin Outdoor Duty" [showOrderBy]="false" [showDisplayMode]="false"
+[showItemsPerPage]="false" [showSearch]="false"></app-list-page-header>
+@if (permissionview.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #addOutdoorDuty="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                [(ngModel)]="filterData.companyMasterID" (change)="selectcompany($event)" required>
+                @for (company of allCompanyData; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && addOutdoorDuty.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #branchName="ngModel" name="branch"
+                [(ngModel)]="filterData.branchMasterID" (change)="selectbranch($event)">
+                @for (branch of allBranchData; track branch) {
+                  <ng-option [value]="branch.branchMasterID">
+                    {{ branch.branchName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Branch</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #employee="ngModel" name="employee" required
+                [(ngModel)]="filterData.userMasterID">
+                @for (item of allusersData; track item) {
+                  <ng-option [value]="item.userMasterID">
+                    {{ item.displayNameWithNumber }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Employee *</span>
+              @if (!employee.valid && addOutdoorDuty.submitted) {
+                <div class="invalid-tooltip">
+                  Employee is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel name="dayType" #dayType="ngModel"
+                (change)="changeDayType()" required [(ngModel)]="filterData.dayType">
+                <ng-option value="First Half">First Half</ng-option>
+                <ng-option value="Second Half">Second Half</ng-option>
+                <ng-option value="Full Day">Full Day</ng-option>
+              </ng-select>
+              <span>Day Type *</span>
+              @if (!dayType.valid && addOutdoorDuty.submitted) {
+                <div class="invalid-tooltip">
+                  Day Type is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel name="fromDate" #fromDate="ngModel"
+                (change)="changeFromDate();" required [(ngModel)]="filterData.fromDate" />
+                <span>From Date *</span>
+                @if (!fromDate.valid && addOutdoorDuty.submitted) {
+                  <div class="invalid-tooltip">
+                    From Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            @if (filterData.dayType == 'Full Day') {
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel name="toDate" #toDate="ngModel"
+                    [min]="filterData.fromDate" (change)="changeToDate()" required
+                    [(ngModel)]="filterData.toDate" />
+                    <span>To Date *</span>
+                    @if (!toDate.valid && addOutdoorDuty.submitted) {
+                      <div class="invalid-tooltip">
+                        To Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" ngModel type="number" name="days" [(ngModel)]="filterData.totalDays"
+                    #days="ngModel" readonly />
+                    <span>Days</span>
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea class="form-control" ngModel name="Remark" #Remark="ngModel" type="text"
+                    [(ngModel)]="filterData.Remark"></textarea>
+                    <span>Reason</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary mt-4" type="submit" (click)="onSubmit()"
+                  [disabled]="permissioncreate.length == 0">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

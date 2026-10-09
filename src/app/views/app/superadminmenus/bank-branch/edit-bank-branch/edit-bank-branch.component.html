@@ -1,0 +1,65 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (companydata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Bank Branch</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel" name="bankMasterID"
+                [(ngModel)]="companydata.bankMasterID" required [readonly]="true" change>
+                @for (bank of allBank; track bank) {
+                  <ng-option [value]="bank.bankMasterID">
+                    {{ bank.bankName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Bank *</span>
+              @if (!bankMasterID.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Bank is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" required ngModel #bankBranchName="ngModel"
+                [(ngModel)]="selectedBankBranch" name="bankBranchName" />
+                <span>Bank Branch Name *</span>
+                @if (!bankBranchName.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Bank Branch Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required ngModel #bankBranchCode="ngModel"
+                  [(ngModel)]="companydata.bankBranchCode" name="bankBranchCode" />
+                  <span>Branch Code *</span>
+                  @if (!bankBranchCode.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Branch Code is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+              <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/superadminmenus/bankBranch'"
+                style="margin-left: 2%">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

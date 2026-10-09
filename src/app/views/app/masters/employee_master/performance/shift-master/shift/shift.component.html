@@ -1,0 +1,923 @@
+<div class="row">
+  @for (item of rows7; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;"></a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              @if (item.shiftID) {
+                <p class="list-item-heading mb-1 truncate">
+                  <a style="cursor: pointer" (click)="getShift(item.shiftID); lgModal121.show()"
+                    tooltip="Please click here to view Shift details" [class]="'glyph-icon tool_tip'">
+                    {{ item.shift.shiftName | uppercase }}
+                  </a>
+                </p>
+              }
+              @if (!item.shiftID) {
+                <p class="list-item-heading mb-1 truncate" style="white-space: normal">
+                  @for (item12 of item.shift.shiftName; track item12; let i = $index) {
+                    <span
+                      tooltip="Please click here to view Shift details" [class]="'glyph-icon tool_tip'">
+                      <a (click)="getShift(item.shiftsID[i]); lgModal121.show()" style="cursor: pointer">
+                        {{ item12 }}
+                      </a>
+                    </span>
+                  }
+                </p>
+              }
+              <p class="text-muted mb-0 text-small">
+                Start Date:-{{ item.startDate | date: 'yyyy-MM-dd' }}
+              </p>
+              @if (item.endDate != null) {
+                <p class="text-muted mb-0 text-small">
+                  End Date:-{{ item.endDate | date: 'yyyy-MM-dd' }}
+                </p>
+              }
+              <div class="min-width-zero">
+                @if (item.shiftstatus == 'active') {
+                  <button type="button" class="btn btn-success"
+                    style="margin-top: 10%">
+                    {{ 'Active' | translate }}
+                  </button>
+                }
+                {{ ' ' }}
+                @if (item.shiftstatus == 'deactive') {
+                  <button type="button" class="btn btn-danger"
+                    style="margin-top: 10%">
+                    {{ 'Deactive' | translate }}
+                  </button>
+                }
+                {{ ' ' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<div bsModal #lgModal121="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg" style="max-width: 100%; padding: 20px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Shift</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal121.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #editshift="ngForm">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" [disabled]="true" ngModel #companyMasterID="ngModel"
+                  name="companyMasterID" [(ngModel)]="shiftdata.companyMasterID" required>
+                  @for (company of company; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!companyMasterID.valid && editshift.submitted) {
+                  <div class="invalid-tooltip">
+                    Company selection is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input [readonly]="true" class="form-control" type="text" required ngModel #shiftName="ngModel"
+                  [(ngModel)]="shiftdata.shiftName" name="shiftName" />
+                  <span>Shift Name *</span>
+                  @if (!shiftName.valid && editshift.submitted) {
+                    <div class="invalid-tooltip">
+                      Shift Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input [readonly]="true" class="form-control" type="text" required ngModel #shiftCode="ngModel"
+                    [(ngModel)]="shiftdata.shiftCode" name="shiftCode" />
+                    <span>Shift Code *</span>
+                    @if (!shiftCode.valid && editshift.submitted) {
+                      <div class="invalid-tooltip">
+                        Shift Code is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <textarea [readonly]="true" class="form-control" type="text" ngModel #shiftDesc="ngModel"
+                    [(ngModel)]="shiftdata.shiftDesc" name="shiftDesc"></textarea>
+                    <span>Shift Description</span>
+                  </label>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <input [readonly]="true" class="form-control" type="number" ngModel #graceminutes="ngModel" value="0"
+                      required [min]="0" name="graceminutes" [(ngModel)]="shiftdata.shiftGrace" />
+                      <span>Grace period for fullday *</span>
+                      @if (!graceminutes.valid && editshift.submitted) {
+                        <div class="invalid-tooltip">
+                          Grace period for fullday is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-1" style="margin-top: 10px">
+                    <span>Minutes</span>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label>Shift by Branch and Department/Designation *</label>
+                    <br />
+                    <input [disabled]="true" type="radio" name="depdes" id="depdes" ngModel #depdes="ngModel" value="1"
+                      required [(ngModel)]="predefined1" />
+                      &nbsp;
+                      <label for="yes">Yes</label>
+                      &nbsp;&nbsp;
+                      <input [disabled]="true" type="radio" name="depdes" id="depdes" ngModel #depdes="ngModel" value="0"
+                        required [(ngModel)]="predefined1" />
+                        &nbsp;
+                        <label for="no">No</label>
+                        @if (!depdes.valid && editshift.submitted) {
+                          <div class="invalid-tooltip">
+                            Shift by Branch and Department/Designation is required!
+                          </div>
+                        }
+                        <br />
+                        <br />
+                      </div>
+                      @if (by_Branch && allbranch && allbranch.length > 0) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select [readonly]="true" placeholder="Choose your option" ngModel #branchID="ngModel"
+                              name="branchID" [(ngModel)]="shiftdata.branchID" required>
+                              @for (branch of allbranch; track branch) {
+                                <ng-option [value]="branch.branchMasterID">
+                                  {{ branch.branchName }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <span>Select Branch *</span>
+                            @if (!branchID.valid && editshift.submitted) {
+                              <div class="invalid-tooltip">
+                                Branch is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      @if (predefined1 == '1') {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select [readonly]="true" placeholder="Choose your option" ngModel #table="ngModel" name="table"
+                              required [(ngModel)]="shiftdata.table" (change)="gettable($event)">
+                              <ng-option value="departments">Department</ng-option>
+                              <ng-option value="designations">Designation</ng-option>
+                            </ng-select>
+                            <span>Select Department/Designation *</span>
+                            @if (!table.valid && editshift.submitted) {
+                              <div class="invalid-tooltip">
+                                Department/Designation is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      @if (alldepartment && alldepartment.length > 0) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select [readonly]="true" placeholder="Choose your option" ngModel #referenceId="ngModel"
+                              name="referenceId" [(ngModel)]="reference_ID" required>
+                              @for (department of alldepartment; track department) {
+                                <ng-option [value]="department.departmentId">
+                                  {{ department.departmentName }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <span>Select Department *</span>
+                            @if (!referenceId.valid && editshift.submitted) {
+                              <div class="invalid-tooltip">
+                                Department selection is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      @if (alldesignation && alldesignation.length > 0) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select [readonly]="true" placeholder="Choose your option" ngModel #referenceId="ngModel"
+                              name="referenceId" [(ngModel)]="reference_ID" required>
+                              @for (designation of alldesignation; track designation) {
+                                <ng-option [value]="designation.designationId">
+                                  {{ designation.designationName }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <span>Select Designation *</span>
+                            @if (!referenceId.valid && editshift.submitted) {
+                              <div class="invalid-tooltip">
+                                Designation selection is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      <hr />
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <hr />
+                        <h4><b>Late Coming Setup:</b></h4>
+                      </div>
+                      <div class="col-md-6">
+                        <label>Allow Penalty for Late Coming</label>
+                        &nbsp;&nbsp;&nbsp;
+                        <input [disabled]="true" type="radio" name="allow_panelty" ngModel #allow_panelty="ngModel" value="1"
+                          required [(ngModel)]="show" />
+                          &nbsp;
+                          <label for="yes">Yes</label>
+                          &nbsp;&nbsp;
+                          <input [disabled]="true" type="radio" name="allow_panelty" ngModel #allow_panelty="ngModel" value="0"
+                            required [(ngModel)]="show" />
+                            &nbsp;
+                            <label for="no">No</label>
+                            @if (!allow_panelty.valid && editshift.submitted) {
+                              <div class="invalid-tooltip">
+                                Allow Penalty If Late is required!
+                              </div>
+                            }
+                            <br />
+                            <br />
+                          </div>
+                          @if (allowpanelty) {
+                            <div class="col-md-6">
+                              <label class="form-group has-float-label">
+                                <input [readonly]="true" class="form-control" type="number" ngModel [min]="0" #graceIntime="ngModel"
+                                  required (change)="checkLatecoming(); check2()" name="graceIntime"
+                                  [(ngModel)]="shiftdata.graceIntime" />
+                                  <span>Grace period for Intime *</span>
+                                </label>
+                                @if (!graceIntime.valid && editshift.submitted) {
+                                  <div class="invalid-tooltip">
+                                    Grace period for Intime is required!
+                                  </div>
+                                }
+                              </div>
+                            }
+                            @if (allowpanelty) {
+                              <div class="col-md-5">
+                                <label class="form-group has-float-label">
+                                  <input [readonly]="true" class="form-control" type="number" ngModel [min]="0" #lateComing="ngModel"
+                                    (change)="checkLatecoming(); check3()" required name="lateComing"
+                                    [(ngModel)]="shiftdata.lateComing" />
+                                    <span>Maximum minutes allowed for late coming *</span>
+                                  </label>
+                                  @if (!lateComing.valid && editshift.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Maximum minutes allowed for late coming is required!
+                                    </div>
+                                  }
+                                </div>
+                              }
+                              @if (allowpanelty) {
+                                <div class="col-md-1" style="margin-top: 10px">
+                                  <span>Minutes</span>
+                                </div>
+                              }
+
+                              @if (allowpanelty) {
+                                <div class="col-md-5">
+                                  <label class="form-group has-float-label">
+                                    <input [readonly]="true" class="form-control" type="number" ngModel [min]="0" #allowDays="ngModel"
+                                      required (change)="check4()" name="allowDays" [(ngModel)]="shiftdata.allowDays" />
+                                      <span>Maximum days allowed for late coming *</span>
+                                    </label>
+                                    @if (!allowDays.valid && editshift.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Maximum days allowed for late coming is required!
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                                @if (allowpanelty) {
+                                  <div class="col-md-1" style="margin-top: 10px">
+                                    <span>Days</span>
+                                  </div>
+                                }
+                                @if (allowpanelty) {
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <ng-select [readonly]="true" placeholder="Choose your option" [(ngModel)]="shiftdata.paneltyDeduction"
+                                        ngModel #paneltyDeduction="ngModel" required name="paneltyDeduction"
+                                        (change)="paneltydeduction($event)">
+                                        <ng-option value="day">Days Wise</ng-option>
+                                        <ng-option value="min">Minutes Wise</ng-option>
+                                        <ng-option value="amount">Amount Wise</ng-option>
+                                        <ng-option value="slotminute">Slot Wise (Minute)</ng-option>
+                                        <ng-option value="slotamount">Slot Wise (Amount)</ng-option>
+                                      </ng-select>
+                                      <span>Penalty Deduction *</span>
+                                    </label>
+                                    @if (!paneltyDeduction.valid && editshift.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Penalty Deduction is required!
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                                @if (deduction == 'day' && allowpanelty) {
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <ng-select [readonly]="true" placeholder="Choose your option" ngModel required #paneltyDays="ngModel"
+                                        name="paneltyDays" [(ngModel)]="shiftdata.paneltyDays">
+                                        <ng-option value="0.5">0.5</ng-option>
+                                        <ng-option value="1">1</ng-option>
+                                      </ng-select>
+                                      <span>Penalty days *</span>
+                                    </label>
+                                    @if (!paneltyDays.valid && editshift.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Penalty days is required!
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                                @if (deduction == 'min' && allowpanelty) {
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <input [readonly]="true" class="form-control" type="number" ngModel #paneltyMin="ngModel" required
+                                        name="paneltyMin" [(ngModel)]="shiftdata.paneltyMin" />
+                                        <span>Penalty Min *</span>
+                                      </label>
+                                      @if (!paneltyMin.valid && editshift.submitted) {
+                                        <div class="invalid-tooltip">
+                                          Penalty Min is required!
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  @if (deduction == 'amount' && allowpanelty) {
+                                    <div class="col-md-4">
+                                      <label class="form-group has-float-label">
+                                        <input [readonly]="true" class="form-control" type="number" ngModel #paneltyAmount="ngModel" required
+                                          name="paneltyAmount" [(ngModel)]="shiftdata.paneltyAmount" />
+                                          <span>Penalty Amount *</span>
+                                        </label>
+                                        @if (!paneltyAmount.valid && editshift.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Penalty Amount is required!
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    <!-- <div class="col-md-4" *ngIf="(deduction == 'slotamount' || deduction == 'slotminute') && allowpanelty">
+                                    <label class="form-group has-float-label">
+                                      <button class="btn btn-primary" type="button" (click)="addvalue()">Add Slot</button>
+                                    </label>
+                                  </div> -->
+                                  @for (value of values; track value; let i = $index) {
+                                    <div class="col-md-12">
+                                      <div class="row">
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <input [readonly]="true" class="form-control" type="number" min="0" [(ngModel)]="value.slot"
+                                              #slot="ngModel" name="slot{{ i }}" required />
+                                              <span>Slot (Minutes) *</span>
+                                              @if (!slot.valid && editshift.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  Slot is required!
+                                                </div>
+                                              }
+                                            </label>
+                                          </div>
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input [readonly]="true" class="form-control" type="number" min="0" [(ngModel)]="value.value"
+                                                #slotvalue="ngModel" name="slotvalue{{ i }}" required />
+                                                <!-- <span>Minute/Amount *</span> -->
+                                                @if (deduction == 'slotamount') {
+                                                  <span>Amount *</span>
+                                                }
+                                                @if (deduction == 'slotminute') {
+                                                  <span>Minute *</span>
+                                                }
+                                                @if (!slotvalue.valid && editshift.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    These Field is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                            <!-- <div class="col-md-4">
+                                            <span (click)="removevalue(i)" style="margin-left: 3%;margin-top: 3%;cursor: pointer;"
+                                            *ngIf="values.length>1">Remove</span>
+                                          </div> -->
+                                        </div>
+                                      </div>
+                                    }
+
+                                    @if (allowpanelty) {
+                                      <div class="col-md-12">
+                                        <label>Recurring *</label>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <br />
+                                        <input [disabled]="true" type="radio" name="recuring" id="recuring" ngModel required #recuring="ngModel"
+                                          [(ngModel)]="shiftdata.recuring" [value]="1" />
+                                          &nbsp;
+                                          <label for="yes">Recurring Penalty for above deduct policy.</label>
+                                          &nbsp;&nbsp;
+                                          <input [disabled]="true" type="radio" name="recuring" id="recuring" ngModel required #recuring="ngModel"
+                                            [(ngModel)]="shiftdata.recuring" [value]="0" />
+                                            &nbsp;
+                                            <label for="no">
+                                              Penalty after max limit reached in the "No of days allowed" policy
+                                            </label>
+                                            <br />
+                                            <br />
+                                            @if (!recuring.valid && editshift.submitted) {
+                                              <div class="invalid-tooltip">
+                                                Recurring is required!
+                                              </div>
+                                            }
+                                          </div>
+                                        }
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-md-12">
+                                          <hr />
+                                          <h4><b>Go Early Setup:</b></h4>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <label>Allow Early by</label>
+                                          &nbsp;&nbsp;&nbsp;
+                                          <input [disabled]="true" type="radio" name="allow_earlyby" id="allow_earlyby" ngModel
+                                            #allow_earlyby="ngModel" value="1" required />
+                                            &nbsp;
+                                            <label for="yes">Yes</label>
+                                            &nbsp;&nbsp;
+                                            <input [disabled]="true" type="radio" name="allow_earlyby" id="allow_earlyby" ngModel
+                                              #allow_earlyby="ngModel" value="0" required [(ngModel)]="showearlyby" />
+                                              &nbsp;
+                                              <label for="no">No</label>
+                                              @if (!allow_earlyby.valid && editshift.submitted) {
+                                                <div class="invalid-tooltip">
+                                                  Allow Early by is required!
+                                                </div>
+                                              }
+                                              <br />
+                                              <br />
+                                            </div>
+
+                                            @if (allowearlyby) {
+                                              <div class="col-md-5">
+                                                <label class="form-group has-float-label">
+                                                  <input [readonly]="true" class="form-control" type="number" ngModel #goEarly="ngModel" required
+                                                    [(ngModel)]="shiftdata.goEarly" name="goEarly" />
+                                                    <span>Maximum minutes allowed for Go Early *</span>
+                                                  </label>
+                                                  @if (!goEarly.valid && editshift.submitted) {
+                                                    <div class="invalid-tooltip">
+                                                      Maximum minutes allowed for Go Early is required!
+                                                    </div>
+                                                  }
+                                                </div>
+                                              }
+                                              @if (allowearlyby) {
+                                                <div class="col-md-1" style="margin-top: 10px">
+                                                  <span>Minutes</span>
+                                                </div>
+                                              }
+                                              @if (allowearlyby) {
+                                                <div class="col-md-6">
+                                                  <label class="form-group has-float-label">
+                                                    <input [readonly]="true" class="form-control" type="number" ngModel #allowEarlybyDays="ngModel" required
+                                                      [(ngModel)]="shiftdata.goEarlyallowdays" name="allowEarlybyDays" />
+                                                      <span>Maximum days allowed for Go Early *</span>
+                                                    </label>
+                                                    @if (!allowEarlybyDays.valid && editshift.submitted) {
+                                                      <div class="invalid-tooltip">
+                                                        Maximum days allowed for Go Early is required!
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                }
+
+                                                @if (allowearlyby) {
+                                                  <div class="col-md-6">
+                                                    <label>Do you want to add penalty for goEarly? *</label>
+                                                    &nbsp;&nbsp;&nbsp;
+                                                    <input [disabled]="true" type="radio" name="goearlypenalty" ngModel required #goearlypenalty="ngModel"
+                                                      [(ngModel)]="selectedEarlyPenalty" (change)="changeallowEarlyPenalty($event.target.value)" value="1" />
+                                                      &nbsp;
+                                                      <label for="yes">Yes</label>
+                                                      &nbsp;&nbsp;
+                                                      <input [disabled]="true" type="radio" name="goearlypenalty" required ngModel #goearlypenalty="ngModel"
+                                                        [(ngModel)]="selectedEarlyPenalty" (change)="changeallowEarlyPenalty($event.target.value)" value="0" />
+                                                        &nbsp;
+                                                        <label for="no">No</label>
+                                                        @if (!goearlypenalty.valid && editshift.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Go Early Penalty is required!
+                                                          </div>
+                                                        }
+                                                        <br />
+                                                        <br />
+                                                      </div>
+                                                    }
+                                                    @if (allowearlyby && allowearlybypenalty) {
+                                                      <div class="col-md-4">
+                                                        <label class="form-group has-float-label">
+                                                          <ng-select [readonly]="true" placeholder="Choose your option" ngModel required
+                                                            #earlypaneltyDeduction="ngModel" name="earlypaneltyDeduction"
+                                                            [(ngModel)]="shiftdata.goEarlyPaneltyDeduction" (change)="Earlypaneltydeduction($event)">
+                                                            <ng-option value="slotminute">Slot Wise (Minute)</ng-option>
+                                                            <ng-option value="slotamount">Slot Wise (Amount)</ng-option>
+                                                          </ng-select>
+                                                          <span>Penalty Deduction *</span>
+                                                        </label>
+                                                        @if (!earlypaneltyDeduction.valid && editshift.submitted) {
+                                                          <div class="invalid-tooltip">
+                                                            Penalty Deduction is required!
+                                                          </div>
+                                                        }
+                                                      </div>
+                                                    }
+                                                    <!-- <div class="col-md-4" *ngIf="allowearlyby && allowearlybypenalty && shiftdata.goEarlyPaneltyDeduction">
+                                                    <label class="form-group has-float-label">
+                                                      <button [readonly]="true" class="btn btn-primary" type="button" (click)="addvalueEarlyGo()">Add Slot</button>
+                                                    </label>
+                                                  </div> -->
+                                                  @for (value of EarlyGovalues; track value; let i = $index) {
+                                                    <div class="col-md-12">
+                                                      <div class="row">
+                                                        <div class="col-md-4">
+                                                          <label class="form-group has-float-label">
+                                                            <input [readonly]="true" class="form-control" type="number" min="0" [(ngModel)]="value.slot"
+                                                              #slot="ngModel" name="slot{{ i }}" required />
+                                                              <span>Slot (Minutes) *</span>
+                                                              @if (!slot.valid && editshift.submitted) {
+                                                                <div class="invalid-tooltip">
+                                                                  Slot is required!
+                                                                </div>
+                                                              }
+                                                            </label>
+                                                          </div>
+                                                          <div class="col-md-4">
+                                                            <label class="form-group has-float-label">
+                                                              <input [readonly]="true" class="form-control" type="number" min="0" [(ngModel)]="value.value"
+                                                                #slotvalue="ngModel" name="slotvalue{{ i }}" required />
+                                                                <!-- <span>Minute/Amount *</span> -->
+                                                                @if (shiftdata.goEarlyPaneltyDeduction == 'slotamount') {
+                                                                  <span>Amount *</span>
+                                                                }
+                                                                @if (shiftdata.goEarlyPaneltyDeduction == 'slotminute') {
+                                                                  <span>Minute *</span>
+                                                                }
+                                                                @if (!slotvalue.valid && editshift.submitted) {
+                                                                  <div class="invalid-tooltip">
+                                                                    These Field is required!
+                                                                  </div>
+                                                                }
+                                                              </label>
+                                                            </div>
+                                                            <!-- <div class="col-md-4">
+                                                            <span (click)="removevalueEarlyGo(i)" style="margin-left: 3%;margin-top: 3%;cursor: pointer;"
+                                                            *ngIf="EarlyGovalues.length>1">Remove</span>
+                                                          </div> -->
+                                                        </div>
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                  <div class="row">
+                                                    <br />
+                                                  </div>
+                                                  <hr />
+                                                  <div class="row">
+                                                    @for (day of days; track day; let i = $index) {
+                                                      <div class="margindown col-md-4">
+                                                        <table style="width: 100%">
+                                                          <tr>
+                                                            <th colspan="3" style="text-align: center">{{ day }}</th>
+                                                          </tr>
+                                                          <tr>
+                                                            <td colspan="3">
+                                                              @if (day == 'Monday') {
+                                                                <div>
+                                                                  <label class="form-group has-float-label">
+                                                                    <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text"
+                                                                      [(ngModel)]="Mondaystarttime" ngModel required #{{day}}starttime="ngModel"
+                                                                      name="{{ day }}starttime" />
+                                                                      <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                      <span>Start Time *</span>
+                                                                    </label>
+                                                                    <label class="form-group has-float-label">
+                                                                      <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                        [(ngModel)]="Mondayfirsthalfend" ngModel required #{{day}}firsthalfend="ngModel"
+                                                                        name="{{ day }}firsthalfend" />
+                                                                        <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                        <span>First half end time *</span>
+                                                                      </label>
+                                                                      <label class="form-group has-float-label">
+                                                                        <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="secondhalfstarttime2"
+                                                                          [(ngModel)]="Mondaysecondhalfstart" ngModel required #{{day}}secondhalfstart="ngModel"
+                                                                          name="{{ day }}secondhalfstart" />
+                                                                          <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                          <span>Second half start time *</span>
+                                                                        </label>
+                                                                        <label class="form-group has-float-label">
+                                                                          <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="endtime2"
+                                                                            [(ngModel)]="Mondayendtime" ngModel required #{{day}}endtime="ngModel"
+                                                                            name="{{ day }}endtime" />
+                                                                            <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                            <span>End Time *</span>
+                                                                          </label>
+                                                                          <label class="form-group has-float-label">
+                                                                            <input [readonly]="true" class="form-control" type="text" ngModel required
+                                                                              #{{day}}totalhourshalfday="ngModel" [(ngModel)]="Mondaytotalhourshalfday"
+                                                                              name="{{ day }}totalhourshalfday" />
+                                                                              <span>Minimum minutes for halfday *</span>
+                                                                            </label>
+                                                                            <label class="form-group has-float-label">
+                                                                              <input [readonly]="true" class="form-control" type="text" ngModel required
+                                                                                #{{day}}totalhours="ngModel" [(ngModel)]="Mondaytotalhours" name="{{ day }}totalhours" />
+                                                                                <span>Minimum minutes for fullday *</span>
+                                                                              </label>
+                                                                            </div>
+                                                                          }
+                                                                          @if (day == 'Tuesday') {
+                                                                            <div>
+                                                                              <label class="form-group has-float-label">
+                                                                                <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text"
+                                                                                  [(ngModel)]="Tuesdaystarttime" ngModel required #{{day}}starttime="ngModel"
+                                                                                  name="{{ day }}starttime" />
+                                                                                  <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                                  <span>Start Time *</span>
+                                                                                </label>
+                                                                                <label class="form-group has-float-label">
+                                                                                  <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                                    [(ngModel)]="Tuesdayfirsthalfend" ngModel required #{{day}}firsthalfend="ngModel"
+                                                                                    name="{{ day }}firsthalfend" />
+                                                                                    <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                                    <span>First half end time *</span>
+                                                                                  </label>
+                                                                                  <label class="form-group has-float-label">
+                                                                                    <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="secondhalfstarttime2"
+                                                                                      [(ngModel)]="Tuesdaysecondhalfstart" ngModel required #{{day}}secondhalfstart="ngModel"
+                                                                                      name="{{ day }}secondhalfstart" />
+                                                                                      <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                                      <span>Second half start time *</span>
+                                                                                    </label>
+                                                                                    <label class="form-group has-float-label">
+                                                                                      <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="endtime2"
+                                                                                        [(ngModel)]="Tuesdayendtime" required ngModel #{{day}}endtime="ngModel"
+                                                                                        name="{{ day }}endtime" />
+                                                                                        <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                                        <span>End Time *</span>
+                                                                                      </label>
+                                                                                      <label class="form-group has-float-label">
+                                                                                        <input [readonly]="true" class="form-control" type="text" ngModel required
+                                                                                          #{{day}}totalhourshalfday="ngModel" [(ngModel)]="Tuesdaytotalhourshalfday"
+                                                                                          name="{{ day }}totalhourshalfday" />
+                                                                                          <span>Minimum minutes for halfday *</span>
+                                                                                        </label>
+                                                                                        <label class="form-group has-float-label">
+                                                                                          <input [readonly]="true" class="form-control" type="text" ngModel required
+                                                                                            #{{day}}totalhours="ngModel" [(ngModel)]="Tuesdaytotalhours" name="{{ day }}totalhours" />
+                                                                                            <span>Minimum minutes for fullday *</span>
+                                                                                          </label>
+                                                                                        </div>
+                                                                                      }
+                                                                                      @if (day == 'Wednesday') {
+                                                                                        <div>
+                                                                                          <label class="form-group has-float-label">
+                                                                                            <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text"
+                                                                                              [(ngModel)]="Wednesdaystarttime" required ngModel #{{day}}starttime="ngModel"
+                                                                                              name="{{ day }}starttime" />
+                                                                                              <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                                              <span>Start Time *</span>
+                                                                                            </label>
+                                                                                            <label class="form-group has-float-label">
+                                                                                              <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                                                required [(ngModel)]="Wednesdayfirsthalfend" ngModel #{{day}}firsthalfend="ngModel"
+                                                                                                name="{{ day }}firsthalfend" />
+                                                                                                <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                                                <span>First half end time *</span>
+                                                                                              </label>
+                                                                                              <label class="form-group has-float-label">
+                                                                                                <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="secondhalfstarttime2"
+                                                                                                  required [(ngModel)]="Wednesdaysecondhalfstart" ngModel #{{day}}secondhalfstart="ngModel"
+                                                                                                  name="{{ day }}secondhalfstart" />
+                                                                                                  <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                                                  <span>Second half start time *</span>
+                                                                                                </label>
+                                                                                                <label class="form-group has-float-label">
+                                                                                                  <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="endtime2" required
+                                                                                                    [(ngModel)]="Wednesdayendtime" ngModel #{{day}}endtime="ngModel" name="{{ day }}endtime" />
+                                                                                                    <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                                                    <span>End Time *</span>
+                                                                                                  </label>
+                                                                                                  <label class="form-group has-float-label">
+                                                                                                    <input [readonly]="true" class="form-control" type="text" ngModel
+                                                                                                      #{{day}}totalhourshalfday="ngModel" [(ngModel)]="Wednesdaytotalhourshalfday" required
+                                                                                                      name="{{ day }}totalhourshalfday" />
+                                                                                                      <span>Minimum minutes for halfday *</span>
+                                                                                                    </label>
+                                                                                                    <label class="form-group has-float-label">
+                                                                                                      <input [readonly]="true" class="form-control" type="text" ngModel #{{day}}totalhours="ngModel"
+                                                                                                        [(ngModel)]="Wednesdaytotalhours" required name="{{ day }}totalhours" />
+                                                                                                        <span>Minimum minutes for fullday *</span>
+                                                                                                      </label>
+                                                                                                    </div>
+                                                                                                  }
+                                                                                                  @if (day == 'Thursday') {
+                                                                                                    <div>
+                                                                                                      <label class="form-group has-float-label">
+                                                                                                        <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text" required
+                                                                                                          [(ngModel)]="Thursdaystarttime" ngModel #{{day}}starttime="ngModel"
+                                                                                                          name="{{ day }}starttime" />
+                                                                                                          <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                                                          <span>Start Time *</span>
+                                                                                                        </label>
+                                                                                                        <label class="form-group has-float-label">
+                                                                                                          <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                                                            required [(ngModel)]="Thursdayfirsthalfend" ngModel #{{day}}firsthalfend="ngModel"
+                                                                                                            name="{{ day }}firsthalfend" />
+                                                                                                            <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                                                            <span>First half end time *</span>
+                                                                                                          </label>
+                                                                                                          <label class="form-group has-float-label">
+                                                                                                            <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="secondhalfstarttime2"
+                                                                                                              required [(ngModel)]="Thursdaysecondhalfstart" ngModel #{{day}}secondhalfstart="ngModel"
+                                                                                                              name="{{ day }}secondhalfstart" />
+                                                                                                              <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                                                              <span>Second half start time *</span>
+                                                                                                            </label>
+                                                                                                            <label class="form-group has-float-label">
+                                                                                                              <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="endtime2"
+                                                                                                                [(ngModel)]="Thursdayendtime" required ngModel #{{day}}endtime="ngModel"
+                                                                                                                name="{{ day }}endtime" />
+                                                                                                                <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                                                                <span>End Time *</span>
+                                                                                                              </label>
+                                                                                                              <label class="form-group has-float-label">
+                                                                                                                <input [readonly]="true" class="form-control" type="text" ngModel
+                                                                                                                  #{{day}}totalhourshalfday="ngModel" required [(ngModel)]="Thursdaytotalhourshalfday"
+                                                                                                                  name="{{ day }}totalhourshalfday" />
+                                                                                                                  <span>Minimum minutes for halfday *</span>
+                                                                                                                </label>
+                                                                                                                <label class="form-group has-float-label">
+                                                                                                                  <input [readonly]="true" class="form-control" type="text" ngModel #{{day}}totalhours="ngModel"
+                                                                                                                    required [(ngModel)]="Thursdaytotalhours" name="{{ day }}totalhours" />
+                                                                                                                    <span>Minimum minutes for fullday *</span>
+                                                                                                                  </label>
+                                                                                                                </div>
+                                                                                                              }
+                                                                                                              @if (day == 'Friday') {
+                                                                                                                <div>
+                                                                                                                  <label class="form-group has-float-label">
+                                                                                                                    <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text"
+                                                                                                                      [(ngModel)]="Fridaystarttime" ngModel required #{{day}}starttime="ngModel"
+                                                                                                                      name="{{ day }}starttime" />
+                                                                                                                      <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                                                                      <span>Start Time *</span>
+                                                                                                                    </label>
+                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                      <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                                                                        [(ngModel)]="Fridayfirsthalfend" ngModel required #{{day}}firsthalfend="ngModel"
+                                                                                                                        name="{{ day }}firsthalfend" />
+                                                                                                                        <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                                                                        <span>First half end time *</span>
+                                                                                                                      </label>
+                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                        <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="secondhalfstarttime2"
+                                                                                                                          [(ngModel)]="Fridaysecondhalfstart" ngModel required #{{day}}secondhalfstart="ngModel"
+                                                                                                                          name="{{ day }}secondhalfstart" />
+                                                                                                                          <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                                                                          <span>Second half start time *</span>
+                                                                                                                        </label>
+                                                                                                                        <label class="form-group has-float-label">
+                                                                                                                          <input [readonly]="true" class="form-control" type="text" required [ngxTimepicker]="endtime2"
+                                                                                                                            [(ngModel)]="Fridayendtime" ngModel #{{day}}endtime="ngModel" name="{{ day }}endtime" />
+                                                                                                                            <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                                                                            <span>End Time *</span>
+                                                                                                                          </label>
+                                                                                                                          <label class="form-group has-float-label">
+                                                                                                                            <input [readonly]="true" class="form-control" type="text" ngModel required
+                                                                                                                              #{{day}}totalhourshalfday="ngModel" [(ngModel)]="Fridaytotalhourshalfday"
+                                                                                                                              name="{{ day }}totalhourshalfday" />
+                                                                                                                              <span>Minimum minutes for halfday *</span>
+                                                                                                                            </label>
+                                                                                                                            <label class="form-group has-float-label">
+                                                                                                                              <input [readonly]="true" class="form-control" type="text" ngModel required
+                                                                                                                                #{{day}}totalhours="ngModel" [(ngModel)]="Fridaytotalhours" name="{{ day }}totalhours" />
+                                                                                                                                <span>Minimum minutes for fullday *</span>
+                                                                                                                              </label>
+                                                                                                                            </div>
+                                                                                                                          }
+                                                                                                                          @if (day == 'Saturday') {
+                                                                                                                            <div>
+                                                                                                                              <label class="form-group has-float-label">
+                                                                                                                                <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text"
+                                                                                                                                  [(ngModel)]="Saturdaystarttime" required ngModel #{{day}}starttime="ngModel"
+                                                                                                                                  name="{{ day }}starttime" />
+                                                                                                                                  <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                                                                                  <span>Start Time *</span>
+                                                                                                                                </label>
+                                                                                                                                <label class="form-group has-float-label">
+                                                                                                                                  <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                                                                                    required [(ngModel)]="Saturdayfirsthalfend" ngModel #{{day}}firsthalfend="ngModel"
+                                                                                                                                    name="{{ day }}firsthalfend" />
+                                                                                                                                    <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                                                                                    <span>First half end time *</span>
+                                                                                                                                  </label>
+                                                                                                                                  <label class="form-group has-float-label">
+                                                                                                                                    <input [readonly]="true" class="form-control" type="text" required
+                                                                                                                                      [ngxTimepicker]="secondhalfstarttime2" [(ngModel)]="Saturdaysecondhalfstart" ngModel
+                                                                                                                                      #{{day}}secondhalfstart="ngModel" name="{{ day }}secondhalfstart" />
+                                                                                                                                      <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                                                                                      <span>Second half start time *</span>
+                                                                                                                                    </label>
+                                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                                      <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="endtime2"
+                                                                                                                                        [(ngModel)]="Saturdayendtime" required ngModel #{{day}}endtime="ngModel"
+                                                                                                                                        name="{{ day }}endtime" />
+                                                                                                                                        <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                                                                                        <span>End Time *</span>
+                                                                                                                                      </label>
+                                                                                                                                      <label class="form-group has-float-label">
+                                                                                                                                        <input [readonly]="true" class="form-control" type="text" ngModel
+                                                                                                                                          #{{day}}totalhourshalfday="ngModel" [(ngModel)]="Saturdaytotalhourshalfday" required
+                                                                                                                                          name="{{ day }}totalhourshalfday" />
+                                                                                                                                          <span>Minimum minutes for halfday *</span>
+                                                                                                                                        </label>
+                                                                                                                                        <label class="form-group has-float-label">
+                                                                                                                                          <input [readonly]="true" class="form-control" type="text" ngModel #{{day}}totalhours="ngModel"
+                                                                                                                                            [(ngModel)]="Saturdaytotalhours" required name="{{ day }}totalhours" />
+                                                                                                                                            <span>Minimum minutes for fullday *</span>
+                                                                                                                                          </label>
+                                                                                                                                        </div>
+                                                                                                                                      }
+                                                                                                                                      @if (day == 'Sunday') {
+                                                                                                                                        <div>
+                                                                                                                                          <label class="form-group has-float-label">
+                                                                                                                                            <input [readonly]="true" class="form-control" [ngxTimepicker]="starttime2" type="text" required
+                                                                                                                                              [(ngModel)]="Sundaystarttime" ngModel #{{day}}starttime="ngModel" name="{{ day }}starttime" />
+                                                                                                                                              <ngx-material-timepicker #starttime2></ngx-material-timepicker>
+                                                                                                                                              <span>Start Time *</span>
+                                                                                                                                            </label>
+                                                                                                                                            <label class="form-group has-float-label">
+                                                                                                                                              <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="firsthalftendtime2"
+                                                                                                                                                [(ngModel)]="Sundayfirsthalfend" required ngModel #{{day}}firsthalfend="ngModel"
+                                                                                                                                                name="{{ day }}firsthalfend" />
+                                                                                                                                                <ngx-material-timepicker #firsthalftendtime2></ngx-material-timepicker>
+                                                                                                                                                <span>First half end time *</span>
+                                                                                                                                              </label>
+                                                                                                                                              <label class="form-group has-float-label">
+                                                                                                                                                <input [readonly]="true" class="form-control" type="text" required
+                                                                                                                                                  [ngxTimepicker]="secondhalfstarttime2" [(ngModel)]="Sundaysecondhalfstart" ngModel
+                                                                                                                                                  #{{day}}secondhalfstart="ngModel" name="{{ day }}secondhalfstart" />
+                                                                                                                                                  <ngx-material-timepicker #secondhalfstarttime2></ngx-material-timepicker>
+                                                                                                                                                  <span>Second half start time *</span>
+                                                                                                                                                </label>
+                                                                                                                                                <label class="form-group has-float-label">
+                                                                                                                                                  <input [readonly]="true" class="form-control" type="text" [ngxTimepicker]="endtime2" required
+                                                                                                                                                    [(ngModel)]="Sundayendtime" ngModel #{{day}}endtime="ngModel" name="{{ day }}endtime" />
+                                                                                                                                                    <ngx-material-timepicker #endtime2></ngx-material-timepicker>
+                                                                                                                                                    <span>End Time *</span>
+                                                                                                                                                  </label>
+                                                                                                                                                  <label class="form-group has-float-label">
+                                                                                                                                                    <input [readonly]="true" class="form-control" type="text" ngModel
+                                                                                                                                                      #{{day}}totalhourshalfday="ngModel" required [(ngModel)]="Sundaytotalhourshalfday"
+                                                                                                                                                      name="{{ day }}totalhourshalfday" />
+                                                                                                                                                      <span>Minimum minutes for halfday *</span>
+                                                                                                                                                    </label>
+                                                                                                                                                    <label class="form-group has-float-label">
+                                                                                                                                                      <input [readonly]="true" class="form-control" type="text" ngModel #{{day}}totalhours="ngModel"
+                                                                                                                                                        required [(ngModel)]="Sundaytotalhours" name="{{ day }}totalhours" />
+                                                                                                                                                        <span>Minimum minutes for fullday *</span>
+                                                                                                                                                      </label>
+                                                                                                                                                    </div>
+                                                                                                                                                  }
+                                                                                                                                                </td>
+                                                                                                                                              </tr>
+                                                                                                                                            </table>
+                                                                                                                                          </div>
+                                                                                                                                        }
+                                                                                                                                      </div>
+                                                                                                                                    </form>
+                                                                                                                                  </div>
+                                                                                                                                </div>
+                                                                                                                              </div>
+                                                                                                                            </div>

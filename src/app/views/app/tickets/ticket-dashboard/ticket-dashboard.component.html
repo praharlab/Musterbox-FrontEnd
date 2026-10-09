@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Ticket Dashboard"></app-heading>
+    <app-breadcrumb title="Ticket Dashboard"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+@if (display) {
+  <div class="row">
+    <div class="col-lg-12 col-xl-8">
+      <app-ticket-dashboard-priority
+        [totalTickets]="ticketDashboardData.totalTickets"
+        [ticketPriorityDistribution]="ticketDashboardData.ticketPriorityDistribution"
+      ></app-ticket-dashboard-priority>
+      <div class="row">
+        <div class="col-md-12 col-lg-6 mb-4">
+          <app-ticket-dashboard-status
+            [employeeStatusData]="ticketDashboardData.ticketStatusDistribution"
+          ></app-ticket-dashboard-status>
+        </div>
+        <div class="col-md-12 col-lg-6 mb-4">
+          <app-ticket-dashboard-ticket-category
+            [ticketCategoryData]="ticketDashboardData.ticketsByCategory"
+          ></app-ticket-dashboard-ticket-category>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-6 col-xl-4">
+      <app-ticket-dashboard-ticket-by-agent
+        [ticketByAgentData]="ticketDashboardData.ticketsByUser"
+        [ticketAverageResolutionTime]="avgResolutionTimeInHours"
+      ></app-ticket-dashboard-ticket-by-agent>
+    </div>
+    <div class="col-md-12 col-lg-6 col-xl-4">
+      <app-ticket-dashboard-ticket-subcategory
+        [ticketSubCategoryData]="ticketDashboardData.ticketsBySubCategory"
+      ></app-ticket-dashboard-ticket-subcategory>
+    </div>
+  </div>
+}

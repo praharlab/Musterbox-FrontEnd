@@ -1,0 +1,159 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Advance Payment</h5>
+
+    @if (advanceData) {
+      <form #editadvancepayment="ngForm" novalidate (ngSubmit)="(onSubmit)">
+        <div class="row">
+          @if (childcompany == 'false') {
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+                  name="company" [(ngModel)]="advanceData.companyMasterID" required disabled>
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                <!-- <div *ngIf="!company.valid && editadvancepayment.submitted" class="invalid-tooltip">
+                Company is required!
+              </div> -->
+            </label>
+          </div>
+        }
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #userMasterId="ngModel" name="userMasterId"
+              [(ngModel)]="advanceData.userMasterID" required>
+              @for (user of employee; track user) {
+                <ng-option [value]="user.userMasterID">
+                  {{ user.displayName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>UserName *</span>
+            @if (!userMasterId.valid && editadvancepayment.submitted) {
+              <div class="invalid-tooltip">
+                User is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" required ngModel #advanceDate="ngModel" name="advanceDate"
+              [(ngModel)]="advanceData.advanceDate" (change)="selectAdvanceDate($event)"/>
+              <span>Advance Date *</span>
+              @if (!advanceDate.valid && editadvancepayment.submitted) {
+                <div class="invalid-tooltip">
+                  Advance Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="month" required ngModel #PaymentYearMonth="ngModel" (keydown)="preventBackMonth($event)"
+                name="PaymentYearMonth" [(ngModel)]="advanceData.paymentYearMonth" [readonly]="advanceData.advanceDate == '' || !advanceData.advanceDate" [min]="minMonth"/>
+                <span>Select Month to Deduct Advance *</span>
+                @if (!PaymentYearMonth.valid && editadvancepayment.submitted) {
+                  <div class="invalid-tooltip">
+                    Month is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required ngModel #advanceAmount="ngModel" name="advanceAmount"
+                  [(ngModel)]="advanceData.amount" />
+                  <span>Advance Amount *</span>
+                  @if (!advanceAmount.valid && editadvancepayment.submitted) {
+                    <div class="invalid-tooltip">
+                      Advance Amount is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-3">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #paymentmode="ngModel" name="paymentmode"
+                    [(ngModel)]="advanceData.paymentmode" required>
+                    <ng-option value="Cash">Cash</ng-option>
+                    <ng-option value="Cheque">Cheque</ng-option>
+                    <ng-option value="UPI">UPI</ng-option>
+                    <ng-option value="NetBanking">NetBanking</ng-option>
+                  </ng-select>
+                  <span>Payment Mode *</span>
+                  @if (!paymentmode.valid && editadvancepayment.submitted) {
+                    <div class="invalid-tooltip">
+                      Payment Mode is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              @if (
+                editadvancepayment.value.paymentmode != '' &&
+                editadvancepayment.value.paymentmode != 'Cash'
+                ) {
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" required ngModel #referenceNo="ngModel" name="referenceNo"
+                      [(ngModel)]="advanceData.referenceNO" />
+                      <span>{{ editadvancepayment.value.paymentmode }} Reference No *</span>
+                      @if (!referenceNo.valid && editadvancepayment.submitted) {
+                        <div class="invalid-tooltip">
+                          Reference No is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (
+                  editadvancepayment.value.paymentmode != '' &&
+                  editadvancepayment.value.paymentmode != 'Cash'
+                  ) {
+                  <div class="col-md-3">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="date" required ngModel #referencedate="ngModel" name="referencedate"
+                        [(ngModel)]="advanceData.referenceDate" />
+                        <span>{{ editadvancepayment.value.paymentmode }} Reference Date *</span>
+                        @if (!referencedate.valid && editadvancepayment.submitted) {
+                          <div class="invalid-tooltip">
+                            Reference Date is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <textarea class="form-control" type="text" required ngModel #Description="ngModel" name="Description"
+                      [(ngModel)]="advanceData.description"></textarea>
+                      <span>Description *</span>
+                      @if (!Description.valid && editadvancepayment.submitted) {
+                        <div class="invalid-tooltip">
+                          Description is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                </div>
+                <br />
+                <button class="btn btn-primary mr-2" type="submit" [disabled]="isdisabled" (click)="onSubmit()">
+                  {{ 'submit' | translate }}
+                </button>
+                <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/finances/advancePayment'"
+                  style="margin-left: 2%">
+                  Cancel
+                </button>
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+              </form>
+            }
+          </div>
+        </div>

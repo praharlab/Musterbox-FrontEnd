@@ -1,0 +1,34 @@
+<div class="card dislpay-none">
+  <div class="card-body">
+    <form #monthYearFilter="ngForm" novalidate>
+      <div class="row">
+        <div class="col-md-11">
+          <h5 class="font-size-15 pt-1">Pending Task</h5>
+        </div>
+        <div class="col-md-1">
+          @if (monthYearFilter.valid) {
+            <button class="btn btn-info form-group" type="button" (click)="download()" style="margin: 0px">
+              Export
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+    @if (showloader == 'true') {
+      <div
+        style="color: #17a2b8; left: 50%"
+        class="la-ball-spin-clockwise"
+        >
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+    <div [class]="'chart-container1'"><canvas #chart></canvas></div>
+  </div>
+</div>

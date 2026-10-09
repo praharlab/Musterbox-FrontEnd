@@ -1,0 +1,325 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<!-- <div class="row">
+<div class="col-12">
+  <app-heading title="Bulk Salary Policy"></app-heading>
+  <app-breadcrumb title="Bulk Salary Policy"></app-breadcrumb>
+  <div class="separator mb-5"></div>
+</div>
+</div>
+<div style="text-align: right">
+  <button class="btn btn-info mb-1" (click)="lgModal.show()" *ngIf="permissioncreate.length != 0">
+    Add
+  </button>
+</div> -->
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [showItemsPerPage]="false" (addNewItem)="lgModal.show(); selectcompany(company_id)" [showSearch]="false"
+name="Bulk Salary Policy"></app-list-page-header>
+<br />
+@if (rows && permissionview.length != 0) {
+  <div class="row">
+    @for (item of rows; track item) {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-6">
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;">
+            @if (item.photo) {
+              <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ item.photo }}"
+                class="img-thumbnail border-0 list-thumbnail" style="margin-top: 33%" />
+            }
+          </a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div
+              class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <p class="list-item-heading mb-1 truncate">
+                    <b>Name :-</b>
+                    {{ item.displayName }}
+                  </p>
+                  <p class="list-item-heading mb-1 truncate">
+                    <b>Mobile Number :-</b>
+                    {{ item.userNumber }}
+                  </p>
+                  <br />
+                  <p class="list-item-heading mb-1 truncate"><b>List Of Salary Policys</b></p>
+                  <br />
+                  @if (item.department.length > 1) {
+                    <div class="row">
+                      @for (item1 of item.department; track item1) {
+                        <div class="col-md-6">
+                          <div class="card">
+                            <div>
+                              <p class="list-item-heading mb-1 truncate" style="font-size: 17px !important">
+                                {{ item1.salaryPolicy.salaryPolicyName | uppercase }}
+                              </p>
+                              <p class="text-muted mb-0 text-small">
+                                Start Date:-{{ item1.startDate | date: 'yyyy-MM-dd' }}
+                              </p>
+                              <p class="text-muted mb-0 text-small">
+                                End Date:-{{ item1.endDate | date: 'yyyy-MM-dd' }}
+                              </p>
+                              @if (item1.status == '1') {
+                                <button type="button" class="btn btn-success" style="margin-top: 10%">
+                                  {{ 'Active' | translate }}
+                                </button>
+                              }
+                              {{ ' ' }}
+                              @if (item1.status == '0') {
+                                <button type="button" class="btn btn-danger" style="margin-top: 10%">
+                                  {{ 'Deactive' | translate }}
+                                </button>
+                              }
+                              {{ ' ' }}
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (item.department.length == 1) {
+                    <div>
+                      @for (item1 of item.department; track item1) {
+                        <div class="col-md-6" style="max-width: 100% !important">
+                          <div class="card">
+                            <div>
+                              <p class="list-item-heading mb-1 truncate" style="font-size: 17px !important">
+                                {{ item1.salaryPolicy.salaryPolicyName | uppercase }}
+                              </p>
+                              <p class="text-muted mb-0 text-small">
+                                Start Date:-{{ item1.startDate | date: 'yyyy-MM-dd' }}
+                              </p>
+                              <p class="text-muted mb-0 text-small">
+                                End Date:-{{ item1.endDate | date: 'yyyy-MM-dd' }}
+                              </p>
+                              @if (item1.status == '1') {
+                                <button type="button" class="btn btn-success" style="margin-top: 10%">
+                                  {{ 'Active' | translate }}
+                                </button>
+                              }
+                              {{ ' ' }}
+                              @if (item1.status == '0') {
+                                <button type="button" class="btn btn-danger" style="margin-top: 10%">
+                                  {{ 'Deactive' | translate }}
+                                </button>
+                              }
+                              {{ ' ' }}
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Salary Policy</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide(); resetModel()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="selectcompany($event)" ngModel #company="ngModel"
+                  name="company" [(ngModel)]="company_id" required>
+                  @for (company of allcomp; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Company *</span>
+                @if (!company.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Company is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select [items]="allbranch" [multiple]="true" bindLabel="branchName" groupBy="selectedAllGroup"
+                  (ngModelChange)="selectbranch()" [(ngModel)]="selectedBranch" [selectableGroup]="true"
+                  [selectableGroupAsModel]="false" bindValue="branchMasterID" [closeOnSelect]="false" ngModel
+                  #branch="ngModel" name="branch">
+                  <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                      [ngModelOptions]="{standalone: true}" />
+                      Select All
+                    </ng-template>
+                  </ng-select>
+                  <span>Select Branch</span>
+                </label>
+              </div>
+
+              <!-- Department -->
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <ng-select [items]="alldepartment" [multiple]="true" bindLabel="departmentName"
+                    groupBy="selectedAllGroup" (ngModelChange)="selectdepartment()" [(ngModel)]="selectedDepartment"
+                    [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="departmentId"
+                    [closeOnSelect]="false" ngModel #department="ngModel" name="department">
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                        [ngModelOptions]="{standalone: true}" />
+                        Select All
+                      </ng-template>
+                    </ng-select>
+                    <span>Select Department</span>
+                  </label>
+                </div>
+
+
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select [items]="allDivision" [multiple]="true" bindLabel="divisionName" groupBy="selectedAllGroup"
+                      (ngModelChange)="selectdivision()" [(ngModel)]="selectedDivision" [selectableGroup]="true"
+                      [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false" ngModel #division="ngModel"
+                      name="division">
+                      <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                          [ngModelOptions]="{standalone: true}" />
+                          Select All
+                        </ng-template>
+                      </ng-select>
+                      <span>Select Division</span>
+                    </label>
+                  </div>
+
+                  <!-- select designation -->
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select [items]="alldesignation" [multiple]="true" bindLabel="designationName"
+                        groupBy="selectedAllGroup" (ngModelChange)="selectdesig()" [(ngModel)]="selecteddesig"
+                        [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="designationId"
+                        [closeOnSelect]="false" ngModel #designation="ngModel" name="designation">
+                        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                            [ngModelOptions]="{standalone: true}" />
+                            Select All
+                          </ng-template>
+                        </ng-select>
+                        <span>Select Designation</span>
+                      </label>
+                    </div>
+
+
+                    <!-- select working area -->
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select [items]="allWorkingArea" [multiple]="true" bindLabel="workingAreaName"
+                          groupBy="selectedAllGroup" (ngModelChange)="selectWorkingArea()" [(ngModel)]="selectedWorkingArea"
+                          [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="id" [closeOnSelect]="false"
+                          ngModel #workingArea="ngModel" name="workingArea">
+                          <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                              [ngModelOptions]="{standalone: true}" />
+                              Select All
+                            </ng-template>
+                          </ng-select>
+                          <span>Select Working Area</span>
+                        </label>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" (ngModelChange)="selectgender()" ngModel #gender="ngModel"
+                            [(ngModel)]="selectedgender" name="gender">
+                            <ng-option value="male">
+                              Male
+                            </ng-option>
+                            <ng-option value="female">
+                              Female
+                            </ng-option>
+                            <ng-option value="other">
+                              Other
+                            </ng-option>
+                          </ng-select>
+                          <span>Select Gender</span>
+                        </label>
+                      </div>
+
+                      <div class="col-md-8">
+                        <label class="form-group has-float-label">
+                          <ng-select [items]="alluser" [multiple]="true" bindLabel="name" groupBy="selectedAllGroup" required
+                            [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID"
+                            [closeOnSelect]="false" ngModel #userMasterID="ngModel" name="userMasterID"
+                            [(ngModel)]="selectedUser">
+                            <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectall"
+                                [ngModelOptions]="{standalone: true}" />
+                                Select All
+                              </ng-template>
+                            </ng-select>
+                            <span>Select Employee *</span>
+                            @if (!userMasterID.valid && addcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                Employee is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel #holidayPolicyID="ngModel"
+                              [(ngModel)]="finalholidaypolicy" name="holidayPolicyID" required>
+                              @for (item of alldepartmentPolicy; track item) {
+                                <ng-option [value]="item.salaryPolicyID">
+                                  {{ item.salaryPolicyName }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                            <span>Select Salary Policy *</span>
+                            @if (!holidayPolicyID.valid && addcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                Salary Policy is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <ng-select placeholder="Choose your option" ngModel required #applicableDate="ngModel"
+                              name="applicableDate" [(ngModel)]="applicableData">
+                              <ng-option value="0">Past Month</ng-option>
+                              <ng-option value="1">Current Month</ng-option>
+                              <ng-option value="2">Upcoming Month</ng-option>
+                            </ng-select>
+                            <span>Applicable from *</span>
+                            @if (!applicableDate.valid && addcomp.submitted) {
+                              <div class="invalid-tooltip">
+                                Applicable Date is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      </div>
+
+                      <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

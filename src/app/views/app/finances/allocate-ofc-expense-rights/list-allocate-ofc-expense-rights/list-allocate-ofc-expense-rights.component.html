@@ -1,0 +1,128 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Allocate Office Expense Rights" [showOrderBy]="false" [showDisplayMode]="false"
+  [showSearch]="false" (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  (addNewItem)="navigateToAddPage()" [itemOptionsPerPage]="itemOptionsPerPage"
+[showadd]="permissioncreate"></app-list-page-header>
+<div class="card">
+  <div class="card-body">
+    <form #listAllocationForm="ngForm" novalidate>
+      <div class="row mt-4">
+        @if (company.length > 0) {
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #companyMasterID="ngModel" name="companyMasterID"
+                [(ngModel)]="filterData.companyMasterID" required>
+                @for (company of company; track company) {
+                  <ng-option [value]="$safeNavigationMigration(company?.companyMasterID)">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company</span>
+            </label>
+          </div>
+        }
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="selectBranch($event)" ngModel #branch="ngModel"
+              name="branch" [(ngModel)]="filterData.branchMasterID">
+              @for (allbranch of allbranch; track allbranch) {
+                <ng-option [value]="allbranch.branchMasterID">
+                  {{ allbranch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Branch</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #site="ngModel" name="site"
+              [required]="filterData.branchMasterID" [(ngModel)]="filterData.siteID">
+              @for (site of allSites; track site) {
+                <ng-option [value]="site.siteID">
+                  {{ site.siteName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Sites</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" type="button" (click)="onSubmit()">Submit</button>
+        <button class="btn btn-danger ml-2" type="button" (click)="clear()">Clear</button>
+        @if (rows.length > 0) {
+          <button class="btn btn-success ml-2" type="button" (click)="export()">Export</button>
+        }
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (rows && permissionview.length > 0) {
+  <div class="row mt-4">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Branch Name" prop="branchMaster.branchName" [flexGrow]="1.2" [width]="150">
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Site Name" prop="site.siteName" [flexGrow]="1.2" [width]="150"></ngx-datatable-column>
+        <ngx-datatable-column name="Assigned Users" prop="userMaster.displayName" [flexGrow]="1.2" [width]="150">
+        </ngx-datatable-column>
+        @if (permissionedit.length > 0 || permissiondelete.length > 0) {
+          <ngx-datatable-column name="Action" [sortable]="true" [width]="120"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a (click)="navigateToEditPage(row)">
+                @if (permissionedit.length > 0) {
+                  <span tooltip="Edit Office Expense Head." [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                  style="padding-right: 10px; font-size: 18px"></span>
+                }
+                {{ ' ' }}
+              </a>
+              <a (click)="alertConfirmation(row.allocateOfficeExpenseRightsID)">
+                @if (permissiondelete.length > 0) {
+                  <span tooltip="Delete Office Expense Head." [class]="'glyph-icon simple-icon-trash tool_tip'"
+                  style="padding-right: 6px; font-size: 18px"></span>
+                }
+                {{ ' ' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)"
+                [customNextTemplate]="nextTemplate" [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>

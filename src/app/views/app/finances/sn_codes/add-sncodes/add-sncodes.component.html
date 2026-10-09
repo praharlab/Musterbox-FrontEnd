@@ -1,0 +1,142 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add SN Codes</h5>
+
+    <form #add_sncodes="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              (change)="selectcompany($event)"
+              ngModel
+              #company="ngModel"
+              name="company"
+              required
+              [(ngModel)]="company_id"
+              >
+              @for (company of allcomp; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && add_sncodes.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              (change)="selectbranch($event)"
+              ngModel
+              #branch="ngModel"
+              name="branch"
+              [(ngModel)]="finalbranch"
+              >
+              @for (allbranch of allbranch; track allbranch) {
+                <ng-option [value]="allbranch.branchMasterID">
+                  {{ allbranch.branchName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Branch</span>
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select
+              [items]="ownerList"
+              [multiple]="false"
+              bindLabel="name"
+              required
+              [selectableGroup]="false"
+              [selectableGroupAsModel]="false"
+              bindValue="userMasterID"
+              [closeOnSelect]="true"
+              [(ngModel)]="selected"
+              ngModel
+              #userMasterID="ngModel"
+              name="userMasterID"
+              >
+              <!-- <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" />{{item.name}}
+            </ng-template> -->
+          </ng-select>
+          <span>Select Employee *</span>
+        </label>
+        @if (!userMasterID.valid && add_sncodes.submitted) {
+          <div class="invalid-tooltip">
+            EMPLOYEE is required!
+          </div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <input
+            class="form-control"
+            type="text"
+            required
+            ngModel
+            #sn_code="ngModel"
+            name="sn_code"
+            />
+            <span>SN Codes *</span>
+            @if (!sn_code.valid && add_sncodes.submitted) {
+              <div class="invalid-tooltip">
+                SN Codes is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #tankhwaPatra_code="ngModel"
+              name="tankhwaPatra_code"
+              />
+              <span>{{tankhwaPatraNameLabel}} Codes *</span>
+              @if (!tankhwaPatra_code.valid && add_sncodes.submitted) {
+                <div class="invalid-tooltip">
+                  {{tankhwaPatraNameLabel}} Codes is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <app-state-button
+          [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+          [currentState]="buttonState"
+          [isDisabled]="buttonDisabled"
+          click="onLoginClick()"
+          >
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button
+          class="btn btn-danger btn-lg btn-shadow mt-4"
+          [routerLink]="adminRoot + '/finances/sn_codes'"
+          style="margin-left: 2%"
+          >
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

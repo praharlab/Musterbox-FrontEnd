@@ -1,0 +1,72 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+  (getCompany)="getCompany($event)" [multiUser]="false" [heading]="'Add Employee Bonus'" (getUser)="getUser($event)"
+  cancelRoute="/payrolls/employee_bonus">
+
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="month" required ngModel #month="ngModel" name="month"
+        [(ngModel)]="selectedMonth" (change)="getEmployeeBonus()" required />
+        <span>Bonus Month *</span>
+        @if (!month.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Bonus Month is required!
+          </div>
+        }
+      </label>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="number" required ngModel #amount="ngModel" name="amount" required
+          [min]="1" [(ngModel)]="bonusAmount" (change)="checkValue($event)" />
+          <span>Bonus Amount *</span>
+          @if (!amount.valid && commonFilter?.filterForm?.submitted) {
+            <div class="invalid-tooltip">
+              Bonus Amount is required!
+            </div>
+          }
+        </label>
+      </div>
+
+    </app-common-filter>
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="text-center">Employee Bonus </h4>
+        <div class="row mt-2">
+          <div class="col-12 data-table-rows">
+            @if (employeeBonusData.length) {
+              <table class="mb-3">
+                <thead>
+                  <tr>
+                    <th>Bonus(MM-YYYY)</th>
+                    <th>Amount</th>
+                    <th>Payment Mode</th>
+                    <th>Pay(MM-YYYY)</th>
+                    <th>status</th>
+                  </tr>
+                </thead>
+                @for (row of employeeBonusData; track row) {
+                  <tr>
+                    <td>{{row.formattedBonusYYYYMM | date: 'MM-yyyy'}}</td>
+                    <td>{{row.amount}}</td>
+                    <td>{{row.paymentMode | uppercase }}</td>
+                    <td>{{row.formattedPayYYYYMM | date: 'MM-yyyy'}}</td>
+                    <td>{{row.status == 10?'Cancelled':row.paymentMode?'Paid':''}}</td>
+                  </tr>
+                }
+              </table>
+            }
+            @if (employeeBonusData.length == 0) {
+              <div>
+                No Data Found!
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>

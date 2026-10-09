@@ -1,0 +1,75 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (divisiondata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Division</h5>
+      <form #editdivision="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #companyMasterID="ngModel"
+                name="companyMasterID"
+                [(ngModel)]="divisiondata.companyMasterID"
+                required
+                disabled
+                >
+                @for (company of company; track company) {
+                  <ng-option [value]="company.companyMasterID">
+                    {{ company.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #divisionName="ngModel"
+                name="divisionName"
+                [(ngModel)]="divisiondata.divisionName"
+                />
+                <span>Division Name *</span>
+                @if (!divisionName.valid && editdivision.submitted) {
+                  <div
+                    class="invalid-tooltip"
+                    >
+                    Division Name is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <app-state-button
+            [btnClass]="'btn btn-primary btn-lg btn-shadow mt-4'"
+            [currentState]="buttonState"
+            [isDisabled]="buttonDisabled"
+            click="onLoginClick()"
+            >
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <button
+            class="btn btn-danger btn-lg btn-shadow mt-4"
+            [routerLink]="adminRoot + '/masters/division'"
+            style="margin-left: 2%"
+            >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  }
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>
+

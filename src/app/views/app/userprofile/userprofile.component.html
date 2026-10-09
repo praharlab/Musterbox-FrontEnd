@@ -1,0 +1,184 @@
+<router-outlet></router-outlet>
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header
+  name="User Profile"
+  [showOrderBy]="false"
+  [showDisplayMode]="false"
+  [showSearch]="false"
+  [showItemsPerPage]="false"
+></app-list-page-header>
+
+<p></p>
+
+@for (item of rows; track item) {
+  <div class="row my-5">
+    <div class="col-2 my-3"></div>
+    <div class="col-8 col-left my-3">
+      @if (item.firstName && item.lastName) {
+        <app-profile-pic
+          [Style] = "'height : 120px;width : 120px; border-radius : 0.75rem'"
+          [Class]="'img-thumbnail card-img social-profile-img c-pointer'"
+          [firstName]="item.firstName"
+          [lastName]="item.lastName"
+        ></app-profile-pic>
+      }
+      @if (imgshow1) {
+        <img
+          alt="Profile"
+          src="{{ apiURL }}uploads/user/photo/{{ item.photo }}"
+          (click)="openLightbox(apiURL + '/uploads/user/photo/' + item.photo)"
+          class="img-thumbnail card-img social-profile-img c-pointer"
+          />
+      }
+      <div class="card mb-6">
+        <div class="card-body">
+          <div class="text-center pt-4">
+            <h3 class="list-item-heading pt-2">
+              @if (item.displayName != null) {
+                <strong>{{ item.displayName }}</strong>
+              }
+              @if (item.displayName == null || item.displayName == '') {
+                <strong>---</strong>
+              }
+            </h3>
+          </div>
+          <div class="row" style="margin-top: 20px">
+            <div class="col-12"></div>
+            <div class="col-6">
+              <div class="col-12">
+                <p class="text-muted text-small mb-2"><strong>Employee Code</strong></p>
+                @if (item.employeeJoiningDetails[0].employeeCode != null) {
+                  <p class="mb-3">
+                    {{ item.employeeJoiningDetails[0].employeeCode }}
+                  </p>
+                }
+                @if (
+                  item.employeeJoiningDetails[0].employeeCode == null ||
+                  item.employeeJoiningDetails[0].employeeCode == ''
+                  ) {
+                  <p
+                    class="mb-3"
+                    >
+                    ---
+                  </p>
+                }
+              </div>
+              <div class="col-12">
+                <p class="text-muted text-small mb-2">
+                  <strong>Contact Number</strong>
+                </p>
+                @if (item.userNumber != null) {
+                  <p class="mb-3">
+                    {{ item.userNumber }}
+                  </p>
+                }
+                @if (item.userNumber == null || item.userNumber == '') {
+                  <p class="mb-3">---</p>
+                }
+              </div>
+              <div class="col-12">
+                <p class="text-muted text-small mb-2">
+                  <strong>EMail-ID</strong>
+                </p>
+                @if (item.email != null) {
+                  <p class="mb-3">{{ item.email }}</p>
+                }
+                @if (item.email == null || item.email == '') {
+                  <p class="mb-3">---</p>
+                }
+              </div>
+              <div class="col-12">
+                <p class="text-muted text-small mb-2"><Strong>Gender</Strong></p>
+                @if (item.gender != null) {
+                  <p class="mb-3">{{ item.gender }}</p>
+                }
+                @if (item.gender == null || item.gender == '') {
+                  <p class="mb-3">---</p>
+                }
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="col-12">
+                <p class="text-muted text-small mb-2">
+                  <strong>Company Name</strong>
+                </p>
+                @if (item.companyMaster.companyName != null) {
+                  <p class="mb-3">
+                    {{ item.companyMaster.companyName }}
+                  </p>
+                }
+                @if (
+                  item.companyMaster.companyName == null || item.companyMaster.companyName == ''
+                  ) {
+                  <p
+                    class="mb-3"
+                    >
+                    ---
+                  </p>
+                }
+              </div>
+              <div class="col-12">
+                <p class="text-muted text-small mb-2"><strong>Branch</strong></p>
+                @if (item.employeeBranches[0].branchMaster.branchName != null) {
+                  <p class="mb-3">
+                    {{ item.employeeBranches[0].branchMaster.branchName }}
+                  </p>
+                }
+                @if (
+                  item.employeeBranches[0].branchMaster.branchName == null ||
+                  item.employeeBranches[0].branchMaster.branchName == ''
+                  ) {
+                  <p
+                    class="mb-3"
+                    >
+                    ---
+                  </p>
+                }
+              </div>
+              <div class="col-12">
+                <p class="text-muted text-small mb-2"><strong>Department</strong></p>
+                @if (item.employeeDepartments[0].department.departmentName != null) {
+                  <p class="mb-3">
+                    {{ item.employeeDepartments[0].department.departmentName }}
+                  </p>
+                }
+                @if (
+                  item.employeeDepartments[0].department.departmentName == null ||
+                  item.employeeDepartments[0].department.departmentName == ''
+                  ) {
+                  <p
+                    class="mb-3"
+                    >
+                    ---
+                  </p>
+                }
+              </div>
+              <div class="col-12">
+                <p class="text-muted text-small mb-2"><strong>Designation</strong></p>
+                @if (item.employeeDesignations[0].designation.designationName != null) {
+                  <p
+                    class="mb-3"
+                    >
+                    {{ item.employeeDesignations[0].designation.designationName }}
+                  </p>
+                }
+                @if (
+                  item.employeeDesignations[0].designation.designationName == null ||
+                  item.employeeDesignations[0].designation.designationName == ''
+                  ) {
+                  <p
+                    class="mb-3"
+                    >
+                    ---
+                  </p>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,97 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showItemsPerPage]="false" [showSearch]="false"
+name="ReporteeWise Shift Roster"></app-list-page-header>
+@if (permissionview.length != 0 && permissioncreate.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <form #datefilter="ngForm" novalidate>
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <ng-select [items]="alluser" [multiple]="true" bindLabel="name" groupBy="selectedAllGroup"
+                [selectableGroup]="true" (ngModelChange)="selectUser()" [selectableGroupAsModel]="false"
+                bindValue="userMasterID" [closeOnSelect]="false" ngModel #user="ngModel" name="user"
+                [(ngModel)]="selectedUser">
+                <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" name="selectall"
+                    [ngModelOptions]="{ standalone: true }" />
+                    Select All
+                  </ng-template>
+                </ng-select>
+                <span>Select User</span>
+                <!-- <div *ngIf="!user.valid && datefilter.submitted" class="invalid-tooltip">
+                User is required!
+              </div> -->
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel [(ngModel)]="filterData.fromDate"
+                (change)="selectFromDate()" #fromDate="ngModel" name="fromDate" required />
+                <span>From Date *</span>
+                @if (!fromDate.valid && datefilter.submitted) {
+                  <div class="invalid-tooltip">
+                    From Date is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" ngModel [(ngModel)]="filterData.toDate"
+                  (change)="selectTodate()" [min]="filterData.startDate" #toDate="ngModel" name="toDate"
+                  required />
+                  <span>To Date *</span>
+                  @if (!toDate.valid && datefilter.submitted) {
+                    <div class="invalid-tooltip">
+                      To Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary form-group" type="submit" (click)="onSubmit()">
+                  {{ 'forms.submit' | translate }}
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary form-group ml-1" type="button" (click)="clear()">
+                  Clear
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-success form-group ml-1" type="submit" (click)="download()">
+                  Export
+                </button>
+                &nbsp;&nbsp;
+                <span class="btn btn-info form-group ml-1" (click)="importExcel()">Import</span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right: -6px"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right: -6px"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+    <app-show-shift-roster-data [permissioncreate]="permissioncreate" [rows]="rows" [permissionview]="permissionview"
+      [allshift]="allshift" [dateRange]="dateRange" (onSaveData)="saveData()">
+    </app-show-shift-roster-data>

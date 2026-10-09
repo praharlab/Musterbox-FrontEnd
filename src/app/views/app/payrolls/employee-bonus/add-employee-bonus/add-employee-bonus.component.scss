@@ -1,0 +1,22 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+}
+
+th,td {
+    padding: 12px 15px;
+    border: 1px solid #aaaaaa;
+    text-align: left;
+}
+
+tr {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+::ng-deep ul{
+    margin-bottom: 0px !important;
+}

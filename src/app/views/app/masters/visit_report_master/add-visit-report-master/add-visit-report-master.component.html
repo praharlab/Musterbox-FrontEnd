@@ -1,0 +1,75 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Visit Report Form Name</h5>
+
+    <form #addvisitreport="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #visitReportName="ngModel"
+              name="visitReportName"
+              />
+              <span>Visit Report Form Name *</span>
+              @if (!visitReportName.valid && addvisitreport.submitted) {
+                <div class="invalid-tooltip">
+                  Visit Report Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          @if (childcompany == 'false') {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select
+                  placeholder="Choose your option"
+                  ngModel
+                  #companyMasterID="ngModel"
+                  name="companyMasterID"
+                  required
+                  >
+                  @for (company of company; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company</span>
+                @if (!companyMasterID.valid && addvisitreport.submitted) {
+                  <div class="invalid-tooltip">
+                    Company Selection is required!
+                  </div>
+                }
+              </label>
+            </div>
+          }
+        </div>
+        <app-state-button
+          [btnClass]="'btn btn-primary btn-lg btn-shadow'"
+          [currentState]="buttonState"
+          [isDisabled]="buttonDisabled"
+          click="onLoginClick()"
+          >
+          {{ 'forms.submit' | translate }}
+        </app-state-button>
+        <button
+          class="btn btn-danger btn-lg btn-shadow"
+          [routerLink]="adminRoot + '/masters/visit_report_master'"
+          style="margin-left: 2%"
+          >
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

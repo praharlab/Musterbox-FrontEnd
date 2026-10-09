@@ -1,0 +1,26 @@
+.col-md-5 {
+      height: 10px;
+    }
+    ::ng-deep {
+      .calendar {
+        z-index: 999 !important;
+      }
+      input[type='text'] {
+        width: 100%;
+        border-width: 1.5px;
+        border-color: rgba(0, 0, 0, 0.125);
+      }
+      .ngx-picker {
+        height: 36px;
+      }
+      span.ng-clear-wrapper {
+        display: none;
+      }
+    }
+    
+    .container {
+      border: 1px dashed #000;
+      margin-top: -25px;
+      height: 67px;
+    }
+    

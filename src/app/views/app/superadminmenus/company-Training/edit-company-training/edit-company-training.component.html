@@ -1,0 +1,215 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Company Training</h5>
+
+    @if (trainingdata) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+              [(ngModel)]="company_id" required>
+              <ng-option *ngFor="let company of company1" [value]="company.companyMasterID">
+                {{ company.companyName }}
+              </ng-option>
+            </ng-select>
+            <span>Select Company *</span>
+            <div *ngIf="!company.valid && addcomp.submitted" class="invalid-tooltip">
+              Company is required!
+            </div>
+          </label>
+        </div> -->
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #title="ngModel" name="title"   [(ngModel)]="trainingdata.title" required />
+            <span>Title *</span>
+            @if (!title.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Title is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #tdate="ngModel" name="tdate"  [(ngModel)]="trainingdata.trainingDate"  required />
+            <span>Training Date *</span>
+            @if (!tdate.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Training Date is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="time" ngModel #starttime="ngModel" name="starttime" required
+              [(ngModel)]="trainingdata.startTrainingTiming"/>
+              <span>Start Training Time *</span>
+              @if (!starttime.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Start Training Time is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="time" ngModel #endtime="ngModel" name="endtime" [(ngModel)]="trainingdata.endTrainingTiming" required />
+              <span>End Training Time *</span>
+              @if (!endtime.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  End Training Time is required!
+                </div>
+              }
+              <!-- <div *ngIf="endtime.valid && starttime.valid && !isEndTimeValid(starttime.value, endtime.value) && addcomp.submitted" class="invalid-tooltip">
+              End Training Time must be greater than Start Training Time!
+            </div> -->
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="text" ngModel #ttkaneby="ngModel" name="ttkaneby" required   [(ngModel)]="trainingdata.trainingTakenBy"/>
+            <span>Training Taken By*</span>
+            @if (!ttkaneby.valid && addcomp.submitted) {
+              <div class="invalid-tooltip">
+                Training Taken By is required!
+              </div>
+            }
+          </label>
+        </div>
+        <!-- <div class="col-md-6">
+        <label class="form-group has-float-label">
+          <textarea class="form-control" type="text" ngModel #description="ngModel" name="description"
+          required  [(ngModel)]="trainingdata.description"></textarea>
+          <span>Description *</span>
+          <div *ngIf="!description.valid && addcomp.submitted" class="invalid-tooltip">
+            Description is required!
+          </div>
+        </label>
+      </div> -->
+      <div class="col-md-12">
+        <label class="form-group has-float-label">
+          <quill-editor (contextmenu)="onToolbarRightClick($event)"
+            [placeholder]="''"
+            ngModel
+            #description="ngModel"
+            name="description"
+            [(ngModel)]="trainingdata.description"
+            required
+            >
+            <div quill-editor-toolbar>
+              <span class="ql-formats">
+                <button class="ql-bold" [title]="'Bold'"></button>
+                <button class="ql-italic" [title]="'Italic'"></button>
+                <button class="ql-underline" [title]="'Underline'"></button>
+                <button class="ql-strike" [title]="'Strike'"></button>
+                <button class="ql-image" [title]="'Image'"></button>
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-link"></button>
+                <button class="ql-video"></button>
+              </span>
+              <span class="ql-formats">
+                <select class="ql-align" [title]="'Aligment'">
+                  <option selected=""></option>
+                  <option value="center"></option>
+                  <option value="right"></option>
+                  <option value="justify"></option>
+                </select>
+                <select class="ql-size" [title]="'Size'">
+                  <option value="8px">8px</option>
+                  <option value="10px">10px</option>
+                  <option selected="" value="12px">12px</option>
+                  <option value="14px">14px</option>
+                  <option value="16px">16px</option>
+                  <option value="18px">18px</option>
+                  <option value="20px">20px</option>
+                  <option value="22px">22px</option>
+                  <option value="24px">24px</option>
+                  <option value="26px">26px</option>
+                  <option value="28px">28px</option>
+                  <option value="30px">30px</option>
+                  <option value="32px">32px</option>
+                  <option value="34px">34px</option>
+                  <option value="36px">36px</option>
+                  <option value="38px">38px</option>
+                  <option value="40px">40px</option>
+                  <option value="42px">42px</option>
+                  <option value="44px">44px</option>
+                  <option value="46px">46px</option>
+                  <option value="48px">48px</option>
+                  <option value="50px">50px</option>
+                </select>
+                <select class="ql-header" [title]="'Header'">
+                  <option value="1">Heading 1</option>
+                  <option value="2">Heading 2</option>
+                  <option value="3">Heading 3</option>
+                  <option value="4">Heading 4</option>
+                  <option value="5">Heading 5</option>
+                  <option value="6">Heading 6</option>
+                </select>
+                <select class="ql-color" [title]="'Color'">
+                  <option value="rgb(0, 0, 0)"></option>
+                  <option value="rgb(230, 0, 0)"></option>
+                  <option value="rgb(255, 153, 0)"></option>
+                  <option value="rgb(255, 255, 0)"></option>
+                  <option value="rgb(0, 138, 0)"></option>
+                  <option value="rgb(0, 102, 204)"></option>
+                  <option value="rgb(153, 51, 255)"></option>
+                  <option value="rgb(255, 255, 255)"></option>
+                  <option value="rgb(250, 204, 204)"></option>
+                  <option value="rgb(255, 235, 204)"></option>
+                  <option value="rgb(204, 224, 245)"></option>
+                  <option value="rgb(235, 214, 255)"></option>
+                  <option value="rgb(187, 187, 187)"></option>
+                  <option value="rgb(102, 185, 102)"></option>
+                  <option value="rgb(192,192,192)"></option>
+                  <option value="rgb(128,128,128)"></option>
+                  <option value="rgb(128,0,0)"></option>
+                  <option value="rgb(128,128,0)"></option>
+                  <option value="rgb(0,128,0)"></option>
+                  <option value="rgb(128,0,128)"></option>
+                  <option value="rgb(0,128,128)"></option>
+                  <option value="rgb(0,0,128)"></option>
+                </select>
+                <select class="ql-font" [title]="'Font'">
+                  <option selected="">Sans Serif</option>
+                  <option value="inconsolata">Inconsolata</option>
+                  <option value="roboto">Roboto</option>
+                  <option value="mirza">Mirza</option>
+                  <option value="arial">Arial</option>
+                  <option value="calibri">Calibri</option>
+                </select>
+              </span>
+            </div>
+          </quill-editor>
+          <!-- <span>Announcement</span>
+          <div *ngIf="!announcement.valid && addcomp.submitted" class="invalid-tooltip">
+            Announcement is required!
+          </div> -->
+          <span>Description *</span>
+          @if (!description.valid && addcomp.submitted) {
+            <div class="invalid-tooltip">
+              Description is required!
+            </div>
+          }
+        </label>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+      <button class="btn btn-danger btn-shadow mt-4"
+        [routerLink]="adminRoot + '/superadminmenus/company_training'" style="margin-left: 2%">
+        Cancel
+      </button>
+    </div>
+  </form>
+}
+</div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

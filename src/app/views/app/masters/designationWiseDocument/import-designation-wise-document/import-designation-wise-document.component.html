@@ -1,0 +1,164 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="mb-4">Import Designationwise Document</h4>
+    <form #addimportuser="ngForm" novalidate (ngSubmit)="validateData()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" (change)="companyChange()" ngModel
+              #company="ngModel" [(ngModel)]="filterData.companyMasterID" name="company" required>
+              @for (company of companyData; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Company *</span>
+            @if (!company.valid && addimportuser.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="file" ngModel #file="ngModel" (change)="onFileChange($event)"
+              accept=".xlsx, .xls" name="file" required />
+              <span>Import File *</span>
+              @if (file.valid) {
+                <p>{{ fileName }}</p>
+              }
+              @if (!file.valid && addimportuser.submitted) {
+                <div class="invalid-tooltip">
+                  File is required!
+                </div>
+              }
+            </label>
+          </div>
+
+        </div>
+        <div class="col-md-6">
+          @if (isValidated == false) {
+            <button class="btn btn-primary" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+          }
+          @if (isValidated == true) {
+            <button class="btn btn-primary" type="button" (click)="clear()">
+              Clear
+            </button>
+          }
+          <span> &nbsp;&nbsp; </span>
+          <button class="btn btn-danger" type="button" (click)="prev()">Cancel</button>
+          <span> &nbsp;&nbsp; </span>
+          @if (filterData.companyMasterID) {
+            <button (click)="downloadDemoExcel()" type="button" class="btn btn-success"
+              >
+              Demo Excel
+            </button>
+          }
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (rows.length > 0) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <form #tableForm="ngForm" novalidate>
+          <div class="row">
+            <div class="col mb-2">
+              @if (rows.length && remarksCount==0 && !isEdited) {
+                <button class="btn btn-primary" type="submit" (click)="saveData()"
+                  >
+                  Submit
+                </button>
+              }
+              @if (rows.length > 0 && isEdited) {
+                <button class="btn btn-primary" type="submit" (click)="reValidateData()"
+                  >
+                  Re-Validate
+                </button>
+              }
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table id="editable-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 50px">Sr No</th>
+                  <th>Remarks</th>
+                  <th>Employee Details</th>
+                  <th>Is Needed</th>
+                  <th>Required</th>
+                  <th>Required User Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of rows; track item; let i = $index) {
+                  <tr>
+                    <td style="width: 50px">
+                      {{i + 1}}
+                    </td>
+                    <td>
+                      <div style="width: 150px">
+                        {{ item.remarks }}
+                      </div>
+                    </td>
+                    <td>
+                      <div style="width: 150px">
+                        Designation - {{ item.designationName }}
+                        <br />
+                        Document - {{ item.documentName }}
+                      </div>
+                    </td>
+                    <td>
+                      <input type="checkbox" #isNeeded="ngModel" [(ngModel)]="item.isNeeded" [value]="true"
+                        name="isNeeded{{i}}" (change)="onChange('add',item,i); onDataChange($event)"
+                        />
+                        &nbsp;&nbsp;
+                        <span>is Needed</span>
+                      </td>
+                      <td>
+                        <input type="checkbox" #isRequired="ngModel" [(ngModel)]="item.isRequired"
+                          [value]="true" [disabled]="!item.isNeeded" name="isRequired{{i}}"
+                          (change)="onChange('isRequired',item,i); onDataChange($event)" />
+                          &nbsp;&nbsp;
+                          <span>is Required</span>
+                        </td>
+                        <td>
+                          <input type="radio" name="requiredUserType{{i}}" value="1" ngModel
+                            #requiredUserType="ngModel" style="margin-right: 2%" required
+                            [(ngModel)]="item.requiredUserType"  (change)="onDataChange($event)" />
+                            <label for="national" style="margin-right: 2%">National</label>
+                            <input type="radio" name="requiredUserType{{i}}" value="2" ngModel
+                              #requiredUserType="ngModel" style="margin-right: 2%" required
+                              [(ngModel)]="item.requiredUserType" (change)="onDataChange($event)" />
+                              <label for="false" style="margin-right: 2%">Expat</label>
+                              <input type="radio" name="requiredUserType{{i}}" value="3" ngModel
+                                #requiredUserType="ngModel" style="margin-right: 2%" required
+                                [(ngModel)]="item.requiredUserType" (change)="onDataChange($event)"/>
+                                <label for="other">Both</label>
+                                @if (!requiredUserType.valid && addcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    requiredUserType is required!
+                                  </div>
+                                }
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            }
+
+            <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

@@ -1,0 +1,101 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Advance Expense Payment</h5>
+
+    @if (getdata) {
+      <form #addPayment="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="text" ngModel #userMasterID="ngModel" name="userMasterID"
+                [(ngModel)]="getdata.userMaster.displayName" disabled />
+                <span>User Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" ngModel #amount="ngModel" name="amount"
+                  [(ngModel)]="getdata.amount" required />
+                  <span>Amount *</span>
+                  @if (!amount.valid && addPayment.submitted) {
+                    <div class="invalid-tooltip">
+                      Amount is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="date" ngModel #paymentDate="ngModel" name="paymentDate"
+                    [(ngModel)]="getdata.paymentDate" required />
+                    <span>Payment Date *</span>
+                    @if (!paymentDate.valid && addPayment.submitted) {
+                      <div class="invalid-tooltip">
+                        Payment Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #paymentmode="ngModel" name="paymentmode"
+                      [(ngModel)]="getdata.paymentmode" required>
+                      <ng-option value="Cash">Cash</ng-option>
+                      <ng-option value="Cheque">Cheque</ng-option>
+                      <ng-option value="UPI">UPI</ng-option>
+                      <ng-option value="NetBanking">NetBanking</ng-option>
+                    </ng-select>
+                    <span>Payment Mode *</span>
+                    @if (!paymentmode.valid && addPayment.submitted) {
+                      <div class="invalid-tooltip">
+                        Payment Mode is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                @if (getdata.paymentmode && getdata.paymentmode != 'Cash') {
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" ngModel #referenceNO="ngModel" name="referenceNO"
+                        [(ngModel)]="getdata.referenceNO" />
+                        <span>Reference NO</span>
+                      </label>
+                    </div>
+                  }
+                  @if (getdata.paymentmode && getdata.paymentmode != 'Cash') {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="date" ngModel #referenceDate="ngModel" name="referenceDate"
+                          [(ngModel)]="getdata.referenceDate" />
+                          <span>Reference Date</span>
+                        </label>
+                      </div>
+                    }
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <textarea class="form-control" ngModel #remarks="ngModel" name="remarks"   [(ngModel)]="getdata.remarks"></textarea>
+                        <span>Remarks *</span>
+                        @if (!remarks.valid && addPayment.submitted) {
+                          <div class="invalid-tooltip">
+                            Remarks is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                    <div class="col-md-12">
+                      <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                      <button class="btn btn-danger btn-shadow mt-4"
+                        [routerLink]="adminRoot + '/finances/list_advance_payment'" style="margin-left: 2%">
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              }
+            </div>
+          </div>
+
+          <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

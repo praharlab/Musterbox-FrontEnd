@@ -1,0 +1,58 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/superadminmenus/company_master'"
+  style="margin-bottom: 22px">
+  Back
+</button>
+
+<app-list-page-header name="Company Stages" [showOrderBy]="false" [showDisplayMode]="false"
+></app-list-page-header>
+
+<div style="text-align: right">
+  @if (rows.length != 0) {
+    <span class="btn btn-info mb-1" (click)="downloadFile()">Export</span>
+  }
+</div>
+
+<div class="kanban-container">
+  <div class="kanban" cdkDropListGroup>
+    @for (status of companyServiceStatus; track status) {
+      <div class="kanban-column" cdkDropList
+        [cdkDropListData]="status.items" (cdkDropListDropped)="drop($event)" [id]="status.CompanyServiceStatusID">
+        <div class="kanban-header" [style.backgroundColor]="status.colorCode">
+          {{ status.CompanyServiceStatusName }}
+        </div>
+        <div class="kanban-body">
+          @for (item of status.items; track item) {
+            <div class="card" cdkDrag>
+              <div class="card-content">
+                <p>{{ item }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+
+
+<div class="container">
+  <div class="wrapper">
+    <h1>History</h1>
+
+    <ul class="sessions">
+      @for (companyProgressHistory of companyporgressHistory; track companyProgressHistory) {
+        <li>
+          <div class="time">{{ companyProgressHistory.createdAt | date:'dd-MM-yyyy HH:mm' }}</div>
+          <p>{{ companyProgressHistory.companyServiceStatus.CompanyServiceStatusName }}</p>
+          <p>Updated By :{{ companyProgressHistory.createdBy.displayName }}</p>
+        </li>
+      }
+    </ul>
+
+  </div>
+</div>

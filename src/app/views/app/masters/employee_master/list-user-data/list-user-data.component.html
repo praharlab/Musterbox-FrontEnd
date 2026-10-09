@@ -1,0 +1,111 @@
+<!-- <router-outlet></router-outlet> -->
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+
+@if (userData) {
+  <div class="container-fluid">
+    <div class="row" style="margin-bottom: 2rem;">
+      <div class="col-sm-12 p-4">
+        <div class="card mb-2">
+          <div class="card-body pb-0" style="padding-right: 28px">
+            @for (item of userData; track item) {
+              <div class="row">
+                <div class="col-sm-2 mb-2" style="text-align: center">
+                  <div class="profile-photo-container">
+                    <div class="image-wrapper">
+                      @if (!item.photo || item.photo == '') {
+                        <span>
+                          @if (item.firstName && item.lastName) {
+                            <app-profile-pic
+                              [Style]="'width: 150px; border-radius: 50%;font-size:32px; height: 150px'"
+                              [Class]="'img-fluid'"
+                              [firstName]="item.firstName"
+                              [lastName]="item.lastName"
+                            ></app-profile-pic>
+                          }
+                        </span>
+                      }
+                      @if (item.photo) {
+                        <span>
+                          <img
+                            class="img-fluid"
+                            src="{{ apiURL }}uploads/user/photo/{{ item.photo }}"
+                            alt="Avatar"
+                            style="width: 150px; border-radius: 50%; height: 150px"
+                            />
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-10 pt-2">
+                    <h3>{{ item.displayName }}</h3>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <span class="p-2">
+                          <b>Company Name :</b>
+                          {{ item.companyMaster.companyName }}
+                        </span>
+                      </div>
+                      <div class="col-sm-4">
+                        <span class="p-2">
+                          <b>E-Mail :</b>
+                          {{ item.email }}
+                        </span>
+                      </div>
+                      <div class="col-sm-4">
+                        <span class="p-2">
+                          <b>Phone Number :</b>
+                          {{ item.userNumber }}
+                        </span>
+                      </div>
+                      <div class="col-sm-4">
+                        @if (item.employeeBranches.length > 0) {
+                          <span class="p-2">
+                            <b>Branch :</b>
+                            {{ item.employeeBranches[0].branchMaster.branchName }}
+                          </span>
+                        }
+                      </div>
+                      @if (item.employeeDepartments.length > 0) {
+                        <div class="col-sm-4">
+                          <span class="p-2">
+                            <b>Department :</b>
+                            {{ item.employeeDepartments[0].department.departmentName }}
+                          </span>
+                        </div>
+                      }
+                      @if (item.employeeDesignations.length > 0) {
+                        <div class="col-sm-4">
+                          <span class="p-2">
+                            <b>Designation :</b>
+                            {{ item.employeeDesignations[0].designationName }}
+                          </span>
+                        </div>
+                      }
+                      @if (item.employeeJoiningDetails.length > 0) {
+                        <div class="col-sm-4">
+                          <span class="p-2">
+                            <b>Employee Code :</b>
+                            {{ item.employeeJoiningDetails[0].employeeCode }}
+                          </span>
+                        </div>
+                      }
+                      <div class="col-sm-4">
+                        <span class="p-2">
+                          <b>Gender :</b>
+                          {{ item.gender }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }

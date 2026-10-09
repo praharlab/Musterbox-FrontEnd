@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-12">
+    <app-heading title="Declaration"></app-heading>
+    @if (permissionview.length >0) {
+      <div class="btn-group float-right float-none-xs mt-2" dropdown>
+        <button id="button-basic" dropdownToggle type="button" class="btn btn-outline-primary btn-xs dropdown-toggle"
+          aria-controls="dropdown-basic">
+          {{ selectedFiscalYear }}
+          <span class="caret"></span>
+        </button>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+          @for (year of financialYears; track year) {
+            <li role="menuitem">
+              <a class="dropdown-item" href="javascript:;" (click)="selectFiscalYear(year)">{{ year }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    <app-breadcrumb title="Declaration"></app-breadcrumb>
+    <div class="separator mb-5"></div>
+  </div>
+</div>
+
+@if (permissionview.length >0) {
+  <app-declaration-information> </app-declaration-information>
+}
+
+@if (categorydata.length > 0 && permissionview.length >0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <tabset class="separator-tabs">
+        <tab heading="My Declarations" (selectTab)="onTabSelect($event)">
+          <app-employee-declaration [data]="myDeclarationData"
+          [selectedFiscalYear]="selectedFiscalYear"></app-employee-declaration>
+        </tab>
+        @for (tab of categorydata; track tab) {
+          <tab [heading]="tab.categoryName"
+            (selectTab)="loadComponent(tab.categoryName, tab.data,selectedFiscalYear,tab.tdsSubSectionCategoryID)">
+          </tab>
+        }
+      </tabset>
+      <ng-container #componentContainer></ng-container>
+    </div>
+  </div>
+}

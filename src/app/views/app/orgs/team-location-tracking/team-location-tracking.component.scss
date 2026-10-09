@@ -1,0 +1,25 @@
+strong {
+  cursor: pointer;
+}
+
+strong.active {
+  font-weight: bold;
+  color: blue; /* Change to your preferred active color */
+}
+.fw800 {
+  font-weight: 400;
+  font-size: 0.75rem !important;
+}
+
+.font-1rem {
+  font-size: 0.75rem !important;
+}
+
+.trackingIcon {
+  margin-right: 5px;
+}
+
+.sortBtn{
+  font-size: 0.8rem; 
+  padding: 0  !important;
+}

@@ -1,0 +1,667 @@
+<div class="card">
+  <div class="position-relative card-top-buttons">
+    <div class="mt-2">
+      <form #dateFilter="ngForm" class="position-relative " novalidate (change)="onDateSelect(dateFilter)">
+        <h3 class="card-title">Miss Punch</h3>
+        <div class="d-flex justify-content-right align-items-center">
+          <label for="fromDateMonthYear" class="form-group has-float-label">
+            <input class="btn btn-outline-primary btn-xs float-right cursor-pointer" type="date" [(ngModel)]="fromDate" ngModel
+              id="fromDateMonthYear" name="fromDate" max="{{ maxDate }}" />
+              <span>From Date</span>
+            </label>
+            <label for="toDateMonthYear" class="form-group has-float-label ml-2 cursor-pointer">
+              <input class="btn btn-outline-primary btn-xs float-right" type="date" [(ngModel)]="toDate" ngModel
+                id="toDateMonthYear" name="toDate" max="{{ maxDate }}" />
+                <span>To Date</span>
+              </label>
+            </div>
+            <div>
+              <label class="form-group has-float-label">
+                <ng-select [items]="allbranch" [multiple]="false" bindLabel="branchName" groupBy="selectedAllGroup"
+                  [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="branchMasterID"
+                  [closeOnSelect]="true" ngModel #branch="ngModel" name="branch" (change)="onDateSelect(dateFilter)">
+                </ng-select>
+                <span>Select Branch</span>
+              </label>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body pt-0">
+        @if (showloader == 'true') {
+          <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        }
+        <div class="scroll pr-0" style="height: 314px !important">
+          <perfect-scrollbar class="scroll pr-0" [config]="{ suppressScrollX: true, wheelPropagation: true }">
+            @for (item of missPunchData; track item) {
+              <div class="d-flex myclass mb-3">
+                <a class="d-flex block position-relative align-items-center mr5px ">
+                  @if (item.userMaster.firstName && item.userMaster.lastName && (!item.userMaster || item.userMaster.photo == '' || item.userMaster.photo == null)) {
+                    <app-profile-pic
+                      [Class]="'list-thumbnail border-0 rounded'" [Style]="'height: 85px; width: 113px'"
+                    [firstName]="item.userMaster.firstName" [lastName]="item.userMaster.lastName"></app-profile-pic>
+                  }
+                  @if (item.userMaster && item.userMaster.photo != '' && item.userMaster.photo != null) {
+                    <img src="{{ apiURL }}uploads/user/photo/{{ item.userMaster.photo }}" [alt]="item.title"
+                      class="imgSize list-thumbnail border-0"/>
+                  }
+                </a>
+                <div class="pt-2 pr-2 pb-2">
+                  <a>
+                    <p class="list-item-heading">
+                      {{ item.userMaster.displayName }}
+                    </p>
+                    <div class="pr-4">
+                      <p class="text-muted mb-1 text-small">
+                        {{ item.designationID }}
+                      </p>
+                    </div>
+                    <div class="text-primary text-small font-weight-medium">
+                      @if (!item.InDatetime) {
+                        <div class="myClass mb-1">
+                          Punch In :-
+                          {{ item.InDatetime | date: 'dd-MM-yyyy h:mm a' }}
+                        </div>
+                      }
+                      @if (item.InDatetime) {
+                        <div class="mb-1">
+                          Punch In :-
+                          {{ item.InDatetime | date: 'dd-MM-yyyy h:mm a' }}
+                        </div>
+                      }
+                      @if (!item.OutDateTime) {
+                        <div class="myClass mb-1">
+                          Punch Out :-
+                          {{ item.OutDateTime | date: 'dd-MM-yyyy h:mm a' }}
+                        </div>
+                      }
+                      @if (item.OutDateTime) {
+                        <div class="mb-1">
+                          Punch Out :-
+                          {{ item.OutDateTime | date: 'dd-MM-yyyy h:mm a' }}
+                        </div>
+                      }
+                    </div>
+                  </a>
+                </div>
+                <div class="d-flex buttonPlace align-items-center">
+                  @if (permissionedit.length != 0) {
+                    <button class="btn btn-primary form-group m-0" style="height: fit-content" type="button"
+                      (click)="lgModal.show(); setUsermasterId(item)">
+                      Edit
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </perfect-scrollbar>
+        </div>
+      </div>
+    </div>
+
+    <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            @if (clickedUsername) {
+              <h5 class="modal-title pull-left">
+                Attendance Details - {{ clickedUsername }}
+              </h5>
+            }
+            <button type="button" class="btn-close close pull-right" (click)="lgModal.hide(); closeModal1()"
+              aria-label="Close" #closeModal>
+              <span aria-hidden="true" class="visually-hidden">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+                <div>
+                  <tabset class="separator-tabs">
+                    @if (permissionedit.length != 0) {
+                      <tab heading="Mannual Attendace" active="true">
+                        <div class="row" style="flex-direction: column">
+                          @if (modalMessage.show == true) {
+                            <p style="color: red; font-size: 14px">
+                              *Note :- {{ modalMessage.modalMessage }}!
+                            </p>
+                          }
+                          @if (modalMessage.show == false) {
+                            <form #addcomp="ngForm" novalidate
+                              (ngSubmit)="onSubmitAttendaceForm()">
+                              <div class="col-md-12 row">
+                                <div class="col-md-12">
+                                  <input type="radio" ngModel #amountType1="ngModel" name="amountType1"
+                                    [(ngModel)]="radiostatus" value="2" style="margin-right: 1%" checked />
+                                    <label for="true" style="margin-right: 4%">Time Correction</label>
+                                    <input type="radio" #amountType1="ngModel" name="amountType1" [(ngModel)]="radiostatus"
+                                      value="1" style="margin-right: 1%" />
+                                      <label for="false">Status Correction</label>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    @if (radiostatus == '2' && manunalRows.length > 0) {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input type="datetime-local" class="form-control" ngModel #punchin="ngModel"
+                                            [(ngModel)]="manunalRows[0].punchin" name="punchin"
+                                            min="{{ manunalRows[0].minpunchinvalid }}" max="{{ manunalRows[0].maxpunchinvalid }}"
+                                            (change)="manual(manunalRows[0])" [disabled]="manunalRows[0].Attendance_Verify"
+                                            required />
+                                            <!-- <input class="form-control" type="datetime-local" required ngModel #inDateTime="ngModel"
+                                            name="inDateTime" /> -->
+                                            <span>In Date Time *</span>
+                                            <!-- <div *ngIf="!punchin.valid && addcomp.submitted" class="invalid-tooltip">In Date Time is required!
+                                          </div> -->
+                                        </label>
+                                      </div>
+                                    }
+                                    @if (radiostatus == '2' && manunalRows.length > 0) {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input type="datetime-local" class="form-control" ngModel #punchout="ngModel"
+                                            [(ngModel)]="manunalRows[0].punchout" name="punchout"
+                                            min="{{ manunalRows[0].minpunchinvalid }}" max="{{ manunalRows[0].maxpunchinvalid1 }}"
+                                            (change)="manual(manunalRows[0])" [disabled]="manunalRows[0].Attendance_Verify"
+                                            required />
+                                            <!-- <input class="form-control" type="datetime-local" required ngModel #outDateTime="ngModel"
+                                            name="outDateTime" /> -->
+                                            <span>Out Date Time *</span>
+                                            <!-- <div *ngIf="!punchout.valid && addcomp.submitted" class="invalid-tooltip">Out Date Time is
+                                          required!</div> -->
+                                        </label>
+                                      </div>
+                                    }
+                                    @if (radiostatus == '1') {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <ng-select placeholder="Choose your option" ngModel (change)="selectShift($event)"
+                                            #shiftID="ngModel" name="shiftID" required>
+                                            @for (item of allshift; track item) {
+                                              <ng-option [value]="item.shiftID">
+                                                {{ item.shiftName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Select Shift *</span>
+                                        </label>
+                                        @if (!shiftID.valid && addcomp.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Shift is required!
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    @if (manunalRows.length != 0 && radiostatus == '1') {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <ng-select placeholder="Choose your option" ngModel #attendanceType="ngModel"
+                                            [(ngModel)]="manunalRows[0].attendanceType" name="attendanceType"
+                                            (change)="manual(manunalRows[0])" [disabled]="manunalRows[0].Attendance_Verify" required>
+                                            <ng-option value="1">P</ng-option>
+                                            <ng-option value="0">A</ng-option>
+                                            <ng-option value="0.5">HD</ng-option>
+                                          </ng-select>
+                                          <span>Select Status *</span>
+                                          @if (!attendanceType.valid && addcomp.submitted) {
+                                            <div class="invalid-tooltip">
+                                              Status is required!
+                                            </div>
+                                          }
+                                        </label>
+                                      </div>
+                                    }
+                                    @if (radiostatus == '1') {
+                                      <div class="col-md-6">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="number" min="0" ngModel #egMinutes="ngModel"
+                                            name="egMinutes" />
+                                            <span>EG Minutes</span>
+                                          </label>
+                                        </div>
+                                      }
+                                      @if (radiostatus == '1') {
+                                        <div class="col-md-6">
+                                          <label class="form-group has-float-label">
+                                            <input class="form-control" type="number" min="0" ngModel #lcMinutes="ngModel"
+                                              name="lcMinutes" />
+                                              <span>LC Minutes</span>
+                                            </label>
+                                          </div>
+                                        }
+                                        @if (radiostatus == '1') {
+                                          <div class="col-md-12">
+                                            <label class="form-group has-float-label">
+                                              <input class="form-control" type="text" required ngModel #Comment="ngModel"
+                                                name="Comment" />
+                                                <span>Comment *</span>
+                                                @if (!Comment.valid && addcomp.submitted) {
+                                                  <div class="invalid-tooltip">
+                                                    Comment is required!
+                                                  </div>
+                                                }
+                                              </label>
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="modal-footer">
+                                          @if (verify == false) {
+                                            <button class="btn btn-primary" type="submit">
+                                              {{ 'forms.submit' | translate }}
+                                            </button>
+                                          }
+                                          @if (verify == true) {
+                                            <p style="color: red; font-size: 14px">
+                                              *Note :- Attendance Is Verified.
+                                            </p>
+                                          }
+                                        </div>
+                                      </form>
+                                    }
+                                  </div>
+                                </tab>
+                              }
+                              @if (permissionview.length != 0) {
+                                <tab heading="Attendance">
+                                  <div class="tab-content">
+                                    @if (modelAttendanceData.length > 0) {
+                                      <div class="row border-bottom pb-3 py-3">
+                                        <div class="col-sm-6 text-center font-size-16">
+                                          <i class="iconsminds-left-1 font-size-20 text-primary"></i>
+                                          <br />
+                                          <span class="text-primary font-weight-bold">In Time</span>
+                                        </div>
+                                        <div class="col-sm-6 text-center font-size-16">
+                                          <i class="iconsminds-right-1 font-size-20 text-primary"></i>
+                                          <br />
+                                          <span class="text-primary font-weight-bold">Out Time</span>
+                                        </div>
+                                      </div>
+                                    }
+                                    <div class="row mt-3">
+                                      <div class="col-sm-4 font-weight-bold">Date</div>
+                                      <div class="col-sm-8">: {{ modelAttendanceData.date }}</div>
+                                    </div>
+                                    <div class="row mt-3">
+                                      <div class="col-sm-4 font-weight-bold">Status</div>
+                                      <div class="col-sm-8">: {{ modelAttendanceData.title }}</div>
+                                    </div>
+                                    @if (modelattDatalength != 2) {
+                                      <div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Shift Name</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.shiftName }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Shift Hrs</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.shiftHours }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Shift In Time</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.shiftInTime }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Shift Out Time</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.shiftOutTime }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">in Hours</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.inHours }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Out Hours</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.outHours }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">late By</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.lateBy }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Early Go</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.earlyBy }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Penalty</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.penalty }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Penalty Deduction</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.penaltyDeduction }}</div>
+                                        </div>
+                                        <div class="row mt-2">
+                                          <div class="col-sm-4 font-weight-bold">Go Early Used</div>
+                                          <div class="col-sm-8">: {{ modelAttendanceData.goEarlyUsed }}</div>
+                                        </div>
+                                      </div>
+                                    }
+                                  </div>
+                                </tab>
+                              }
+                              @if (permissionview.length != 0) {
+                                <tab heading="Shift">
+                                  <div class="tab-content">
+                                    @if (modelShiftData.length > 0) {
+                                      <div class="row">
+                                        @for (item of modelShiftData; track item) {
+                                          <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+                                            <div class="card d-flex flex-row mb-4">
+                                              <a class="d-flex" href="javascript:;"></a>
+                                              <div class="d-flex flex-grow-1 min-width-zero">
+                                                <div
+                                                  class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+                                                  style="margin-left: 5%">
+                                                  <div class="min-width-zero">
+                                                    <a href="javascript:;">
+                                                      <p class="list-item-heading mb-1 truncate">
+                                                        {{ item.shift.shiftName | uppercase }}
+                                                      </p>
+                                                      <p class="text-muted mb-0 text-small">
+                                                        Start Date:-{{ item.startDate | date: 'yyyy-MM-dd' }}
+                                                      </p>
+                                                      @if (item.endDate != null) {
+                                                        <p class="text-muted mb-0 text-small">
+                                                          End Date:-{{ item.endDate | date: 'yyyy-MM-dd' }}
+                                                        </p>
+                                                      }
+                                                      <div class="min-width-zero">
+                                                        <a href="javascript:;">
+                                                          @if (item.shiftstatus == 'active') {
+                                                            <button type="button" class="btn btn-success"
+                                                              style="margin-top: 10%">
+                                                              {{ 'Active' | translate }}
+                                                            </button>
+                                                          }
+                                                          {{ ' ' }}
+                                                          @if (item.shiftstatus == 'deactive') {
+                                                            <button type="button" class="btn btn-danger"
+                                                              style="margin-top: 10%">
+                                                              {{ 'Deactive' | translate }}
+                                                            </button>
+                                                          }
+                                                          {{ ' ' }}
+                                                        </a>
+                                                      </div>
+                                                    </a>
+                                                  </div>
+                                                  <div style="margin-top: 14px">
+                                                    <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+                                                    <!-- <a class="btn btn-outline-primary btn-xs"    (click)="alertConfirmation(item.employeeShiftID)" style="margin-top: 10%;">DELETE</a> -->
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                  </div>
+                                </tab>
+                              }
+                              @if (permissionview.length != 0) {
+                                <tab heading="Calculation">
+                                  <div class="tab-content">
+                                    @if (log.length > 0) {
+                                      <table style="width: 100%">
+                                        <tr style="background-color: lightblue; text-align: center">
+                                          <th>Log Date-Time</th>
+                                          <th>Direction(IN / OUT)</th>
+                                        </tr>
+                                        @for (logdata of log; track logdata) {
+                                          <tr>
+                                            <td style="padding: 10px; text-align: center">
+                                              {{ logdata.logDateTime | date: 'dd-MM-yyyy h:mm a' }}
+                                            </td>
+                                            <td style="padding: 10px; text-align: center">
+                                              {{ logdata.direction | uppercase }}
+                                            </td>
+                                          </tr>
+                                        }
+                                      </table>
+                                    }
+                                  </div>
+                                </tab>
+                              }
+                              @if (permissionview.length != 0) {
+                                <tab heading="Raw Data">
+                                  <div class="tab-content">
+                                    @if (modelRawData && modelRawData.length > 0) {
+                                      <div class="table-style">
+                                        <table>
+                                          <thead>
+                                            <tr>
+                                              <th class="name-col" style="width: 100%; text-align: center">Date</th>
+                                              <th class="name-col" style="width: 100%">Status</th>
+                                              <th class="name-col" style="width: 100%">Attendance InTime</th>
+                                              <th class="name-col" style="width: 100%">Attendance OutTime</th>
+                                              <th class="name-col" style="width: 100%">Shift Name</th>
+                                              <th class="name-col" style="width: 100%">Shift Hours</th>
+                                              <th class="name-col" style="width: 100%">Shift InTime</th>
+                                              <th class="name-col" style="width: 100%">Shift OutTime</th>
+                                              <th class="name-col" style="width: 100%">inHours</th>
+                                              <th class="name-col" style="width: 100%">outHours</th>
+                                              <th class="name-col" style="width: 100%">lateBy</th>
+                                              <th class="name-col" style="width: 100%">earlyBy</th>
+                                              <th class="name-col" style="width: 100%">penalty</th>
+                                              <th class="name-col" style="width: 100%">penaltyDeduction</th>
+                                              <th class="name-col" style="width: 100%">goEarlyUsed</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            @for (item of modelRawData; track item) {
+                                              <tr class="student">
+                                                <td class="name-col">{{ item.date | date: 'dd-MM-yyyy ' }}</td>
+                                                <td class="name-col">{{ item.title }}</td>
+                                                <td class="name-col">
+                                                  {{ item.inTime | date: 'dd-MM-yyyy ' }}
+                                                  <br />
+                                                  {{ item.inTime | date: 'h:mm a' }}
+                                                </td>
+                                                <td class="name-col">
+                                                  {{ item.outTime | date: 'dd-MM-yyyy ' }}
+                                                  <br />
+                                                  {{ item.outTime | date: 'h:mm a' }}
+                                                </td>
+                                                <td class="name-col">{{ item.shiftName }}</td>
+                                                <td class="name-col">{{ item.shiftHours }}</td>
+                                                <td class="name-col">{{ item.shiftInTime }}</td>
+                                                <td class="name-col">{{ item.shiftOutTime }}</td>
+                                                <td class="name-col">{{ item.inHours }}</td>
+                                                <td class="name-col">{{ item.outHours }}</td>
+                                                <td class="name-col">{{ item.lateBy }}</td>
+                                                <td class="name-col">{{ item.earlyBy }}</td>
+                                                <td class="name-col">{{ item.penalty }}</td>
+                                                <td class="name-col">{{ item.penaltyDeduction }}</td>
+                                                <td class="name-col">{{ item.goEarlyUsed }}</td>
+                                              </tr>
+                                            }
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    }
+                                    <br />
+                                    @if (!modelRawData) {
+                                      <div style="text-align: center">
+                                        <h5>No Data Found</h5>
+                                      </div>
+                                    }
+                                  </div>
+                                </tab>
+                              }
+                              @if (permissionview.length != 0) {
+                                <tab heading="Attendace Correction">
+                                  <div class="tab-content">
+                                    <div class="row">
+                                      <div class="col-sm-12">
+                                        <div class="table-responsive">
+                                          @if (corerectionData && corerectionData.length > 0) {
+                                            <div class="table-style">
+                                              <table class="table">
+                                                <thead>
+                                                  <tr class="text-uppercase" style="text-align: center">
+                                                    <th style="vertical-align: top" class="col">userName</th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      designation
+                                                      <br />
+                                                      Name
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      department
+                                                      <br />
+                                                      Name
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      branch
+                                                      <br />
+                                                      Name
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      Attendance
+                                                      <br />
+                                                      Date
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      In
+                                                      <br />
+                                                      Datetime
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      Out
+                                                      <br />
+                                                      DateTime
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">shiftName</th>
+                                                    <th style="vertical-align: top" class="col">Shifthrs</th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      Shift
+                                                      <br />
+                                                      Intime
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      Shift
+                                                      <br />
+                                                      outTime
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">InHrs</th>
+                                                    <th style="vertical-align: top" class="col">OutHrs</th>
+                                                    <th style="vertical-align: top" class="col">LateBy</th>
+                                                    <th style="vertical-align: top" class="col">EarlyBy</th>
+                                                    <th style="vertical-align: top" class="col">Panalty</th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      Panalty
+                                                      <br />
+                                                      Deduction
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">Othrs</th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      punch
+                                                      <br />
+                                                      INbranch
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      punch
+                                                      <br />
+                                                      OUTbranch
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      goEarly
+                                                      <br />
+                                                      Used
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      createBy
+                                                      <br />
+                                                      Name
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      created
+                                                      <br />
+                                                      DateTime
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      updateBy
+                                                      <br />
+                                                      Name
+                                                    </th>
+                                                    <th style="vertical-align: top" class="col">
+                                                      updated
+                                                      <br />
+                                                      DateTime
+                                                    </th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  @for (item of corerectionData; track item) {
+                                                    <tr>
+                                                      <td>{{ item.userName }}</td>
+                                                      <td>{{ item.designationName }}</td>
+                                                      <td>{{ item.departmentName }}</td>
+                                                      <td>{{ item.branchName }}</td>
+                                                      <td>{{ item.AttendanceDate }}</td>
+                                                      <td>
+                                                        {{ item.InDatetime | date: 'dd-MM-yyyy ' }}
+                                                        <br />
+                                                        {{ item.InDatetime | date: 'h:mm a' }}
+                                                      </td>
+                                                      <td>
+                                                        {{ item.OutDateTime | date: 'dd-MM-yyyy ' }}
+                                                        <br />
+                                                        {{ item.OutDateTime | date: 'h:mm a' }}
+                                                      </td>
+                                                      <td>{{ item.shiftName }}</td>
+                                                      <td>{{ item.Shifthrs }}</td>
+                                                      <td>{{ item.ShiftIntime }}</td>
+                                                      <td>{{ item.ShiftoutTime }}</td>
+                                                      <td>{{ item.InHrs }}</td>
+                                                      <td>{{ item.OutHrs }}</td>
+                                                      <td>{{ item.LateBy }}</td>
+                                                      <td>{{ item.EarlyBy }}</td>
+                                                      <td>{{ item.Panalty }}</td>
+                                                      <td>{{ item.PanaltyDeduction }}</td>
+                                                      <td>{{ item.Othrs }}</td>
+                                                      <td>{{ item.punchINbranch }}</td>
+                                                      <td>{{ item.punchOUTbranch }}</td>
+                                                      <td>{{ item.goEarlyUsed }}</td>
+                                                      <td>{{ item.createdByName }}</td>
+                                                      <td>
+                                                        {{ item.createdAt | date: 'dd-MM-yyyy ' }}
+                                                        <br />
+                                                        {{ item.createdAt | date: 'h:mm a' }}
+                                                      </td>
+                                                      <td>{{ item.updateByName }}</td>
+                                                      <td>
+                                                        {{ item.updatedAt | date: 'dd-MM-yyyy ' }}
+                                                        <br />
+                                                        {{ item.updatedAt | date: 'h:mm a' }}
+                                                      </td>
+                                                    </tr>
+                                                  }
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                          }
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </tab>
+                              }
+                            </tabset>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

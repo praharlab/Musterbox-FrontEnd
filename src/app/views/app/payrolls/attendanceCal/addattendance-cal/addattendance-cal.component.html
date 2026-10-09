@@ -1,0 +1,134 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5>Attendance Calculation</h5>
+    <form #addattendance="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="col-md-12 row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #companyMasterID="ngModel"
+              name="companyMasterID"
+              (change)="getCompanyUser()"
+              >
+              @for (data of company; track data) {
+                <ng-option [value]="data.companyMasterID">
+                  {{ data.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <!-- <ng-select placeholder="Choose your option" ngModel #AttnYearMon="ngModel"  name="AttnYearMon" (change)="getLeavetype()">
+            <ng-option  *ngFor="let data of yearMonth" [value]="data.fin">{{data.fin}}</ng-option>
+          </ng-select>   -->
+          <input
+            class="form-control"
+            type="month"
+            required
+            ngModel
+            #AttnYearMon="ngModel"
+            name="AttnYearMon"
+            (change)="getLeavetype()"
+            />
+            <span>Attendance Year Month *</span>
+            <!-- <div *ngIf="!ctc.valid && addattendance.submitted" class="invalid-tooltip">CTC is required!</div> -->
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #userMasterID="ngModel"
+              name="userMasterID"
+              (change)="getLeavetype()"
+              >
+              @for (data of employee; track data) {
+                <ng-option [value]="data.userMasterID">
+                  {{ data.displayName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Employee</span>
+          </label>
+        </div>
+
+        @if (leavetypedata && leavetypedata.length != 0) {
+          <div class="col-md-6">
+            <table border="1" width="100%">
+              <tr style="background-color: lightblue; text-align: center">
+                <th>Name</th>
+                <th>MonthDays</th>
+                <th>Working Days</th>
+                <th>Attendance Value</th>
+              </tr>
+              @for (data of leavetypedata; track data; let i = $index) {
+                <tr style="text-align: center">
+                  <td>{{ data.leavename }}</td>
+                  <td>{{ monthdays }}</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      type="number"
+                      [(ngModel)]="data.monworkdays"
+                      [name]="'name_' + i"
+                      />
+                    </td>
+                    <td>
+                      @if (data.allowfieldentry == 'Y') {
+                        <span>
+                          <input
+                            class="form-control"
+                            type="number"
+                            [(ngModel)]="data.attnval"
+                            [name]="'namee' + i"
+                            />
+                          </span>
+                        }
+                        @if (data.allowfieldentry == 'N') {
+                          <span>
+                            <input
+                              class="form-control"
+                              type="number"
+                              [(ngModel)]="data.attnval"
+                              [name]="'namee' + i"
+                              readonly
+                              />
+                            </span>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </table>
+                </div>
+              }
+              <hr width="100%" />
+              <div class="col-md-12">
+                <button class="btn btn-primary float-right" [disabled]="isdisebled" type="submit">
+                  {{ 'forms.submit' | translate }}
+                </button>
+                <button
+                  class="btn btn-danger float-right"
+                  [routerLink]="adminRoot + '/payrolls/attendancecal'"
+                  >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <simple-notifications
+        [options]="{ position: ['top', 'center'], maxStack: 1 }"
+      ></simple-notifications>

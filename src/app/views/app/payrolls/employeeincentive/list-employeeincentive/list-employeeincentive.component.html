@@ -1,0 +1,200 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="$safeNavigationMigration(filterData?.searchQuery)" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()" [showadd]="true"
+name="Employee Incentive"></app-list-page-header>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (export)="Export()" (clearData)="clear()"
+    (getCompany)="initGetCompany($event)" (import)="lgModal2.show()">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" ngModel #yearmonth="ngModel" name="yearmonth" />
+        <span>YearMonth </span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #incentivetypename="ngModel" name="incentivetypename"
+          [(ngModel)]="filterData.incentivetype">
+          @for (list of list; track list) {
+            <ng-option [value]="list.IncentivetypeID">
+              {{ list.incentivetypename }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Select incentive Category</span>
+      </label>
+    </div>
+  </app-common-filter>
+}
+
+@if (rows && permissionview.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-6 data-table-rows">
+      <ngx-datatable [rows]="rows" [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100"
+        [columnMode]="ColumnMode" [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="Employee Name" prop="Employee Name" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Employee Number" prop="Employee Number" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Incentive name" prop="Incentive" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ (row['inc_type_displayName'] ? row['inc_type_displayName']:row['Incentive']) }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="YearMonth" prop="YearMonth" [flexGrow]="1.2" [width]="160"></ngx-datatable-column>
+        <ngx-datatable-column name="Incentive Date" prop="Incentive Date" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row['Incentive Date'] | date: 'dd-MM-yyyy' }}
+            {{row?.Incentive}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Amount" prop="Amount" [flexGrow]="1.2" [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="200">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.Incentive && !nonEditableList.includes(row.Incentive.trim().toLowerCase())) {
+              @if (permissionedit.length !=0 && !row.ReferenceId && row.IncentivetypeID != '191' && row.IncentivetypeID != '192') {
+                <a
+                  (click)="navigateToEditPage(row)">
+                  <span tooltip="Edit Employee incentive details" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                  style="padding-right: 10px; font-size: 18px"></span>
+                  {{ ' ' }}
+                </a>
+              }
+              @if (permissiondelete.length !=0 &&!row.ReferenceId && row.IncentivetypeID != '191' && row.IncentivetypeID != '192') {
+                <a
+                  (click)="alertConfirmation(row.employeeincentiveID)">
+                  <span tooltip="Delete Employee incentive details" [class]="'glyph-icon simple-icon-trash tool_tip'"
+                  style="padding-right: 6px; font-size: 18px"></span>
+                  {{ ' ' }}
+                </a>
+              }
+            }
+            @if (row.ReferenceId) {
+              <button type="button" class="btn btn-outline-success btn-xs"
+                style="margin-right: 8px">
+                Paid In Salary
+              </button>
+            }
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Import Incentive</h4>
+        <button #closeModal2 type="button" class="btn-close close pull-right" (click)="lgModal2.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addimportincentive="ngForm" novalidate>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" ngModel #company1="ngModel" name="company1" required
+                  (change)="showdemo($event)" [(ngModel)]="company_id1">
+                  @for (comp of company; track comp) {
+                    <ng-option [value]="comp.companyMasterID">
+                      {{ comp.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company *</span>
+                @if (!company1.valid && addimportincentive.submitted) {
+                  <div class="invalid-tooltip">Company is
+                    required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="month" ngModel #month="ngModel" name="month" required />
+                <span>Month *</span>
+                @if (!month.valid && addimportincentive.submitted) {
+                  <div class="invalid-tooltip">
+                    Month is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="file" ngModel #file="ngModel" (change)="onSelectFiles($event)"
+                  name="file" accept=".xls, .xlsx" required />
+                  <span>Import File *</span>
+                </label>
+                @if (!file.valid && addimportincentive.submitted) {
+                  <div class="invalid-tooltip">File is required!</div>
+                }
+              </div>
+              <div class="col-md-6">
+
+                <button class="btn btn-primary" (click)="addIncentiveData()" type="button">{{ 'forms.submit' | translate
+                }}</button>
+
+                <span> &nbsp;&nbsp; </span>
+
+                @if (showdemoExcel==true) {
+                  <button class="btn btn-success" type="button"
+                  (click)="downloadDemo()">Download Demo Excel</button>
+                }
+              </div>
+
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

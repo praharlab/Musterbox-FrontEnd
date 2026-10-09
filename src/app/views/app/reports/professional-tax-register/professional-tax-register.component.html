@@ -1,0 +1,42 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Professional Tax Register" [showOrderBy]="false" [showDisplayMode]="false"
+[showSearch]="false" [showItemsPerPage]="false"></app-list-page-header>
+
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" customExportButtonName="Export Excel"
+    [showCustomExportButton]="true" [showCustomPdfButton]="true" customPdfButtonName="Export PDF"
+    (onExcelSubmit)="downloadExcel($event)" (onPdfSubmit)="downloadPdf($event)">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #state="ngModel" [(ngModel)]="selectedState" required
+          name="state">
+          @for (states of Allstates; track states) {
+            <ng-option [value]="states.stateMasterID">
+              {{ states.stateName }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Select State *</span>
+        @if (!state.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            State is required!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <input class="form-control" type="month" ngModel #month="ngModel" name="month" required [(ngModel)]="selectedMonth" />
+        <span>Select Month *</span>
+        @if (!month.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Month is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}

@@ -1,0 +1,1604 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Vehicle Meter Details" [showadd]="permissioncreate" [showOrderBy]="false"
+  [showDisplayMode]="false" [showSearch]="false" (itemsPerPageChange)="onLimitChange($event)"
+  [itemsPerPage]="filterData.limit" [itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)" [showRequiredFields]="showRequiredFields" (emitUsers)="emitUsers($event)"
+  (onClear)="clear()" (export)="download()" (clearData)="clear()" *ngIf="permissionview.length > 0" (init)="init($event)" (getCompany)="getCompany($event)">
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="date" ngModel #fromdate="ngModel" name="fromdate" required/>
+      <span>From Date *</span>
+      <div *ngIf="!fromdate.valid && commonFilter?.filterForm?.submitted" class="invalid-tooltip">
+        From Date is required!
+      </div>
+    </label>
+  </div>
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <input class="form-control" type="date" ngModel #todate="ngModel" name="todate" required/>
+      <span>To Date *</span>
+      <div *ngIf="!todate.valid && commonFilter?.filterForm?.submitted" class="invalid-tooltip">
+        From Date is required!
+      </div>
+    </label>
+  </div>
+</app-common-filter>
+
+<div class="row" *ngIf="rows">
+  <div class="col-12 mb-4 data-table-rows">
+    <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+      [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+      (page)="onChange($event)" [selectionType]="SelectionType.cell" (activate)="onActivate($event)">
+      <ngx-datatable-column name="Sr No." [flexGrow]="1.2" [width]="80">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
+          {{ filterData.limit * (filterData.page - 1) + rowIndex + 1 }}
+        </ng-template>
+      </ngx-datatable-column>
+
+      <!-- <ngx-datatable-column name="Employee Name" prop="userMaster" [flexGrow]="1.2" [width]="300">
+                <ng-template ngx-datatable-cell-template>
+                    {{userMaster.displayName}} <span style="cursor:pointer;">
+                        <img src="../../../../assets/img/cards/info.png" width="14" height="14">
+                    </span>
+                </ng-template>
+            </ngx-datatable-column> -->
+      <ngx-datatable-column name="Employee Name" prop="userMaster" [flexGrow]="1.2" [width]="200">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.userMaster.displayName }}
+          <span style="cursor: pointer">
+            <img src="../../../../assets/img/cards/info.png" width="14" height="14" />
+          </span>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Mobile Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+        [width]="150"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Branch" prop="branchName" [flexGrow]="1.2" [width]="180"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Starting DateTime" prop="startingDateTime" [flexGrow]="1.2" [width]="210">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.startingDateTime | slice: 0 : 10 | date: 'dd-MM-yyyy' }} &nbsp;
+          {{ row.startingDateTime | date: 'mediumTime' }}
+        </ng-template>
+      </ngx-datatable-column>
+      <!-- 
+            <ngx-datatable-column name="Starting Time" prop="startingDateTime" [flexGrow]="1.2" [width]="180">
+                <ng-template let-row="row" ngx-datatable-cell-template></ng-template></ngx-datatable-column> -->
+
+      <ngx-datatable-column name="Starting Meter Image" prop="startingMeterImage" [flexGrow]="1.2" [width]="160"
+        style="justify-content: center">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <img src="data:image/jpeg;base64,{{ row.startingMeterImage }}"
+            (click)="lgModal.show(); editimage(row.startingMeterImage)" height="50px" width="50px"
+            *ngIf="row.startingMeterImage != '' || row.startingMeterImage != null" />
+        </ng-template>
+      </ngx-datatable-column>
+
+      <!-- <ngx-datatable-column name="startKilometer" prop="startkilometer" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column> -->
+
+      <ngx-datatable-column name="Ending DateTime" prop="endingDateTime" [flexGrow]="1.2" [width]="210">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{ row.endingDateTime | slice: 0 : 10 | date: 'dd-MM-yyyy' }} &nbsp;
+          {{ row.endingDateTime | date: 'mediumTime' }}
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Ending Meter Image" prop="endingMeterImage" [flexGrow]="1.2" [width]="160"
+        style="justify-content: center !important">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <img src="data:image/jpeg;base64,{{ row.endingMeterImage }}" alt=" "
+            (click)="lgModal.show(); editimage(row.endingMeterImage)" height="50px" width="50px"
+            *ngIf="row.endingMeterImage != '' || row.endingMeterImage != null" />
+        </ng-template>
+      </ngx-datatable-column>
+      <!-- 
+            <ngx-datatable-column name="endKilometers" prop="endkilometer" [flexGrow]="1.2"
+                [width]="180"></ngx-datatable-column> -->
+
+      <ngx-datatable-column name="Kilometers" prop="tableKilometer" [flexGrow]="1.2" [width]="180">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          Starting Meter : {{ row.startkilometer }}
+          <br />
+          Ending Meter : {{ row.endkilometer }}
+          <br />
+          Total Kilometer : {{ row.tableKilometer }}
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Action" [sortable]="true" [width]="300">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button class="btn btn-primary form-group mr-2" (click)="lgModal2.show(); showdata(row)">
+            View
+          </button>
+          <button class="btn btn-primary form-group" (click)="lgModal3.show(); showdataModal3(row)">
+            Edit
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-footer *ngIf="true">
+        <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+          let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+          <div class="w-100 d-flex justify-content-center">
+            <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+              [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+              (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+              [customPreviousTemplate]="prevTemplate"></pagination>
+
+          </div>
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+</div>
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Image</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center">
+          <img src="data:image/jpeg;base64,{{ image }}" height="350px" width="350px" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-user-modal [pagex]="userModalLeftPosition" [pagey]="userModalTopPosition" [masterId]="eventUserMasterId"
+  (myEvent)="onChildEvent($event)" *ngIf="display"></app-user-modal>
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">User Tracking & Visits</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide(); closeonclick()"
+          aria-label="Close" #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-7" style="margin-top: 30px" *ngIf="map">
+              <div style="margin: 10px">
+                <span><b>Map View</b></span>
+                &nbsp;&nbsp;
+                <input type="radio" name="defaultRight" value="true" ngModel [(ngModel)]="defaultVal"
+                  #defaultRight="ngModel" style="margin-right: 1%" required (click)="showpoly()" />
+                <label for="true" style="margin-right: 1%">Polylines</label>
+                <input type="radio" name="defaultRight" value="false" ngModel #defaultRight="ngModel"
+                  style="margin-right: 1%" required (click)="showdir()" />
+                <label for="false">Directions</label>
+                <br />
+              </div>
+              <div style="color: #17a2b8; left: 50%" *ngIf="showloader" class="la-ball-spin-clockwise">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <agm-map [latitude]="lat" [longitude]="lng" style="height: 535px" [fullscreenControl]="true"
+                *ngIf="isData == true">
+                <agm-polyline *ngIf="polyline == true" [strokeColor]="'red'">
+                  <ng-container *ngFor="let i of dirs">
+                    <agm-polyline-point [latitude]="i.origin.lat" [longitude]="i.origin.lng"></agm-polyline-point>
+                  </ng-container>
+                </agm-polyline>
+                <!-- <agm-marker *ngFor="let i of dirs" [latitude]="i.origin.lat" [longitude]="i.origin.lng"
+                  [iconUrl]="i.markerColor"></agm-marker> -->
+                <agm-marker *ngFor="let i of dirs; let idx=index" [latitude]="i.origin.lat" [longitude]="i.origin.lng"
+                  [iconUrl]="i.markerColor">
+                  <agm-info-window [disableAutoPan]="false" id="profileWindow" [maxWidth]="325">
+                    <div class="row justify-content-center align-items-center
+                  ">
+                      <div class="col-12">
+                        <div class="row align-items-center">
+                          <div class="col-4">
+
+                            <div class="img" *ngIf="!imgshow1">
+                              <app-profile-pic *ngIf="markers.firstName && markers.lastName"
+                                [Style]="' border-radius: 50%;height : 80px; width : 80px'"
+                                [firstName]="markers.firstName" [lastName]="markers.lastName"></app-profile-pic>
+                            </div>
+                            <div class="img" *ngIf="imgshow1">
+                              <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ i?.renderOptions?.photo}}"
+                                style="width: 80px;height: 80px;border-radius: 50%;" />
+                            </div>
+
+                          </div>
+                          <div class="col-8">
+                            <h3 class="fw800" class="text-start">{{ i?.renderOptions?.user }}</h3>
+                            <div class="d-flex">
+                              <span class="trackingIcon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                  class="bi bi-phone" viewBox="0 0 16 16">
+                                  <path
+                                    d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                  <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                </svg>
+                              </span>
+                              <p class="font-1rem">
+                                {{ i?.renderOptions?.tracking[idx]?.userMaster?.userNumber }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 mt-2">
+                        <div class="row d-flex justify-content-center">
+                          <div class="col-12">
+                            <p class="font-1rem fw800">{{i?.renderOptions?.tracking[idx]?.Address}}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="row d-flex justify-content-between">
+                          <div class="col-5 d-flex">
+                            <span class="trackingIcon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                <path
+                                  d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+                              </svg>
+                            </span>
+                            <p class="font-1rem">
+                              {{i?.renderOptions?.tracking[idx]?.type == 'checkin' ? 'Check-in' :
+                              i?.renderOptions?.tracking[idx]?.type == 'checkout' ? 'Check-out' :
+                              i?.renderOptions?.tracking[idx]?.type == 'login' ? 'Log-in' :
+                              i?.renderOptions?.tracking[idx]?.type
+                              == 'logout' ? 'Log-out' : i?.renderOptions?.tracking[idx]?.type == 'punchin' ? 'Punch-in'
+                              :
+                              i?.renderOptions?.tracking[idx]?.type == 'punchout' ? 'Punch-out' : 'no log found' }}
+                            </p>
+                          </div>
+                          <div class="col-7 d-flex">
+                            <span class="trackingIcon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                <path
+                                  d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                <path
+                                  d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                              </svg>
+                            </span>
+                            <p class="font-1rem">
+                              {{ $safeNavigationMigration(i?.renderOptions?.tracking[idx]?.Track_datetime) | date : 'dd-MM-yyyy HH:mm:ss'}}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </agm-info-window>
+                </agm-marker>
+                <div *ngIf="direction == true">
+                  <agm-direction *ngFor="let dir of dirs" [origin]="dir.origin" [destination]="dir.destination"
+                    [renderOptions]="dir.renderOptions" [markerOptions]="dir.markerOptions"></agm-direction>
+                </div>
+              </agm-map>
+            </div>
+            <div class="col-md-5">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <!-- <div class="modal-header">
+                                    <h4 class="modal-title pull-left">Tracking</h4>
+                                </div> -->
+
+                  <div class="modal-body">
+                    <div style="color: #17a2b8; left: 50%" *ngIf="showloader" class="la-ball-spin-clockwise">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                    <div>
+
+                      <div class="row" *ngIf="isData == true">
+                        <div class="col-md-2 col-xs-4">
+                          <div class="img" *ngIf="!imgshow1">
+                            <app-profile-pic *ngIf="markers.firstName && markers.lastName" [Style]="'width: 50px'"
+                              [firstName]="markers.firstName" [lastName]="markers.lastName"></app-profile-pic>
+                          </div>
+                          <div class="img" *ngIf="imgshow1">
+                            <img alt="Profile" src="{{ apiURL }}uploads/user/photo/{{ markers.photo }}"
+                              style="width: 60px" />
+                          </div>
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="col-md-10 col-xs-8">
+                          <div class="infos">
+                            <div class="name">
+                              <h2 *ngIf="markers.user">{{ markers.user }}</h2>
+                              <h4>{{ designation }}</h4>
+                            </div>
+                            <!-- <p class="text">
+                                  I'm a Front End Developer, follow me to be the first who see my
+                                  new work.
+                                </p> -->
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row" *ngIf="isData == true">
+                        <div class="col-md-4 col-xs-4">
+                          <div style="text-align: center">
+                            <h3>{{ visit123 }}</h3>
+                            <h4>Total Visit</h4>
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                          <div style="text-align: center">
+                            <h3>{{ expense }}</h3>
+                            <h4>Total Expense</h4>
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                          <div style="text-align: center">
+                            <h3>{{ total_kms | number: '1.2-2' }}</h3>
+                            <h4>Total KMS</h4>
+                          </div>
+                        </div>
+                      </div>
+                      <hr style="margin-top: 17px; margin-bottom: 10px" />
+
+                      <div *ngIf="isData == true">
+                        <!-- <span style="margin-left: 5px; font-size: 18px">
+                          <strong (click)="selectTab('timeline')" (keydown.enter)="selectTab('timeline')"
+                            [class.active]="activeTab === 'timeline'" tabindex="0">Timeline &nbsp;&nbsp;
+                          </strong>
+                          <strong (click)="selectTab('checkin')" (keydown.enter)="selectTab('checkin')"
+                            [class.active]="activeTab === 'checkin'" tabindex="0">Summary
+                          </strong>
+                        </span> -->
+                        <tabset class="card-tabs">
+                          <!-- <tab 
+                              (click)="selectTab('timeline')" 
+                              heading="timeline"
+                              (keydown.enter)="selectTab('timeline')" 
+                              [class.active]="activeTab === 'timeline'" 
+                              tabindex="0">
+                            </tab> -->
+                          <tab heading="TimeLine" (selectTab)="loadComponent('timeline')">
+                          </tab>
+                          <tab heading="Summary" (selectTab)="loadComponent('summary')"></tab>
+                        </tabset>
+
+                        <div>
+                          <ng-container *ngIf="activeTab === 'timeline'">
+                            <!-- Timeline content here -->
+                          </ng-container>
+                          <ng-container *ngIf="activeTab === 'summary'">
+                            <!-- Check-in content here -->
+                          </ng-container>
+                        </div>
+                      </div>
+                      <br />
+                      <div class="history-tl-container" style="
+                          height: 250px;
+                          overflow-x: hidden;
+                          overflow-y: auto;
+                          text-align: justify;
+                          padding-right: 14px;
+                        ">
+                        <ul class="tl" *ngIf="isData">
+                          <div *ngFor="let data of info">
+                            <li class="tl-item custom-control custom-switch" *ngIf="data.type == 'punchin'">
+                              <input type="checkbox" class="custom-control-input" checked />
+                              <span class="custom-control-label item-title" for="customSwitches"
+                                style="font-size: 16px">
+                                Punched-in
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail" style="right: 20px">
+                                <b>{{ data.address }}</b>
+                              </div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="tl-item custom-control custom-switch" *ngIf="data.type == 'punchout'">
+                              <input type="checkbox" class="custom-control-input" />
+                              <span class="custom-control-label item-title" for="customSwitches"
+                                style="font-size: 16px">
+                                Punched-out
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail" style="right: 20px">
+                                <b>{{ data.address }}</b>
+                              </div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="tl-item custom-control custom-switch" *ngIf="data.type == 'checkin'">
+                              <input type="checkbox" class="custom-control-input" checked />
+                              <span class="custom-control-label item-title" for="customSwitches"
+                                style="font-size: 16px">
+                                Check-in
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail" style="right: 20px">
+                                <b>{{ data.address }}</b>
+                              </div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="tl-item custom-control custom-switch" *ngIf="data.type == 'checkout'">
+                              <input type="checkbox" class="custom-control-input" />
+                              <span class="custom-control-label item-title" for="customSwitches"
+                                style="font-size: 16px">
+                                Check-out
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail" style="right: 20px">
+                                <b>{{ data.address }}</b>
+                              </div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="tl-item custom-control custom-switch" *ngIf="data.type == 'login'">
+                              <input type="checkbox" class="custom-control-input" checked />
+                              <span class="custom-control-label item-title" for="customSwitches"
+                                style="font-size: 16px">
+                                Log-in
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail" style="right: 20px">
+                                <b>{{ data.address }}</b>
+                              </div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="tl-item custom-control custom-switch" *ngIf="data.type == 'logout'">
+                              <input type="checkbox" class="custom-control-input" />
+                              <span class="custom-control-label item-title" for="customSwitches"
+                                style="font-size: 16px">
+                                Log-out
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail" style="right: 20px">
+                                <b>{{ data.address }}</b>
+                              </div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="tl-item" *ngIf="data.type == '' || data.type == null">
+                              <span class="item-title" style="overflow: hidden; text-overflow: ellipsis">
+                                <b>{{ data.address }}</b>
+                              </span>
+                              <span style="font-size: 12px" class="float-right">
+                                {{ data.time | date: 'shortTime' }}
+                              </span>
+                              <div class="item-detail"></div>
+                              <div class="row" style="justify-content: space-around">
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                      class="bi bi-battery" viewBox="0 0 16 16">
+                                      <path
+                                        d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z" />
+                                    </svg>
+                                    &nbsp;&nbsp; {{ data.battery }}%
+                                  </span>
+                                </div>
+                                <div *ngIf="data.wifi == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.wifi == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.wifi == '' || data.wifi === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-wifi" viewBox="0 0 16 16">
+                                      <path
+                                        d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z" />
+                                      <path
+                                        d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.gps == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: green">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.gps == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16" style="color: red">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div *ngIf="data.gps == '' || data.gps === null">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                      class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                      <path
+                                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div *ngIf="data.developerMode == 'on'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>On</b>
+                                </div>
+                                <div *ngIf="data.developerMode == 'off'">
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-code-square" viewBox="0 0 16 16" tooltip="Developer Mode">
+                                      <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                      <path
+                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>Off</b>
+                                </div>
+                                <div>
+                                  <span style="font-size: 15px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-phone" viewBox="0 0 16 16">
+                                      <path
+                                        d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z" />
+                                      <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                    </svg>
+                                  </span>
+                                  &nbsp;
+                                  <b>{{ data.mobile_name }}</b>
+                                </div>
+                              </div>
+                            </li>
+                            <br />
+                          </div>
+                        </ul>
+                        <!-- <div *ngIf="!isData">
+                          <label class="h-100 justify-content-center align-items-center"
+                            style="margin-left: 5em; margin-top: 5em">
+                            !-- Record Not Found --!
+                          </label>
+                        </div> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <br>
+          <div class="row" *ngIf="rows2 && rows2.length > 0">
+            <div class="col-12 mb-4 data-table-rows">
+              <ngx-datatable [scrollbarH]="true" [rowHeight]="'auto'" [rows]="rows2" [footerHeight]="100"
+                [columnMode]="'force'" [limit]="limit" [externalPaging]="true" [count]="page2.totalCount"
+                [offset]="page2.offset" (page)="onChange($event)">
+                <ngx-datatable-column name="Sr.No" prop="srlNo" [flexGrow]="1.2" [width]="80" value="1">
+                  <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                    {{ filterData.limit * (filterData.page - 1) + rowIndex + 1 }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Name" prop="Employee" [flexGrow]="1.2" [width]="350"></ngx-datatable-column>
+                <ngx-datatable-column name="Co-Person" prop="Coperson" [flexGrow]="1.2"
+                  [width]="350"></ngx-datatable-column>
+                <ngx-datatable-column name="Date" prop="VisitDate" [flexGrow]="1.2"
+                  [width]="180"></ngx-datatable-column>
+                <ngx-datatable-column name="Time" prop="VisitTime" [flexGrow]="1.2"
+                  [width]="150"></ngx-datatable-column>
+                <ngx-datatable-column name="Check-In-DateTime" prop="CheckInDateTime" [flexGrow]="1.2"
+                  [width]="230"></ngx-datatable-column>
+                <ngx-datatable-column name="Check-In-Location" prop="CheckInLocation" [flexGrow]="1.2"
+                  [width]="700"></ngx-datatable-column>
+                <ngx-datatable-column name="Check-Out-DateTime" prop="CheckOutDateTime" [flexGrow]="1.2"
+                  [width]="230"></ngx-datatable-column>
+                <ngx-datatable-column name="Check-Out-Location" prop="CheckOutLocation" [flexGrow]="1.2"
+                  [width]="700"></ngx-datatable-column>
+                <!-- <ngx-datatable-column
+                    name="Tracking(Km)"
+                    prop="TotalKms"
+                    [flexGrow]="1.2"
+                    [width]="150"
+                  ></ngx-datatable-column> -->
+                <ngx-datatable-column name="Product" prop="Product" [flexGrow]="1.2"
+                  [width]="230"></ngx-datatable-column>
+                <ngx-datatable-column name="Visit Purpose" prop="VisitPurpose" [flexGrow]="1.2"
+                  [width]="250"></ngx-datatable-column>
+                <ngx-datatable-column name="Customer" prop="CustomerContact" [flexGrow]="1.2"
+                  [width]="350"></ngx-datatable-column>
+                <ngx-datatable-column name="Customer's Company" prop="CustomerCompany" [flexGrow]="1.2"
+                  [width]="300"></ngx-datatable-column>
+                <ngx-datatable-column name="Customer's Address" prop="CustomerAddress" [flexGrow]="1.2"
+                  [width]="300"></ngx-datatable-column>
+                <ngx-datatable-column name="Customize Fields" prop="visitFormCustomizeValue" [flexGrow]="4"
+                  [width]="700">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div *ngFor="let data of row.visitFormCustomizeValue; let i = index">
+                      <div>
+                        {{ i + 1 }}. &nbsp;
+                        <b>{{ data.visitFormCustomize.fieldLabel }} :</b>
+                        &nbsp; &nbsp;{{ data.value }}
+                        <br />
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title pull-left">Visit Data</h4>
+                        <button type="button" class="btn-close close pull-right" (click)="lgModal3.hide()"
+                          aria-label="Close">
+                          <span aria-hidden="true" class="visually-hidden">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div>
+                          <table class="table table-striped" *ngIf="visitdata">
+                            <tbody>
+                              <tr>
+                                <th>Assign Name</th>
+                                <td>{{ visitdata.assign.firstName }}</td>
+                              </tr>
+                              <tr>
+                                <th>Visit Date</th>
+                                <td>
+                                  {{ visitdata.visitDate | date: 'dd-MM-yyyy' }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Visit Time</th>
+                                <td>{{ visitdata.visitTime }}</td>
+                              </tr>
+                              <tr>
+                                <th>Check-In Date and Time</th>
+                                <td>{{ visitdata.checkInDateTime }}</td>
+                              </tr>
+
+                              <tr>
+                                <th>Check-In Location</th>
+                                <td>{{ visitdata.checkInLocation }}</td>
+                              </tr>
+                              <tr>
+                                <th>Check-Out Date and Time</th>
+                                <td>{{ visitdata.checkOutDateTime }}</td>
+                              </tr>
+                              <tr>
+                                <th>Check-Out Location</th>
+                                <td>{{ visitdata.checkOutLocation }}</td>
+                              </tr>
+                              <tr *ngIf="visitdata.coPersonID != null && visitdata.coPersonID != ''">
+                                <th>Co-Person</th>
+                                <td>
+                                  {{ coperson }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Customer Name</th>
+                                <td>{{ visitdata.customer.customerName }}</td>
+                              </tr>
+                              <tr *ngIf="visitdata.product != null">
+                                <th>Product Name</th>
+                                <td>{{ visitdata.product.productName }}</td>
+                              </tr>
+                              <tr>
+                                <th>Visit Purpose</th>
+                                <td>{{ visitdata.visitPurpose.visitPurpose }}</td>
+                              </tr>
+                              <tr>
+                                <th>Company Name</th>
+                                <td>{{ visitdata.customer.companyName }}</td>
+                              </tr>
+                              <tr *ngFor="let items of visitcustomizefield">
+                                <th>{{ items.visitFormCustomize.fieldLabel }}</th>
+                                <td>{{ items.value }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <h3>Visit Report</h3>
+                          <hr />
+                          <table class="table table-striped">
+                            <tbody>
+                              <tr *ngFor="let items of visitreportcustomizefield">
+                                <th>{{ items.visitReportCustomize.fieldLabel }}</th>
+                                <td style="overflow: hidden" *ngIf="
+                                    items.visitReportCustomize.inputType != 'image' &&
+                                    items.visitReportCustomize.inputType != 'signature'
+                                  ">
+                                  {{ items.value }}
+                                </td>
+                                <td *ngIf="
+                                    items.visitReportCustomize.inputType == 'image' ||
+                                    items.visitReportCustomize.inputType == 'signature'
+                                  ">
+                                  <img src="{{ 'data:image/jpeg;base64,' + items.value }}" height="200" width="200" />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <ngx-datatable-footer *ngIf="true">
+                  <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                    let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                    <div class="w-100 d-flex justify-content-center">
+                      <pagination [totalItems]="rowCount" [itemsPerPage]="pageSize" [maxSize]="5"
+                        (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                        [customPreviousTemplate]="prevTemplate"></pagination>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-footer>
+              </ngx-datatable>
+            </div>
+          </div>
+
+          <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+            <i class="simple-icon-arrow-right"></i>
+          </ng-template>
+          <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+            <i class="simple-icon-arrow-left"></i>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+</div>
+
+<div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Vehicle Meter Details</h4>
+        <button #closeModal3 type="button" class="btn-close close pull-right" (click)="lgModal3.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #kilometercomp="ngForm" novalidate (ngSubmit)="onSubmit3()">
+          <div class="row">
+            <div class="col-md-6" sstyle="padding-right: 15px !important;padding-left: 15px !important">
+              <label class="form-group has-float-label">
+                <input type="number" required ngModel #startkilometerform="ngModel" class="form-control"
+                  name="startkilometerform" [(ngModel)]="this.startkilometerValue" [readonly]="true" />
+                <span>Starting Meter *</span>
+              </label>
+            </div>
+            <div class="col-md-6" style="padding-right: 15px !important; padding-left: 15px !important">
+              <label class="form-group has-float-label">
+                <input type="number" required ngModel #endkilometerform="ngModel" class="form-control"
+                  name="endkilometerform" [(ngModel)]="this.endkilometerValue" />
+                <span>Ending Meter *</span>
+              </label>
+              <div *ngIf="!endkilometerform.valid && kilometercomp.submitted" class="invalid-tooltip">
+                Ending Meter is required!
+              </div>
+            </div>
+          </div>
+          <app-state-button [btnClass]="'btn btn-primary btn-lg btn-shadow'">
+            {{ 'forms.submit' | translate }}
+          </app-state-button>
+          <!-- <button class="btn btn-primary" type="submit" >{{ 'forms.submit' | translate }}</button> -->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

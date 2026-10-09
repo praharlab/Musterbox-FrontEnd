@@ -1,0 +1,171 @@
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+  [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">View Form</h4>
+        <button type="button" #closeModal class="btn-close close pull-right" (click)="lgModal.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addpreboarding="ngForm" novalidate>
+          <h5>Default Fields</h5>
+          <hr />
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="firstName" [readonly]="true" />
+                <span>First Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="middleName" [readonly]="true" />
+                <span>Middle Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="lastName" [readonly]="true" />
+                <span>Last Name</span>
+              </label>
+            </div>
+            <div class="col-md-1">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="text" required name="countryCode" [readonly]="true" />
+                <span>Country Code</span>
+              </label>
+            </div>
+            <div class="col-md-3">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="number" required name="userNumber" [readonly]="true" />
+                <span>Phone Number</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" required name="dob" [readonly]="true" />
+                <span>DOB</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="email" required ngModel #email="ngModel" name="email" disabled />
+                <span>Email *</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #address="ngModel" name="address" required disabled></textarea>
+                <span>Address *</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" name="branch" [readonly]="true" required></ng-select>
+                <span>Select Branch</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" name="designation" [readonly]="true" required></ng-select>
+                <span>Select Designation</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label>Employee Type *</label>
+              &nbsp;&nbsp;
+              <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="national" id="national"
+                [(ngModel)]="deafultEmployeeType" disabled readonly/>
+                &nbsp;
+                <label for="html">National</label>
+                &nbsp;&nbsp;
+                <input type="radio" name="employeeType" ngModel #employeeType="ngModel" value="expat" id="expat"
+                  [(ngModel)]="deafultEmployeeType" disabled readonly/>
+                  &nbsp;
+                  <label for="html">Expat</label>
+                  &nbsp;&nbsp;
+                </div>
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" ngModel #nationality="ngModel"
+                      [(ngModel)]="defaultNationality" name="nationality" disabled readonly>
+                    </ng-select>
+                    <span>Nationality</span>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                @for (fields of fields1; track fields; let i = $index) {
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <span>
+                        {{ fields.fieldLabel }}
+                        @if (fields.isRequired == true) {
+                          <span>*</span>
+                        }
+                      </span>
+                      @if (
+                        fields.inputType != titleTypeLabel &&
+                        fields.inputType != textareaLabel &&
+                        fields.inputType != radioTypeLabel &&
+                        fields.inputType != dropDownLabel &&
+                        fields.inputType != signatureLabel &&
+                        fields.inputType != dateTypeLabel &&
+                        fields.inputType != monthTypeLabel
+                        ) {
+                        <input class="form-control" [type]="getinputType(fields.inputType, i)" ngModel
+                          #{{fields.fieldLabel}}="ngModel" [readonly]="true" name="{{ fields.fieldLabel }}" />
+                        }
+                        @if (fields.inputType == textareaLabel) {
+                          <textarea class="form-control" rows="2" ngModel #{{ fields.fieldLabel }}="ngModel" [readonly]="true"
+                          name="{{ fields.fieldLabel }}"></textarea>
+                        }
+                        @if (fields.inputType == radioTypeLabel) {
+                          @for (val of fields.value; track val) {
+                            <div class="custom-control custom-radio">
+                              <input class="custom-control-input" type="radio"
+                                name="{{ fields.fieldLabel }}" ngModel [readonly]="true" #{{fields.fieldLabel}}="ngModel"
+                                [value]="val" style="margin-right: 10px" />
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
+                                &nbsp;
+                                <label for="value" class="custom-control-label" style="margin-right: 25px">
+                                  {{ val }}
+                                </label>
+                              </div>
+                            }
+                          }
+                          @if (fields.inputType == dropDownLabel) {
+                            <ng-select placeholder="Choose your option" ngModel #{{fields.fieldLabel}}="ngModel"
+                              name="{{ fields.fieldLabel }}">
+                              @for (val of fields.value; track val) {
+                                <ng-option [value]="val" style="border: 1px solid red;">
+                                  {{ val }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                          }
+                          @if (fields.inputType == signatureLabel) {
+                            <div class="container" [readonly]="true"></div>
+                          }
+                          @if (fields.inputType == dateTypeLabel) {
+                            <input class="form-control" type="dateTypeLabel" ngModel #{{fields.fieldLabel}}="ngModel"
+                              [readonly]="true" name="{{ fields.fieldLabel }}" />
+                            }
+                            @if (fields.inputType == monthTypeLabel) {
+                              <input class="form-control" type="month" ngModel #{{fields.fieldLabel}}="ngModel" [readonly]="true"
+                                name="{{ fields.fieldLabel }}" />
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>

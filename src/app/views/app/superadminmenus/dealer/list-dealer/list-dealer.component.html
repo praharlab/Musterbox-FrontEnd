@@ -1,0 +1,167 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="Dealer" [showadd]="permissioncreate" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="filterData.searchQuery" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+[itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="showAddNewModal()"></app-list-page-header>
+
+
+@if (rows) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="scrollBarHorizontal" [rowHeight]="50" [rows]="rows" [footerHeight]="100"
+        [columnMode]="'force'" [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount"
+        [offset]="page.offset" (page)="onChange($event)">
+        <ngx-datatable-column name="User Name" prop="userName" [flexGrow]="1.2" [width]="80">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span>{{ row.displayName }}</span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="User Mobile" prop="userNumber" [flexGrow]="1.2" [width]="60"></ngx-datatable-column>
+        <ngx-datatable-column name="User Email" prop="email" [flexGrow]="1.2" [width]="120"></ngx-datatable-column>
+        <ngx-datatable-column name="User Type" prop="admin" [flexGrow]="1.2" [width]="50">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.admin == '4') {
+              <button type="button" class="btn btn-primary">
+                {{ 'Dealer' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Change Password" [sortable]="true" [width]="90">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button type="button" class="btn btn-primary" (click)="lgModal2.show(); getdata(row.userNumber)">
+              {{ 'Change Password' | translate }}
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+        <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/superadminmenus/list_dealer'"
+          style="margin-left: 2%">
+          Cancel
+        </button>
+        <ngx-datatable-column name="Add Subscripton" [sortable]="true" [width]="90">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <button type="button" class="btn btn-primary" (click)="navigateToSubscription(row)">
+              {{ 'Add Subscripton' | translate }}
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Status" prop="status" [flexGrow]="1.2" [width]="60">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.status == '1') {
+              <button type="button" class="btn btn-success"
+                (click)="alertDeactiveConfirmation(row.userMasterID)">
+                {{ 'Active' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+            @if (row.status == '0') {
+              <button type="button" class="btn btn-danger"
+                (click)="alertActiveConfirmation(row.userMasterID)">
+                {{ 'Deactive' | translate }}
+              </button>
+            }
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Action" [sortable]="true" [width]="60">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a (click)="navigateToEditPage(row)">
+              <span tooltip="Edit User Details." [class]="'glyph-icon simple-icon-pencil tool_tip'"
+              style="padding-right: 10px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+            <a (click)="alertConfirmation(row.userMasterID)">
+              <span tooltip="Delete User Details." [class]="'glyph-icon simple-icon-trash tool_tip'"
+              style="padding-right: 6px; font-size: 18px"></span>
+              {{ ' ' }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  [(ngModel)]="currentPage" (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Password Change</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide();resetForm()"
+          aria-label="Close" #closeModal>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+
+      <form #resetForm1="ngForm" (ngSubmit)="passwordchange()">
+        <div class="modal-body">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="password" placeholder="" required ngModel #newPassword="ngModel"
+              name="newPassword" #newPasswordModel="ngModel" />
+              <span>New Password*</span>
+              @if (!newPassword.valid && resetForm1.submitted) {
+                <div class="invalid-tooltip">
+                  New Password is required!
+                </div>
+              }
+            </label>
+
+            <label class="form-group has-float-label">
+              <input class="form-control" type="password" placeholder="" required ngModel #confPassword="ngModel"
+                name="confPassword" #confPasswordModel="ngModel" />
+                <span>Confirm New Password*</span>
+                @if (!confPassword.valid && resetForm1.submitted) {
+                  <div class="invalid-tooltip">
+                    Confirm New Password is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">{{ 'Submit' | translate }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

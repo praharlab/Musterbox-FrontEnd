@@ -1,0 +1,97 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<button
+  class="btn btn-danger btn-shadow"
+  [routerLink]="adminRoot + '/masters/company_master'"
+  style="margin-bottom: 22px"
+  >
+  Back
+</button>
+<div class="disable-text-selection">
+  <div class="row app-row survey-app pb-4">
+    <div class="col-12">
+      <h1>View Company Details</h1>
+      <br />
+
+      @if (companydata) {
+        <div class="row">
+          <div class="col-12 col-lg-12 mb-12">
+            <div class="card mb-4">
+              <div class="card-body">
+                <p class="list-item-heading mb-4">Company Details</p>
+                <div class="row">
+                  <div class="col-md-4">
+                    <p class="text-muted text-small mb-2">Company Logo</p>
+                    <img
+                      src="{{ apiURL }}uploads/company/logo/{{ companydata.companyLogo }}"
+                      class="mb-3"
+                      />
+                      <p class="text-muted text-small mb-2">Company Name</p>
+                      <p class="mb-3">{{ companydata.companyName }}</p>
+                      <p class="text-muted text-small mb-2">Company Email</p>
+                      <p class="mb-3">{{ companydata.companyEmail }}</p>
+                      @if (usertype == 2) {
+                        <p class="text-muted text-small mb-2">
+                          Company Description
+                        </p>
+                      }
+                      @if (usertype == 2) {
+                        <p class="mb-3" style="text-align: justify">
+                          {{ companydata.companyDescription }}
+                        </p>
+                      }
+                    </div>
+                    <div class="col-md-3">
+                      <p class="text-muted text-small mb-2">Company Address</p>
+                      <p class="mb-3">{{ companydata.companyAddress }}</p>
+                      <p class="text-muted text-small mb-2">Company City</p>
+                      <p class="mb-3">{{ cityname }}</p>
+                      <p class="text-muted text-small mb-2">Company State</p>
+                      <p class="mb-3">{{ statename }}</p>
+                      <p class="text-muted text-small mb-2">Company Country</p>
+                      <p class="mb-3">{{ countryname }}</p>
+                    </div>
+                    <div class="col-md-5">
+                      <p class="text-muted text-small mb-2">Company Website</p>
+                      <p class="mb-3">{{ companydata.companyWebsite }}</p>
+                      <p class="text-muted text-small mb-2">Company Type</p>
+                      <p class="mb-3">{{ companytype }}</p>
+                      <p class="text-muted text-small mb-2">Created Date</p>
+                      <p class="mb-3">{{ companydata.createdAt | date: mediumDateFormat }}</p>
+                      <p class="text-muted text-small mb-2">Pan No.</p>
+                      <p class="mb-3">{{ companydata.panNumber }}</p>
+                      <p class="text-muted text-small mb-2">Tan No.</p>
+                      <p class="mb-3">{{ companydata.tanNumber }}</p>
+                      <p class="text-muted text-small mb-2">Status</p>
+                      @if (companydata.status == '1') {
+                        <button type="button" class="btn btn-success">
+                          {{ 'Active' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                      @if (companydata.status == '0') {
+                        <button type="button" class="btn btn-danger">
+                          {{ 'Deactive' | translate }}
+                        </button>
+                      }
+                      {{ ' ' }}
+                    </div>
+                    <div class="col-md-3">
+                      <p class="text-muted text-small mb-2">Company Authorized Signature</p>
+                      <img
+                    src="{{ apiURL }}uploads/company/signature/{{
+                      companydata.authorizedSignature
+                    }}"
+                        class="mb-3"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>

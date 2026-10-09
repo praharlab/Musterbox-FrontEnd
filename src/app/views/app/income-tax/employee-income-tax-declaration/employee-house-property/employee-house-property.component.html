@@ -1,0 +1,866 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+
+<div class="d-flex flex-column mb-2">
+  <h3>{{data.sectionName}}</h3>
+  <p class="mb-1">{{data.sectionInfo}}</p>
+  <ul>
+    <li class="mb-1">
+      You can add more than one rented property or own property for the current financial year.
+    </li>
+    <li class="mb-1">
+      For rented property if the total rent is more than 1,00,000 then you need to provide either PAN of owner or
+      declaration letter.
+    </li>
+    <li class="mb-1">For rented property you are eligible for HRA and In
+      case HRA is not paid by your employer you will be
+      eligible for exemption under 80 GG.
+    </li>
+    <li class="mb-1">For own property/residence you will be eligible for house loan interest exemption under Section
+      24.
+    </li>
+  </ul>
+</div>
+
+
+<div class="card d-flex mb-3 text-black mb-4">
+  <div class="card-body font text-justify">
+
+    @if (loaderstatus) {
+      <div style="color: var(--m-primary); left: 50%;top: 50%;" class="la-ball-spin-clockwise">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    }
+
+    <h3>I live in a rented residence.</h3>
+    <p style="color: #4d7293;"> @if (rows.length === 0) {
+      <span class="p-background d-flex text-justify">There are no
+        rental details
+      available</span>
+    }</p>
+
+    <p style="color: #4d7293;"> @if (rows.length > 0) {
+      <span class="p-background d-flex text-justify">Your rental
+        details
+      </span>
+    }</p>
+
+    @if (rows.length === 0) {
+      <button (click)="lgModal.show();" type="button" class="btn btn-outline-info btn-sm">+Add
+      Rented Residence</button>
+    }
+    @if (rows.length > 0) {
+      <button (click)="lgModal1.show();" type="button" class="btn btn-outline-info btn-sm">View
+      Rented Residence</button>
+    }
+
+    @if (rows.length > 0 && rows[0].authStatus==0) {
+      <button style="margin-left: 20px;" (click)="onDeleteClick();"
+        type="button" class="btn btn-outline-danger btn-sm my-2">Delete
+      Rented Residence Details </button>
+    }
+
+    <!-- <button style="margin-left: 20px;" *ngIf="rows.length > 0" (click)="lgModal2.show();editData();" type="button"
+    class="btn btn-outline-info btn-sm">Edit
+  Rented Residence</button> -->
+
+</div>
+</div>
+
+
+
+<div class="card d-flex mb-3 text-black mb-4">
+  <div class="card-body font text-justify">
+    <h3>I own residence.</h3>
+
+
+    <p style="color: #4d7293;"> <span class="p-background d-flex text-justify">Your own
+      details
+    </span></p>
+
+
+    <div class="ownClass mb-4">
+      <div class="table-style mb-2">
+        @if (loaderstatus) {
+          <div style="color: var(--m-primary); left: 50%;top: 50%;" class="la-ball-spin-clockwise">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        }
+
+        <table style="width: 100%">
+          <thead>
+            <tr>
+              <th class="name-col name-col-shadow" style="width: 15%; border-radius: 10px 0px 0px 0px">
+                SECTION
+              </th>
+              <th class="name-col name-col-shadow" style="width: 20%">DEDUCTION NAME</th>
+              <th class="name-col name-col-shadow" style="width: 15%">DECLARATION</th>
+              <th class="name-col name-col-shadow" style="width: 15%">MAX LIMIT</th>
+              <th class="name-col name-col-shadow" style="width: 22%">PROOF</th>
+              <th class="name-col name-col-shadow" style="width: 15%">STATUS</th>
+              <th class="name-col name-col-shadow sticky"
+                style="border-radius: 0px 10px 0px 0px; width: 15%;position: sticky;">
+                ACTIONS
+              </th>
+            </tr>
+          </thead>
+          @if (tableStatus) {
+            <tbody class="text-black" style="font-weight: 600;">
+              @for (item of subSectionData; track item; let i = $index) {
+                <tr class="student bottom-border bottom-border-radius">
+                  <td class="name-col left-border">
+                    {{ item['tdsSection.tdsSectionName'] }}
+                    <sup>$</sup>
+                  </td>
+                  <td class="name-col">
+                    {{ item.tdsSubSectionName }}
+                    <span class="ml-1 text-small" [tooltip]="item.tdsSubSectionDescription"
+                    [class]="'glyph-icon simple-icon-info '"></span>
+                  </td>
+                  <td class="name-col">
+                    @if (!item.editMode && item.amount) {
+                      <span>INR&nbsp;{{ item.amount }}</span>
+                    }
+                    @if ( !item.editMode && !item.amount) {
+                      <span class="text-muted">Not Declared</span>
+                    }
+                    @if (item.editMode) {
+                      <div class="input-group" style="width: max-content">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)"
+                          [(ngModel)]="item.amount" />
+                      </div>
+                    }
+                  </td>
+                  <td class="name-col">
+                    @if (item.maxLimit) {
+                      <span>
+                        INR&nbsp;{{ item.maxLimit | number: '1.0-0'}}
+                      </span>
+                    }
+                    @if (!item.maxLimit) {
+                      <span>No Limit</span>
+                    }
+                  </td>
+                  <td class="name-col">
+                    @if (!item.editMode && item.proof && item.proof.length == 0) {
+                      <span class="text-muted">No
+                      Proof</span>
+                    }
+                    @if (!item.editMode && item.proof) {
+                      @for (proofItem of item.proof; track proofItem; let j = $index) {
+                        <div class="attachments">
+                          <div style="position: relative; display: inline-block;" (click)="ownView(proofItem)">
+                            <span class="attachment">
+                              <i class="simple-icon-paper-clip"></i>&nbsp;
+                              {{ proofItem.length > 18 ? (proofItem.substring(0, 16) + '...' +
+                              proofItem.split('.').pop()) : proofItem }}
+                            </span>
+                          </div>
+                        </div>
+                      }
+                    }
+                    @if (item.editMode) {
+                      <form #addAttachments="ngForm" novalidate>
+                        <div class="input-group" style="width: max-content">
+                          <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .xlsx, .csv, .pdf" multiple
+                            ngModel #fileInput="ngModel" name="fileInput{{ i }}" (change)="onOwnSelectFile($event,item)" />
+                        </div>
+                      </form>
+                      @for (proofItem of item.proof; track proofItem; let j = $index) {
+                        <div class="attachments">
+                          <div style="position: relative; display: inline-block;">
+                            <span class="attachment">
+                              <i class="simple-icon-paper-clip"></i>&nbsp;
+                              {{ proofItem.length > 18 ? (proofItem.substring(0, 16) + '...' +
+                              proofItem.split('.').pop()) : proofItem }}
+                            </span>
+                            <button class="close pull-right" style="position: absolute; margin-left: 10px;"
+                              (click)="removeImage(i,j)"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                          </div>
+                        }
+                      }
+                    </td>
+                    <td class="name-col">
+                      @if (item.authStatus==null) {
+                        <span class="text-small">Not Declared</span>
+                      }
+                      @if (item.authStatus == 0) {
+                        <button type="button"
+                        class="btn btn-outline-warning btn-xs">Pending</button>
+                      }
+                      @if (item.authStatus == 1) {
+                        <button type="button"
+                        class="btn btn-outline-success btn-xs">Accepted</button>
+                      }
+                      @if (item.authStatus == 2) {
+                        <button type="button"
+                        class="btn btn-outline-danger btn-xs">Rejected</button>
+                      }
+                      <!-- <i *ngIf="item.status && item.status !== 'Pending'"
+                    class="simple-icon-check text-success mr-2"></i>
+                    <i *ngIf="item.status === 'Pending'" class="simple-icon-check text-warning mr-2"></i> -->
+                    @if (item.status === 'Accepted') {
+                      <span>
+                        Accepted
+                        <br />
+                        <span class="text-muted">Using Amount {{ item.amount }}</span>
+                      </span>
+                    }
+                    @if (item.authStatus === 'Auto Accepted') {
+                      <span>Auto Accepted</span>
+                    }
+                    @if (item.authStatus === 'Pending') {
+                      <span>
+                        Auto Accepted till cutoff date
+                        <br />
+                        <span class="text-muted">Using Amount {{ item.amount }}</span>
+                      </span>
+                    }
+                  </td>
+                  <td class="name-col sticky" style="position: sticky;">
+                    @if (!item.editMode) {
+                      <div>
+                        <button type="button" class="btn btn-primary btn-xs mr-2 pointer" (click)="onEditClick(item)">
+                          Edit
+                        </button>
+                        @if (item.employeeDeclarationID && item.authStatus == 0) {
+                          <button type="button"
+                            class="btn btn-danger btn-xs pointer" (click)="onOwnDeleteClick(item.employeeDeclarationID)">
+                            Delete
+                          </button>
+                        }
+                      </div>
+                    }
+                    @if (item.editMode) {
+                      <div>
+                        <button type="submit" class="btn btn-success btn-xs mr-2 pointer" (click)="onSaveClick(item)">
+                          Save
+                        </button>
+                        <button type="button" class="btn btn-danger btn-xs pointer" (click)="onCalcelClick(item)">
+                          Cancel
+                        </button>
+                      </div>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          }
+        </table>
+      </div>
+
+      <pagination class="pagination-sm justify-content-center" [totalItems]="page.totalCount" [itemsPerPage]="limit"
+        [(ngModel)]="body.page" (pageChanged)="pageChanged($event)" [customNextTemplate]="nextTemplate"
+        [customPreviousTemplate]="prevTemplate">
+      </pagination>
+
+      <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+        <i class="simple-icon-arrow-right"></i>
+      </ng-template>
+
+      <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+        <i class="simple-icon-arrow-left"></i>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Rented Residence</h4>
+        <button #closeModal type="button" class="btn-close close pull-right" (click)="lgModal.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <form #addrentedresidence="ngForm" novalidate>
+          <div class="row">
+
+            @for (value of values; track value; let i = $index) {
+              <div style="margin-top: 10px;"
+                [ngClass]="{'d-none': value.isDeleted === true,'col-md-12 my-2': true}">
+                <div class="row" style="background-color: #f5f5f5;  padding: 20px; border-radius: 15px;">
+                  <div class="col-md-12" style="margin-bottom: 10px;"><b>Rental Details</b></div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="month" ngModel #startmonth="ngModel" [(ngModel)]="value.fromMonth"
+                        (change)="selectdate($event,'f',i)" name="startmonth{{i}}" [min]="i>0?value.min:minYear "
+                        [max]="maxYear" [required]="!value.isDeleted" />
+                      <span>From Month*</span>
+                      @if (!startmonth.valid && addrentedresidence.submitted && !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          From Month is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <!--todate-->
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="month" ngModel #endmonth="ngModel" [(ngModel)]="value.toMonth"
+                        (change)="selectdate($event,'t',i)" name="endmonth{{i}}" [min]="i>0?value.min:minYear "
+                        [max]="maxYear" [required]="!value.isDeleted" />
+                      <span>To Month *</span>
+                      @if (!endmonth.valid && addrentedresidence.submitted && !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          To Month is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="number" ngModel #amount="ngModel" (keyup)="changeAmount($event,i)"
+                        [(ngModel)]="value.amount" name="amount{{i}}" [required]="!value.isDeleted" />
+                      <span>Rent Amount *</span>
+                      @if (!amount.valid && addrentedresidence.submitted && !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          Rent Amount is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <textarea class="form-control" type="text" [(ngModel)]="value.address" ngModel #address="ngModel"
+                      name="address{{i}}"></textarea>
+                      <span>Address </span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <ng-select placeholder="Choose your option" [(ngModel)]="value.city" ngModel #city="ngModel"
+                        name="city{{i}}" [required]="!value.isDeleted">
+                        <ng-option value="metro">
+                          Metro City
+                        </ng-option>
+                        <ng-option value="non-metro">
+                          Non Metro City
+                        </ng-option>
+                      </ng-select>
+                      <span>City *</span>
+                      @if (!city.valid && addrentedresidence.submitted && !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          City is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .pdf" ngModel
+                        #attachment="ngModel" name="attachment{{i}}" (change)="onSelectFile($event,i)" />
+                      <span>Rent Receipts or Agreement </span>
+                    </label>
+                  </div>
+                  <div class="col-md-12" style="margin-bottom: 10px;"> <b>Owner Details</b></div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" ngModel [(ngModel)]="value.ownerName" #ownerName="ngModel"
+                        name="ownerName{{i}}" [required]="!value.isDeleted" />
+                      <span>Owner Name *</span>
+                      @if (!ownerName.valid && addrentedresidence.submitted && !value.isDeleted) {
+                        <div
+                          class="invalid-tooltip">
+                          Owner Name is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-12">
+                    <label for="yes">
+                      <input type="checkbox" ngModel (change)="sameAddress($event,i)" #same="ngModel" name="same{{i}}" />
+                      <span>&nbsp;Owner address same as rental address</span>
+                    </label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <textarea class="form-control" type="text" ngModel #ownerAddress="ngModel"
+                      [(ngModel)]="value.ownerAddress" name="ownerAddress{{i}}"></textarea>
+                      <span>Owner Address </span>
+                    </label>
+                  </div>
+                  @if (value.showOwnerAttachment) {
+                    <div class="col-md-12" style="margin-bottom: 10px">
+                      <input type="radio" name="show{{i}}" value="pan" ngModel #show="ngModel" style="margin-right: 1%"
+                        [required]="!value.isDeleted" (click)="showdata($event,i)" />
+                      <label for="consider" style="margin-right: 2%">PAN Number</label>
+                      <input type="radio" name="show{{i}}" value="declarationletter" ngModel #show="ngModel"
+                        style="margin-right: 1%" [required]="!value.isDeleted" (click)="showdata($event,i)" />
+                      <label for="netsalary">Signed Declaration Letter</label>
+                      @if (!show.valid && addrentedresidence.submitted && !value.isDeleted) {
+                        <div class="invalid-tooltip">
+                          Please Select One!
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (value.show == 'pan' &&value.showOwnerAttachment) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="text" [(ngModel)]="value.ownerPAN" ngModel #panNumber="ngModel"
+                          name="panNumber{{i}}" (blur)="validatePanCardNumber($event.target.value,i)"
+                          [required]="!value.isDeleted" />
+                        <span>Owner PAN Number *</span>
+                        @if ((value.panCardError ||!panNumber.valid) && addrentedresidence.submitted && !value.isDeleted) {
+                          <div
+                            class="invalid-tooltip">
+                            Enter valid PAN Number
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  @if (value.show == 'pan' && value.showOwnerAttachment) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .pdf" ngModel
+                          #ownerAttachment="ngModel" name="ownerAttachment{{i}}" (change)="onSelectFile1($event,i)"
+                          [required]="!value.isDeleted" />
+                        <span>Upload PAN *</span>
+                        @if (!ownerAttachment.valid && addrentedresidence.submitted && !value.isDeleted) {
+                          <div
+                            class="invalid-tooltip">
+                            Upload PAN is required field!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  @if (value.show == 'declarationletter' && value.showOwnerAttachment) {
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .pdf" ngModel
+                          #ownerAttachment="ngModel" name="ownerAttachment{{i}}" (change)="onSelectFile1($event,i)"
+                          [required]="!value.isDeleted" />
+                        <span>Upload Declaration Letter *</span>
+                        @if (!ownerAttachment.valid && addrentedresidence.submitted && !value.isDeleted) {
+                          <div
+                            class="invalid-tooltip">
+                            Declaration Letter is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                  <div class="col-md-12 text-right">
+                    @if (i != 0) {
+                      <button class="button btn btn-danger btn-xs mt-2 text-right" type="button" (click)="removevalue(i)"
+                      style=" color: white;">Remove</button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+            <div class="col-md-6">
+              <button class="button btn btn-success   mt-2" type="button" (click)="addMoreList();"
+              style=" color: white;">Add Owner</button>
+            </div>
+
+
+            <div class="col-md-6 text-right">
+              <button class="btn btn-primary form-group" type="submit" (click)="onSubmit();">
+                Submit
+              </button>
+              &nbsp;&nbsp;
+
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Rented Residence Details</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      @if (rows.length > 0) {
+        <div class="modal-body">
+          @for (row of rows; track row; let i = $index) {
+            <div>
+              <div class="row">
+                @if (rows.length === 1) {
+                  <div class="col-md-6"
+                    style="margin-bottom: 10px;font-size: 15px;padding-left: 15px !important;"><b> Rental
+                  Details</b></div>
+                }
+                @if (rows.length > 1) {
+                  <div class="col-md-6"
+                    style="margin-bottom: 10px;font-size: 15px;padding-left: 15px !important;"><b> {{i+1}}.
+                  Rental Details</b></div>
+                }
+                <div class="col-md-6 text-right"
+                  style="margin-bottom: 10px;font-size: 15px;padding-right: 20px !important;"> <b>Authorization Status :
+                </b>
+                @if (row.authStatus == 2) {
+                  <button type="button" class="btn btn-outline-danger btn-xs">
+                    Rejected
+                  </button>
+                }
+                {{ ' ' }}
+                @if (row.authStatus == 0) {
+                  <button type="button" class="btn btn-outline-warning btn-xs">
+                    Pending
+                  </button>
+                }
+                {{ ' ' }}
+                @if (row.authStatus == 1) {
+                  <button type="button" class="btn btn-outline-success btn-xs">
+                    Accepted
+                  </button>
+                }
+                {{ ' ' }}
+              </div>
+            </div>
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th>From Month</th>
+                  <td>{{row.fromMonth1 }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>TO Month</th>
+                  <td>{{ row.toMonth1}}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Amount</th>
+                  <td>{{ row.amount}}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Address</th>
+                  <td>{{ row.address}}
+                  </td>
+                </tr>
+                <tr>
+                  <th>City</th>
+                  <td>{{ row.city}}
+                  </td>
+                </tr>
+                @if (row.attachment) {
+                  <tr>
+                    <th>Rent Receipts or Agreement </th>
+                    <td>
+                      <div class="attachments"><span (click)="view(row.attachment)"> <i
+                      class="simple-icon-paper-clip"></i>{{row.attachment}}</span></div>
+                    </td>
+                  </tr>
+                }
+                <tr>
+                  <th>Owner Name</th>
+                  <td>{{row.ownerName }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Owner Address</th>
+                  <td>{{ row.ownerAddress}}
+                  </td>
+                </tr>
+                @if (row.ownerPAN) {
+                  <tr>
+                    <th>Owner PAN Number</th>
+                    <td>{{ row.ownerPAN}}
+                    </td>
+                  </tr>
+                }
+                @if (row.ownerPAN && row.ownerAttachment) {
+                  <tr>
+                    <th>Owner PAN Attachment</th>
+                    <td>
+                  <div class="attachments"><span (click)="view(row.ownerAttachment
+                  )"> <i class="simple-icon-paper-clip"></i>{{row.ownerAttachment
+                      }}</span></div>
+                    </td>
+                  </tr>
+                }
+                @if (!row.ownerPAN &&row.ownerAttachment) {
+                  <tr>
+                    <th>Declaration Letter</th>
+                    <td>
+                  <div class="attachments"><span (click)="view(row.ownerAttachment
+                  )"> <i class="simple-icon-paper-clip"></i>{{row.ownerAttachment
+                      }}</span></div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            <hr>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Rented Residence</h4>
+        <button #closeModal type="button" class="btn-close close pull-right" (click)="lgModal2.hide()"
+          aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <form #editrentedresidence="ngForm" novalidate>
+          @if (editRows.length>0) {
+            <div>
+              @for (value of editRows; track value; let i = $index) {
+                <div style="margin-top: 10px;"
+                  [ngClass]="{'d-none': value.isDeleted === true,'col-md-12 my-2': true}">
+                  <div class="row" style="background-color: #f5f5f5;  padding: 20px; border-radius: 15px;">
+                    <div class="row">
+                      <div class="col-md-12" style="margin-bottom: 10px;"><b>Rental Details</b></div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="month" ngModel #startmonth="ngModel"
+                            [(ngModel)]="value.fromMonth" (change)="selectdate($event,'f',i)" name="startmonth{{i}}"
+                            [min]="i>0?value.min:minYear " [max]="maxYear" [disabled]="value.isdisable"
+                            [required]="!value.isdisable" />
+                          <span>From Month*</span>
+                          @if (!startmonth.valid && editrentedresidence.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              From Month is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <!--todate-->
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="month" ngModel #endmonth="ngModel" [(ngModel)]="value.toMonth"
+                            (change)="selectdate($event,'t',i)" name="endmonth{{i}}" [min]="i>0?value.min:minYear "
+                            [max]="maxYear" [disabled]="value.isdisable" [required]="!value.isdisable" />
+                          <span>To Month *</span>
+                          @if (!endmonth.valid && editrentedresidence.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              To Month is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="number" ngModel #amount="ngModel"
+                            (keyup)="changeAmount($event,i)" [(ngModel)]="value.amount" name="amount{{i}}"
+                            [disabled]="value.isdisable" [required]="!value.isdisable" />
+                          <span>Rent Amount *</span>
+                          @if (!amount.valid && editrentedresidence.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              Rent Amount is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <textarea class="form-control" type="text" [(ngModel)]="value.address" ngModel #address="ngModel"
+                          name="address{{i}}" [disabled]="value.isdisable"></textarea>
+                          <span>Address </span>
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Choose your option" [(ngModel)]="value.city" ngModel #city="ngModel"
+                            name="city{{i}}" [disabled]="value.isdisable" [required]="!value.isdisable">
+                            <ng-option value="metro">
+                              Metro City
+                            </ng-option>
+                            <ng-option value="non-metro">
+                              Non Metro City
+                            </ng-option>
+                          </ng-select>
+                          <span>City *</span>
+                          @if (!city.valid && editrentedresidence.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              City is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .pdf" ngModel
+                            #attachment="ngModel" name="attachment{{i}}" (change)="onSelectFile($event,i)"
+                            [disabled]="value.isdisable" />
+                          <span>Rent Receipts or Agreement </span>
+                        </label>
+                      </div>
+                      <div class="col-md-12" style="margin-bottom: 10px;"> <b>Owner Details</b></div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel [(ngModel)]="value.ownerName" #ownerName="ngModel"
+                            name="ownerName{{i}}" [disabled]="value.isdisable" [required]="!value.isdisable" />
+                          <span>Owner Name *</span>
+                          @if (!ownerName.valid && editrentedresidence.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              Owner Name is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="yes">
+                          <input type="checkbox" [disabled]="value.isdisable" ngModel (change)="sameAddress($event,i)"
+                            #same="ngModel" name="same{{i}}" />
+                          <span>&nbsp;Owner address same as rental address</span>
+                        </label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-group has-float-label">
+                          <textarea class="form-control" type="text" ngModel #ownerAddress="ngModel"
+                            [(ngModel)]="value.ownerAddress" name="ownerAddress{{i}}"
+                          [disabled]="value.isdisable"></textarea>
+                          <span>Owner Address </span>
+                        </label>
+                      </div>
+                      @if (value.ownerPAN || value.ownerAttachment) {
+                        <div class="col-md-12" style="margin-bottom: 10px">
+                          <input type="radio" name="show{{i}}" value="pan" ngModel #show="ngModel" style="margin-right: 1%"
+                            [disabled]="value.isdisable" [required]="!value.isdisable" (click)="showdata($event,i)" />
+                          <label for="consider" style="margin-right: 2%">PAN Number</label>
+                          <input type="radio" name="show{{i}}" value="declarationletter" ngModel #show="ngModel"
+                            style="margin-right: 1%" [disabled]="value.isdisable" [required]="!value.isdisable"
+                            (click)="showdata($event,i)" />
+                          <label for="netsalary">Signed Declaration Letter</label>
+                          @if (!show.valid && editrentedresidence.submitted && !value.isDeleted) {
+                            <div
+                              class="invalid-tooltip">
+                              Please Select One!
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (value.ownerPAN) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="text" [(ngModel)]="value.ownerPAN" ngModel #panNumber="ngModel"
+                              name="panNumber{{i}}" (blur)="validatePanCardNumber($event.target.value,i)"
+                              [disabled]="value.isdisable" [required]="!value.isdisable" />
+                            <span>Owner PAN Number *</span>
+                            @if ((value.panCardError ||!panNumber.valid) && editrentedresidence.submitted && !value.isDeleted) {
+                              <div
+                                class="invalid-tooltip">
+                                Enter valid PAN Number
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      @if (value.ownerPAN) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .pdf" ngModel
+                              #ownerAttachment="ngModel" name="ownerAttachment{{i}}" (change)="onSelectFile1($event,i)"
+                              [disabled]="value.isdisable" [required]="!value.isdisable" />
+                            <span>Upload PAN *</span>
+                            @if (!ownerAttachment.valid && editrentedresidence.submitted && !value.isDeleted) {
+                              <div
+                                class="invalid-tooltip">
+                                Upload PAN is required field!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                      @if (!value.ownerPAN && value.ownerAttachment) {
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .pdf" ngModel
+                              #ownerAttachment="ngModel" name="ownerAttachment{{i}}" (change)="onSelectFile1($event,i)"
+                              [disabled]="value.isdisable" [required]="!value.isdisable" />
+                            <span>Upload Declaration Letter *</span>
+                            @if (!ownerAttachment.valid && editrentedresidence.submitted && !value.isDeleted) {
+                              <div
+                                class="invalid-tooltip">
+                                Declaration Letter is required!
+                              </div>
+                            }
+                          </label>
+                        </div>
+                      }
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 text-left">
+                        @if (!value.isdisable) {
+                          <button class="button btn btn-success btn-xs mt-2" type="button"
+                          (click)="editData();" style=" color: white;">Update</button>
+                        }
+                      </div>
+                      <div class="col-md-6 text-right">
+                        @if (i != 0 && !value.isdisable) {
+                          <button class="button btn btn-danger btn-xs mt-2 text-right" type="button" (click)="removevalue(i)"
+                          style=" color: white;">Remove</button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+              <!-- <div class="col-md-6">
+              <button class="button btn btn-success btn-xs  mt-2" type="button" (click)="addMoreList();"
+              style=" color: white;">Add Owner</button>
+            </div> -->
+          </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

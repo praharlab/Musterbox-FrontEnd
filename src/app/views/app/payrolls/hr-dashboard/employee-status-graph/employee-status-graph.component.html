@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="card-body">
+    <!-- <form #companyFilter="ngForm" novalidate (change)="onCompanySelect($event)">
+    <div class="float-right float-none-xs mt-2">
+      <label class="form-group has-float-label">
+        <ng-select class="btn-outline-primary" placeholder="Choose your option" [(ngModel)]="defaultValue.cName" ngModel #cid2="ngModel"
+          name="cid2" (change)="onCompanySelect($event)">
+          <ng-option *ngFor="let data of company" [value]="data.companyMasterID">
+            {{ data.companyName }}
+          </ng-option>
+        </ng-select>
+      </label>
+    </div>
+  </form> -->
+  @if (showloader == 'true') {
+    <div style="color: #17a2b8; left: 50%" class="la-ball-spin-clockwise">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  }
+
+  <div class="d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">Employee Status</h5>
+    <button class="btn btn-primary btn-shadow btn-sm" (click)="navigateToEmployeeData()">
+      View
+    </button>
+  </div>
+
+  <div class="chart-container1">
+    <div [class]="class"><canvas #chart></canvas></div>
+  </div>
+</div>
+</div>

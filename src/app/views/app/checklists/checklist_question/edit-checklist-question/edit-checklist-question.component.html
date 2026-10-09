@@ -1,0 +1,141 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (checklistquestiondata) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Edit Check List Question</h5>
+      <form #editchecklist="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="getDesignation($event)"
+                ngModel
+                required
+                #companyMasterID="ngModel"
+                name="companyMasterID"
+                [(ngModel)]="checklistquestiondata['checklist.designation.companyMasterID']"
+                >
+                @for (product of product; track product) {
+                  <ng-option [value]="product.companyMasterID">
+                    {{ product.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!companyMasterID.valid && editchecklist.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                (change)="getchecklist($event)"
+                ngModel
+                #designationId="ngModel"
+                required
+                name="designationId"
+                [(ngModel)]="checklistquestiondata['checklist.designation.designationId']"
+                >
+                @for (designation of designation; track designation) {
+                  <ng-option
+                    [value]="designation.designationId"
+                    >
+                    {{ designation.designationName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Designation</span>
+              @if (!designationId.valid && editchecklist.submitted) {
+                <div class="invalid-tooltip">
+                  Designation is required!
+                </div>
+              }
+            </label>
+          </div>
+          <!-- Display selected designation name -->
+          @if (selectedDesignationName) {
+            <div class="col-md-6">
+              <label class="form-group">
+                <span>Selected Designation: {{ selectedDesignationName }}</span>
+              </label>
+            </div>
+          }
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select
+                placeholder="Choose your option"
+                ngModel
+                #checkListID="ngModel"
+                name="checkListID"
+                required
+                [(ngModel)]="checklistquestiondata.checkListID"
+                >
+                @for (checkList1 of checkList; track checkList1) {
+                  <ng-option [value]="checkList1.checkListID">
+                    {{ checkList1.checkListName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Check List *</span>
+              @if (!checkListID.valid && editchecklist.submitted) {
+                <div class="invalid-tooltip">
+                  Check List is required!
+                </div>
+              }
+            </label>
+          </div>
+          <!-- Display selected check list name -->
+          @if (selectedCheckListName) {
+            <div class="col-md-12">
+              <label class="form-group">
+                <span>Selected Check List Name: {{ selectedCheckListName }}</span>
+              </label>
+            </div>
+          }
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                required
+                ngModel
+                #checkListQuestion="ngModel"
+                [(ngModel)]="checklistquestiondata.checkListQuestion"
+                name="checkListQuestion"
+                />
+                <span>Check List Question*</span>
+                @if (!checkListQuestion.valid && editchecklist.submitted) {
+                  <div
+                    class="invalid-tooltip"
+                    >
+                    checkListQuestion is required!
+                  </div>
+                }
+              </label>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+            <button
+              class="btn btn-danger btn-shadow mt-4"
+              [routerLink]="adminRoot + '/checklists/checklistQuestion'"
+              style="margin-left: 2%"
+              >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <simple-notifications
+    [options]="{ position: ['top', 'center'], maxStack: 1 }"
+  ></simple-notifications>

@@ -1,0 +1,474 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="IncomeTax Declaration Request" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="filterData.searchQuery" (searchKeyUp)="updateFilter($event)"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit1($event)"
+  (onClear)="clear()" (clearData)="clear()" *ngIf="permissionview.length > 0"
+  (getCompany)="getCompany($event)">
+  <div class="col-md-4">
+    <label class="form-group has-float-label">
+      <ng-select placeholder="Choose your option" ngModel #financialYear="ngModel" name="financialYear">
+        <ng-option *ngFor="let year of financialYears" [value]="year">
+          {{ year }}
+        </ng-option>
+      </ng-select>
+      <span>Select Financial Year</span>
+    </label>
+  </div>
+</app-common-filter>
+
+<tabset class="separator-tabs">
+  <tab heading="Other Declaration" (selectTab)="loadComponent('Other')">
+
+
+    <div class="row" *ngIf="rows.length > 0 && permissionview.length != 0">
+      <div class="col-12 mb-4 data-table-rows">
+        <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+          [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+          (page)="onChange($event)">
+
+          <ngx-datatable-column name="Action" [sortable]="true" [width]="180">
+
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div *ngIf="
+              row.authStatus == 0
+            ">
+                <button type="button" class="btn btn-success btn-xs"
+                  (click)="lgModal1.show(); acceptReject(row,'Accept')">
+                  {{ 'Accept' | translate }}
+                </button>
+                {{ ' ' }}
+                <button type="button" class="btn btn-danger btn-xs"
+                  (click)="lgModal1.show(); acceptReject(row,'Reject')">
+                  {{ 'Reject' | translate }}
+                </button>
+                {{ ' ' }}
+              </div>
+              <button type="button" class="btn btn-outline-success btn-xs" *ngIf="row.authStatus == 1">
+                {{ 'Accepted' | translate }}
+              </button>
+              {{ ' ' }}
+              <button type="button" class="btn btn-outline-danger btn-xs" *ngIf="row.authStatus == 2">
+                {{ 'Rejected' | translate }}
+              </button>
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <button type="button" class="btn btn-primary btn-xs" (click)="lgModal.show(); showdata(row)">
+                {{ 'Show Data' | translate }}
+              </button>
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Employee Name" prop="userMaster.displayName" [flexGrow]="1.2"
+            [width]="200"></ngx-datatable-column>
+          <ngx-datatable-column name="Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+            [width]="120"></ngx-datatable-column>
+          <ngx-datatable-column name="Financial Year" prop="assessmentYear" [flexGrow]="1.2"
+            [width]="120"></ngx-datatable-column>
+          <ngx-datatable-column name="Category Name" prop="tdsSubSection.tdsSubSectionCategory.categoryName"
+            [flexGrow]="1.2" [width]="200"></ngx-datatable-column>
+          <ngx-datatable-column name="Amount" prop="declarationAmount" [flexGrow]="1.2"
+            [width]="120"></ngx-datatable-column>
+
+
+
+          <ngx-datatable-footer *ngIf="true">
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                  [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        </ngx-datatable>
+      </div>
+    </div>
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+
+  </tab>
+  <tab heading="HRA Declaration" (selectTab)="loadComponent('HRA')">
+
+    
+    <div class="row" *ngIf="hra.length > 0 && permissionview.length != 0">
+      <div class="col-12 mb-4 data-table-rows">
+        <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="hra" [footerHeight]="100" [columnMode]="'force'"
+          [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+          (page)="onChange($event)">
+
+          <ngx-datatable-column name="Action" [sortable]="true" [width]="180">
+
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div *ngIf="
+              row.authStatus == 0
+            ">
+                <button type="button" class="btn btn-success btn-xs"
+                  (click)="lgModal3.show(); acceptRejectHRA(row,'Accept')">
+                  {{ 'Accept' | translate }}
+                </button>
+                {{ ' ' }}
+                <button type="button" class="btn btn-danger btn-xs"
+                  (click)="lgModal3.show(); acceptRejectHRA(row,'Reject')">
+                  {{ 'Reject' | translate }}
+                </button>
+                {{ ' ' }}
+              </div>
+              <button type="button" class="btn btn-outline-success btn-xs" *ngIf="row.authStatus == 1">
+                {{ 'Accepted' | translate }}
+              </button>
+              {{ ' ' }}
+              <button type="button" class="btn btn-outline-danger btn-xs" *ngIf="row.authStatus == 2">
+                {{ 'Rejected' | translate }}
+              </button>
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Show Form" [flexGrow]="1.2" [width]="150">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <button type="button" class="btn btn-primary btn-xs" (click)="lgModal2.show(); showdataHRA(row)">
+                {{ 'Show Data' | translate }}
+              </button>
+              {{ ' ' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Employee Name" prop="userMaster.displayName" [flexGrow]="1.2"
+            [width]="200"></ngx-datatable-column>
+          <ngx-datatable-column name="Number" prop="userMaster.userNumber" [flexGrow]="1.2"
+            [width]="120"></ngx-datatable-column>
+          <ngx-datatable-column name="Financial Year" prop="financialYear" [flexGrow]="1.2"
+            [width]="120"></ngx-datatable-column>
+          <ngx-datatable-column name="Category Name" 
+            [flexGrow]="1.2" [width]="200">House Property</ngx-datatable-column>
+          <ngx-datatable-column name="Amount" prop="amount" [flexGrow]="1.2"
+            [width]="120"></ngx-datatable-column>
+
+
+
+          <ngx-datatable-footer *ngIf="true">
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                  [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        </ngx-datatable>
+      </div>
+    </div>
+
+    <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+    <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-right"></i>
+    </ng-template>
+    <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+      <i class="simple-icon-arrow-left"></i>
+    </ng-template>
+
+  </tab>
+</tabset>
+
+
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Show Data</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <table class="table table-striped" *ngIf="rowdata">
+            <tbody>
+              <tr>
+                <th>Employee Name</th>
+                <td>{{ rowdata['userMaster.displayName']}}
+                </td>
+              </tr>
+              <tr>
+                <th>Branch</th>
+                <td>{{ rowdata.employeeBranch}}
+                </td>
+              </tr>
+              <tr>
+                <th>Department</th>
+                <td>{{ rowdata.employeeDepartment}}
+                </td>
+              </tr>
+              <tr>
+                <th>Designation</th>
+                <td>{{ rowdata.employeeDesignation}}
+                </td>
+              </tr>
+              <tr>
+                <th>TDS Section</th>
+                <td>{{ rowdata['tdsSubSection.tdsSection.tdsSectionName']}}
+                </td>
+              </tr>
+              <tr>
+                <th>TDS Sub Section</th>
+                <td>{{ rowdata['tdsSubSection.tdsSubSectionName'] }}</td>
+              </tr>
+              <tr>
+                <th>TDS Category</th>
+                <td>{{ rowdata['tdsSubSection.tdsSubSectionCategory.categoryName'] }}</td>
+              </tr>
+              <tr>
+                <th>Declaration Amount</th>
+                <td>{{ rowdata.declarationAmount }}</td>
+              </tr>
+              <tr>
+                <th>Financial Year</th>
+                <td>{{ rowdata.assessmentYear }}</td>
+              </tr>
+              <tr *ngIf="rowdata.authStatus!=0">
+                <th>Remarks</th>
+                <td>{{ rowdata.acceptRejectRemark }}</td>
+              </tr>
+              <tr>
+                <th>Attachments</th>
+                <td>
+                  <div class="attachments" *ngFor="let attchment of rowdata.attachments "><span
+                      (click)="view(attchment)"> <i class="simple-icon-paper-clip"></i>{{attchment}}</span></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" *ngIf="modelType">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modelType}} Income Tax Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close"
+          #closeModal1>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #acceptreject="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks"
+                  [(ngModel)]="remarksdata"></textarea>
+                <span>Remarks</span>
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div bsModal #lgModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Show Data</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal2.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="hraData">
+          <div class="col-md-12" style="margin-bottom: 10px;font-size: 15px;"><b> Employee Details</b></div>
+          <table class="table table-striped" >
+            <tbody>
+              <tr>
+                <th>Employee Name</th>
+                <td>{{ hraData['userMaster.displayName']}}
+                </td>
+              </tr>
+              <tr>
+                <th>Branch</th>
+                <td>{{ hraData.employeeBranch}}
+                </td>
+              </tr>
+              <tr>
+                <th>Department</th>
+                <td>{{ hraData.employeeDepartment}}
+                </td>
+              </tr>
+              <tr>
+                <th>Designation</th>
+                <td>{{ hraData.employeeDesignation}}
+                </td>
+              </tr>
+           
+              <tr>
+                <th>Financial Year</th>
+                <td>{{ hraData.financialYear }}</td>
+              </tr>
+              <tr *ngIf="hraData.authStatus!=0">
+                <th>Remarks</th>
+                <td>{{ hraData.acceptRejectRemark }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="col-md-12" style="margin-bottom: 10px;font-size: 15px;"><b> Rental Details</b></div>
+        
+          <table class="table table-striped">
+            <tbody>
+              <tr>
+                <th>From Month</th>
+                <td>{{hraData.fromMonth }}
+                </td>
+              </tr>
+              <tr>
+                <th>TO Month</th>
+                <td>{{ hraData.toMonth}}
+                </td>
+              </tr>
+              <tr>
+                <th>Amount</th>
+                <td>{{ hraData.amount}}
+                </td>
+              </tr>
+              <tr>
+                <th>Address</th>
+                <td>{{ hraData.address}}
+                </td>
+              </tr>
+              <tr>
+                <th>City</th>
+                <td>{{ hraData.city}}
+                </td>
+              </tr>
+              <tr *ngIf="hraData.attachment">
+                <th>Rent Receipts or Agreement </th>
+                <td >
+                  <div class="attachments"><span (click)="view1(hraData.attachment)"> <i
+                        class="simple-icon-paper-clip"></i>{{hraData.attachment}}</span></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="col-md-12" style="margin-bottom: 10px;font-size: 15px;"> <b>Owner Details</b></div>
+          <table class="table table-striped">
+            <tbody>
+              <tr>
+                <th>Owner Name</th>
+                <td>{{hraData.ownerName }}
+                </td>
+              </tr>
+              <tr>
+                <th>Owner Address</th>
+                <td>{{ hraData.ownerAddress}}
+                </td>
+              </tr>
+              <tr *ngIf="hraData.ownerPAN">
+                <th>Owner PAN Number</th>
+                <td>{{ hraData.ownerPAN}}
+                </td>
+              </tr>
+              <tr *ngIf="hraData.ownerPAN && hraData.ownerAttachment">
+                <th>PAN Attachment</th>
+                <td>
+                  <div class="attachments"><span (click)="view1(hraData.ownerAttachment
+                  )"> <i class="simple-icon-paper-clip"></i>{{hraData.ownerAttachment
+                      }}</span></div>
+                </td>
+
+              </tr>
+              <tr *ngIf="!hraData.ownerPAN &&hraData.ownerAttachment">
+                <th>Declaration Letter</th>
+                <td>
+                  <div class="attachments"><span (click)="view1(hraData.ownerAttachment
+                  )"> <i class="simple-icon-paper-clip"></i>{{hraData.ownerAttachment
+                      }}</span></div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #lgModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" *ngIf="modelTypeHRA">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modelTypeHRA}} Income Tax Request</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal3.hide()" aria-label="Close"
+          #closeModal3>
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #acceptrejecthra="ngForm" novalidate (ngSubmit)="submitHRA()">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <textarea type="text" class="form-control" ngModel #remarks="ngModel" name="remarks"
+                  [(ngModel)]="remarksdatahra"></textarea>
+                <span>Remarks</span>
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

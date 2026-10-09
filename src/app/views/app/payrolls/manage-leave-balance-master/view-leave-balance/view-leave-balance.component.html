@@ -1,0 +1,67 @@
+<div class="row justify-content-between">
+  <div>
+    <button class="btn btn-danger btn-shadow" [routerLink]="adminRoot + '/payrolls/manage-leave-balance'"
+      style="margin-bottom: 22px">
+      Back
+    </button>
+  </div>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" name="View Leave Balance"
+(itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit" [showSearch]="false"></app-list-page-header>
+@if (filterData.userMasterID) {
+  <app-list-user-data [userMasterID]="filterData.userMasterID"></app-list-user-data>
+}
+<div class="card ">
+  <div class="card-body">
+    <form #filterForm="ngForm" class="d-flex justify-content-end align-items-center">
+      <div class="row justify-content-end align-items-center">
+        <div>
+          <label class="form-group has-float-label m-0">
+            <input class="btn btn-outline-primary btn-xs" type="month" [(ngModel)]="selectedFromMonth" required ngModel #fromMonth="ngModel" name="fromMonth" required />
+            <span>From Month *</span>
+          </label>
+        </div>
+        <div>
+          <label class="form-group has-float-label m-0 ml-2">
+            <input class="btn btn-outline-primary btn-xs" type="month" [(ngModel)]="selectedToMonth" required ngModel #toMonth="ngModel" name="toMonth" />
+            <span>To Month *</span>
+          </label>
+        </div>
+        <div>
+          <button class="btn btn-primary ml-2" type="submit" (click)="onSubmit()">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row position-relative">
+  <div class="col-md-6 mt-4 position-relative">
+    <div class="card">
+      <div class="card-body">
+        <app-list-add-leave-balance-master #ListAddLeaveBalanceMasterComponent></app-list-add-leave-balance-master>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 mt-4">
+    <div class="card">
+      <div class="card-body">
+        <app-list-leave-encashment-master #ListLeaveEncashmentMasterComponent></app-list-leave-encashment-master>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 mt-4">
+    <div class="card">
+      <div class="card-body">
+        <app-approved-leave-transaction-master
+        #ApprovedLeaveTransactionMasterComponent></app-approved-leave-transaction-master>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 mt-4">
+    <div class="card">
+      <div class="card-body">
+        <app-lapse-leave-master #LapseLeaveMasterComponent></app-lapse-leave-master>
+      </div>
+    </div>
+  </div>
+</div>

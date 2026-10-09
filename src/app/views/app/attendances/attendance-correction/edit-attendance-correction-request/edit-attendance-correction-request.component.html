@@ -1,0 +1,215 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-4">Edit Attendance Correction Request</h5>
+
+    <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmitAttendaceForm()">
+      <div class="row">
+        <div class="col-md-12 d-flex">
+          <div class="form-check pr-3">
+            <input type="radio" id="timeCorrection" name="amountType1" value="1" class="form-check-input"
+              (change)="radiostatus = '1'" [checked]="radiostatus === '1'" />
+              <label for="timeCorrection" class="form-check-label">Time Correction</label>
+            </div>
+
+            <div class="form-check pr-3">
+              <input type="radio" id="attendanceStatus" name="amountType1" value="2" class="form-check-input"
+                (change)="radiostatus = '2'" [checked]="radiostatus === '2'" />
+                <label for="attendanceStatus" class="form-check-label">Set Attendance Status</label>
+              </div>
+
+              <div class="form-check pr-3">
+                <input type="radio" id="addLog" name="amountType1" value="3" class="form-check-input"
+                  (change)="radiostatus = '3'" [checked]="radiostatus === '3'" />
+                  <label for="addLog" class="form-check-label">Add Log</label>
+                </div>
+              </div>
+
+              <div class="col-md-4 mt-4 pr-3">
+                <label class="form-group has-float-label">
+                  <input type="date" class="form-control" name="attendanceDate" [min]="minDate" [max]="maxDate"
+                    [(ngModel)]="attendanceDate" (ngModelChange)="onAttendanceDateChange($event)" required />
+                    <span>Attendance Date *</span>
+                    @if (!addcomp.controls['attendanceDate']?.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Attendance Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-4 mt-4">
+                  <label class="form-group has-float-label">
+                    <ng-select placeholder="Choose your option" [(ngModel)]="selectedReason" name="attendanceCorrectionReasonID" required
+                      (change)="onReasonChange()">
+
+                      @for (reason of reasons; track reason) {
+                        <ng-option [value]="reason.attendanceCorrectionReasonID">
+                          {{ reason.reason }}
+                        </ng-option>
+                      }
+
+                    </ng-select>
+
+                    <span>Select Reason *</span>
+
+                    @if (!selectedReason && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Reason is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                @if (this.showRemark) {
+                  <div class="col-md-4 mt-4">
+                    <label class="form-group has-float-label">
+                      <textarea type="text" class="form-control" name="remark" [(ngModel)]="remark" required></textarea>
+                      <span>Remark *</span>
+                      @if (!addcomp.controls['remark']?.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Remark is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+
+                @if (radiostatus === '3') {
+                  <div class="col-md-12">
+                    <div class="row">
+                      @for (value of values; track trackByFn(i, value); let i = $index) {
+                        <div class="col-md-12">
+                          @if (!value.deleted) {
+                            <div class="row">
+                              <div class="col-md-4">
+                                <label class="form-group has-float-label">
+                                  <input type="datetime-local" class="form-control" name="logDateTime{{ i }}"
+                                    [(ngModel)]="value.logDateTime" [attr.min]="getMinDateTime()" [attr.max]="getMaxDateTime()"
+                                    (change)="changeLog(value)" required />
+                                    <span>Log Date-Time *</span>
+                                    @if (!value.logDateTime && addcomp.submitted) {
+                                      <div class="invalid-tooltip">
+                                        Log Date-Time is required!
+                                      </div>
+                                    }
+                                  </label>
+                                </div>
+                                <div class="col-md-1">
+                                  <label class="form-group has-float-label">
+                                    <input type="text" [(ngModel)]="value.direction" name="direction{{ i }}" placeholder="Direction"
+                                      [disabled]="true" class="form-control" />
+                                      <span>Direction</span>
+                                    </label>
+                                  </div>
+                                  @if (values.length > 0) {
+                                    <div class="col-md-3">
+                                      @if (i === 0) {
+                                        <span (click)="addLogOnTop(i)" tooltip="Add Log On Top"
+                                          class="tool_tip btn btn-success btn-xs mr-3"
+                                          style="font-size: 12px; cursor: pointer; margin-bottom: 10px">
+                                          &#8593;
+                                        </span>
+                                      }
+                                      <span (click)="addLogForEntry(i)" class="btn btn-success btn-xs mr-3"
+                                        style="font-size: 12px; cursor: pointer; margin-bottom: 10px">
+                                        +
+                                      </span>
+                                      <span (click)="removevalue(i)" class="btn btn-danger btn-xs"
+                                        style="font-size: 12px; cursor: pointer; margin-bottom: 10px">
+                                        Remove
+                                      </span>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          }
+                          <div class="col-md-12">
+                            <button type="button" class="btn btn-primary mt-3" (click)="addvalue()">
+                              + Add Log
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    @if (radiostatus === '2') {
+                      <div class="col-md-4 mt-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Attendance Status" [(ngModel)]="attendanceStatus" name="attendanceStatus" required>
+                            <ng-option value="A">Absent</ng-option>
+                            <ng-option value="P">Present</ng-option>
+                            <ng-option value="HD">Half Day</ng-option>
+                          </ng-select>
+                          <span>Attendance Status *</span>
+                          @if (!attendanceStatus && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Attendance Status is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+
+                    @if (radiostatus === '2' && (attendanceStatus =='P' || attendanceStatus =='HD')) {
+                      <div class="col-md-4 mt-4">
+                        <label class="form-group has-float-label">
+                          <ng-select placeholder="Select Shift" [(ngModel)]="selectedShift" #shiftID="ngModel" name="shiftID"
+                            required>
+                            @for (shiftData of allshift; track shiftData) {
+                              <ng-option [value]="shiftData.shiftID">
+                                {{shiftData.shiftName}}
+                              </ng-option>
+                            }
+                          </ng-select>
+                          <span>Select Shift *</span>
+                          @if (!shiftID.valid && addcomp.submitted) {
+                            <div class="invalid-tooltip">
+                              Shift is required!
+                            </div>
+                          }
+                        </label>
+                      </div>
+                    }
+
+                    @if (radiostatus === '1') {
+                      <div class="col-md-8 mt-4">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input type="datetime-local" class="form-control" name="inLogDateTime" [(ngModel)]="inLogDateTime"
+                                [attr.min]="currentDate + 'T00:00'" [attr.max]="currentDate + 'T23:59'" required
+                                (change)="changeTime('in')" />
+                                <span>In Log Date-Time *</span>
+                                @if (!inLogDateTime && addcomp.submitted) {
+                                  <div class="invalid-tooltip">
+                                    In Log Date-Time is required!
+                                  </div>
+                                }
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <label class="form-group has-float-label">
+                                <input type="datetime-local" class="form-control" name="outLogDateTime" [(ngModel)]="outLogDateTime"
+                                  [attr.min]="currentDate + 'T00:00'" [attr.max]="tomorrowDate + 'T23:59'" required
+                                  (change)="changeTime('out')" />
+                                  <span>Out Log Date-Time *</span>
+                                  @if (!outLogDateTime && addcomp.submitted) {
+                                    <div class="invalid-tooltip">
+                                      Out Log Date-Time is required!
+                                    </div>
+                                  }
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        }
+
+                        <div class="col-md-12 mt-4">
+                          <button class="btn btn-primary" type="submit">Submit</button>
+                          <button class="btn btn-danger ml-2" type="button" (click)="onCancel()">Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

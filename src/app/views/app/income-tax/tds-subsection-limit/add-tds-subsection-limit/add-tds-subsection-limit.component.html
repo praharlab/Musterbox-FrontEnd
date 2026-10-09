@@ -1,0 +1,102 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add TDS Sub Section Limit</h5>
+
+    <form #addTdsSubSectionLimit="ngForm" novalidate>
+      <div class="row">
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #tdsSectionID="ngModel" name="tdsSectionID"
+              [(ngModel)]="selectedSection" (change)="getTDSSubSection()">
+              @for (item of tdsSectionData; track item) {
+                <ng-option [value]="item.tdsSectionID">
+                  {{ item.tdsSectionName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select TDS Section </span>
+
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #tdsSubSectionCategoryID="ngModel"
+              name="tdsSubSectionCategoryID" [(ngModel)]="selectedCategory" (change)="getTDSSubSection()">
+              @for (category of tdsSubSectionCategory; track category) {
+                <ng-option
+                  [value]="category.tdsSubSectionCategoryID">
+                  {{ category.categoryName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select TDS Sub Section Category </span>
+
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" ngModel #tdsSubSectionID="ngModel"
+              name="tdsSubSectionID" [(ngModel)]="selectedSubSectionID">
+              @for (item of tdsSubSectionData; track item) {
+                <ng-option [value]="item.tdsSubSectionID">
+                  {{ item.tdsSubSectionName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select TDS Sub Section *</span>
+            @if (!tdsSubSectionID.valid && addTdsSubSectionLimit.submitted) {
+              <div class="invalid-tooltip">
+                TDS Sub Section is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="month" ngModel #applicableYYYYMM="ngModel"
+              name="applicableYYYYMM" required required />
+              <span>Select Applicable Year Month *</span>
+              @if (!applicableYYYYMM.valid && addTdsSubSectionLimit.submitted) {
+                <div class="invalid-tooltip">
+                  Applicable Year Month is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" ngModel #maxLimit="ngModel" name="maxLimit"
+                required />
+                <span>TDS SubSection Limit *</span>
+                @if (!maxLimit.valid && addTdsSubSectionLimit.submitted) {
+                  <div class="invalid-tooltip">
+                    TDS SubSection Limit is required!
+                  </div>
+                }
+              </label>
+            </div>
+
+          </div>
+
+
+          <button class="btn btn-primary btn-lg btn-shadow mt-4" type="submit" (click)="onSubmit()"
+            style="margin-left: 2%">
+            Submit
+          </button>
+          <button class="btn btn-danger btn-lg btn-shadow mt-4" type="button" (click)="cancel()"
+            style="margin-left: 2%">
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

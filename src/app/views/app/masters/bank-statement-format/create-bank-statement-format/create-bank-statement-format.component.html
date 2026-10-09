@@ -1,0 +1,40 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+@if (permissionview.length > 0) {
+  <app-common-filter #commonFilter [hideFilters]="hideFilters" [showButtons]="showButtons" (onSubmit)="onSubmit($event)"
+    (onClear)="clear()" (clearData)="clear()" (getCompany)="getCompany($event)" cancelRoute="/masters/bankStatementFormat" heading="Create Bank Statement Format">
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select placeholder="Choose your option" ngModel #bankMasterID="ngModel"
+          name="bankMasterID" required (change)="onChangeBank($event)">
+          @for (bankdata of bankdata; track bankdata; let i = $index) {
+            <ng-option [value]="bankdata.bankMasterID">
+              {{ bankdata.bankName }}
+            </ng-option>
+          }
+        </ng-select>
+        <span>Select Bank*</span>
+        @if (!bankMasterID.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Selection is required Bank Master!
+          </div>
+        }
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label class="form-group has-float-label">
+        <ng-select [items]="selectedFieldsList" [multiple]="true" groupBy="selectedAllGroup"
+          [selectableGroup]="true" [selectableGroupAsModel]="false" [closeOnSelect]="false" ngModel
+        #fields="ngModel" [(ngModel)]="selectedFields" name="fields"></ng-select>
+        <span>Select Fields *</span>
+        @if (!fields.valid && commonFilter?.filterForm?.submitted) {
+          <div class="invalid-tooltip">
+            Fields is required!
+          </div>
+        }
+      </label>
+    </div>
+  </app-common-filter>
+}

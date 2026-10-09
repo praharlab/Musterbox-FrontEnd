@@ -1,0 +1,46 @@
+:host ::ng-deep .scrollStyleTable {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+:host ::ng-deep Table {
+  border-collapse: collapse;
+}
+
+:host ::ng-deep .tableTd {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+:host ::ng-deep .tableTh,
+:host ::ng-deep .tableTd {
+  border: 1px solid black;
+  font-family: 'Nunito', sans-serif !important;
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  text-align: center;
+}
+
+:host ::ng-deep .tableTh {
+  background-color: #f2f2f2;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+:host ::ng-deep .tableTd a {
+  color: blue;
+  text-decoration: underline;
+}
+
+:host ::ng-deep .modal-content {
+  font-family: 'Nunito', sans-serif;
+}
+
+:host ::ng-deep .modal-body .table th,
+:host ::ng-deep .modal-body .table td {
+  font-family: 'Nunito', sans-serif;
+}
+
+.btn-xs {
+  padding: 0.1rem 0.75rem !important;
+}

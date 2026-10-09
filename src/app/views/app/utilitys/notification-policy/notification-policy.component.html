@@ -1,0 +1,155 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Mail Setup</h5>
+
+    @if (permissioncreate != 0) {
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <ng-select placeholder="Choose your option" ngModel #company="ngModel" name="company"
+                (change)="selectCompany($event)" [(ngModel)]="selectedcompany">
+                @for (comp of comp; track comp) {
+                  <ng-option [value]="comp.companyMasterID">
+                    {{ comp.companyName }}
+                  </ng-option>
+                }
+              </ng-select>
+              <span>Select Company *</span>
+              @if (!company.valid && addcomp.submitted) {
+                <div class="invalid-tooltip">
+                  Company is required!
+                </div>
+              }
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          @if (showData) {
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="email" required ngModel #email="ngModel" [(ngModel)]="MailData.email"
+                  name="email" />
+                  <span>Email *</span>
+                  @if (!email.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Mail Id is required!
+                    </div>
+                  }
+                </label>
+              </div>
+            }
+            @if (showData) {
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="password" required ngModel #password="ngModel"
+                    [(ngModel)]="MailData.password" name="password" />
+                    <span>Password *</span>
+                    @if (!password.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Password is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+              }
+            </div>
+            <div class="row">
+              @if (showData) {
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" required ngModel #port="ngModel" [(ngModel)]="MailData.port"
+                      name="port" />
+                      <span>Port (recommended: 465) *</span>
+                      @if (!port.valid && addcomp.submitted) {
+                        <div class="invalid-tooltip">
+                          Port Number is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                }
+                @if (showData) {
+                  <div class="col-md-6">
+                    <label class="form-group has-float-label">
+                      <input class="form-control" type="text" required ngModel #hostmail="ngModel" [(ngModel)]="MailData.hostmail"
+                        name="hostmail" />
+                        <span>HostMail (recommended: smtp.gmail.com) *</span>
+                        @if (!hostmail.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            Host Mail is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  }
+                </div>
+                <div class="row">
+                  @if (showData) {
+                    <div class="col-md-12  text-danger">
+                      <div>
+                        Note* :- 1) Recommended Secure True For Port - 465
+                        <br>
+                          &nbsp;&nbsp;
+                          &nbsp;&nbsp;
+                          &nbsp;&nbsp;
+                          &nbsp;&nbsp;
+                          &nbsp;
+                          2) Recommended Secure False For Other Ports
+                        </div>
+                        <br>
+                        </div>
+                      }
+                      @if (showData) {
+                        <div class="col-md-6">
+                          <label><b>Secure *</b></label>
+                          &nbsp;&nbsp;
+                          <input
+                            type="radio"
+                            name="secure"
+                            ngModel
+                            #secure="ngModel"
+                            [value]="true"
+                            [(ngModel)]="MailData.secure"
+                            required
+                            />
+                            &nbsp;
+                            <label for="html">TRUE</label>
+                            &nbsp;&nbsp;
+                            <input
+                              type="radio"
+                              name="secure"
+                              ngModel
+                              #secure="ngModel"
+                              [value]="false"
+                              [(ngModel)]="MailData.secure"
+                              required
+                              />
+                              &nbsp;
+                              <label for="html">FALSE</label>
+                              &nbsp;&nbsp;
+                            </div>
+                          }
+                        </div>
+                        <div class="col-md-12">
+                          <button class="btn btn-primary mt-4" type="submit">{{ 'forms.submit' | translate }}</button>
+                          <span> &nbsp;&nbsp; </span>
+                          @if (MailData.email && MailData.password && MailData.port && MailData.hostmail) {
+                            <button class="btn btn-primary mt-4" type="button"
+                              (click)="checkEmail()">
+                              Send Test Mail
+                            </button>
+                          }
+                          <!-- <button class="btn btn-danger btn-shadow mt-4" [routerLink]="'/app/notification_policy'" style="margin-left: 2%;">
+                          Cancel
+                        </button> -->
+                      </div>
+                    </form>
+                  }
+                </div>
+              </div>
+
+              <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

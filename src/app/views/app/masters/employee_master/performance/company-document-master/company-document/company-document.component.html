@@ -1,0 +1,36 @@
+<div class="row">
+  @for (item of rows8; track item) {
+    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;">
+          @if (item.document && item.checkpdf == false) {
+            <img alt="Profile" src="{{ apiURL }}uploads/company/document/{{ item.document }}"
+              (click)="download(item)"
+              class="img-thumbnail border-0 m-4 list-thumbnail align-self-center" />
+          }
+          @if (item.document && item.checkpdf == true) {
+            <img alt="Profile" src="/assets/img/file-pdf.svg" (click)="download(item)"
+              class="img-thumbnail border-0 m-4 list-thumbnail align-self-center" />
+          }
+        </a>
+        <div class="d-flex flex-grow-1 min-width-zero">
+          <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+            style="margin-left: 5%">
+            <div class="min-width-zero">
+              <p class="list-item-heading mb-1 truncate">
+                {{ item.documentType.documentName }}
+              </p>
+              <div class="min-width-zero">
+                <button type="button" class="btn btn-success" style="margin-top: 10%"
+                  (click)="download(item)">
+                  Download
+                </button>
+                {{ ' ' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

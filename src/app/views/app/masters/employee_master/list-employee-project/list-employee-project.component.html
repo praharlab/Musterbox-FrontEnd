@@ -1,0 +1,160 @@
+<div style="text-align: right">
+  <button class="btn btn-primary mb-1" (click)="openModal()">Add</button>
+</div>
+
+@if (employeeProjectData && employeeProjectData.length > 0) {
+  <div class="row">
+    @for (item of employeeProjectData; track item) {
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
+        <div class="card d-flex flex-row mb-4">
+          <a class="d-flex" href="javascript:;"></a>
+          <div class="d-flex flex-grow-1 min-width-zero">
+            <div class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="margin-left: 5%">
+              <div class="min-width-zero">
+                <a href="javascript:;">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      @if (item.projectID) {
+                        <p class="list-item-heading mb-1 text-wrap-auto">
+                          {{ item.project.projectName | uppercase }}
+                        </p>
+                      }
+                    </div>
+                    <div>
+                      <!-- <a class="btn btn-outline-primary btn-xs"    (click)="lgModal1.show();edit(item)">EDIT</a><br> -->
+                      @if (item.showDelete) {
+                        <a class="btn btn-outline-danger btn-xs"
+                          (click)="alertConfirmation(item.employeeProjectID)"
+                        >DELETE</a>
+                      }
+                    </div>
+                  </div>
+                  @if (item.project.createBy != null) {
+                    <div class="d-flex mt-2" style="margin-top: 5%">
+                      <p class="text-muted mb-0 text-small">
+                        <strong>Project Created</strong> by {{
+                        item.project.createdByUserDetails.displayName }}, at {{
+                        item.project.createdAt
+                        | date: 'dd-MM-yyyy hh:mm a' }}
+                      </p>
+                    </div>
+                  }
+                  @if (item.project.updateBy != null) {
+                    <div class="d-flex mt-1" style="margin-top: 1px">
+                      <p class="text-muted mb-0 text-small">
+                        <strong>Project Updated</strong> by {{
+                        item.project.updatedByUserDetails.displayName }}, at {{
+                        item.project.updatedAt
+                        | date: 'dd-MM-yyyy hh:mm a' }}
+                      </p>
+                    </div>
+                  }
+                  <hr>
+                    <p class="text-muted mb-0 text-small">
+                      Start Date : {{ item.startDate | date: 'dd-MM-yyyy' }}
+                    </p>
+                    @if (item.releaseDate != null) {
+                      <p class="text-muted mb-0 text-small">
+                        End Date : {{ item.releaseDate | date: 'dd-MM-yyyy' }}
+                      </p>
+                    }
+                    @if (item.project.createBy != null) {
+                      <div style="margin-top: 2%;">
+                        <p class="text-muted mb-0 text-small">
+                          <strong>Assigned</strong> by {{ item.createdByUserDetails.displayName }}, at {{
+                          item.createdAt
+                          | date: 'dd-MM-yyyy hh:mm a' }}
+                        </p>
+                      </div>
+                    }
+                    <div class="min-width-zero">
+                      <a href="javascript:;">
+                        @if (item.employeeProjectStatus == 1) {
+                          <button type="button" class="btn btn-success"
+                            style="margin-top: 10%">
+                            {{ 'Active' | translate }}
+                          </button>
+                        }
+                        {{ ' ' }}
+                        @if (item.employeeProjectStatus == 0) {
+                          <button type="button" class="btn btn-danger"
+                            style="margin-top: 10%">
+                            {{ 'Deactive' | translate }}
+                          </button>
+                        }
+                        {{ ' ' }}
+                      </a>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"
+    [config]="{backdrop: 'static', keyboard: false}">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Add Employee Project</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <ng-select placeholder="Choose your option" ngModel #projectID="ngModel"
+                    name="projectID" required>
+                    @for (item of allProject; track item) {
+                      <ng-option [value]="item.projectID">
+                        {{ item.projectName }}
+                        @if (item?.display_id) {
+                          <span>({{ item?.display_id}})</span>
+                        }
+                      </ng-option>
+                    }
+                  </ng-select>
+                  <span>Select Project *</span>
+                  @if (!projectID.valid && addcomp.submitted) {
+                    <div class="invalid-tooltip">
+                      Project is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="Date" ngModel #startDate="ngModel" name="startDate"
+                    required />
+                    <span>Start Date *</span>
+                    @if (!startDate.valid && addcomp.submitted) {
+                      <div class="invalid-tooltip">
+                        Start Date is required!
+                      </div>
+                    }
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="Date" ngModel #releaseDate="ngModel"
+                      name="releaseDate" />
+                      <span>Release Date</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary" type="submit">{{ 'forms.submit' | translate }}</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>

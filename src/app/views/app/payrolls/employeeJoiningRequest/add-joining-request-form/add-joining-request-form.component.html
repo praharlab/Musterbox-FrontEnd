@@ -1,0 +1,842 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Personal Information Form</h5>
+
+    <form #addEmployeeJoiningRequest="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <ng-select
+              placeholder="Choose your option"
+              ngModel
+              #company="ngModel"
+              name="company"
+              [(ngModel)]="companyMasterID"
+              (change)="getAllData($event)"
+              required
+              >
+              @for (comp of comp; track comp) {
+                <ng-option [value]="comp.companyMasterID">
+                  {{ comp.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+          </label>
+          @if (!company.valid && addEmployeeJoiningRequest.submitted) {
+            <div
+              class="invalid-tooltip"
+              >
+              Company is required!
+            </div>
+          }
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-md-12">
+          <h6>Personal Details</h6>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input
+              class="form-control"
+              type="text"
+              required
+              ngModel
+              #firstName="ngModel"
+              name="firstName"
+              />
+              <span>First Name *</span>
+              @if (!firstName.valid && addEmployeeJoiningRequest.submitted) {
+                <div
+                  class="invalid-tooltip"
+                  >
+                  First Name is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-4">
+            <label class="form-group has-float-label">
+              <input
+                class="form-control"
+                type="text"
+                ngModel
+                #middleName="ngModel"
+                name="middleName"
+                />
+                <span>Middle Name</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <input
+                  class="form-control"
+                  type="text"
+                  ngModel
+                  required
+                  #lastName="ngModel"
+                  name="lastName"
+                  />
+                  <span>Last Name *</span>
+                  @if (!lastName.valid && addEmployeeJoiningRequest.submitted) {
+                    <div
+                      class="invalid-tooltip"
+                      >
+                      Last Name is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="form-group has-float-label">
+                  <input
+                    class="form-control"
+                    type="number"
+                    ngModel
+                    #mobileNumber="ngModel"
+                    name="mobileNumber"
+                    required
+                    />
+                    <span>Contact Number *</span>
+                    @if (
+                      addEmployeeJoiningRequest.value.mobileNumber &&
+                      addEmployeeJoiningRequest.value.mobileNumber.toString().length != 10 &&
+                      addEmployeeJoiningRequest.submitted
+                      ) {
+                      <div
+                        class="invalid-tooltip"
+                        >
+                        Contact Number should be of 10 digits!
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <label class="form-group has-float-label">
+                    <input
+                      class="form-control"
+                      type="number"
+                      ngModel
+                      #aadharNumber="ngModel"
+                      name="aadharNumber"
+                      />
+                      <span>Aadhar Number</span>
+                    </label>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-group has-float-label">
+                      <input
+                        class="form-control"
+                        type="text"
+                        ngModel
+                        #nameAsAAdhar="ngModel"
+                        name="nameAsAAdhar"
+                        />
+                        <span>Name As on Aadhar Card</span>
+                      </label>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <input
+                          class="form-control"
+                          type="file"
+                          ngModel
+                          #file1="ngModel"
+                          (change)="onSelectFile1($event)"
+                          accept="image/png, image/jpeg, image/jpg, application/pdf"
+                          name="file1"
+                          />
+                          <span>Aadhar Card Photo</span>
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input class="form-control" type="text" ngModel #panCardNo="ngModel" name="panCardNo" />
+                          <span>PAN Number</span>
+                        </label>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-group has-float-label">
+                          <input
+                            class="form-control"
+                            type="file"
+                            ngModel
+                            #file2="ngModel"
+                            (change)="onSelectFile2($event)"
+                            accept="image/png, image/jpeg, image/jpg, application/pdf"
+                            name="file2"
+                            />
+                            <span>Pan Card Photo</span>
+                          </label>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-group has-float-label">
+                            <input
+                              class="form-control"
+                              type="file"
+                              ngModel
+                              #file3="ngModel"
+                              (change)="onSelectFile3($event)"
+                              accept="image/png, image/jpeg, image/jpg, application/pdf"
+                              name="file3"
+                              />
+                              <span>Driving License Photo</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                              <input
+                                class="form-control"
+                                type="date"
+                                ngModel
+                                #dob="ngModel"
+                                name="dob"
+                                [max]="currDate"
+                                />
+                                <span>Date Of Birth</span>
+                              </label>
+                            </div>
+                            <div class="col-md-4">
+                              <span>Gender *</span>
+                              &nbsp;&nbsp;
+                              <input
+                                type="radio"
+                                name="gender"
+                                value="male"
+                                ngModel
+                                #gender="ngModel"
+                                style="margin-right: 2%"
+                                required
+                                />
+                                <label for="true" style="margin-right: 2%">Male</label>
+
+                                <input
+                                  type="radio"
+                                  name="gender"
+                                  value="female"
+                                  ngModel
+                                  #gender="ngModel"
+                                  style="margin-right: 2%"
+                                  required
+                                  />
+                                  <label for="false" style="margin-right: 2%">Female</label>
+
+                                  <input
+                                    type="radio"
+                                    name="gender"
+                                    value="other"
+                                    ngModel
+                                    #gender="ngModel"
+                                    style="margin-right: 2%"
+                                    required
+                                    />
+                                    <label>Other</label>
+
+                                    @if (!gender.valid && addEmployeeJoiningRequest.submitted) {
+                                      <div class="invalid-tooltip">
+                                        gender is required!
+                                      </div>
+                                    }
+                                  </div>
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <ng-select
+                                        placeholder="Choose your option"
+                                        ngModel
+                                        #maratialStatus="ngModel"
+                                        name="maratialStatus"
+                                        >
+                                        <ng-option value="Single">Single</ng-option>
+                                        <ng-option value="Married">Married</ng-option>
+                                        <ng-option value="Divorced">Divorced</ng-option>
+                                        <ng-option value="Widow/Widower">Widow/ Widower</ng-option>
+                                      </ng-select>
+                                      <span>Select Maritial Status</span>
+                                    </label>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-4">
+                                    <label class="form-group has-float-label">
+                                      <input
+                                        class="form-control"
+                                        type="date"
+                                        [(ngModel)]="currentDate"
+                                        #dateOfJoining="ngModel"
+                                        name="dateOfJoining"
+                                        required
+                                        />
+                                        <span>Joining Date *</span>
+                                      </label>
+                                      @if (!dateOfJoining.valid && addEmployeeJoiningRequest.submitted) {
+                                        <div
+                                          class="invalid-tooltip"
+                                          >
+                                          Joining Date is required!
+                                        </div>
+                                      }
+                                    </div>
+                                    <div class="col-md-4">
+                                      <label class="form-group has-float-label">
+                                        <input
+                                          class="form-control"
+                                          type="file"
+                                          ngModel
+                                          #file="ngModel"
+                                          (change)="onSelectFile($event)"
+                                          accept="image/png, image/jpeg, image/jpg"
+                                          name="file"
+                                          required
+                                          />
+                                          <span>Photo *</span>
+                                        </label>
+                                        @if (!file.valid && addEmployeeJoiningRequest.submitted) {
+                                          <div class="invalid-tooltip">
+                                            Photo is required!
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <h6>Address Details</h6>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <textarea
+                                            class="form-control"
+                                            ngModel
+                                            #presentAddress="ngModel"
+                                            name="presentAddress"
+                                          ></textarea>
+                                          <span>Present Address</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            (change)="selectcountry($event)"
+                                            ngModel
+                                            #presentCountry1="ngModel"
+                                            name="presentCountry1"
+                                            >
+                                            @for (countrys of presentCountry; track countrys) {
+                                              <ng-option [value]="countrys.countryMasterID">
+                                                {{ countrys.countryName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Country</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            (change)="selectstate($event)"
+                                            ngModel
+                                            #presentState1="ngModel"
+                                            name="presentState1"
+                                            >
+                                            @for (states of presentState; track states) {
+                                              <ng-option [value]="states.stateMasterID">
+                                                {{ states.stateName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>State</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            (change)="selectcity($event)"
+                                            ngModel
+                                            #presentCity1="ngModel"
+                                            name="presentCity1"
+                                            >
+                                            @for (citys of presentCity; track citys) {
+                                              <ng-option [value]="citys.cityMasterID">
+                                                {{ citys.cityName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>City</span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <label class="form-group has-float-label">
+                                          <input type="checkbox" ngModel name="copyAddress" (change)="onCopyAddress($event)" />
+                                          Same as Present Address
+                                        </label>
+                                      </div>
+                                    </div>
+                                    @if (copyAddress != true) {
+                                      <div class="row">
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <textarea
+                                              class="form-control"
+                                              ngModel
+                                              #permenetAddress="ngModel"
+                                              name="permenetAddress"
+                                            ></textarea>
+                                            <span>Permenent Address</span>
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select
+                                              placeholder="Choose your option"
+                                              (change)="selectcountry1($event)"
+                                              ngModel
+                                              #permenentCountry1="ngModel"
+                                              name="permenentCountry1"
+                                              >
+                                              @for (countrys1 of permenentCountry; track countrys1) {
+                                                <ng-option
+                                                  [value]="countrys1.countryMasterID"
+                                                  >
+                                                  {{ countrys1.countryName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>Country</span>
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select
+                                              placeholder="Choose your option"
+                                              (change)="selectstate1($event)"
+                                              ngModel
+                                              #permenentState1="ngModel"
+                                              name="permenentState1"
+                                              >
+                                              @for (states1 of permenentState; track states1) {
+                                                <ng-option [value]="states1.stateMasterID">
+                                                  {{ states1.stateName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>State</span>
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <ng-select
+                                              placeholder="Choose your option"
+                                              (change)="selectcity1($event)"
+                                              ngModel
+                                              #permenantCity1="ngModel"
+                                              name="permenantCity1"
+                                              >
+                                              @for (citys1 of permenentCity; track citys1) {
+                                                <ng-option [value]="citys1.cityMasterID">
+                                                  {{ citys1.cityName }}
+                                                </ng-option>
+                                              }
+                                            </ng-select>
+                                            <span>City</span>
+                                          </label>
+                                        </div>
+                                      </div>
+                                    }
+                                    <hr />
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <h6>Uniform Details</h6>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="text" ngModel #shirtSize="ngModel" name="shirtSize" />
+                                          <span>Shirt Size</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="text" ngModel #pantSize="ngModel" name="pantSize" />
+                                          <span>Pants Size</span>
+                                        </label>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="text" ngModel #shoesSize="ngModel" name="shoesSize" />
+                                          <span>Shoes Size</span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <hr />
+
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <h6>Important Details</h6>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            ngModel
+                                            #branchID="ngModel"
+                                            [(ngModel)]="selectedbranch"
+                                            name="branchID"
+                                            required
+                                            >
+                                            @for (item of allbranch; track item) {
+                                              <ng-option [value]="item.branchMasterID">
+                                                {{ item.branchName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Select Branch *</span>
+                                        </label>
+                                        @if (!branchID.valid && addEmployeeJoiningRequest.submitted) {
+                                          <div
+                                            class="invalid-tooltip"
+                                            >
+                                            Branch is required!
+                                          </div>
+                                        }
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            ngModel
+                                            #departmentID="ngModel"
+                                            [(ngModel)]="selecteddepartment"
+                                            name="departmentID"
+                                            required
+                                            >
+                                            @for (item of alldepartment; track item) {
+                                              <ng-option [value]="item.departmentId">
+                                                {{ item.departmentName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Select Department *</span>
+                                        </label>
+                                        @if (!departmentID.valid && addEmployeeJoiningRequest.submitted) {
+                                          <div
+                                            class="invalid-tooltip"
+                                            >
+                                            Department is required!
+                                          </div>
+                                        }
+                                      </div>
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            ngModel
+                                            #designationID="ngModel"
+                                            [(ngModel)]="selecteddesignation"
+                                            name="designationID"
+                                            required
+                                            >
+                                            @for (item of alldesignation; track item) {
+                                              <ng-option [value]="item.designationId">
+                                                {{ item.designationName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Select Designation *</span>
+                                        </label>
+                                        @if (!designationID.valid && addEmployeeJoiningRequest.submitted) {
+                                          <div
+                                            class="invalid-tooltip"
+                                            >
+                                            Designation is required!
+                                          </div>
+                                        }
+                                      </div>
+
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input class="form-control" type="number" ngModel #salary="ngModel" name="salary" />
+                                          <span>Salary</span>
+                                        </label>
+                                      </div>
+                                    </div>
+
+                                    <hr />
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <h6>Bank Details</h6>
+                                      </div>
+
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <ng-select
+                                            placeholder="Choose your option"
+                                            ngModel
+                                            required
+                                            #bankMasterID="ngModel"
+                                            name="bankMasterID"
+                                            >
+                                            @for (bankdata of bankdata; track bankdata; let i = $index) {
+                                              <ng-option
+                                                [value]="bankdata.bankMasterID"
+                                                >
+                                                {{ bankdata.bankName }}
+                                              </ng-option>
+                                            }
+                                          </ng-select>
+                                          <span>Select Bank *</span>
+                                        </label>
+
+                                        @if (!bankMasterID.valid && addEmployeeJoiningRequest.submitted) {
+                                          <div
+                                            class="invalid-tooltip"
+                                            >
+                                            Bank Name is required!
+                                          </div>
+                                        }
+                                      </div>
+
+                                      <div class="col-md-4">
+                                        <label class="form-group has-float-label">
+                                          <input
+                                            class="form-control"
+                                            type="text"
+                                            ngModel
+                                            #bankAccountNumber="ngModel"
+                                            name="bankAccountNumber"
+                                            />
+                                            <span>A/C Number</span>
+                                          </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <label class="form-group has-float-label">
+                                            <input
+                                              class="form-control"
+                                              type="text"
+                                              ngModel
+                                              #IFSCNumber="ngModel"
+                                              name="IFSCNumber"
+                                              />
+                                              <span>IFSC Number</span>
+                                            </label>
+                                          </div>
+                                          <div class="col-md-4">
+                                            <label class="form-group has-float-label">
+                                              <input
+                                                class="form-control"
+                                                type="file"
+                                                ngModel
+                                                #file5="ngModel"
+                                                (change)="onSelectFile5($event)"
+                                                accept="image/png, image/jpeg, image/jpg, application/pdf"
+                                                name="file5"
+                                                />
+                                                <span>Passbook Photo</span>
+                                              </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <input class="form-control" type="text" ngModel #uanNumber="ngModel" name="uanNumber" />
+                                                <span>UAN Number</span>
+                                              </label>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <label class="form-group has-float-label">
+                                                <input
+                                                  class="form-control"
+                                                  type="text"
+                                                  ngModel
+                                                  #ESICNumber="ngModel"
+                                                  name="ESICNumber"
+                                                  />
+                                                  <span>ESIC Number</span>
+                                                </label>
+                                              </div>
+                                              <div class="col-md-4">
+                                                <label class="form-group has-float-label">
+                                                  <input
+                                                    class="form-control"
+                                                    type="file"
+                                                    ngModel
+                                                    #file4="ngModel"
+                                                    (change)="onSelectFile4($event)"
+                                                    accept="image/png, image/jpeg, image/jpg, application/pdf"
+                                                    name="file4"
+                                                    />
+                                                    <span>Declaration Photo</span>
+                                                  </label>
+                                                </div>
+                                              </div>
+                                              <hr />
+                                              <br />
+                                              <br />
+                                              <div class="row">
+                                                <div class="col-md-4">
+                                                  <label class="form-group has-float-label container">
+                                                    <ngx-signature-pad [config]="config" #sign></ngx-signature-pad>
+                                                    <span>Candidate Signature *</span>
+                                                  </label>
+                                                  <div>
+                                                    @if (isInValid()) {
+                                                      <button
+                                                        type="button"
+                                                        (click)="getImageSign()"
+                                                        class="btn btn-info btn-xs"
+                                                        >
+                                                        Confirm Sign
+                                                      </button>
+                                                    }
+                                                    &nbsp; &nbsp;
+                                                    @if (isInValid()) {
+                                                      <button
+                                                        type="button"
+                                                        (click)="clearSignature()"
+                                                        class="btn btn-danger btn-xs"
+                                                        >
+                                                        Clear Sign
+                                                      </button>
+                                                    }
+                                                  </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                  <label class="form-group has-float-label">
+                                                    <textarea class="form-control" ngModel #remarks="ngModel" name="remarks"></textarea>
+                                                    <span>Remarks</span>
+                                                  </label>
+                                                </div>
+                                              </div>
+                                              <hr style="color: green" />
+                                              <div class="row mb-2">
+                                                <div class="col-md-6">
+                                                  <h6>Family Details For ESIC:-</h6>
+                                                </div>
+                                                <div class="col-md-6" style="text-align: right">
+                                                  <span class="button" class="btn btn-success" (click)="addvalue()">ADD Family Member</span>
+                                                </div>
+                                              </div>
+                                              <br />
+                                              <div class="row">
+                                                <br />
+                                                @for (value of values; track value; let i = $index) {
+                                                  <div class="col-md-12">
+                                                    @if (!value.deleted) {
+                                                      <div class="row">
+                                                        <div class="col-md-3">
+                                                          <label class="form-group has-float-label">
+                                                            <input
+                                                              class="form-control"
+                                                              type="text"
+                                                              [(ngModel)]="value.familyMemberName"
+                                                              ngModel
+                                                              #familyMemberName="ngModel"
+                                                              name="familyMemberName{{ i }}"
+                                                              />
+                                                              <span>Member Name *</span>
+                                                            </label>
+                                                          </div>
+                                                          <div class="col-md-3">
+                                                            <label class="form-group has-float-label">
+                                                              <input
+                                                                class="form-control"
+                                                                type="text"
+                                                                ngModel
+                                                                [(ngModel)]="value.relation"
+                                                                #relation="ngModel"
+                                                                name="relation{{ i }}"
+                                                                />
+                                                                <span>Relation</span>
+                                                              </label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                              <label class="form-group has-float-label">
+                                                                <input
+                                                                  class="form-control"
+                                                                  type="date"
+                                                                  ngModel
+                                                                  [(ngModel)]="value.familydob"
+                                                                  #familydob="ngModel"
+                                                                  name="familydob{{ i }}"
+                                                                  [max]="currDate"
+                                                                  />
+                                                                  <span>Date Of Birth*</span>
+                                                                </label>
+                                                              </div>
+                                                              <div class="col-md-3">
+                                                                <span>Gender *</span>
+                                                                &nbsp;&nbsp;
+                                                                <input
+                                                                  type="radio"
+                                                                  name="familygender{{ i }}"
+                                                                  value="male"
+                                                                  ngModel
+                                                                  [(ngModel)]="value.familygender"
+                                                                  #familygender="ngModel"
+                                                                  style="margin-right: 2%"
+                                                                  />
+                                                                  <label for="true" style="margin-right: 2%">Male</label>
+                                                                  <input
+                                                                    type="radio"
+                                                                    name="familygender{{ i }}"
+                                                                    value="female"
+                                                                    ngModel
+                                                                    [(ngModel)]="value.familygender"
+                                                                    #gender="ngModel"
+                                                                    style="margin-right: 2%"
+                                                                    />
+                                                                    <label for="false" style="margin-right: 2%">Female</label>
+                                                                    <input
+                                                                      type="radio"
+                                                                      name="familygender{{ i }}"
+                                                                      value="other"
+                                                                      ngModel
+                                                                      [(ngModel)]="value.familygender"
+                                                                      #gender="ngModel"
+                                                                      style="margin-right: 2%"
+                                                                      />
+                                                                      <label style="margin-right: 2%">Other</label>
+                                                                    </div>
+                                                                    @if (values.length > 0) {
+                                                                      <div class="col-md-3">
+                                                                        <span
+                                                                          (click)="removevalue(i)"
+                                                                          class="btn btn-danger"
+                                                                          style="font-size: 10px; cursor: pointer; margin-bottom: 10px"
+                                                                          >
+                                                                          Remove
+                                                                        </span>
+                                                                      </div>
+                                                                    }
+                                                                  </div>
+                                                                }
+                                                              </div>
+                                                            }
+                                                          </div>
+                                                          <div class="row">
+                                                            <div class="col-md-12">
+                                                              <button class="btn btn-primary mt-4" type="submit">
+                                                                {{ 'forms.submit' | translate }}
+                                                              </button>
+                                                              <button class="btn btn-danger btn-shadow mt-4" (click)="prev()" style="margin-left: 2%">
+                                                                Cancel
+                                                              </button>
+                                                            </div>
+                                                          </div>
+                                                        </form>
+                                                      </div>
+                                                    </div>
+
+                                                    <simple-notifications
+                                                      [options]="{ position: ['top', 'center'], maxStack: 1 }"
+                                                    ></simple-notifications>

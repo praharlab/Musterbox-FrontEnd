@@ -1,0 +1,192 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Add Employee incentive</h5>
+
+    <form #addincentive="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" required ngModel #companyMasterID="ngModel"
+              (change)="companydata($event)" name="companyMasterID" [(ngModel)]="company_id">
+              @for (company of company; track company) {
+                <ng-option [value]="company.companyMasterID">
+                  {{ company.companyName }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select Company *</span>
+            @if (!companyMasterID.valid && addincentive.submitted) {
+              <div class="invalid-tooltip">
+                Company is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select [items]="allbranch" bindLabel="branchName" [selectableGroup]="true"
+              [selectableGroupAsModel]="false" bindValue="branchMasterID" (change)="selectbranch($event)" ngModel
+            #branch="ngModel" name="branch" [(ngModel)]="selectedlist"></ng-select>
+            <span>Select Branch</span>
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <ng-select [items]="ownerList" required [multiple]="true" bindLabel="name" groupBy="selectedAllGroup"
+              [selectableGroup]="true" [selectableGroupAsModel]="false" bindValue="userMasterID" [closeOnSelect]="false"
+              ngModel #employee="ngModel" name="employee" [(ngModel)]="selectedowner">
+              <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                Select All
+              </ng-template>
+            </ng-select>
+            <span>Select Employee *</span>
+            @if (!employee.valid && addincentive.submitted) {
+              <div class="invalid-tooltip">
+                Employee is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-5">
+          <label class="form-group has-float-label">
+            <ng-select placeholder="Choose your option" required ngModel #incentivetypename="ngModel"
+              name="incentivetypename" [(ngModel)]="selectedtype">
+              @for (list of list; track list) {
+                <ng-option [value]="list.IncentivetypeID">
+                  {{ list.incentivetypename }}
+                </ng-option>
+              }
+            </ng-select>
+            <span>Select incentive Category *</span>
+            @if (!incentivetypename.valid && addincentive.submitted) {
+              <div class="invalid-tooltip">
+                Incentive type name is required!
+              </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-md-1">
+          @if (selectedCompany && permissioncreate.length > 0) {
+            <button type="button" style="font-size: large"
+              class="btn btn-primary" (click)="lgModal.show()">
+              +
+            </button>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="month" required ngModel #yearmonth="ngModel" name="yearmonth"
+              [(ngModel)]="selectedYearMonth" required />
+              <span>YearMonth *</span>
+              @if (!yearmonth.valid && addincentive.submitted) {
+                <div class="invalid-tooltip">
+                  YearMonth is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="number" required ngModel #amount="ngModel" [(ngModel)]="selectedAmount"
+                name="amount" />
+                <span>Amount *</span>
+                @if (!amount.valid && addincentive.submitted) {
+                  <div class="invalid-tooltip">
+                    amount is required!
+                  </div>
+                }
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                <input class="form-control" type="date" placeholder="" ngModel #incentiveDate="ngModel" name="incentiveDate"
+                  required />
+                  <span>Incentive Date *</span>
+                  @if (!incentiveDate.valid && addincentive.submitted) {
+                    <div class="invalid-tooltip">
+                      Incentive Date is required!
+                    </div>
+                  }
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" ngModel #description="ngModel" name="description"></textarea>
+                  <span>Description</span>
+                </label>
+              </div>
+
+            </div>
+            <div class="row"></div>
+
+            <app-state-button [btnClass]="'btn btn-primary btn-shadow'" [currentState]="buttonState"
+              [isDisabled]="buttonDisabled" click="onLoginClick()">
+              {{ 'forms.submit' | translate }}
+            </app-state-button>
+            <button class="btn btn-danger btn-shadow" type="button" style="margin-left: 1%"
+              [routerLink]="adminRoot + '/payrolls/list-employeeincentive'">
+              Cancel
+            </button>
+          </form>
+        </div>
+      </div>
+      <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+
+      <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title pull-left">Add Expense Category</h4>
+              <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+                #closeModal>
+                <span aria-hidden="true" class="visually-hidden">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form #filterform="ngForm" novalidate (ngSubmit)="onSubmit1()">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="text" placeholder="" required ngModel #incentivetypename="ngModel"
+                      name="incentivetypename" />
+                      <span>Incentive Type name *</span>
+                      @if (!incentivetypename.valid && filterform.submitted) {
+                        <div class="invalid-tooltip">
+                          Incentive Type Name is required!
+                        </div>
+                      }
+                    </label>
+                  </div>
+                  <div class="col-md-12">
+                    <label for="yes">
+                      <input type="checkbox" ngModel (change)="calltoshow($event)" #showinsalaryslip="ngModel"
+                        name="showinsalaryslip" />
+                        <span>Show in salary slip</span>
+                      </label>
+                    </div>
+
+                    @if (datashow) {
+                      <div class="col-md-12" style="margin-bottom: 10px">
+                        <input type="radio" name="show" value="gross" ngModel #show="ngModel" style="margin-right: 1%" required />
+                        <label for="consider" style="margin-right: 2%">Consider in gross salary</label>
+                        <input type="radio" name="show" value="net" ngModel #show="ngModel" style="margin-right: 1%" required />
+                        <label for="netsalary">Not Consider in gross salary</label>
+                        @if (!show.valid && filterform.submitted) {
+                          <div class="invalid-tooltip">
+                            Please Select One!
+                          </div>
+                        }
+                      </div>
+                    }
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>

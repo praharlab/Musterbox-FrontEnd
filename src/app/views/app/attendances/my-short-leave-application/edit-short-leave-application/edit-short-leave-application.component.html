@@ -1,0 +1,42 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="mb-4">Edit Short Leave Application</h5>
+    @if (shortLeaveData) {
+      <form #editShortLeave="ngForm" novalidate>
+        <div class="col-md-12 row">
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" name="date" ngModel [(ngModel)]="shortLeaveData.date" #date="ngModel" [max]="maxDate" required />
+              <span>Date *</span>
+              @if (!date.valid && editShortLeave.submitted) {
+                <div class="invalid-tooltip">
+                  Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" type="text" name="remarks" [(ngModel)]="shortLeaveData.remarks"></textarea>
+              <span>Remarks</span>
+            </label>
+          </div>
+        </div>
+        <br />
+        <div class="col-md-12">
+          <button class="btn btn-primary mt-4" type="submit" (click)="onSubmit()">
+            {{ 'forms.submit' | translate }}
+          </button>
+          <button class="btn btn-danger btn-shadow mt-4" [routerLink]="adminRoot + '/attendances/my-short-leave-application'"
+            style="margin-left: 2%">
+            Cancel
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

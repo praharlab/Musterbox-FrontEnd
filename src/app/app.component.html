@@ -1,0 +1,12 @@
+<div class="h-100">
+  <app-session-time-out></app-session-time-out>
+  <!-- Theme colour switcher removed: the palette is fixed by the design system.
+  The chat bot used to share the isMultiColorActive flag with it, so it now
+  carries its own route condition; its own chatBotShow state does the rest. -->
+  @if (router.url != '/user/login') {
+    <app-chat-bot></app-chat-bot>
+  }
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+  <router-outlet></router-outlet>
+  <simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>
+</div>

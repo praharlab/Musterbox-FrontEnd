@@ -1,0 +1,50 @@
+diff --git a/node_modules/ngx-lightbox/lightbox.service.d.ts b/node_modules/ngx-lightbox/lightbox.service.d.ts
+index 15e386b..c4ef3a5 100644
+--- a/node_modules/ngx-lightbox/lightbox.service.d.ts
++++ b/node_modules/ngx-lightbox/lightbox.service.d.ts
+@@ -1,4 +1,4 @@
+-import { ApplicationRef, ComponentFactoryResolver, ComponentRef, Injector } from '@angular/core';
++import { ApplicationRef, ComponentRef, Injector } from '@angular/core';
+ import { LightboxConfig } from './lightbox-config.service';
+ import { LightboxEvent, IAlbum } from './lightbox-event.service';
+ import * as i0 from "@angular/core";
+@@ -9,7 +9,7 @@ export declare class Lightbox {
+     private _lightboxConfig;
+     private _lightboxEvent;
+     private _documentRef;
+-    constructor(_componentFactoryResolver: ComponentFactoryResolver, _injector: Injector, _applicationRef: ApplicationRef, _lightboxConfig: LightboxConfig, _lightboxEvent: LightboxEvent, _documentRef: any);
++    constructor(_componentFactoryResolver: Injector, _injector: Injector, _applicationRef: ApplicationRef, _lightboxConfig: LightboxConfig, _lightboxEvent: LightboxEvent, _documentRef: any);
+     open(album: Array<IAlbum>, curIndex?: number, options?: {}): void;
+     close(): void;
+     _createComponent(ComponentClass: any): ComponentRef<any>;
+diff --git a/node_modules/ngx-lightbox/lightbox.service.js b/node_modules/ngx-lightbox/lightbox.service.js
+index 39349a1..5445672 100644
+--- a/node_modules/ngx-lightbox/lightbox.service.js
++++ b/node_modules/ngx-lightbox/lightbox.service.js
+@@ -1,4 +1,4 @@
+-import { ApplicationRef, ComponentFactoryResolver, Inject, Injectable, Injector } from '@angular/core';
++import { ApplicationRef, createComponent, Inject, Injectable, Injector } from '@angular/core';
+ import { LightboxComponent } from './lightbox.component';
+ import { LightboxConfig } from './lightbox-config.service';
+ import { LightboxEvent, LIGHTBOX_EVENT } from './lightbox-event.service';
+@@ -54,16 +54,16 @@ export class Lightbox {
+         }
+     }
+     _createComponent(ComponentClass) {
+-        const factory = this._componentFactoryResolver.resolveComponentFactory(ComponentClass);
+-        const component = factory.create(this._injector);
++        // Angular 22 removed ComponentFactoryResolver (patched via patch-package)
++        const component = createComponent(ComponentClass, { environmentInjector: this._applicationRef.injector, elementInjector: this._injector });
+         return component;
+     }
+ }
+-Lightbox.ɵfac = function Lightbox_Factory(t) { return new (t || Lightbox)(i0.ɵɵinject(i0.ComponentFactoryResolver), i0.ɵɵinject(i0.Injector), i0.ɵɵinject(i0.ApplicationRef), i0.ɵɵinject(i1.LightboxConfig), i0.ɵɵinject(i2.LightboxEvent), i0.ɵɵinject(DOCUMENT)); };
++Lightbox.ɵfac = function Lightbox_Factory(t) { return new (t || Lightbox)(i0.ɵɵinject(i0.Injector), i0.ɵɵinject(i0.Injector), i0.ɵɵinject(i0.ApplicationRef), i0.ɵɵinject(i1.LightboxConfig), i0.ɵɵinject(i2.LightboxEvent), i0.ɵɵinject(DOCUMENT)); };
+ Lightbox.ɵprov = /*@__PURE__*/ i0.ɵɵdefineInjectable({ token: Lightbox, factory: Lightbox.ɵfac });
+ (function () { (typeof ngDevMode === "undefined" || ngDevMode) && i0.ɵsetClassMetadata(Lightbox, [{
+         type: Injectable
+-    }], function () { return [{ type: i0.ComponentFactoryResolver }, { type: i0.Injector }, { type: i0.ApplicationRef }, { type: i1.LightboxConfig }, { type: i2.LightboxEvent }, { type: undefined, decorators: [{
++    }], function () { return [{ type: i0.Injector }, { type: i0.Injector }, { type: i0.ApplicationRef }, { type: i1.LightboxConfig }, { type: i2.LightboxEvent }, { type: undefined, decorators: [{
+                 type: Inject,
+                 args: [DOCUMENT]
+             }] }]; }, null); })();

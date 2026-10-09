@@ -1,0 +1,60 @@
+@if (showMood && permissionMood.length > 0) {
+  <section id="print">
+    @if (hide) {
+      <div class="moodWidget">
+        @if (showCard) {
+          <div class="moodCard">
+            @if (!selectedEmoji) {
+              <div>
+                <p class="moodCard__prompt">How is your mood?</p>
+                <div class="emoji-container">
+                  <button type="button" class="emoji" (click)="selectEmoji('happy')" title="Happy" aria-label="Happy">😊</button>
+                  <button type="button" class="emoji" (click)="selectEmoji('notSure')" title="Not Sure" aria-label="Not Sure">🤔</button>
+                  <button type="button" class="emoji" (click)="selectEmoji('stressed')" title="Stressed" aria-label="Stressed">😩</button>
+                  <button type="button" class="emoji" (click)="selectEmoji('sad')" title="Sad" aria-label="Sad">😞</button>
+                  <button type="button" class="emoji" (click)="selectEmoji('angry')" title="Angry" aria-label="Angry">😡</button>
+                  <button type="button" class="emoji" (click)="selectEmoji('ok')" title="OK" aria-label="OK">👌</button>
+                </div>
+              </div>
+            }
+            @if (selectedEmoji) {
+              <p class="moodCard__prompt m-0">Thank you for your feedback! 😊</p>
+            }
+          </div>
+        }
+        <button
+          type="button"
+          class="moodLauncher"
+          [class.moodLauncher--open]="showCard"
+          [attr.aria-expanded]="showCard"
+          (click)="toggleCard()"
+          title="How is your mood?"
+          aria-label="How is your mood?"
+          >
+          <span class="moodLauncher__face" aria-hidden="true">😊</span>
+        </button>
+      </div>
+    }
+  </section>
+}
+
+@if (chatCountShow) {
+  <section>
+    <div id="print" class="chat-icon">
+      <a (click)="onChatClick()">
+        <div class="position-relative d-inline-flex">
+          <span class="badge badge-primary-custom rounded-circle position-absolute top-0 end-0 translate-middle p-1"
+            style="font-size: 12px; right: 0px; bottom: 30px">
+            {{ chatCount }}
+          </span>
+          <span class="glyph-icon iconsminds-speach-bubble tool_tip" style="font-size: 32px; color: white"
+          tooltip="chat"></span>
+        </div>
+        {{ ' ' }}
+      </a>
+    </div>
+  </section>
+}
+
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

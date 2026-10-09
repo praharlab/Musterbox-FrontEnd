@@ -1,0 +1,114 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+@if (permissioncreate.length != 0) {
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-4">Fill Form</h5>
+      <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+        @for (value of values; track value; let i = $index) {
+          <div class="row">
+            <div class="col-md-12">
+              <p style="text-align: justify; font-size: 14px !important; font-weight: 600 !important">
+                {{ i + 1 }}. &nbsp;&nbsp;{{ value.skillSet }}*
+              </p>
+            </div>
+            <div class="col-md-3 leftside">
+              <div class="radio-group d-flex justify-content-between">
+                <label class="radio-label">
+                  <input
+                    type="radio"
+                    class="radio-button"
+                    required
+                    name="skillsetsForm{{ i }}"
+                    [value]="0"
+                    (change)="onSkillSetChange(i, 0)"
+                    />
+                    <span>0%</span>
+                  </label>
+                  <label class="radio-label">
+                    <input
+                      type="radio"
+                      class="radio-button"
+                      required
+                      name="skillsetsForm{{ i }}"
+                      [value]="25"
+                      (change)="onSkillSetChange(i, 25)"
+                      />
+                      <span>25%</span>
+                    </label>
+                    <label class="radio-label">
+                      <input
+                        type="radio"
+                        class="radio-button"
+                        required
+                        name="skillsetsForm{{ i }}"
+                        [value]="50"
+                        (change)="onSkillSetChange(i, 50)"
+                        />
+                        <span>50%</span>
+                      </label>
+                      <label class="radio-label">
+                        <input
+                          type="radio"
+                          class="radio-button"
+                          required
+                          name="skillsetsForm{{ i }}"
+                          [value]="75"
+                          (change)="onSkillSetChange(i, 75)"
+                          />
+                          <span>75%</span>
+                        </label>
+                        <label class="radio-label">
+                          <input
+                            type="radio"
+                            class="radio-button"
+                            required
+                            name="skillsetsForm{{ i }}"
+                            [value]="100"
+                            (change)="onSkillSetChange(i, 100)"
+                            />
+                            <span>100%</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  <div class="row mt-4">
+                    <div class="col-md-4">
+                      <label class="form-group has-float-label">
+                        <ng-select
+                          placeholder="Choose your option"
+                          ngModel
+                          #reportsToID="ngModel"
+                          name="reportsToID"
+                          required
+                          >
+                          @for (item of reportsTo; track item) {
+                            <ng-option [value]="item.userMasterID">
+                              {{ item.name }}
+                            </ng-option>
+                          }
+                        </ng-select>
+                        <span>Select ReportsTo</span>
+                        @if (!reportsToID.valid && addcomp.submitted) {
+                          <div class="invalid-tooltip">
+                            ReportsTo is required!
+                          </div>
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <button class="btn btn-primary form-group" type="submit">
+                      {{ 'forms.submit' | translate }}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          }
+
+          <simple-notifications
+            [options]="{ position: ['top', 'center'], maxStack: 1 }"
+          ></simple-notifications>

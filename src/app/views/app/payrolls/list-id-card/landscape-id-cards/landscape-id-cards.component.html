@@ -1,0 +1,416 @@
+<!-- <section class="landscape-container"> -->
+@if (!idCardForAsopalav) {
+  <div class="row" style="width: 1200px !important; margin: auto"
+    #screen2>
+    @for (item of idCardDataArray; track item) {
+      <div class="col-6" style="margin: 25px 0">
+        <div class="container">
+          <div class="row">
+            <div class="col-12" style="filter: drop-shadow(1px 1px 1px black)">
+              <div class="padding">
+                <div class="font1">
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="center" style="margin: 0% auto">
+                        <img class="img2" style="object-fit: cover; width: auto" height="50" width="100"
+                          src="{{ apiURL }}uploads/company/logo/{{ item.idCardData.companyLogo }}" />
+                        </div>
+                      </div>
+                      @if (item) {
+                        <div class="col-6 companyname2 modernWay">
+                          @if (item.idCardData.companyAddress) {
+                            <span style="height: 57.55px !important">
+                              {{ item.idCardData.companyAddress }}
+                            </span>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Address center" style="line-height: 15px">
+                          @if (item) {
+                            <span style="font-size: 14px">
+                              <b>{{ item.idCardData.companyName }}</b>
+                            </span>
+                          }
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <!-- Empty column -->
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 center" style="margin: 10px 0 0 0">
+                        <div class="top2">
+                          @if (item.idCardData.userPhoto) {
+                            <img
+                              src="{{ apiURL }}uploads/user/photo/{{ item.idCardData.userPhoto }}" alt="" />
+                          }
+                          @if (!item.idCardData.userPhoto) {
+                            <img src="/assets/img/profiles/avatar-default.png" alt="" />
+                          }
+                        </div>
+                        <div class="ename2">
+                          <p class="p1">
+                            @if (item) {
+                              <b>
+                                {{ item.idCardData.userFirstName }} {{ item.idCardData.userLastName }}
+                              </b>
+                            }
+                          </p>
+                          @if (item.idCardData.designationName) {
+                            <p>
+                              {{ item.idCardData.designationName }}
+                            </p>
+                          }
+                          @if (!item.idCardData.designationName) {
+                            <p style="visibility: hidden">
+                              designation
+                            </p>
+                          }
+                        </div>
+                        <div>
+                          @if (item.idCardData) {
+                            <span style="font-size: 10px">
+                              <b>{{ item.idCardData.employeeCode }}</b>
+                            </span>
+                          }
+                          @if (
+                            item.idCardData.employeeCode == null || item.idCardData.employeeCode == ''
+                            ) {
+                            <span style="font-size: 10px; visibility: hidden">
+                              <b>tk202302023</b>
+                            </span>
+                          }
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="edetails2">
+                          <div class="Address2">
+                            <b>Mobile No</b>
+                            <span style="padding-left: 32px">:&nbsp;</span>
+                            @if (item.idCardData.userNumber) {
+                              <span>
+                                {{ item.idCardData.userNumber }}
+                              </span>
+                            }
+                          </div>
+                          <div class="Address2">
+                            <b>Date Of Joining</b>
+                            <span style="padding-left: 4px">:&nbsp;</span>
+                            @if (item.idCardData.joiningDate != ' ') {
+                              <span>
+                                {{ item.idCardData.joiningDate | date: 'dd/MM/yyyy' }}
+                              </span>
+                            }
+                          </div>
+                          <div class="Address2">
+                            <b>Date Of Birth &nbsp;</b>
+                            <span style="padding-left: 8px">:&nbsp;</span>
+                            @if (item.idCardData.dob != ' ') {
+                              <span>
+                                {{ item.idCardData.dob | date: 'dd/MM/yyyy' }}
+                              </span>
+                            }
+                          </div>
+                          <div class="Address2">
+                            <b>Blood Group</b>
+                            <span style="padding-left: 19px">:&nbsp;</span>
+                            @if (item.idCardData.bloodgroup) {
+                              <span>
+                                {{ item.idCardData.bloodgroup }}
+                              </span>
+                            }
+                          </div>
+                          <div class="Address2 modernWay" style="line-height: 15px; height: 46.67px">
+                            <span><b>Address</b></span>
+                            <span style="padding-left: 44px">:&nbsp;</span>
+                            @if (item) {
+                              <span>
+                                @if (item.idCardData.houseNumber ) {
+                                  <span>
+                                    {{ item.idCardData.houseNumber }},
+                                  </span>
+                                }
+                                @if (item.idCardData.houseName ) {
+                                  <span>
+                                    {{ item.idCardData.houseName }},
+                                  </span>
+                                }
+                                @if (item.idCardData.landmark ) {
+                                  <span>
+                                    {{ item.idCardData.landmark }},
+                                  </span>
+                                }
+                                @if (item.idCardData.cityName ) {
+                                  <span>
+                                    {{ item.idCardData.cityName }}
+                                  </span>
+                                }
+                                @if (item.idCardData.zipcode ) {
+                                  <span>
+                                    -{{ item.idCardData.zipcode }}
+                                  </span>
+                                }
+                              </span>
+                            }
+                          </div>
+                        </div>
+                        <div class="row" style="margin: 8% 0 0 0px">
+                          <div class="col-6">
+                            <div class="signature2">
+                              @if (item.idCardData.userSignature) {
+<img src="{{ apiURL }}uploads/user/signature/{{
+                            item.idCardData.userSignature
+                          }}" height="40" width="100" alt="" />
+                              }
+                              @if (!item.idCardData.userSignature) {
+                                <div style="width: 100px; height: 40px"></div>
+                              }
+                              <b style="font-size: 10px">Employee Signature</b>
+                            </div>
+                          </div>
+                          <div class="col-6">
+                            <div class="signature2">
+                              @if (item.idCardData.authorizedSignature) {
+<img src="{{ apiURL }}uploads/company/signature/{{
+                            item.idCardData.authorizedSignature
+                          }}" height="40" width="100" alt="" />
+                              }
+                              @if (!item.idCardData.authorizedSignature) {
+                                <div style="width: 100px; height: 40px"></div>
+                              }
+                              <b style="font-size: 10px">Authorized Signature</b>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (idCardForAsopalav == true) {
+    <div class="row" style="width: 1200px !important; margin: auto" #screen2>
+      @for (item of idCardDataArray; track item) {
+        <div class="col-6" style="margin: 25px 0">
+          <div class="container">
+            <div class="row">
+              <div class="col-12" style="filter: drop-shadow(1px 1px 1px black)">
+                <div class="padding">
+                  <div class="font1">
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="center" style="margin: 0% auto">
+                          <img class="img2" style="object-fit: cover; width: auto" height="50" width="100"
+                            src="{{ apiURL }}uploads/company/logo/{{ item.idCardData.companyLogo }}" />
+                          </div>
+                        </div>
+                        @if (item) {
+                          <div class="col-6 companyname2 modernWay">
+                            @if (item.idCardData.companyAddress) {
+                              <span style="height: 57.55px !important">
+                                {{ item.idCardData.companyAddress }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+                      <div class="row">
+                        <div class="col-6">
+                          <div class="Address center" style="line-height: 15px">
+                            @if (item) {
+                              <span style="font-size: 14px">
+                                <b>{{ item.idCardData.companyName }}</b>
+                              </span>
+                            }
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <!-- Empty column -->
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-6 center">
+                          <div class="top2">
+                            @if (item.idCardData.userPhoto) {
+                              <img
+                                src="{{ apiURL }}uploads/user/photo/{{ item.idCardData.userPhoto }}" alt="" />
+                            }
+                            @if (!item.idCardData.userPhoto) {
+                              <img src="/assets/img/profiles/avatar-default.png" alt="" />
+                            }
+                          </div>
+                          <div class="ename2">
+                            <p class="p1">
+                              @if (item) {
+                                <b>
+                                  {{ item.idCardData.userFirstName }} {{ item.idCardData.userLastName }}
+                                </b>
+                              }
+                            </p>
+                            @if (item.idCardData.departmentName) {
+                              <p>
+                                {{ item.idCardData.departmentName }}
+                              </p>
+                            }
+                            @if (!item.idCardData.departmentName) {
+                              <p style="visibility: hidden">
+                                department
+                              </p>
+                            }
+                            @if (item.idCardData.designationName) {
+                              <p>
+                                {{ item.idCardData.designationName }}
+                              </p>
+                            }
+                            @if (!item.idCardData.designationName) {
+                              <p style="visibility: hidden">
+                                designation
+                              </p>
+                            }
+                          </div>
+                          <div>
+                            @if (item.idCardData) {
+                              <span style="font-size: 10px">
+                                <b>{{ item.idCardData.employeeCode }}</b>
+                              </span>
+                            }
+                            @if (
+                              item.idCardData.employeeCode == null || item.idCardData.employeeCode == ''
+                              ) {
+                              <span style="font-size: 10px; visibility: hidden">
+                                <b>tk202302023</b>
+                              </span>
+                            }
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="edetailsAsoplav2">
+                            <div class="Address2">
+                              <b>Mobile No</b>
+                              <span style="padding-left: 32px">:&nbsp;</span>
+                              @if (item.idCardData.userNumber) {
+                                <span>
+                                  <b>{{ item.idCardData.userNumber }}</b>
+                                </span>
+                              }
+                            </div>
+                            <div class="Address2">
+                              <b>Emergency No</b>
+                              <span style="padding-left: 8px">:&nbsp;</span>
+                              @if (item.idCardData.otherContactNumber) {
+                                <span>
+                                  <b>{{ item.idCardData.otherContactNumber }}</b>
+                                </span>
+                              }
+                            </div>
+                            <div class="Address2">
+                              <b>Date Of Joining</b>
+                              <span style="padding-left: 4px">:&nbsp;</span>
+                              @if (item.idCardData.joiningDate != ' ') {
+                                <span>
+                                  <b>{{ item.idCardData.joiningDate | date: 'dd/MM/yyyy' }}</b>
+                                </span>
+                              }
+                            </div>
+                            <div class="Address2">
+                              <b>Date Of Birth &nbsp;</b>
+                              <span style="padding-left: 8px">:&nbsp;</span>
+                              @if (item.idCardData.dob != ' ') {
+                                <span>
+                                  <b>{{ item.idCardData.dob | date: 'dd/MM/yyyy' }}</b>
+                                </span>
+                              }
+                            </div>
+                            <div class="Address2">
+                              <b>Blood Group</b>
+                              <span style="padding-left: 19px">:&nbsp;</span>
+                              @if (item.idCardData.bloodgroup) {
+                                <span>
+                                  <b>{{ item.idCardData.bloodgroup }}</b>
+                                </span>
+                              }
+                            </div>
+                            <div class="AddressAsoplav2 modernWay" style="line-height: 15px; height: 41.67px">
+                              <span><b>Address</b></span>
+                              <span style="padding-left: 44px">:&nbsp;</span>
+                              @if (item) {
+                                <span>
+                                  @if (item.idCardData.houseNumber) {
+                                    <span>
+                                      <b>{{ item.idCardData.houseNumber }},</b>
+                                    </span>
+                                  }
+                                  @if (item.idCardData.houseName) {
+                                    <span>
+                                      <b>{{ item.idCardData.houseName }},</b>
+                                    </span>
+                                  }
+                                  @if (item.idCardData.landmark) {
+                                    <span>
+                                      <b>{{ item.idCardData.landmark }},</b>
+                                    </span>
+                                  }
+                                  @if (item.idCardData.cityName) {
+                                    <span>
+                                      <b>{{ item.idCardData.cityName }}</b>
+                                    </span>
+                                  }
+                                  @if (item.idCardData.zipcode) {
+                                    <span>
+                                      <b>-{{ item.idCardData.zipcode }}</b>
+                                    </span>
+                                  }
+                                </span>
+                              }
+                            </div>
+                          </div>
+                          <div class="row" style="margin: 8% 0 0 0px">
+                            <div class="col-6" style="visibility: hidden;">
+                              <div class="signature2">
+                                @if (item.idCardData.userSignature) {
+<img src="{{ apiURL }}uploads/user/signature/{{
+                            item.idCardData.userSignature
+                          }}" height="40" width="100" alt="" />
+                                }
+                                @if (!item.idCardData.userSignature) {
+                                  <div style="width: 100px; height: 40px"></div>
+                                }
+                                <b style="font-size: 10px">Employee Signature</b>
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="signature2">
+                                @if (item.idCardData.authorizedSignature) {
+<img src="{{ apiURL }}uploads/company/signature/{{
+                            item.idCardData.authorizedSignature
+                          }}" height="40" width="100" alt="" />
+                                }
+                                @if (!item.idCardData.authorizedSignature) {
+                                  <div style="width: 100px; height: 40px"></div>
+                                }
+                                <b style="font-size: 10px">Authorized Signature</b>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  <!-- </section> -->

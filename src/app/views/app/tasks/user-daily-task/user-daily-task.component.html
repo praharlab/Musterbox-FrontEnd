@@ -1,0 +1,355 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="My Daily Reporting" [showOrderBy]="false" [showDisplayMode]="false" [showSearch]="false"
+  (itemsPerPageChange)="onLimitChange($event)" [itemsPerPage]="filterData.limit"
+  [itemOptionsPerPage]="itemOptionsPerPage" (addNewItem)="lgModal.show()"
+[showadd]="permissioncreate"></app-list-page-header>
+<!-- <div class="row">
+<div class="col-12">
+  <app-heading></app-heading>
+  <app-breadcrumb></app-breadcrumb>
+  <div class="separator mb-5"></div>
+</div>
+</div> -->
+<!-- <div style="text-align: right;" *ngIf="permissioncreate.length!=0">
+<button class="btn btn-info mb-1" (click)="showAddNewModal1()" >Add</button>
+</div> -->
+<br />
+<div class="card mb-4">
+  <div class="card-body">
+    <form #addcomp2="ngForm" novalidate (ngSubmit)="onSubmit2()">
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate" required />
+            <span>From Date *</span>
+            @if (!startdate.valid && addcomp2.submitted) {
+              <div class="invalid-tooltip">
+                From Date is required!
+              </div>
+            }
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" required />
+            <span>To Date *</span>
+            @if (!enddate.valid && addcomp2.submitted) {
+              <div class="invalid-tooltip">
+                To Date is required!
+              </div>
+            }
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit">
+        {{ 'forms.submit' | translate }}
+      </button>
+    </form>
+  </div>
+</div>
+<br />
+@if (rows) {
+  <div class="row">
+    <div class="col-12 mb-4 data-table-rows">
+      <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+        [limit]="filterData.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+        (page)="onChange($event)">
+        <ngx-datatable-column name="Task Date" prop="taskDate" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{row.taskDate | date:'dd-MM-yyyy'}}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Task Description" prop="taskDesc" [flexGrow]="1.2"
+        [width]="180"></ngx-datatable-column>
+        <ngx-datatable-column name="Attachment" [flexGrow]="1.2" [width]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            @if (row.attachments && row.attachments.length > 0) {
+              @for (attachment of row.attachments; track attachment) {
+                <div class="attachments">
+                  <div style="position: relative; display: inline-block;" (click)="view(attachment)">
+                    <span class="attachment">
+                      <i class="simple-icon-paper-clip"></i>&nbsp;
+                      {{ attachment.length > 18 ? (attachment.substring(0, 16) + '...' +
+                      attachment.split('.').pop()) : attachment }}
+                    </span>
+                  </div>
+                </div>
+              }
+            }
+            @if (row.attachment) {
+              <a type="button" class="btn btn-primary" href="{{ apiURL }}uploads/dailyTask/{{ row.attachment }}"
+                target="_blank">
+                {{ 'View Attachment' | translate }}
+              </a>
+            }
+            {{ ' ' }}
+          </ng-template>
+        </ngx-datatable-column>
+        @if (permissionedit.length != 0 || permissiondelete.length != 0) {
+          <ngx-datatable-column name="Action" [sortable]="true" [width]="230"
+            >
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (today == row.taskDate) {
+                <a (click)="edit(row.dailyTaskID); lgModal1.show()">
+                  @if (permissionedit.length != 0) {
+                    <span tooltip="Edit Task" [class]="'glyph-icon simple-icon-pencil tool_tip'"
+                    style="padding-right: 10px; font-size: 18px"></span>
+                  }
+                  {{ ' ' }}
+                </a>
+              }
+              @if (today == row.taskDate) {
+                <a (click)="alertConfirmation(row.dailyTaskID)">
+                  @if (permissiondelete.length != 0) {
+                    <span tooltip="Delete Task" [class]="'glyph-icon simple-icon-trash tool_tip'"
+                    style="padding-right: 6px; font-size: 18px"></span>
+                  }
+                  {{ ' ' }}
+                </a>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+        }
+        @if (true) {
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+              <div class="w-100 d-flex justify-content-center">
+                <pagination [totalItems]="rowCount" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate" [itemsPerPage]="filterData.limit" [maxSize]="5"
+                  (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                [customPreviousTemplate]="prevTemplate"></pagination>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
+        }
+      </ngx-datatable>
+    </div>
+  </div>
+}
+
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-right"></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+  <i class="simple-icon-arrow-left"></i>
+</ng-template>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add Daily Task</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addcomp="ngForm" novalidate (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-12">
+              <label class="form-group has-float-label">
+                <textarea class="form-control" ngModel #description="ngModel" name="description" required></textarea>
+                @if (!description.valid && addcomp.submitted) {
+                  <div class="invalid-tooltip">
+                    Description is required!
+                  </div>
+                }
+                <span>Task Description *</span>
+              </label>
+            </div>
+          </div>
+
+          @for (file of addFilesArray; track file; let i = $index) {
+            <div class="row"
+              [ngClass]="{'d-none': file.deleted === true,'col-md-12 my-2': true}">
+              <div class="col-md-6">
+                <label class="form-group has-float-label">
+                  <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .xlsx, .csv, .pdf,application/msword"
+                    placeholder="" (change)="onFileChange($event,i,'add')" />
+                    <span>Attachment</span>
+                  </label>
+                </div>
+                @if (i == 0) {
+                  <div class="col-md-6">
+                    <button class="btn btn-success float-right" type="button" (click)="addFile('add')">Add</button>
+                  </div>
+                }
+                <div class="col-md-3">
+                  @if (i != 0) {
+                    <button class="btn btn-danger" type="button" (click)="removeFile(i,'add')">
+                      <span [class]="'glyph-icon simple-icon-trash tool_tip'" style="color: white"></span>
+                      {{ ' ' }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- <div class="col-md-12">
+
+          </div> -->
+
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #lgModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1" [config]="{backdrop: 'static', keyboard: false}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Edit Task</h4>
+        <button type="button" class="btn-close close pull-right" (click)="lgModal1.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @if (editTaskDATA) {
+          <form #addcomp1="ngForm" novalidate (ngSubmit)="onSubmit1()">
+            <!-- <div class="row"> -->
+            <!-- <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <textarea class="form-control" ngModel #description="ngModel" name="description" required
+              [(ngModel)]="editTaskDATA.taskDesc"></textarea>
+              <div *ngIf="!description.valid && addcomp1.submitted" class="invalid-tooltip">
+                Description is required!
+              </div>
+              <span>Task Description</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="file" multiple="true"
+                accept=".png, .jpg, .jpeg, .xlsx, .csv, .pdf,application/msword" placeholder=""
+                (change)="onFileChange($event)" />
+                <span>Attachment</span>
+              </label>
+            </div> -->
+            <div class="row">
+              <div class="col-md-12">
+                <label class="form-group has-float-label">
+                  <textarea class="form-control" ngModel #description="ngModel" name="description" required
+                  [(ngModel)]="editTaskDATA.taskDesc"></textarea>
+                  @if (!description.valid && addcomp1.submitted) {
+                    <div class="invalid-tooltip">
+                      Description is required!
+                    </div>
+                  }
+                  <span>Task Description</span>
+                </label>
+              </div>
+            </div>
+            @for (file of editFilesArray; track file; let i = $index) {
+              <div class="row"
+                [ngClass]="{'d-none': file.deleted === true,'col-md-12 my-2': true}">
+                <div class="col-md-6">
+                  <label class="form-group has-float-label">
+                    <input class="form-control" type="file" accept=".png, .jpg, .jpeg, .xlsx, .csv, .pdf,application/msword"
+                      placeholder="" (change)="onFileChange($event,i,'edit')" />
+                      <span>Attachment</span>
+                    </label>
+                  </div>
+                  @if (i == 0) {
+                    <div class="col-md-6">
+                      <button class="btn btn-success float-right" type="button" (click)="addFile('edit')">Add</button>
+                    </div>
+                  }
+                  <div class="col-md-3">
+                    @if (i != 0) {
+                      <button class="btn btn-danger" type="button" (click)="removeFile(i,'edit')">
+                        <span [class]="'glyph-icon simple-icon-trash tool_tip'" style="color: white"></span>
+                        {{ ' ' }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+              <!-- <div class="col-md-12">
+              <button class="btn btn-success float-right" type="button" (click)="addFile('edit')">Add</button>
+            </div> -->
+            <br />
+            <div class="col-md-6">
+              <label class="form-group has-float-label">
+                @if (EditOldAttachments && EditOldAttachments.length > 0) {
+                  <div style="margin-top: 15px; margin-bottom: 10px;"
+                    >
+                    <b>Attachments:</b>
+                    @for (attachment1 of EditOldAttachments; track attachment1) {
+                      <div class="attachments">
+                        <div style="position: relative; display: inline-block;" (click)="view(attachment1)">
+                          <span class="attachment">
+                            <i class="simple-icon-paper-clip"></i>&nbsp;
+                            {{ attachment1.length > 18 ? (attachment1.substring(0, 16) + '...' +
+                            attachment1.split('.').pop()) : attachment1 }}
+                          </span>
+                        </div>
+                        <span (click)="changeRemoveItem( attachment1)" style="padding-left: 10px;" tooltip="Delete File"
+                        [class]="'glyph-icon simple-icon-trash tool_tip'"></span>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (editTaskDATA.attachment) {
+                  <div>
+                    <p>
+                      <b>Attachment:</b>
+                      {{ editTaskDATA.attachment }}
+                    </p>
+                  </div>
+                }
+              </label>
+            </div>
+            <!-- <div class="col-md-6">
+            <label class="form-group has-float-label">
+              <div style="margin-top: 15px;margin-bottom: 10px;" *ngIf="EditOldAttachments && EditOldAttachments.length > 0">
+                <b>Attachments:</b>
+                <div class="attachments" *ngFor="let attachment of EditOldAttachments;">
+                  <div  style="position: relative; display: inline-block;" (click)="view(attachment.attachment)">
+                    <span class="attachment">
+                      <i class="simple-icon-paper-clip"></i>&nbsp;
+                      {{ attachment.attachment.length > 18 ? (attachment.attachment.substring(0, 16) + '...' +
+                      attachment.attachment.split('.').pop()) : attachment.attachment }}
+                    </span>
+                  </div>
+                  <button class="close pull-right" type="button" style="position: absolute; margin-left: 5px;"
+                    (click)="changeRemoveItem(attachment.attachment)"><span aria-hidden="true">&times;</span></button>
+                  </div>
+                </div>
+                <div *ngIf="editTaskDATA.attachment">
+                  <p>
+                    <b>Attachment:</b>
+                    {{ editTaskDATA.attachment }}
+                  </p>
+                </div>
+              </label>
+            </div> -->
+          <!-- </div> -->
+          <br />
+          <br />
+          <button class="btn btn-primary" type="submit">
+            {{ 'forms.submit' | translate }}
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+</div>
+</div>
+
+<simple-notifications [options]="{ position: ['top', 'center'], maxStack: 1 }"></simple-notifications>

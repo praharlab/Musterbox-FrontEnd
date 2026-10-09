@@ -1,0 +1,70 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+
+<div class="col-12">
+  <app-heading title="Notification"></app-heading>
+  <app-breadcrumb title="Notification"></app-breadcrumb>
+  <div class="separator mb-5"></div>
+</div>
+
+@for (notification of notificationList; track notification) {
+  <div class="row">
+    <div class="col-12 col-sm-12 col-lg-12 col-xl-12">
+      <div class="card d-flex flex-row mb-4">
+        <a class="d-flex" href="javascript:;">
+          @if (notification.attachment) {
+            <span>
+              @if (isImage(notification.attachment)) {
+                <img
+                  alt="Profile"
+                  src="{{ apiURL }}uploads/announcement/{{ notification.attachment }}"
+                  (click)="view(notification.attachment)"
+                  class="img-thumbnail border-0 rounded-circle m-4 list-thumbnail align-self-center"
+                  style="height: 90px; width: 90px"
+                  />
+                } @else {
+                  <div
+                    class="img-thumbnail border-0 rounded-circle m-4 list-thumbnail align-self-center"
+              style="
+                height: 90px;
+                width: 90px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+                    >
+                    @if (notification.attachment !== '') {
+                      <button
+                        class="btn btn-primary btn-sm"
+                        type="button"
+                        (click)="handleViewButtonClick(notification.attachment)"
+                        >
+                        View
+                      </button>
+                    }
+                  </div>
+                }
+              </span>
+            }
+          </a>
+          <div class="d-flex flex-grow-1 min-width-zero" style="padding-left: 60px">
+            <div
+              class="card-body pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
+              style="font-family: Arial, Helvetica, sans-serif"
+              >
+              <div class="min-width-zero">
+                <p class="list-item-heading mb-1 truncate">
+                  <span [innerHTML]="notification.announcement | safe: 'html'"></span>
+                </p>
+              </div>
+              <div class="notification-footer">
+                <p class="notification-date">{{ notification.announcementDate | date }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-12 col-lg-6 col-xl-6"></div>
+    </div>
+  }

@@ -1,0 +1,47 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header [showOrderBy]="false" [showDisplayMode]="false" [showItemsPerPage]="false" [showSearch]="false"
+name="Task Dashboard"></app-list-page-header>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12">
+        <form #companyFilter="ngForm" novalidate>
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-group has-float-label">
+                <ng-select placeholder="Choose your option" (change)="onCompanyIdChange($event)" ngModel
+                  #companyMasterID="ngModel" name="companyMasterID" [(ngModel)]="defaultCompany">
+                  @for (company of companyData; track company) {
+                    <ng-option [value]="company.companyMasterID">
+                      {{ company.companyName }}
+                    </ng-option>
+                  }
+                </ng-select>
+                <span>Select Company</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="mb-4">
+      <app-pending-task-percentage-wise-graph></app-pending-task-percentage-wise-graph>
+    </div>
+
+    <div class="mb-4">
+      <app-task-created-and-start-date-graph></app-task-created-and-start-date-graph>
+    </div>
+
+    <div class="mb-4">
+      <app-task-status-count-by-company-graph></app-task-status-count-by-company-graph>
+    </div>
+    <div class="mb-4">
+      <app-task-status-count-by-users-graph></app-task-status-count-by-users-graph>
+    </div>
+
+    <ng-container #componentContainer></ng-container>
+  </div>
+</div>

@@ -1,0 +1,146 @@
+<div style="position: relative">
+  <ngx-ui-loader></ngx-ui-loader>
+</div>
+<app-list-page-header name="My Asset" [showOrderBy]="false" [showDisplayMode]="false"
+  [searchValue]="body1.searchQuery"  (itemsPerPageChange)="onLimitChange($event)" (searchKeyUp)="updateFilter($event)" [itemsPerPage]="body1.limit"
+[itemOptionsPerPage]="itemOptionsPerPage"></app-list-page-header>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form #filterdate="ngForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-3">
+          <label class="form-group has-float-label">
+            <input class="form-control" type="date" ngModel #startdate="ngModel" name="startdate"
+              (change)="selectfrom()" required />
+              <span>From Date *</span>
+              @if (!startdate.valid && filterdate.submitted) {
+                <div class="invalid-tooltip">
+                  From Date is required!
+                </div>
+              }
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="form-group has-float-label">
+              <input class="form-control" type="date" ngModel #enddate="ngModel" name="enddate" required />
+              <span>To Date *</span>
+              @if (!enddate.valid && filterdate.submitted) {
+                <div class="invalid-tooltip">
+                  To Date is required!
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="col-md-3">
+            <button class="btn btn-primary form-group" type="submit">
+              {{ 'forms.submit' | translate }}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-primary form-group" type="button" (click)="clear()">Clear</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  @if (rows) {
+    <div class="row">
+      <div class="col-12 data-table-rows" style="width: 100%">
+        <ngx-datatable [scrollbarH]="true" [rowHeight]="50" [rows]="rows" [footerHeight]="100" [columnMode]="'force'"
+          [limit]="body1.limit" [externalPaging]="true" [count]="page.totalCount" [offset]="page.offset"
+          (page)="onChange($event)">
+          <ngx-datatable-column name="Sr No." [flexGrow]="1.2" [width]="80">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
+              {{ body1.limit * (body1.page - 1) + rowIndex + 1 }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Name" prop="employee.displayName" [flexGrow]="1.2"
+          [width]="160"></ngx-datatable-column>
+          <ngx-datatable-column name="Assign Date" prop="assignDate" [flexGrow]="1.2" [width]="160">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.assignDate | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Return Date" prop="returnDate" [flexGrow]="1.2" [width]="160">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.returnDate | date: 'dd-MM-yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Asset Images" [flexGrow]="1.2" [width]="160">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              @if (row.assetImages?.length != 0) {
+                <button class="btn btn-success" (click)="getImage(row); lgModal.show()">
+                  Image
+                  {{ ' ' }}
+                </button>
+              }
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Asset Category" prop="assetCategory.assetCategory" [flexGrow]="1.2"
+          [width]="160"></ngx-datatable-column>
+          <ngx-datatable-column name="Asset Name" prop="assetMaster.assetName" [flexGrow]="1.2"
+          [width]="160"></ngx-datatable-column>
+          @if (true) {
+            <ngx-datatable-footer>
+              <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+                let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset" let-limit="limit">
+                <div class="w-100 d-flex justify-content-center">
+                  <pagination [totalItems]="rowCount" [itemsPerPage]="pageSize" [maxSize]="5"
+                    (pageChanged)="table.onFooterPage($event)" [customNextTemplate]="nextTemplate"
+                    [customPreviousTemplate]="prevTemplate" [boundaryLinks]="true" [customFirstTemplate]="firstTemplate"
+                  [customLastTemplate]="lastTemplate"></pagination>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
+          }
+        </ngx-datatable>
+      </div>
+    </div>
+  }
+
+  <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+  <ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right" style="margin-right:-6px;"></i>
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-right"></i>
+  </ng-template>
+  <ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class="simple-icon-arrow-left"></i>
+  </ng-template>
+
+  <div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1"   [config]="{backdrop: 'static', keyboard: false}"
+    >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Asset Images</h4>
+          <button type="button" class="btn-close close pull-right" (click)="lgModal.hide()" aria-label="Close"
+            #closeModal>
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form>
+            <div class="row" style="overflow: auto">
+              @for (data of images; track data) {
+                <div class="col-md-3">
+                  <label class="form-group has-float-label">
+                    <a href="{{ apiURL }}uploads/user/assets/{{ data }}" target="_blank">
+                      <img src="{{ apiURL }}uploads/user/assets/{{ data }}" alt="" width="200px" height="200px" />
+                    </a>
+                  </label>
+                </div>
+              }
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
