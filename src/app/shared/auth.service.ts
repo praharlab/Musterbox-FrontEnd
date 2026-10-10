@@ -74,9 +74,6 @@ export class AuthService {
 
   // eslint-disable-next-line
   async getUser() {
-    // Original code - restore once our own Firebase keys are added in environment files:
-    // const u = auth.currentUser;
-
     const u = auth.currentUser;
     return { ...u, role: getUserRole() };
   }
