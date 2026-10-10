@@ -1352,11 +1352,11 @@ export class ConstantService {
   CHECKUNASSIGNEDEMPLOYEECODEDATA = 'biometricintegration/v1/checkunassignedEmployeeCodeData';
   GETBIOMETRICINTEGRATIONBYCHILDPARENTCOMPANY = 'biometricintegration/v1/getbyChildParentCompany';
 
-  //tankhwapatraDatabaseList
-  GETDBNAME = 'tankhwapatraDatabaseList/v1/tankhwapatraDatabase';
-  GETTABLENAME = 'tankhwapatraDatabaseList/v1/tankhwapatraGetTable';
-  GETSERIALNO = 'tankhwapatraDatabaseList/v1/tankhwapatragetSerialNo';
-  CREATETABLE = 'tankhwapatraDatabaseList/v1/tankhwapatraCreateTable';
+  //MusterBoxDatabaseList
+  GETDBNAME = 'MusterBoxDatabaseList/v1/MusterBoxDatabase';
+  GETTABLENAME = 'MusterBoxDatabaseList/v1/MusterBoxGetTable';
+  GETSERIALNO = 'MusterBoxDatabaseList/v1/MusterBoxgetSerialNo';
+  CREATETABLE = 'MusterBoxDatabaseList/v1/MusterBoxCreateTable';
 
   //mannualAttendance
   ADDMANUALATTENDANCE = 'mannualAttendance/v1/addmanualAttendance';

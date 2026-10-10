@@ -97,7 +97,7 @@ export class ListCompanyContactComponent implements OnInit {
   viewAadhar: any = labelUtils.viewAadhar;
   showBankBranch: any = labelUtils.showBankBranch;
   bankIfscCodeLabel: any = labelUtils.bankIfscCodeLabel;
-  tankhwaPatraNameLabel: any = labelUtils.tankhwaPatraNameLabel;
+  MusterBoxNameLabel: any = labelUtils.MusterBoxNameLabel;
   showUanNumber: any = labelUtils.showUanNumber;
   showpfbankAccountNo: any = labelUtils.showpfbankAccountNo;
   showPanCard: any = labelUtils.showPanCard;
@@ -189,7 +189,7 @@ export class ListCompanyContactComponent implements OnInit {
       viewAadhar: this.viewAadhar,
       showBankBranch: this.showBankBranch,
       bankIfscCodeLabel: this.bankIfscCodeLabel,
-      tankhwaPatraNameLabel: this.tankhwaPatraNameLabel,
+      MusterBoxNameLabel: this.MusterBoxNameLabel,
       showUanNumber: this.showUanNumber,
       showpfbankAccountNo: this.showpfbankAccountNo,
       showPanCard: this.showPanCard,

@@ -32,7 +32,7 @@ export class AddSncodesComponent implements OnInit {
   finalbranch: string;
   finalholidaypolicy: string;
   selected: any[];
-  tankhwaPatraNameLabel: string = labelUtils.tankhwaPatraNameLabel;
+  MusterBoxNameLabel: string = labelUtils.MusterBoxNameLabel;
   constructor(
     private spinner: NgxUiLoaderService,
     private router: Router,
@@ -157,7 +157,7 @@ export class AddSncodesComponent implements OnInit {
       companyMasterID: this.add_sncodes.value.company,
       sn_code: this.add_sncodes.value.sn_code,
       userMasterID: this.add_sncodes.value.userMasterID,
-      tankhwaPatra_code: this.add_sncodes.value.tankhwaPatra_code,
+      MusterBox_code: this.add_sncodes.value.MusterBox_code,
       createBy: localStorage.getItem('id'),
       createByIp: this.ipAddress,
     };

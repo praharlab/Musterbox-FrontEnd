@@ -37,7 +37,7 @@ export class EditSncodesComponent implements OnInit {
   selected: any[];
   sn_codeData: any;
   formValue: any;
-  tankhwaPatraNameLabel: string = labelUtils.tankhwaPatraNameLabel;
+  MusterBoxNameLabel: string = labelUtils.MusterBoxNameLabel;
   constructor(
     private spinner: NgxUiLoaderService,
     public activatedRoute: ActivatedRoute,
@@ -185,7 +185,7 @@ export class EditSncodesComponent implements OnInit {
       companyMasterID: this.sn_codeData.userMaster.companyMasterId,
       sn_codeID: this.formValue.ListSncodesComponent.id,
       sn_code: this.edit_sncodes.value.sn_code,
-      tankhwaPatra_code: this.edit_sncodes.value.tankhwaPatra_code,
+      MusterBox_code: this.edit_sncodes.value.MusterBox_code,
       userMasterID: this.sn_codeData.userMasterID,
       updateBy: localStorage.getItem('id'),
       updateByIp: this.ipAddress,

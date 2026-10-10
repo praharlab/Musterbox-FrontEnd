@@ -1,7 +1,7 @@
 export const labelUtils = {
   defaultPolicy: 'Default Policy',
 
-  /* ----------------------------------------Tankhwa Patra---------------------------------------- */
+  /* ----------------------------------------SalaryPatra---------------------------------------- */
 
   // pfNumber: 'PF Number',
   // pfJoiningDate: 'PF Joining Date',
@@ -17,7 +17,7 @@ export const labelUtils = {
   // viewAadhar: 'View Aadhar',
   // showBankBranch: false,
   // bankIfscCodeLabel: 'Bank Ifsc Code',
-  // tankhwaPatraNameLabel: 'Tankhwa Patra',
+  // MusterBoxNameLabel: 'SalaryPatra',
   // showUanNumber: true,
   // showpfbankAccountNo: true,
   // showPanCard: true,
@@ -52,7 +52,7 @@ export const labelUtils = {
 
   /* ----------------------------------------Pacific International Hospital ( PIH )---------------------------------------- */
 
-  // tankhwaPatraNameLabel: 'Pacific International Hospital',
+  // MusterBoxNameLabel: 'Pacific International Hospital',
   // pfNumber: 'NASFUND',
   // pfJoiningDate: 'NASFUND Joining Date',
   // pfBank: 'NASFUND Bank',
@@ -114,7 +114,7 @@ export const labelUtils = {
   // viewAadhar: 'View Aadhar',
   // showBankBranch: false,
   // bankIfscCodeLabel: 'Bank Ifsc Code',
-  // tankhwaPatraNameLabel: 'Mars Consultancy',
+  // MusterBoxNameLabel: 'Mars Consultancy',
   // showUanNumber: true,
   // showpfbankAccountNo: true,
   // showPanCard: true,
@@ -165,7 +165,7 @@ export const labelUtils = {
   bankIfscCodeLabel: 'Bank Ifsc Code',
   // Neutral product-agnostic term. This one value drives the footer, data
   // column headers ("SN Code"), form labels and Excel export headers.
-  tankhwaPatraNameLabel: 'SN',
+  MusterBoxNameLabel: 'SN',
   showUanNumber: true,
   showpfbankAccountNo: true,
   showPanCard: true,
@@ -213,7 +213,7 @@ export const labelUtils = {
   // viewAadhar: 'View Aadhar',
   // showBankBranch: false,
   // bankIfscCodeLabel: 'Bank Ifsc Code',
-  // tankhwaPatraNameLabel: 'Harsha Engineering',
+  // MusterBoxNameLabel: 'Harsha Engineering',
   // showUanNumber: true,
   // showpfbankAccountNo: true,
   // showPanCard: true,

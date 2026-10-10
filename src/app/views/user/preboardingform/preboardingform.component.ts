@@ -74,7 +74,7 @@ export class PreboardingformComponent implements OnInit {
     this.getIPAddress();
     this.getallcountry()
     if (this.showCountryCodeSelected) {
-      this.selectedCountryCode = 103 //Default Selected India for Tankhwa Patra
+      this.selectedCountryCode = 103 //Default Selected India for SalaryPatra
     }
   }
   getcustomizefield() {

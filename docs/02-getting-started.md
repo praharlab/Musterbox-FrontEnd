@@ -62,9 +62,9 @@ isAuthGuardActive: true
 ```ts
 production:        true
 apiUrl:            'http://13.204.149.192:3210/'
-biometricApiUrl:   'https://www.aptavetan.com/'
-chatUrl:           'https://www.aptavetan.com'
-appLoginUrl:       'http://www.aptavetan.com/'
+biometricApiUrl:   'https://www.MusterBox/'
+chatUrl:           'https://www.MusterBox'
+appLoginUrl:       'http://www.MusterBox/'
 adminRoot:         '/app'
 isAuthGuardActive: false        // ← note: guards are effectively off in prod
 ```

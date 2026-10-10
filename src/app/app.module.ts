@@ -6,8 +6,6 @@ import { ViewsModule } from './views/views.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
-import { AngularFireModule } from '@angular/fire/compat';
-import { environment } from 'src/environments/environment';
 import { LayoutContainersModule } from './containers/layout/layout.containers.module';
 import { SessionTimeOutComponent } from './session-time-out/session-time-out.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -56,7 +54,6 @@ import { PreboardingsRoutingModule } from './views/app/preboardings/preboardings
         LayoutContainersModule,
         BrowserAnimationsModule,
         TranslateModule.forRoot(),
-        AngularFireModule.initializeApp(environment.firebase),
         ModalModule,
         SimpleNotificationsModule.forRoot(),
         AngularDualListBoxModule,

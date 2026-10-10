@@ -11,7 +11,7 @@
 | Service | Base URL (env key) | Protocol |
 |---------|--------------------|----------|
 | **Main REST API** | `environment.apiUrl` — dev `http://localhost:3210/`, prod `http://13.204.149.192:3210/` | HTTPS/JSON |
-| **Biometric service** | `environment.biometricApiUrl` — dev `http://localhost:3510/`, prod `https://www.aptavetan.com/` | HTTPS/JSON |
+| **Biometric service** | `environment.biometricApiUrl` — dev `http://localhost:3510/`, prod `https://www.MusterBox/` | HTTPS/JSON |
 | **Chat / notifications** | `environment.chatUrl` | socket.io (WebSocket) |
 | **Static uploads** | `environment.apiUrl + 'uploads/…'` | HTTP GET |
 
@@ -202,7 +202,7 @@ File uploads switch to `multipart/form-data` via `FormData`.
 `companyProgress` · `companyTraining` · `companyServiceStatus` ·
 `companyNotificationSetup` · `companywiseReport` · `productmaster` ·
 `subscription` · `dealerPlan` · `leadMaster` · `moduleList` · `moduleDetails` ·
-`appversion` · `corporation` · `tankhwapatraDatabaseList`
+`appversion` · `corporation` · `MusterBoxDatabaseList`
 
 **Org structure**
 `branchmaster` · `department` · `division` · `designation` · `gradestructure` ·

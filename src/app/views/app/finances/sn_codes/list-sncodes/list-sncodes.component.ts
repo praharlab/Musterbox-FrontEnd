@@ -73,7 +73,7 @@ export class ListSncodesComponent implements OnInit {
 
   currentPage: number;
   formValue: any;
-  tankhwaPatraNameLabel: string = labelUtils.tankhwaPatraNameLabel;
+  MusterBoxNameLabel: string = labelUtils.MusterBoxNameLabel;
   constructor(
     private spinner: NgxUiLoaderService,
     private api: ApiService,

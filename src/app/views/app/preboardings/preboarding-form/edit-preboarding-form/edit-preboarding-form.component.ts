@@ -79,7 +79,7 @@ export class EditPreboardingFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.showCountryCodeSelected) {
-      this.selectedCountryCode = 103 //Default Selected India for Tankhwa Patra
+      this.selectedCountryCode = 103 //Default Selected India for SalaryPatra
       this.defaultNationality = 'Indian'
       this.deafultEmployeeType = 'national'
     }

@@ -83,14 +83,14 @@
             type="text"
             required
             ngModel
-            #tankhwaPatra_code="ngModel"
-            [(ngModel)]="sn_codeData.tankhwaPatra_code"
-            name="tankhwaPatra_code"
+            #MusterBox_code="ngModel"
+            [(ngModel)]="sn_codeData.MusterBox_code"
+            name="MusterBox_code"
             />
-            <span>{{tankhwaPatraNameLabel}} Codes *</span>
-            @if (!tankhwaPatra_code.valid && edit_sncodes.submitted) {
+            <span>{{MusterBoxNameLabel}} Codes *</span>
+            @if (!MusterBox_code.valid && edit_sncodes.submitted) {
               <div class="invalid-tooltip">
-                {{tankhwaPatraNameLabel}} Codes is required!
+                {{MusterBoxNameLabel}} Codes is required!
               </div>
             }
           </label>

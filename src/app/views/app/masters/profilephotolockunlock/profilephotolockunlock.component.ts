@@ -10,7 +10,6 @@ import { NgForm } from '@angular/forms';
 import { FilterStatusService } from 'src/app/services/filter-status.service';
 import { FormValueStorageService } from 'src/app/services/form-value-storage.service';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import { loggedIn } from '@angular/fire/compat/auth-guard';
 import { ItemOptionsPerPageArray } from 'src/app/constants/CommonFilterFields';
 @Component({
     selector: 'app-profilephotolockunlock',

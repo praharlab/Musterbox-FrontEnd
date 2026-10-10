@@ -110,7 +110,7 @@ export class AddCompanyContactComponent implements OnInit {
       this.getAllData(this.selectedCompany);
     }
     if (this.showCountryCodeSelected) {
-      this.selectedCountryCode = 103; //Default Selected India for Tankhwa Patra
+      this.selectedCountryCode = 103; //Default Selected India for SalaryPatra
     }
   }
 

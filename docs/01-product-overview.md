@@ -14,10 +14,10 @@ It is broad rather than deep: a single login covers the whole employee lifecycle
 >
 > | Name | Where it appears | What it is |
 > |------|------------------|------------|
-> | **Tankhwapatra** | The `tankhwaPatraNameLabel` variable, upload paths like `uploads/tankhwaFace/`, backend routes like `tankhwapatraDatabaseList/` | The product's previous name (*tankhwa* = wages, *patra* = document). Still baked into API paths, so it cannot be renamed from the frontend alone |
-> | **aptavetan.com** | `environment.prod.ts` — `chatUrl`, `biometricApiUrl`, `appUrl`–`appUrl3`, `appLoginUrl` | **Live infrastructure.** A deployed domain, not branding. Do not rename it in code without a DNS and backend change |
+> | **MusterBox** | The `MusterBoxNameLabel` variable, upload paths like `uploads/SalaryFace/`, backend routes like `MusterBoxDatabaseList/` | The product's previous name (*Salary* = wages, *patra* = document). Still baked into API paths, so it cannot be renamed from the frontend alone |
+> | **MusterBox** | `environment.prod.ts` — `chatUrl`, `biometricApiUrl`, `appUrl`–`appUrl3`, `appLoginUrl` | **Live infrastructure.** A deployed domain, not branding. Do not rename it in code without a DNS and backend change |
 > | **vien-angular** | `environment.ts` / `environment.prod.ts` — the `firebase` block (`vien-angular-login`) | The Vien admin template this project was scaffolded from. The project name is now `musterbox`; the Firebase ids still point at the template author's demo project |
-> | **SN**, *Pacific International Hospital*, *Mars Consultancy*, *Harsha Engineering* | [`constants/labelUtils.ts`](../src/app/constants/labelUtils.ts) | **White-label customer brands.** `tankhwaPatraNameLabel` is the brand slot swapped per deployment |
+> | **SN**, *Pacific International Hospital*, *Mars Consultancy*, *Harsha Engineering* | [`constants/labelUtils.ts`](../src/app/constants/labelUtils.ts) | **White-label customer brands.** `MusterBoxNameLabel` is the brand slot swapped per deployment |
 >
 > The product is white-labelled, so the customer-facing name is data, not a
 > constant. Musterbox is the house brand that sits behind those labels.

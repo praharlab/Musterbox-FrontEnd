@@ -9,7 +9,7 @@ import { labelUtils } from 'src/app/constants/labelUtils';
 })
 export class FooterComponent implements OnInit {
   messagesArray = [];
-  tankhwaPatraNameLabel: string = labelUtils.tankhwaPatraNameLabel;
+  MusterBoxNameLabel: string = labelUtils.MusterBoxNameLabel;
   copyRightYear: string = labelUtils.copyRightYear;
 
   constructor() {}

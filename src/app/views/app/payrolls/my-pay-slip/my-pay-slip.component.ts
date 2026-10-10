@@ -90,7 +90,7 @@ export class MyPaySlipComponent implements OnInit {
 
 
   showSalarySlip(data: IPaySlip) {
-    // this.salarySlipPath = `https://apitankhwapatra.tankhwapatra.co.in/${data.path}`
+    // this.salarySlipPath = `https://apiMusterBox.MusterBox.co.in/${data.path}`
     this.salarySlipPath = this.apiUrl + data.path
   }
 

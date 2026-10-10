@@ -48,7 +48,7 @@ export class ApplyJobComponent implements OnInit {
     this.getallcountry()
     this.getIPAddress();
     if (this.showCountryCodeSelected) {
-      this.selectedCountryCode = 103 //Default Selected India for Tankhwa Patra
+      this.selectedCountryCode = 103 //Default Selected India for SalaryPatra
     }
   }
   getIPAddress() {
