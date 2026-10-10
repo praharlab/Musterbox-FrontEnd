@@ -145,6 +145,10 @@ npm run format
 - `npm run lint`: checks project linting issues
 - `npm run format`: formats the codebase with Prettier
 
+## Continuous integration
+
+CircleCI uses `.circleci/config.yml` to install dependencies with `npm ci`, run the production build, and publish the generated `dist/musterbox-prod` bundle as a workflow artifact.
+
 ## Features
 
 ### Employee lifecycle management
