@@ -11,8 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormValueStorageService } from 'src/app/services/form-value-storage.service';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
-var Size = Quill.import('attributors/style/size');
+var Size = importQuillFormatWithWhitelist('attributors/style/size');
 import Quill from 'node_modules/quill';
+import { importQuillFormatWithWhitelist } from 'src/app/shared/quill-format';
 import { ItemOptionsPerPageArray } from 'src/app/constants/CommonFilterFields';
 
 Size.whitelist = [
@@ -40,11 +41,11 @@ Size.whitelist = [
   '48px',
   '50px',
 ];
-Quill.register(Size, true);
+Quill.register('attributors/style/size', Size, true);
 
-let Font = Quill.import('formats/font');
+let Font = importQuillFormatWithWhitelist('formats/font');
 Font.whitelist = ['inconsolata', 'roboto', 'mirza', 'arial', 'calibri'];
-Quill.register(Font, true);
+Quill.register('formats/font', Font, true);
 
 @Component({
     selector: 'app-employee-resignation',
