@@ -8,8 +8,9 @@ import { HttpClient } from '@angular/common/http';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { environment } from 'src/environments/environment';
 import { FormValueStorageService } from 'src/app/services/form-value-storage.service';
-var Size = Quill.import('attributors/style/size');
+var Size = importQuillFormatWithWhitelist('attributors/style/size');
 import Quill from 'node_modules/quill';
+import { importQuillFormatWithWhitelist } from 'src/app/shared/quill-format';
 
 
 Size.whitelist = [
@@ -37,11 +38,11 @@ Size.whitelist = [
   '48px',
   '50px',
 ];
-Quill.register(Size, true);
+Quill.register('attributors/style/size', Size, true);
 
-let Font = Quill.import('formats/font');
+let Font = importQuillFormatWithWhitelist('formats/font');
 Font.whitelist = ['inconsolata', 'roboto', 'mirza', 'arial','calibri'];
-Quill.register(Font, true);
+Quill.register('formats/font', Font, true);
 @Component({
     selector: 'app-edit-tds-subsection',
     templateUrl: './edit-tds-subsection.component.html',
