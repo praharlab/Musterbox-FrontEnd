@@ -20,6 +20,8 @@ jobs:
             - ~/.npm
       - run:
           name: Build production bundle
+          environment:
+            NG_BUILD_MAX_WORKERS: "1"
           command: npm run build:prod
       - store_artifacts:
           path: dist/musterbox-prod
