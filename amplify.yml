@@ -3,13 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 22.22.3
-        - nvm use 22.22.3
+        - nvm install 24.15.0 || nvm install 24
+        - nvm use 24.15.0 || nvm use 24
         - node --version
         - npm ci
     build:
       commands:
-        - nvm use 22.22.3
+        - nvm use 24.15.0 || nvm use 24
         - npm run build
   artifacts:
     baseDirectory: dist/musterbox
