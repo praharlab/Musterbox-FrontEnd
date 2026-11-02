@@ -212,6 +212,12 @@
             "buildTarget": "musterbox:build"
           },
           "configurations": {
+            "development": {
+              "buildTarget": "musterbox:build:development"
+            },
+            "staging": {
+              "buildTarget": "musterbox:build:staging"
+            },
             "production": {
               "buildTarget": "musterbox:build:production"
             }
