@@ -8,8 +8,9 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ApiService } from 'src/app/services/api.service';
 import { ConstantService } from 'src/app/services/constant.service';
 import { environment } from 'src/environments/environment';
-var Size = Quill.import('attributors/style/size');
+var Size = importQuillFormatWithWhitelist('attributors/style/size');
 import Quill from 'node_modules/quill';
+import { importQuillFormatWithWhitelist } from 'src/app/shared/quill-format';
 import { letterHeadOptions } from 'src/app/constants/commonVariables';
 
 Size.whitelist = [
@@ -37,11 +38,11 @@ Size.whitelist = [
   '48px',
   '50px',
 ];
-Quill.register(Size, true);
+Quill.register('attributors/style/size', Size, true);
 
-let Font = Quill.import('formats/font');
+let Font = importQuillFormatWithWhitelist('formats/font');
 Font.whitelist = ['inconsolata', 'roboto', 'mirza', 'arial', 'calibri'];
-Quill.register(Font, true);
+Quill.register('formats/font', Font, true);
 
 
 
