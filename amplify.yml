@@ -3,13 +3,15 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 24
-        - nvm use 24
+        - nvm install
+        - nvm use
         - node --version
+        - npm install -g npm@11.12.0
+        - npm --version
         - npm ci
     build:
       commands:
-        - nvm use 24
+        - nvm use
         - npm run build
   artifacts:
     baseDirectory: dist/musterbox
